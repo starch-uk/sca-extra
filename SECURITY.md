@@ -19,7 +19,7 @@ We take security vulnerabilities seriously. If you discover a security vulnerabi
 
 Instead, please report security vulnerabilities by:
 
-1. **Email:** Send details to [security@starch-uk.com](mailto:security@starch-uk.com)
+1. **Email:** Send details to [security@starch.uk](mailto:security@starch.uk)
    - Include "SECURITY" in the subject line
    - Provide a clear description of the vulnerability
    - Include steps to reproduce (if applicable)
