@@ -12,18 +12,24 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Java
+        uses: actions/setup-java@v5
         with:
-          node-version: "18"
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 10.26.1
 
       - name: Cache pnpm store
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: ~/.local/share/pnpm/store
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -31,7 +37,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -47,6 +53,16 @@ jobs:
 
       - name: Lint JavaScript
         run: pnpm run lint
+
+      - name: Install PMD CLI
+        run: |
+          PMD_VERSION="7.19.0"
+          curl -L -o pmd-bin.zip "https://github.com/pmd/pmd/releases/download/pmd_releases/${PMD_VERSION}/pmd-bin-${PMD_VERSION}.zip"
+          unzip -q pmd-bin.zip
+          sudo mv pmd-bin-${PMD_VERSION} /opt/pmd
+          sudo ln -sf /opt/pmd/bin/pmd /usr/local/bin/pmd
+          rm pmd-bin.zip
+          pmd --version
 
       - name: Run tests
         run: pnpm test
@@ -101,7 +117,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         if: always()
         with:
           files: ./coverage/lcov.info
