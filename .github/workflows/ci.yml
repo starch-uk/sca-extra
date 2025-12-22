@@ -57,7 +57,7 @@ jobs:
       - name: Install PMD CLI
         run: |
           PMD_VERSION="7.19.0"
-          curl -L -o pmd-bin.zip "https://github.com/pmd/pmd/releases/download/pmd_releases/${PMD_VERSION}/pmd-bin-${PMD_VERSION}.zip"
+          curl -L -o pmd-bin.zip "https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-dist-${PMD_VERSION}-bin.zip"
           unzip -q pmd-bin.zip
           sudo mv pmd-bin-${PMD_VERSION} /opt/pmd
           sudo ln -sf /opt/pmd/bin/pmd /usr/local/bin/pmd
