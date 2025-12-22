@@ -30,6 +30,20 @@
                     //WhileLoopStatement[
                         count(StandardCondition//MethodCallExpression[@Image = 'contains']) >= 2
                     ]
+                    |
+                    //StandardCondition[
+                        count(.//MethodCallExpression[@Image = 'contains']) >= 2
+                    ]
+                    |
+                    //BinaryExpression[
+                        @Op = 'and'
+                        and count(.//MethodCallExpression[@Image = 'contains']) >= 2
+                    ]
+                    |
+                    //BinaryExpression[
+                        @Op = 'or'
+                        and count(.//MethodCallExpression[@Image = 'contains']) >= 2
+                    ]
                     ]]>
                 </value>
       </property>

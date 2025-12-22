@@ -2,7 +2,7 @@
 public class MyTestClass {
     // Valid: IsParallel=true specified
     @IsTest
-    static void testMethod() {
+    public static void testMethod() {
     }
 }
 

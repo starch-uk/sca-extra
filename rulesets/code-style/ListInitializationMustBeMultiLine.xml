@@ -23,7 +23,7 @@
         <value>
                     <![CDATA[
                     //NewListLiteralExpression[
-                        count(.//*) >= 2
+                        count(*) >= 2
                         and @BeginLine = @EndLine
                     ]
                     ]]>

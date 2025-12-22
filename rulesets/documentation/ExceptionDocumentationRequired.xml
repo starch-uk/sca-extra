@@ -25,14 +25,9 @@
         <value>
                     <![CDATA[
                     //Method[
-                        BlockStatement//ThrowStatement
+                        .//ThrowStatement
                         and FormalComment
-                        and (
-                            contains(FormalComment/@Image, '@param')
-                            or contains(FormalComment/@Image, '@return')
-                            or contains(FormalComment/@Image, '@throws')
-                            or contains(FormalComment/@Image, '@exception')
-                        )
+                        and contains(FormalComment/@Image, '/**')
                         and not(contains(FormalComment/@Image, '@throws'))
                         and not(contains(FormalComment/@Image, '@exception'))
                     ]

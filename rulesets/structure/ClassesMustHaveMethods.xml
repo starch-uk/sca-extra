@@ -25,8 +25,8 @@
                     <![CDATA[
                     //UserClass[
                         count(Field) > 0
-                        and count(Method[@Constructor = true()]) > 0
-                        and count(Method[not(@Constructor = true()) and not(ModifierNode[@Static = true()])]) = 0
+                        and count(Method[@Image = ancestor::UserClass/@Name]) > 0
+                        and count(Method[not(@Image = ancestor::UserClass/@Name) and not(ModifierNode[@Static = true()])]) = 0
                     ]
                     ]]>
                 </value>

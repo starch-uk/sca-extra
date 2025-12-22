@@ -29,11 +29,11 @@
                             contains(@Type, 'Map')
                             and VariableInitializer/NewMapLiteralExpression[count(MapEntryNode) = 0]
                         ]
-                        and following-sibling::*[1]/ExpressionStatement[
+                        and following-sibling::*[1][self::ExpressionStatement[
                             MethodCallExpression[@Image = 'put']
                             and PrimaryExpression[1]/ReferenceExpression/@Image = 
                                 preceding-sibling::VariableDeclarationStatements/VariableDeclaration/VariableExpression/@Image
-                        ]
+                        ]]
                     ]
                     ]]>
                 </value>

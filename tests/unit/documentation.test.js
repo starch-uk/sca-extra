@@ -1,26 +1,6 @@
 const { runPMD, assertNoViolations } = require("../helpers/pmd-helper");
 
 describe("Documentation Rules", () => {
-  describe("AnnotationBeforeComment", () => {
-    it("should detect comments before annotations", async () => {
-      const violations = await runPMD(
-        "rulesets/documentation/AnnotationBeforeComment.xml",
-        "tests/fixtures/negative/documentation/AnnotationBeforeComment.cls"
-      );
-      expect(violations.filter((v) => v.rule === "AnnotationBeforeComment").length).toBeGreaterThan(
-        0
-      );
-    });
-
-    it("should not flag annotations before comments", async () => {
-      const violations = await runPMD(
-        "rulesets/documentation/AnnotationBeforeComment.xml",
-        "tests/fixtures/positive/documentation/AnnotationBeforeComment.cls"
-      );
-      assertNoViolations(violations, "AnnotationBeforeComment");
-    });
-  });
-
   describe("ExceptionDocumentationRequired", () => {
     it("should detect methods that throw exceptions without @throws documentation", async () => {
       const violations = await runPMD(

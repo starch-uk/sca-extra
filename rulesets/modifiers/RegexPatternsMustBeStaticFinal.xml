@@ -27,7 +27,7 @@
                             or (@Image = 'matches')
                         )
                         and .//LiteralExpression[@String = true()]
-                        and not(ancestor::Field[ModifierNode[@Static = true() and @Final = true()]])
+                        and not(ancestor::FieldDeclarationStatements[ModifierNode[@Static = true() and @Final = true()]])
                     ]
                     ]]>
                 </value>

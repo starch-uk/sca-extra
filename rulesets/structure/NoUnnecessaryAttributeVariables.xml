@@ -50,8 +50,9 @@
                             ancestor::Method//VariableExpression[
                                 @Image = current()/VariableExpression/@Image
                                 and not(ancestor::VariableInitializer)
+                                and not(ancestor::VariableDeclaration[1])
                             ]
-                        ) = 2
+                        ) = 1
                     ]
                     ]]>
                 </value>

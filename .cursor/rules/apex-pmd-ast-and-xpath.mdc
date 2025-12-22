@@ -42,3 +42,19 @@ When creating or modifying PMD rules:
     - `stress-naming.cls` - Naming rules (100+ violations)
     - `stress-documentation.cls` - Documentation rules (50+ violations)
     - `stress-method-signatures.cls` - Method signature rules (30+ violations)
+13. **Running specific tests**: Use Jest's `--testNamePattern` flag to run only specific tests:
+    - `npm test -- --testNamePattern="RuleName"` - Run all tests matching the pattern
+    - `npm test -- --testNamePattern="should detect"` - Run only detection tests
+    - `npm test -- --testNamePattern="RuleName.*should detect"` - Run specific test for a rule
+    - Examples:
+      - `npm test -- --testNamePattern="AnnotationBeforeComment"` - Run AnnotationBeforeComment tests
+      - `npm test -- --testNamePattern="ProhibitSuppressWarnings.*should detect"` - Run specific test
+14. **Using PMD AST dump tool**: Use the AST dump script to inspect the actual AST structure of Apex files:
+    - `npm run ast-dump <apex-file>` - Dump AST for a file (text format)
+    - `pmd ast-dump --file=<apex-file> -l apex -f xml` - Dump AST in XML format
+    - `pmd ast-dump --file=<apex-file> -l apex -f xml > output.ast.xml` - Save AST to file
+    - Examples:
+      - `npm run ast-dump tests/fixtures/negative/structure/ProhibitSuppressWarnings.cls`
+      - `pmd ast-dump --file=tests/fixtures/positive/documentation/AnnotationBeforeComment.cls -l apex -f xml | grep -E "Method|FormalComment|Annotation"`
+    - **Note**: Files with syntax errors cannot be parsed. Fix syntax errors first or use valid test files for AST inspection.
+    - **Tip**: Use AST dump to understand node relationships, attributes, and structure before writing XPath expressions.

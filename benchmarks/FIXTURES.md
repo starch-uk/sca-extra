@@ -13,10 +13,10 @@ The benchmark fixtures are comprehensive stress-test files designed to explicitl
 | `stress-structure.cls` | 8.0 KB | 100+ | Structure rules |
 | `stress-modifiers.cls` | 5.7 KB | 100+ | Modifier rules |
 | `stress-naming.cls` | 3.2 KB | 100+ | Naming rules |
-| `stress-documentation.cls` | 3.9 KB | 50+ | Documentation rules |
+| `stress-documentation.cls` | 3.9 KB | 30+ | Documentation rules |
 | `stress-method-signatures.cls` | 2.3 KB | 30+ | Method signature rules |
 
-**Total: ~43 KB of stress-test code with 600+ potential violations**
+**Total: ~43 KB of stress-test code with 580+ potential violations**
 
 ## Rule Coverage
 
@@ -70,8 +70,7 @@ The benchmark fixtures are comprehensive stress-test files designed to explicitl
 - ✅ VariablesMustNotShareNamesWithClasses (10 violations)
 - ✅ InnerClassesMustBeOneWord (5 violations)
 
-### Documentation Rules (50+ violations)
-- ✅ AnnotationBeforeComment (20 violations)
+### Documentation Rules (30+ violations)
 - ✅ ExceptionDocumentationRequired (20 violations)
 - ✅ SingleLineDocumentationFormat (10 violations)
 

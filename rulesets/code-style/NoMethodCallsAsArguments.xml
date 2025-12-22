@@ -24,9 +24,13 @@
         <value>
                     <![CDATA[
                     //MethodCallExpression[
-                        (ancestor::MethodCallExpression[position() > 1]
+                        (parent::MethodCallExpression
+                         or parent::NewClassExpression
+                         or ancestor::MethodCallExpression[position() > 1]
                          or ancestor::NewClassExpression)
                         and not(ancestor::VariableDeclaration)
+                        and not(ancestor::AssignmentExpression[VariableExpression])
+                        and not(parent::VariableDeclaration)
                     ]
                     ]]>
                 </value>

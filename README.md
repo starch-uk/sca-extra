@@ -55,7 +55,6 @@ This project provides a comprehensive set of PMD rules for Salesforce Apex code 
    - Documentation completeness
    - Examples:
      - `ExceptionDocumentationRequired` - Ensures exceptions are documented
-     - `AnnotationBeforeComment` - Ensures proper annotation placement (structural, not formatting)
 
 ### What Prettier Handles (Not PMD Rules):
 

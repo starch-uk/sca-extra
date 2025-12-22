@@ -28,7 +28,7 @@
                         @Op = '='
                         and VariableExpression
                         and MethodCallExpression[
-                            PrimaryExpression[1]/ReferenceExpression/@Image = ancestor::AssignmentExpression/VariableExpression/@Image
+                            PrimaryExpression[1]/ReferenceExpression/@Image = current()/VariableExpression/@Image
                         ]
                         and not(ancestor::MethodCallExpression)
                         and not(ancestor::VariableDeclaration)

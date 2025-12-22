@@ -27,7 +27,7 @@
                     //MethodCallExpression[
                         @Image = 'join'
                         and ancestor::PrimaryExpression[1]/ReferenceExpression[@Image = 'String']
-                        and .//LiteralExpression[@String = true() and (@Image = "''" or @Image = '""')]
+                        and .//LiteralExpression[@String = true() and (@Image = "''" or @Image = '""' or string-length(@Image) = 0)]
                         and .//NewListLiteralExpression
                     ]
                     ]]>

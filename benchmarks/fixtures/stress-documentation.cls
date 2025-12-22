@@ -1,82 +1,9 @@
 /**
  * Stress test for documentation rules
- * Contains 50+ violations across all documentation rules
+ * Contains 30+ violations across all documentation rules
  */
 
 public class StressDocumentation {
-  // 20 violations: AnnotationBeforeComment
-  // This is a test method
-  @IsTest
-  static void testMethod1() {}
-
-  // This is another test
-  @IsTest
-  static void testMethod2() {}
-
-  // Test method with description
-  @IsTest
-  static void testMethod3() {}
-
-  // Test method
-  @IsTest
-  static void testMethod4() {}
-
-  // Another test
-  @IsTest
-  static void testMethod5() {}
-
-  // Test description
-  @IsTest
-  static void testMethod6() {}
-
-  // Method comment
-  @TestVisible
-  public void method1() {}
-
-  // Another comment
-  @TestVisible
-  public void method2() {}
-
-  // Description comment
-  @TestVisible
-  public void method3() {}
-
-  // Comment before annotation
-  @Deprecated
-  public void method4() {}
-
-  // Comment
-  @Deprecated
-  public void method5() {}
-
-  // Description
-  @Deprecated
-  public void method6() {}
-
-  // Test comment
-  @Future
-  public static void futureMethod1() {}
-
-  // Another comment
-  @Future
-  public static void futureMethod2() {}
-
-  // Description
-  @Future
-  public static void futureMethod3() {}
-
-  // Comment
-  @WebService
-  public void webMethod1() {}
-
-  // Another
-  @WebService
-  public void webMethod2() {}
-
-  // Description
-  @WebService
-  public void webMethod3() {}
-
   // 20 violations: ExceptionDocumentationRequired
   public void methodThrowsException1() {
     throw new CustomException('Error 1');

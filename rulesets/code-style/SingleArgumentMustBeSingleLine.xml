@@ -23,7 +23,7 @@
         <value>
                     <![CDATA[
                     //MethodCallExpression[
-                        count(Parameter) <= 1
+                        (count(*) <= 1 or not(*))
                         and @BeginLine != @EndLine
                     ]
                     ]]>

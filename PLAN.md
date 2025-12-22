@@ -39,25 +39,28 @@ sca-extra/
 │   ├── modifiers/                     # Modifier rules
 │   ├── naming/                        # Naming convention rules
 │   └── structure/                     # Code structure rules
-├── src/                               # Source code (if needed for custom rule classes)
+├── code-analyzer.yml                  # Prevents Salesforce Code Analyzer VS Code extension from running any rules
+├── jest.config.js                     # Jest test configuration
 ├── tests/                             # Test files
 │   ├── fixtures/                      # Test Apex code files
 │   │   ├── positive/                  # Code that should NOT trigger rules
-│   │   │   ├── code-style/
-│   │   │   ├── documentation/
-│   │   │   ├── method-signatures/
-│   │   │   ├── modifiers/
-│   │   │   ├── naming/
-│   │   │   └── structure/
+│   │   │   ├── code-style/            # Positive test fixtures for code-style rules
+│   │   │   ├── documentation/         # Positive test fixtures for documentation rules
+│   │   │   ├── method-signatures/     # Positive test fixtures for method-signature rules
+│   │   │   ├── modifiers/             # Positive test fixtures for modifier rules
+│   │   │   ├── naming/                # Positive test fixtures for naming rules
+│   │   │   └── structure/             # Positive test fixtures for structure rules
 │   │   └── negative/                  # Code that SHOULD trigger rules
-│   │       ├── code-style/
-│   │       ├── documentation/
-│   │       ├── method-signatures/
-│   │       ├── modifiers/
-│   │       ├── naming/
-│   │       └── structure/
+│   │       ├── code-style/            # Negative test fixtures for code-style rules
+│   │       ├── documentation/         # Negative test fixtures for documentation rules
+│   │       ├── method-signatures/     # Negative test fixtures for method-signature rules
+│   │       ├── modifiers/            # Negative test fixtures for modifier rules
+│   │       ├── naming/                # Negative test fixtures for naming rules
+│   │       └── structure/             # Negative test fixtures for structure rules
+│   ├── helpers/                       # Test helper utilities
+│   │   └── pmd-helper.js              # PMD test helper functions
 │   ├── rulesets/                      # Test-specific rulesets
-│   │   └── test-ruleset.xml           # Combined ruleset for testing
+│   │   └── test-ruleset.xml           # Combined ruleset for testing (generated)
 │   └── unit/                          # Unit test files
 │       ├── code-style.test.js
 │       ├── documentation.test.js
@@ -75,11 +78,46 @@ sca-extra/
 │   └── ast-dump.sh                    # Helper for AST debugging
 ├── benchmarks/                        # Benchmark test files
 │   ├── fixtures/                      # Large Apex files for benchmarking
-│   └── results/                       # Benchmark results (gitignored)
+│   │   ├── stress-test-all-rules.cls  # Comprehensive stress test (100+ violations)
+│   │   ├── stress-code-style.cls      # Code style stress test (200+ violations)
+│   │   ├── stress-structure.cls       # Structure stress test (100+ violations)
+│   │   ├── stress-modifiers.cls       # Modifier stress test (100+ violations)
+│   │   ├── stress-naming.cls          # Naming stress test (100+ violations)
+│   │   ├── stress-documentation.cls   # Documentation stress test (30+ violations)
+│   │   └── stress-method-signatures.cls # Method signature stress test (30+ violations)
+│   ├── results/                      # Benchmark results (gitignored)
+│   ├── README.md                      # Benchmark documentation
+│   └── FIXTURES.md                    # Benchmark fixture documentation
 └── .github/                           # GitHub Actions
     └── workflows/
         └── ci.yml                     # CI/CD workflow (lint + test on PRs)
 ```
+
+## Critical Prerequisites
+
+### PMD CLI Installation
+
+**IMPORTANT:** This project uses PMD CLI directly as an external tool. PMD is NOT an npm package and must be installed separately.
+
+1. **Install PMD CLI:**
+   - **macOS:** `brew install pmd`
+   - **Linux/Windows:** Download from https://pmd.github.io/pmd/pmd_userdocs_installation.html
+   - **Verify installation:** `pmd --version` and `pmd check --help`
+
+2. **PMD Requirements:**
+   - PMD version 7.0+ (supports Apex language)
+   - Apex language support enabled
+   - XPath 3.1 support
+
+3. **Test PMD with Apex:**
+   ```bash
+   pmd check -d <apex-file> -R <ruleset> -l apex -f xml
+   ```
+
+4. **Note for Tests:**
+   - Tests will fail if PMD CLI is not installed
+   - Test helper should check for PMD availability and provide clear error messages
+   - PMD CLI must be in system PATH
 
 ## Implementation Steps
 
@@ -87,7 +125,17 @@ sca-extra/
 
 1. **Initialize NPM project**
    - Create `package.json` with project metadata
-   - Add dependencies: `pmd` (or `@salesforce/pmd` if available), test framework (Jest or Mocha)
+   - **Important:** No runtime dependencies - PMD is external CLI tool
+   - Add dev dependencies:
+     - `jest` (^29.0.0) - Test framework
+     - `@types/jest` (^29.0.0) - TypeScript definitions for Jest
+     - `eslint` (^8.0.0) - JavaScript linting
+     - `prettier` (^3.0.0) - Code formatting
+     - `@prettier/plugin-xml` (^3.0.0) - XML formatting support
+     - `husky` (^8.0.0) - Git hooks
+     - `lint-staged` (^13.0.0) - Staged file linting
+     - `xml2js` (^0.6.0) - XML parsing (if needed)
+     - `xmldom` (^0.6.0) - DOM implementation for XML parsing
    - Configure npm scripts for testing, validation, linting, and development
    - Add Prettier for XML formatting of rulesets
 
@@ -102,7 +150,14 @@ sca-extra/
    - Reference license in README and package.json
 
 4. **Create `.gitignore`**
-   - Ignore `node_modules/`, test artifacts, AST dumps, benchmark results, etc.
+   - Ignore `node_modules/`, test artifacts, AST dumps, benchmark results, coverage reports, etc.
+   - Example patterns:
+     - `node_modules/`
+     - `coverage/`
+     - `benchmarks/results/`
+     - `*.ast.xml` (AST dump files)
+     - `.DS_Store`
+     - IDE-specific files
 
 5. **Set up Prettier for XML formatting**
    - Configure Prettier with XML plugin (`@prettier/plugin-xml` or similar)
@@ -130,6 +185,10 @@ sca-extra/
 
 8. **Create `README.md`**
    - Project overview
+   - **Prerequisites section:**
+     - PMD CLI installation requirements
+     - Node.js version requirements
+     - How to verify PMD installation
    - **What Makes a Good Rule vs. What Prettier Handles** (important guidance section)
      - Explain when to create PMD rules (code quality, logic, best practices)
      - Explain what Prettier handles (formatting, spacing, indentation)
@@ -141,7 +200,9 @@ sca-extra/
      - How to enable rules in `code-analyzer.yml`
      - How to configure rule properties
      - Examples of rule configuration
+     - Create example `code-analyzer.yml` file
    - Usage examples
+   - Development section (running tests, benchmarks, etc.)
    - Link to CONTRIBUTING.md for contribution guidelines
    - Link to SECURITY.md for security reporting
    - Reference to documentation files
@@ -185,18 +246,36 @@ sca-extra/
 ### Phase 2: Test Infrastructure
 
 1. **Set up test framework**
-   - Choose testing library (Jest recommended for Node.js)
+   - Choose testing library: Jest (recommended for Node.js)
+   - Create `jest.config.js` with configuration:
+     - Test environment: "node"
+     - Test match: `**/tests/unit/**/*.test.js`
+     - Test timeout: 10000ms (10 seconds)
+     - Coverage collection from `tests/**/*.js` and `scripts/**/*.js`
+     - Exclude fixtures and helpers from coverage
+     - Verbose output enabled
    - Create test utilities for:
      - Running PMD against Apex files
      - Parsing PMD XML output
      - Asserting rule violations
      - Comparing expected vs actual violations
 
-2. **Create test helper functions**
-   - `runPMD(rulesetPath, apexFile)` - Execute PMD and return results
-   - `parseViolations(pmdOutput)` - Parse XML/JSON output
-   - `assertViolation(violations, ruleName, lineNumber)` - Assert specific violation
+2. **Create test helper functions** (`tests/helpers/pmd-helper.js`)
+   - `runPMD(rulesetPath, apexFile)` - Execute PMD CLI and return results
+     - Uses `pmd check --no-cache -d <file> -R <ruleset> -f xml`
+     - Handles PMD exit codes (non-zero when violations found is expected)
+     - Extracts XML from output (handles warnings before XML)
+     - Timeout: 30 seconds
+     - Error handling for missing PMD CLI
+   - `parseViolations(pmdOutput)` - Parse PMD XML output
+     - Uses `xmldom` DOMParser
+     - Extracts: file, rule, message, line, column
+     - Returns array of violation objects
+   - `assertViolation(violations, ruleName, lineNumber)` - Assert specific violation exists
    - `assertNoViolations(violations, ruleName)` - Assert rule doesn't fire
+   - `readFixture(category, ruleName, type)` - Read test fixture files
+     - Type: 'positive' or 'negative'
+     - Returns file contents as string
 
 3. **Create test fixture structure**
    - For each rule, create:
@@ -204,16 +283,35 @@ sca-extra/
      - `tests/fixtures/negative/{category}/{RuleName}.cls` - Should fail
 
 4. **Generate combined test ruleset**
-   - Script to combine all rulesets into single XML for testing
-   - Or maintain separate test runs per category
+   - Create `scripts/generate-test-ruleset.js` to combine all rulesets into single XML
+   - Output: `tests/rulesets/test-ruleset.xml`
+   - Script should:
+     - Read all rule XML files from `rulesets/` directories
+     - Combine into single ruleset
+     - Preserve rule structure and properties
+   - Create `npm run generate-test-ruleset` script
+   - Or maintain separate test runs per category (current approach)
 
 5. **Set up benchmarking infrastructure**
-   - Create benchmark script to measure rule performance
+   - Create `scripts/benchmark.js` to measure rule performance
    - Test rules against large Apex codebases
    - Track execution time per rule
    - Store benchmark results for comparison
-   - Add benchmark fixtures (large Apex files)
+   - Add benchmark fixtures in `benchmarks/fixtures/`:
+     - `stress-test-all-rules.cls` - Comprehensive (100+ violations across all rules)
+     - `stress-code-style.cls` - Code style focused (200+ violations)
+     - `stress-structure.cls` - Structure focused (100+ violations)
+     - `stress-modifiers.cls` - Modifiers focused (100+ violations)
+     - `stress-naming.cls` - Naming focused (100+ violations)
+     - `stress-documentation.cls` - Documentation focused (30+ violations)
+     - `stress-method-signatures.cls` - Method signatures focused (30+ violations)
+   - Create `benchmarks/README.md` - Benchmark documentation
+   - Create `benchmarks/FIXTURES.md` - Fixture statistics and coverage
+   - Create `scripts/check-performance-regressions.js` - Regression detection
+   - Results stored in `benchmarks/results/` (gitignored)
+   - Support baseline comparison and JSON output for CI
    - Create `npm run benchmark` script
+   - Create `npm run check-regressions` script
 
 ### Phase 3: Test Implementation (Priority Order)
 
@@ -245,14 +343,21 @@ sca-extra/
 ### Phase 4: Validation & Quality
 
 1. **Create validation scripts**
-   - XML schema validation for rulesets
-   - XPath syntax validation
-   - Rule name consistency checks
-   - **Enhanced versioning tooling**:
-     - Automated version bumping script (major/minor/patch)
-     - Changelog generation from commits
-     - Version validation (ensure versions are incremented correctly)
-     - Version comparison and conflict detection
+   - `scripts/validate-rules.js` - Validate all rulesets
+     - XML schema validation for rulesets
+     - XPath syntax validation
+     - Rule name consistency checks
+     - Rule quality checks (descriptions, properties, etc.)
+   - `scripts/version-bump.js` - Automated version bumping
+     - Support major/minor/patch versions
+     - Update version in package.json
+     - Update version in rules (if versioned in XML)
+   - `scripts/generate-changelog.js` - Changelog generation from commits
+     - Parse git commits
+     - Generate formatted changelog
+   - `scripts/list-test-files.js` - List test fixture files
+     - Help identify missing test fixtures
+     - Generate test file inventory
 
 2. **Add linting and formatting**
    - ESLint for JavaScript test files
@@ -323,7 +428,7 @@ This ensures:
   "name": "sca-extra",
   "version": "1.0.0",
   "description": "Additional PMD rules for Salesforce Apex code analysis",
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/starch-uk/sca-extra.git"
@@ -334,8 +439,8 @@ This ensures:
     "test:coverage": "jest --coverage",
     "test:rules": "node scripts/validate-rules.js && npm test",
     "validate": "node scripts/validate-rules.js",
-    "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.{js,cls}\"",
-    "format:check": "prettier --check \"rulesets/**/*.xml\" \"tests/**/*.{js,cls}\"",
+    "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\"",
+    "format:check": "prettier --check \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\"",
     "lint": "eslint tests/**/*.js scripts/**/*.js",
     "lint:fix": "eslint --fix tests/**/*.js scripts/**/*.js",
     "benchmark": "node scripts/benchmark.js",
@@ -358,9 +463,7 @@ This ensures:
     "xml2js": "^0.6.0",
     "xmldom": "^0.6.0"
   },
-  "dependencies": {
-    "@salesforce/pmd": "^latest"
-  }
+  "dependencies": {}
 }
 ```
 
@@ -415,14 +518,38 @@ public class Example {
 ## PMD Integration
 
 ### Running PMD
-- Use PMD CLI: `pmd check -d <apex-file> -R <ruleset> -f json`
-- Or use Salesforce Code Analyzer if available as npm package
-- Parse output to extract violations (file, line, rule, message)
+
+**Critical:** PMD is used as a CLI tool, NOT an npm package.
+
+- **Command format:** `pmd check --no-cache -d <apex-file> -R <ruleset> -f xml`
+  - `--no-cache` - Disable PMD cache for consistent test results
+  - `-d` - Directory or file to analyze
+  - `-R` - Ruleset file path
+  - `-f xml` - Output format (XML for parsing)
+  - `-l apex` - Language (Apex)
+- **Output parsing:** Parse XML output to extract violations
+  - Violation attributes: file, rule, message, beginline, begincol
+  - PMD may exit with non-zero code when violations found (expected)
+  - Output may contain warnings before XML - extract XML portion
+- **Error handling:**
+  - Check if PMD CLI is available (ENOENT error)
+  - Handle timeout (30 seconds recommended)
+  - Extract XML from stdout even on non-zero exit
 
 ### AST Debugging
-- Use `pmd ast-dump` command to inspect AST structure
-- Create helper script: `scripts/ast-dump.sh`
-- Document common AST patterns in `docs/APEX_PMD_AST.md`
+
+- **Command:** `pmd ast-dump -d <apex-file> -l apex`
+- **XML format:** `pmd ast-dump -d <apex-file> -l apex -f xml > output.ast.xml`
+- **Helper script:** Create `scripts/ast-dump.sh`
+  - Accepts apex file as argument
+  - Checks if PMD is available
+  - Outputs AST in text format
+  - Optionally saves to XML file
+  - Usage: `npm run ast-dump <apex-file>` or `bash scripts/ast-dump.sh <apex-file>`
+- **Documentation:** Document common AST patterns in `docs/APEX_PMD_AST.md`
+  - Node types and relationships
+  - Common XPath patterns
+  - AST traversal examples
 
 ## Rule Requirements
 
@@ -658,6 +785,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
+      - name: Install PMD CLI
+        run: |
+          wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.0.0/pmd-bin-7.0.0.zip
+          unzip pmd-bin-7.0.0.zip
+          sudo mv pmd-bin-7.0.0 /opt/pmd
+          sudo ln -s /opt/pmd/bin/pmd /usr/local/bin/pmd
+          pmd --version
+        # Alternative: Use PMD installation action if available
+        # Or use package manager: sudo apt-get install pmd (if available)
+      
       - name: Check XML formatting
         run: npm run format:check
       
@@ -763,16 +900,18 @@ jobs:
 
 This project is licensed under the **MIT License**. See the `LICENSE.md` file for details.
 
-The BSD 3-Clause License allows:
+**Copyright:** 2025 Beech Horn (or appropriate copyright holder)
+
+The MIT License allows:
 - Commercial use
 - Modification
 - Distribution
 - Private use
+- Sublicensing
 
 With requirements:
 - Include copyright notice
 - Include license text
-- Include disclaimer
 
 ## README Content Requirements
 
@@ -823,7 +962,6 @@ The README.md should include comprehensive instructions for using these rules in
    - Documentation completeness
    - Examples:
      - `ExceptionDocumentationRequired` - Ensures exceptions are documented
-     - `AnnotationBeforeComment` - Ensures proper annotation placement (structural, not formatting)
 
 #### What Prettier Handles (Not PMD Rules):
 
@@ -1124,10 +1262,27 @@ The CONTRIBUTING.md file should include:
 - Link to code of conduct (if applicable)
 
 ### Development Setup
-- Prerequisites (Node.js version, PMD version, etc.)
-- Installation steps
-- How to run tests locally
-- How to run benchmarks
+- Prerequisites:
+  - Node.js version 18 or higher
+  - npm version 8 or higher
+  - **PMD CLI version 7.0+** (NOT an npm package - must be installed separately)
+    - macOS: `brew install pmd`
+    - Linux/Windows: Download from PMD website
+    - Verify: `pmd --version` and `pmd check --help`
+    - Must be in system PATH
+- Installation steps:
+  - Clone repository
+  - Run `npm install`
+  - Run `npm run prepare` to set up husky hooks
+- How to run tests locally:
+  - `npm test` - Run all tests
+  - `npm run test:watch` - Watch mode
+  - `npm run test:coverage` - With coverage report
+- How to run benchmarks:
+  - `npm run benchmark` - Run all benchmarks
+  - `npm run benchmark -- --baseline` - Generate baseline
+  - `npm run benchmark -- --json` - JSON output for CI
+  - `npm run check-regressions` - Check for performance regressions
 
 ### Adding New Rules
 - Step-by-step guide for creating a new rule

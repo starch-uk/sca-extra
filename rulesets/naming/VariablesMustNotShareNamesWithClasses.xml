@@ -20,8 +20,9 @@
         <value>
                     <![CDATA[
                     //VariableDeclaration[
-                        ancestor::ApexFile//UserClass/@Name = @Image
-                        or ancestor::ApexFile//UserClass[lower-case(@Name) = lower-case(current()/@Image)]
+                        VariableExpression
+                        and some $class in ancestor::ApexFile//UserClass
+                        satisfies lower-case($class/@Name) = lower-case(VariableExpression/@Image)
                     ]
                     ]]>
                 </value>

@@ -26,8 +26,7 @@
                     //IfBlockStatement[
                         BlockStatement
                         and count(BlockStatement/*) = 1
-                        and BlockStatement//IfBlockStatement
-                        and not(BlockStatement//IfBlockStatement/BlockStatement//IfBlockStatement)
+                        and BlockStatement/IfBlockStatement
                     ]
                     ]]>
                 </value>

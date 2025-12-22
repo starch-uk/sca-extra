@@ -25,7 +25,7 @@
         <value>
                     <![CDATA[
                     //IfElseBlockStatement[
-                        count(IfBlockStatement) >= 2
+                        count(IfBlockStatement) >= 3
                     ]
                     ]]>
                 </value>
