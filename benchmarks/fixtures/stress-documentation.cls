@@ -5,82 +5,142 @@
 
 public class StressDocumentation {
   // 20 violations: ExceptionDocumentationRequired
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException1() {
     throw new CustomException('Error 1');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException2() {
     throw new CustomException('Error 2');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException3() {
     throw new CustomException('Error 3');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException4() {
     throw new CustomException('Error 4');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException5() {
     throw new CustomException('Error 5');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException6() {
     throw new IllegalArgumentException('Invalid argument');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException7() {
     throw new IllegalArgumentException('Invalid argument');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException8() {
     throw new IllegalArgumentException('Invalid argument');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException9() {
     throw new NullPointerException('Null value');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException10() {
     throw new NullPointerException('Null value');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException11() {
     throw new NullPointerException('Null value');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException12() {
     throw new DmlException('DML error');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException13() {
     throw new DmlException('DML error');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException14() {
     throw new DmlException('DML error');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException15() {
     throw new QueryException('Query error');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException16() {
     throw new QueryException('Query error');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException17() {
     throw new QueryException('Query error');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException18() {
     throw new SecurityException('Security error');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException19() {
     throw new SecurityException('Security error');
   }
 
+  /**
+   * Method that throws exception without throws documentation
+   */
   public void methodThrowsException20() {
     throw new SecurityException('Security error');
   }

@@ -22,11 +22,11 @@
       <property name="xpath">
         <value>
                     <![CDATA[
-                    //Method[ModifierNode/Annotation[@Name = 'SuppressWarnings']]
+                    //Method[.//Annotation[@Image = 'SuppressWarnings']]
                     |
-                    //Field[ModifierNode/Annotation[@Name = 'SuppressWarnings']]
+                    //Field[.//Annotation[@Image = 'SuppressWarnings']]
                     |
-                    //UserClass[ModifierNode/Annotation[@Name = 'SuppressWarnings']]
+                    //UserClass[.//Annotation[@Image = 'SuppressWarnings']]
                     ]]>
                 </value>
       </property>

@@ -1,6 +1,6 @@
 public class Example {
     /**
-     * Method that throws exception without @throws documentation
+     * Method that throws exception without throws annotation
      */
     public void method1() {
         throw new CustomException('Error');

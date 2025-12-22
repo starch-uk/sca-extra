@@ -24,13 +24,12 @@
       <property name="xpath">
         <value>
                     <![CDATA[
-                    //Method[
-                        .//ThrowStatement
-                        and FormalComment
-                        and contains(FormalComment/@Image, '/**')
-                        and not(contains(FormalComment/@Image, '@throws'))
-                        and not(contains(FormalComment/@Image, '@exception'))
-                    ]
+                    //FormalComment[
+                        starts-with(@Image, '/**')
+                        and not(contains(@Image, '@throws'))
+                        and not(contains(@Image, '@exception'))
+                        and ancestor::Method[1]//ThrowStatement
+                    ]/ancestor::Method[1]
                     ]]>
                 </value>
       </property>
