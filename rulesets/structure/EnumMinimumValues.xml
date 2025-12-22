@@ -1,32 +1,32 @@
 <?xml version="1.0" ?>
 <ruleset
-    name="Apex Structure Rules"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Structure Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description
-    >Custom rules for Apex code structure and organization</description>
+	<description>Custom rules for Apex code structure and organization</description>
 
-    <rule
-        name="EnumMinimumValues"
-        language="apex"
-        message="Enum must contain at least 3 values"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            Enums must contain at least 3 values. Enums with fewer than 3 values should be reconsidered
+	<rule
+		name="EnumMinimumValues"
+		language="apex"
+		message="Enum must contain at least 3 values"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Enums must contain at least 3 values. Enums with fewer than 3 values should be
+			reconsidered
             as they may not provide sufficient flexibility or may indicate a design issue.
-        </description>
-        <priority>3</priority>
-        <properties>
-            <property name="xpath">
-                <value>
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //UserEnum[count(Field) < 3]
                     ]]>
                 </value>
-            </property>
-        </properties>
-    </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

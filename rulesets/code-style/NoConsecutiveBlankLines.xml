@@ -1,28 +1,28 @@
 <?xml version="1.0" ?>
 <ruleset
-  name="Apex Code Style Rules"
-  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Code Style Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-  <description>Custom rules for Apex code style and formatting</description>
+	<description>Custom rules for Apex code style and formatting</description>
 
-  <rule
-    name="NoConsecutiveBlankLines"
-    language="apex"
-    message="Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
-    class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-  >
-    <description>
-      Prevents two or more consecutive blank lines in Apex code.
+	<rule
+		name="NoConsecutiveBlankLines"
+		language="apex"
+		message="Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Prevents two or more consecutive blank lines in Apex code.
             Code should have at most one blank line between statements, methods, or other code
       elements.
             This improves code readability and consistency.
-    </description>
-    <priority>3</priority>
-    <properties>
-      <property name="xpath">
-        <value>
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //BlockStatement/*[
                         following-sibling::*[1]
@@ -40,7 +40,7 @@
                     ]
                     ]]>
                 </value>
-      </property>
-    </properties>
-  </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

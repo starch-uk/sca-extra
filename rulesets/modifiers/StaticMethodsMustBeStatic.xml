@@ -1,23 +1,25 @@
 <?xml version="1.0" ?>
 <ruleset
-  name="Apex Modifiers Rules"
-  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Modifiers Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-  <description>Custom rules for Apex modifiers and variable declarations</description>
+	<description>Custom rules for Apex modifiers and variable declarations</description>
 
-  <rule
-    name="StaticMethodsMustBeStatic"
-    language="apex"
-    message="Any method that CAN be static without adding logic MUST be static"
-    class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-  >
-    <description>Methods that do not use instance state should be declared as static.</description>
-    <priority>3</priority>
-    <properties>
-      <property name="xpath">
-        <value>
+	<rule
+		name="StaticMethodsMustBeStatic"
+		language="apex"
+		message="Any method that CAN be static without adding logic MUST be static"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Methods that do not use instance state should be declared as static.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //Method[
                         not(ModifierNode[@Static = true()])
@@ -39,7 +41,7 @@
                     ]
                     ]]>
                 </value>
-      </property>
-    </properties>
-  </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

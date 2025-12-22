@@ -1,28 +1,28 @@
 <?xml version="1.0" ?>
 <ruleset
-  name="Apex Documentation Rules"
-  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Documentation Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-  <description>Custom rules for Apex documentation standards</description>
+	<description>Custom rules for Apex documentation standards</description>
 
-  <rule
-    name="ExceptionDocumentationRequired"
-    language="apex"
-    message="Methods that throw exceptions must document them with @throws or @exception tag in ApexDoc"
-    class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-  >
-    <description>
-      Methods that contain throw statements must document the exceptions they throw
+	<rule
+		name="ExceptionDocumentationRequired"
+		language="apex"
+		message="Methods that throw exceptions must document them with @throws or @exception tag in ApexDoc"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Methods that contain throw statements must document the exceptions they throw
             using @throws or @exception tags in their ApexDoc comments.
             This rule checks methods that have ApexDoc comments but are missing the required
             @throws or @exception documentation for exceptions they throw.
-    </description>
-    <priority>3</priority>
-    <properties>
-      <property name="xpath">
-        <value>
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //FormalComment[
                         starts-with(@Image, '/**')
@@ -32,7 +32,7 @@
                     ]/ancestor::Method[1]
                     ]]>
                 </value>
-      </property>
-    </properties>
-  </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

@@ -1,27 +1,29 @@
 <?xml version="1.0" ?>
 <ruleset
-    name="Apex Code Style Rules"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Code Style Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description>Custom rules for Apex code style and formatting</description>
+	<description>Custom rules for Apex code style and formatting</description>
 
-    <rule
-        name="AvoidOneLinerMethods"
-        language="apex"
-        message="Methods that contain only a single statement should be inlined at their call sites"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            Methods that contain only a single statement should be inlined at their call sites.
+	<rule
+		name="AvoidOneLinerMethods"
+		language="apex"
+		message="Methods that contain only a single statement should be inlined at their call sites"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Methods that contain only a single statement should be inlined at their call sites.
             This rule detects methods with exactly one statement in their body.
-            Exceptions: Methods that are part of interfaces, abstract methods, override methods, overloaded methods, switch statements with more than one outcome, or methods that update a class attribute are excluded.
-        </description>
-        <priority>4</priority>
-        <properties>
-            <property name="xpath">
-                <value>
+            Exceptions: Methods that are part of interfaces, abstract methods, override
+			methods, overloaded methods, switch statements with more than one outcome, or methods
+			that update a class attribute are excluded.
+		</description>
+		<priority>4</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //Method[
                         not(ModifierNode[@Abstract = true()])
@@ -65,7 +67,7 @@
                     ]
                     ]]>
                 </value>
-            </property>
-        </properties>
-    </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

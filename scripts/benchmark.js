@@ -353,7 +353,7 @@ async function checkPMDAvailable() {
 		const { execSync } = require('child_process');
 		execSync('pmd --version', { stdio: 'ignore', timeout: 2000 });
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 }
