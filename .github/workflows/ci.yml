@@ -68,6 +68,7 @@ jobs:
       - name: Install PMD CLI
         if: steps.cache-pmd.outputs.cache-hit != 'true'
         run: |
+          mkdir -p ~/pmd
           curl -L -o pmd-bin.zip "https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-dist-${PMD_VERSION}-bin.zip"
           unzip -q pmd-bin.zip
           mv pmd-bin-${PMD_VERSION} ~/pmd
@@ -75,7 +76,19 @@ jobs:
 
       - name: Setup PMD CLI
         run: |
-          sudo ln -sf $HOME/pmd/pmd-bin-${PMD_VERSION}/bin/pmd /usr/local/bin/pmd
+          PMD_DIR="$HOME/pmd/pmd-bin-${PMD_VERSION}"
+          PMD_BIN="$PMD_DIR/bin/pmd"
+          if [ ! -d "$PMD_DIR" ]; then
+            echo "Error: PMD directory not found at $PMD_DIR"
+            ls -la "$HOME/pmd/" || echo "PMD cache directory does not exist"
+            exit 1
+          fi
+          if [ ! -f "$PMD_BIN" ]; then
+            echo "Error: PMD binary not found at $PMD_BIN"
+            ls -la "$PMD_DIR/bin/" || echo "PMD bin directory does not exist"
+            exit 1
+          fi
+          sudo ln -sf "$PMD_BIN" /usr/local/bin/pmd
           pmd --version
 
       - name: Run tests
