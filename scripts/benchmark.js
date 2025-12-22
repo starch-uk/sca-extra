@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { performance } = require('perf_hooks');
 
 /**
@@ -365,18 +366,54 @@ async function runPMDCLI(rulesetPath, apexFilePath) {
 	const { execSync } = require('child_process');
 	const { parseViolations } = require('../tests/helpers/pmd-helper');
 
+	// Use a temporary file to avoid progressbar rendering conflicts with STDOUT
+	const tempFile = path.join(
+		os.tmpdir(),
+		`pmd-output-${Date.now()}-${Math.random().toString(36).substring(7)}.xml`
+	);
+
 	try {
-		const output = execSync(`pmd check -d "${apexFilePath}" -R "${rulesetPath}" -f xml`, {
-			encoding: 'utf-8',
-			timeout: 30000,
-		});
+		// Use --no-cache to avoid cache issues
+		// Output to file (-r) to avoid progressbar rendering conflicts with STDOUT
+		// Ignore stderr to suppress warnings about progressbar and incremental analysis
+		execSync(
+			`pmd check --no-cache -d "${apexFilePath}" -R "${rulesetPath}" -f xml -r "${tempFile}"`,
+			{
+				encoding: 'utf-8',
+				timeout: 30000,
+				stdio: ['pipe', 'pipe', 'ignore'],
+			}
+		);
+
+		// Read the output file
+		const output = fs.readFileSync(tempFile, 'utf-8');
 		return parseViolations(output);
 	} catch (error) {
 		// PMD may exit with non-zero if violations found, but still output XML
-		if (error.stdout) {
-			return parseViolations(error.stdout);
+		// Check if output file exists and contains XML
+		if (fs.existsSync(tempFile)) {
+			try {
+				const output = fs.readFileSync(tempFile, 'utf-8');
+				// Extract XML from output (may contain warnings before XML)
+				const xmlMatch = output.match(/<\?xml[\s\S]*$/);
+				if (xmlMatch) {
+					return parseViolations(xmlMatch[0]);
+				}
+				return parseViolations(output);
+			} catch {
+				// If we can't read the file, fall through to throw the original error
+			}
 		}
 		throw error;
+	} finally {
+		// Clean up temporary file
+		try {
+			if (fs.existsSync(tempFile)) {
+				fs.unlinkSync(tempFile);
+			}
+		} catch {
+			// Ignore cleanup errors
+		}
 	}
 }
 
