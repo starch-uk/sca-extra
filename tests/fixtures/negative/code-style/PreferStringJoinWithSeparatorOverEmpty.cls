@@ -15,6 +15,14 @@ public class Example {
             'item3,',
             'final'
         }, '');
+
+        // Violation: Empty separator with multi-character common suffix
+        String text2 = String.join(new List<String>{
+            'item1ABCDEFG',
+            'item2ABCDEFG',
+            'item3ABCDEFG',
+            'final'
+        }, '');
     }
 }
 

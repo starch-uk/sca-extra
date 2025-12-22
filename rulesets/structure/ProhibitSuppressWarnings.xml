@@ -1,31 +1,35 @@
 <?xml version="1.0" ?>
 <ruleset
-    name="Apex Structure Rules"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+  name="Apex Structure Rules"
+  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description
-    >Custom rules for Apex code structure and organization</description>
+  <description>Custom rules for Apex code structure and organization</description>
 
-    <rule
-        name="ProhibitSuppressWarnings"
-        language="apex"
-        message="@SuppressWarnings annotation is prohibited. Fix the warning instead of suppressing it"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            The @SuppressWarnings annotation is prohibited. Fix the underlying warning instead of suppressing it.
-        </description>
-        <priority>1</priority>
-        <properties>
-            <property name="xpath">
-                <value>
+  <rule
+    name="ProhibitSuppressWarnings"
+    language="apex"
+    message="@SuppressWarnings annotation is prohibited. Fix the warning instead of suppressing it"
+    class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+  >
+    <description>
+      The @SuppressWarnings annotation is prohibited. Fix the underlying warning instead of
+      suppressing it.
+    </description>
+    <priority>1</priority>
+    <properties>
+      <property name="xpath">
+        <value>
                     <![CDATA[
-                    //Annotation[@Name = 'SuppressWarnings']
+                    //Method[ModifierNode/Annotation[@Name = 'SuppressWarnings']]
+                    |
+                    //Field[ModifierNode/Annotation[@Name = 'SuppressWarnings']]
+                    |
+                    //UserClass[ModifierNode/Annotation[@Name = 'SuppressWarnings']]
                     ]]>
                 </value>
-            </property>
-        </properties>
-    </rule>
+      </property>
+    </properties>
+  </rule>
 </ruleset>

@@ -1,20 +1,20 @@
 <?xml version="1.0" ?>
 <ruleset
-    name="Apex Code Style Rules"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+  name="Apex Code Style Rules"
+  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description>Custom rules for Apex code style and formatting</description>
+  <description>Custom rules for Apex code style and formatting</description>
 
-    <rule
-        name="PreferStringJoinOverConcatenation"
-        language="apex"
-        message="Multiple string concatenations with common separator should use String.join()"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            When concatenating 3 or more strings where all strings except the last end with the same
+  <rule
+    name="PreferStringJoinOverConcatenation"
+    language="apex"
+    message="Multiple string concatenations with common separator should use String.join()"
+    class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+  >
+    <description>
+      When concatenating 3 or more strings where all strings except the last end with the same
             non-empty sequence of characters, use String.join() with the following format:
 
             String.join(new List{
@@ -23,34 +23,22 @@
                 'line3'
             }, '\n');
 
-            The second argument to String.join() should be the repeating separator pattern (not an empty string).
-        </description>
-        <priority>3</priority>
-        <properties>
-            <property name="xpath">
-                <value>
+            The second argument to String.join() should be the repeating separator pattern (not an
+      empty string).
+    </description>
+    <priority>3</priority>
+    <properties>
+      <property name="xpath">
+        <value>
                     <![CDATA[
                     //BinaryExpression[
-                        @Op = '+' and
-                        BinaryExpression[@Op = '+'] and
-                        LiteralExpression[@LiteralType = 'STRING'] and
-                        count(.//LiteralExpression[@LiteralType = 'STRING']) >= 3
-                    ][
-                        let $strings := .//LiteralExpression[@LiteralType = 'STRING']/@Image,
-                             $lastString := $strings[last()],
-                             $otherStrings := $strings[position() < last()],
-                             $suffixes := for $s in $otherStrings return
-                               if (string-length($s) > 0) then
-                                 substring($s, string-length($s))
-                               else ''
-                        return
-                        count(distinct-values($suffixes)) = 1 and
-                        string-length($suffixes[1]) > 0 and
-                        not(ends-with($lastString, $suffixes[1]))
+                        @Op = '+'
+                        and BinaryExpression[@Op = '+']
+                        and count(.//LiteralExpression[@String = true()]) >= 3
                     ]
                     ]]>
                 </value>
-            </property>
-        </properties>
-    </rule>
+      </property>
+    </properties>
+  </rule>
 </ruleset>
