@@ -17,37 +17,43 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Cache node modules
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Cache pnpm store
         uses: actions/cache@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          path: ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-pnpm-store-
 
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
       - name: Install dependencies
-        run: npm ci
+        # TODO: Once pnpm-lock.yaml is committed, change to: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Check XML formatting
-        run: npm run format:check
+        run: pnpm run format:check
 
       - name: Lint JavaScript
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Run tests
-        run: npm test
+        run: pnpm test
 
       - name: Run benchmarks
         id: benchmark
-        run: npm run benchmark -- --json > benchmark-results.json || true
+        run: pnpm run benchmark -- --json > benchmark-results.json || true
         continue-on-error: true
 
       - name: Comment benchmark results on PR

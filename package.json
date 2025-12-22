@@ -23,20 +23,24 @@
     "changelog": "node scripts/generate-changelog.js",
     "ci": "pnpm run format:check && pnpm run lint && pnpm test",
     "generate-test-ruleset": "node scripts/generate-test-ruleset.js",
-    "ast-dump": "bash scripts/ast-dump.sh",
-    "prepare": "husky install"
+    "ast-dump": "bash scripts/ast-dump.sh"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "@types/jest": "^29.5.12",
-    "eslint": "^8.57.0",
+    "jest": "^30.2.0",
+    "@types/jest": "^30.0.0",
+    "eslint": "^9.39.2",
     "prettier": "^3.2.5",
     "@prettier/plugin-xml": "^3.2.0",
     "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
+    "lint-staged": "^16.2.7",
     "xml2js": "^0.6.2",
     "xmldom": "^0.6.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "unrs-resolver"
+    ]
+  }
 }
 
