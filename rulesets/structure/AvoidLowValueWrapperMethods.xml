@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<ruleset
+    name="Apex Structure Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description
+    >Custom rules for Apex code structure and organization</description>
+
+    <rule
+        name="AvoidLowValueWrapperMethods"
+        language="apex"
+        message="Never create methods that only wrap a simple type check or trivial operation"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+    >
+        <description>
+            Methods that only wrap simple operations should be inlined.
+        </description>
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                    //Method[
+                        BlockStatement//ReturnStatement/InstanceOfExpression
+                    ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

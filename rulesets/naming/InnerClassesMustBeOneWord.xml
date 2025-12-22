@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<ruleset
+    name="Apex Naming Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom rules for Apex naming conventions</description>
+
+    <rule
+        name="InnerClassesMustBeOneWord"
+        language="apex"
+        message="Inner class names must be a single word (no underscores, no multiple words in PascalCase)"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+    >
+        <description>
+            Inner class names must be a single word. They cannot contain underscores or multiple words in PascalCase.
+        </description>
+        <priority>2</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                    //UserClass[
+                        @Nested = true()
+                        and (
+                            contains(@Image, '_')
+                            or matches(substring(@Image, 2), '[A-Z]')
+                        )
+                    ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

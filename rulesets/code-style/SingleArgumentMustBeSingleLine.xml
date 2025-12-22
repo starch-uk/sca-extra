@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<ruleset
+    name="Apex Code Style Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom rules for Apex code style and formatting</description>
+
+    <rule
+        name="SingleArgumentMustBeSingleLine"
+        language="apex"
+        message="Method calls with 0-1 arguments must be formatted on a single line"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+    >
+        <description>
+            Method calls with 0-1 arguments must be formatted on a single line.
+            Unnecessary multi-line formatting for single arguments is not allowed.
+        </description>
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                    //MethodCallExpression[
+                        @InputParametersSize <= 1
+                        and @BeginLine != @EndLine
+                        and parent::ExpressionStatement
+                    ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

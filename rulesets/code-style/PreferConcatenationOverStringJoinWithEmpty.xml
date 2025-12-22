@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<ruleset
+    name="Apex Code Style Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom rules for Apex code style and formatting</description>
+
+    <rule
+        name="PreferConcatenationOverStringJoinWithEmpty"
+        language="apex"
+        message="String.join() with empty separator should use string concatenation instead"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+    >
+        <description>
+            When using String.join() with an empty string separator, use string concatenation instead:
+
+            Instead of: String.join('', new List&lt;String&gt;{'a', 'b', 'c'});
+            Use: 'a' + 'b' + 'c';
+        </description>
+        <priority>4</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                    //MethodCallExpression[
+                        @MethodName = 'join' and
+                        @FullMethodName = 'String.join' and
+                        count(*[local-name() = 'LiteralExpression' or local-name() = 'NewListLiteralExpression']) >= 2
+                    ][
+                        (
+                            (*[2][self::LiteralExpression[@LiteralType = 'STRING' and @Image = '']] and
+                             *[3][self::NewListLiteralExpression]) or
+                            (*[2][self::NewListLiteralExpression] and
+                             *[3][self::LiteralExpression[@LiteralType = 'STRING' and @Image = '']])
+                        )
+                    ][
+                        let $strings := if (*[2][self::NewListLiteralExpression])
+                                        then *[2]//LiteralExpression[@LiteralType = 'STRING']/@Image
+                                        else *[3]//LiteralExpression[@LiteralType = 'STRING']/@Image
+                        return count($strings) >= 2
+                    ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

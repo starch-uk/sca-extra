@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<ruleset
+    name="Apex Code Style Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom rules for Apex code style and formatting</description>
+
+    <rule
+        name="MapInitializationMustBeMultiLine"
+        language="apex"
+        message="Map initializations with 2 or more entries must be formatted with each entry on its own line"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+    >
+        <description>
+            Map initializations with 2 or more entries must be formatted with each entry on its own line.
+            Single entry maps can be on a single line.
+        </description>
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                    //NewMapLiteralExpression[
+                        count(MapEntryNode) >= 2
+                        and (
+                            @BeginLine = MapEntryNode[1]/@BeginLine
+                            and @BeginLine = MapEntryNode[2]/@BeginLine
+                        )
+                    ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

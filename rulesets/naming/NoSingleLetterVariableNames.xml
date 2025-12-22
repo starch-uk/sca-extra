@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<ruleset
+    name="Apex Naming Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom rules for Apex naming conventions</description>
+
+    <rule
+        name="NoSingleLetterVariableNames"
+        language="apex"
+        message="Never use single-letter variable names except for loop counters (i, c) or exceptions (e)"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+    >
+        <description>
+            Single-letter variable names are not allowed except for loop counters (i, c) or exception variables (e).
+        </description>
+        <priority>2</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                    //VariableDeclaration[
+                        string-length(@Image) = 1
+                        and @Image != 'i'
+                        and @Image != 'c'
+                        and not(ancestor::CatchBlockStatement)
+                    ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

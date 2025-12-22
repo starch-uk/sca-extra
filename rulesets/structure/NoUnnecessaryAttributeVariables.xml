@@ -1,0 +1,61 @@
+<?xml version="1.0" ?>
+<ruleset
+    name="Apex Structure Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description
+    >Custom rules for Apex code structure and organization</description>
+
+    <rule
+        name="NoUnnecessaryAttributeVariables"
+        language="apex"
+        message="Never create a variable for a class attribute that is only used once and never reassigned"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+    >
+        <description>
+            Variables that extract a single attribute from an object and are only used once should be inlined.
+            This rule does not apply to collection types (List, Set, Map) or object/class instances, only primitive types.
+        </description>
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                    //VariableDeclaration[
+                        VariableInitializer
+                        and VariableInitializer/Expression/PrimaryExpression[count(.//ReferenceExpression) >= 2]
+                        and (
+                            @Type = 'String'
+                            or @Type = 'Integer'
+                            or @Type = 'Long'
+                            or @Type = 'Double'
+                            or @Type = 'Decimal'
+                            or @Type = 'Boolean'
+                            or @Type = 'Date'
+                            or @Type = 'DateTime'
+                            or @Type = 'Time'
+                            or @Type = 'Id'
+                            or @Type = 'Blob'
+                        )
+                        and not(
+                            ancestor::Method//AssignmentExpression[
+                                VariableExpression/@Image = ancestor::VariableDeclaration/VariableExpression/@Image
+                                and not(ancestor::VariableInitializer)
+                            ]
+                        )
+                        and count(
+                            ancestor::Method//VariableExpression[
+                                @Image = ancestor::VariableDeclaration/VariableExpression/@Image
+                                and not(ancestor::VariableInitializer)
+                                and not(parent::VariableDeclaration)
+                            ]
+                        ) = 1
+                    ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

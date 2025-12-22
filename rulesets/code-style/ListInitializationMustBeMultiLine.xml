@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<ruleset
+    name="Apex Code Style Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom rules for Apex code style and formatting</description>
+
+    <rule
+        name="ListInitializationMustBeMultiLine"
+        language="apex"
+        message="List initializations with 2 or more items must be formatted with each item on its own line"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+    >
+        <description>
+            List initializations with 2 or more items must be formatted with each item on its own line.
+            Single item lists can be on a single line.
+        </description>
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                    //NewListLiteralExpression[
+                        count(LiteralExpression) >= 2
+                        and (
+                            @BeginLine = LiteralExpression[1]/@BeginLine
+                            and @BeginLine = LiteralExpression[2]/@BeginLine
+                        )
+                    ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

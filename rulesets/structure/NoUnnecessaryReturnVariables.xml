@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<ruleset
+    name="Apex Structure Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description
+    >Custom rules for Apex code structure and organization</description>
+
+    <rule
+        name="NoUnnecessaryReturnVariables"
+        language="apex"
+        message="Never create a variable for a return value immediately before returning it"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+    >
+        <description>
+            Variables created solely for return statements should be inlined.
+        </description>
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                    //VariableDeclarationStatements[
+                        VariableDeclaration/VariableExpression
+                        and following-sibling::*[1][self::ReturnStatement]
+                        and following-sibling::ReturnStatement[1]/VariableExpression/@Image = 
+                            VariableDeclaration/VariableExpression/@Image
+                    ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

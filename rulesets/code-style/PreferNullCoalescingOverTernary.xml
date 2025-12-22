@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<ruleset
+    name="Apex Code Style Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom rules for Apex code style and formatting</description>
+
+    <rule
+        name="PreferNullCoalescingOverTernary"
+        language="apex"
+        message="Use null coalescing operator (??) instead of ternary operators for null checks"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+    >
+        <description>
+            Prefer the null coalescing operator ?? over ternary operators when checking for null and providing a default value.
+        </description>
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                    //TernaryExpression[
+                        StandardCondition/BooleanExpression[@Op = '==' or @Op = '!=']
+                        and (StandardCondition/BooleanExpression/LiteralExpression[@Null = true()]
+                             or StandardCondition/BooleanExpression/VariableExpression[@Image = 'null'])
+                    ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

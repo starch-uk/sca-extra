@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<ruleset
+    name="Apex Naming Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom rules for Apex naming conventions</description>
+
+    <rule
+        name="VariablesMustNotShareNamesWithClasses"
+        language="apex"
+        message="Variables must not share names with classes"
+        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+    >
+        <description>
+            Variable names should not match class names to avoid confusion.
+        </description>
+        <priority>3</priority>
+        <properties>
+            <property name="xpath">
+                <value>
+                    <![CDATA[
+                    //VariableDeclaration[
+                        some $className in ancestor::ApexFile//UserClass/@SimpleName
+                        satisfies lower-case(@Image) = lower-case($className)
+                    ]
+                    ]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>
