@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check XML formatting
+        run: npm run format:check
+
+      - name: Lint JavaScript
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+      - name: Run benchmarks
+        id: benchmark
+        run: npm run benchmark -- --json > benchmark-results.json || true
+        continue-on-error: true
+
+      - name: Comment benchmark results on PR
+        if: github.event_name == 'pull_request' && steps.benchmark.outcome == 'success'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            try {
+              const benchmarkResults = JSON.parse(fs.readFileSync('benchmark-results.json', 'utf8'));
+              
+              let comment = '## 📊 Benchmark Results\n\n';
+              comment += '| Rule | Execution Time (ms) | Violations | Status |\n';
+              comment += '|------|-------------------|------------|--------|\n';
+              
+              benchmarkResults.rules.forEach(rule => {
+                const status = rule.regression ? '⚠️ Regression' : '✅ OK';
+                comment += `| ${rule.name} | ${rule.executionTime} | ${rule.violations} | ${status} |\n`;
+              });
+              
+              comment += `\n**Total Time:** ${benchmarkResults.totalTime}ms\n`;
+              comment += `**Baseline:** ${benchmarkResults.baselineTime}ms\n`;
+              
+              if (benchmarkResults.regressions && benchmarkResults.regressions.length > 0) {
+                comment += '\n### ⚠️ Performance Regressions Detected\n';
+                benchmarkResults.regressions.forEach(regression => {
+                  comment += `- ${regression.rule}: ${regression.percentChange}% slower\n`;
+                });
+              }
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } catch (error) {
+              console.log('Could not parse benchmark results:', error.message);
+            }
+
+      - name: Check for performance regressions
+        if: steps.benchmark.outcome == 'success'
+        run: |
+          node scripts/check-performance-regressions.js benchmark-results.json || true
+        continue-on-error: true
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          files: ./coverage/lcov.info
+

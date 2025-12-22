@@ -1,0 +1,176 @@
+# Benchmark Fixtures Documentation
+
+## Overview
+
+The benchmark fixtures are comprehensive stress-test files designed to explicitly stress each PMD rule with realistic, complex Apex code patterns. These fixtures enable performance benchmarking and regression detection.
+
+## Fixture Statistics
+
+| Fixture | Size | Estimated Violations | Primary Focus |
+|---------|------|---------------------|---------------|
+| `stress-test-all-rules.cls` | 5.5 KB | 100+ | All rules (comprehensive) |
+| `stress-code-style.cls` | 15 KB | 200+ | Code style rules |
+| `stress-structure.cls` | 8.0 KB | 100+ | Structure rules |
+| `stress-modifiers.cls` | 5.7 KB | 100+ | Modifier rules |
+| `stress-naming.cls` | 3.2 KB | 100+ | Naming rules |
+| `stress-documentation.cls` | 3.9 KB | 50+ | Documentation rules |
+| `stress-method-signatures.cls` | 2.3 KB | 30+ | Method signature rules |
+
+**Total: ~43 KB of stress-test code with 600+ potential violations**
+
+## Rule Coverage
+
+### Code Style Rules (200+ violations)
+- ✅ NoMethodCallsInConditionals (20 violations)
+- ✅ NoMethodChaining (20 violations)
+- ✅ PreferSafeNavigationOperator (15 violations)
+- ✅ PreferNullCoalescingOverTernary (15 violations)
+- ✅ ListInitializationMustBeMultiLine (10 violations)
+- ✅ MapInitializationMustBeMultiLine (10 violations)
+- ✅ MapShouldBeInitializedWithValues (10 violations)
+- ✅ PreferStringJoinOverMultipleNewlines (10 violations)
+- ✅ PreferConcatenationOverStringJoinWithEmpty (10 violations)
+- ✅ PreferStringJoinOverConcatenation (10 violations)
+- ✅ MultipleStringContainsCalls (10 violations)
+- ✅ PreferMethodCallsInLoopConditions (10 violations)
+- ✅ PreferBuilderPatternChaining (10 violations)
+- ✅ PreferStringJoinWithSeparatorOverEmpty (10 violations)
+- ✅ SingleArgumentMustBeSingleLine (10 violations)
+- ✅ NoMethodCallsAsArguments (10 violations)
+- ✅ NoConsecutiveBlankLines (multiple)
+- ✅ AvoidOneLinerMethods (10 violations)
+
+### Structure Rules (100+ violations)
+- ✅ ProhibitSuppressWarnings (1 violation)
+- ✅ InnerClassesCannotBeStatic (1 violation)
+- ✅ InnerClassesCannotHaveStaticMembers (2 violations)
+- ✅ InnerClassesMustBeOneWord (2 violations)
+- ✅ NoParameterClasses (3 violations)
+- ✅ ClassesMustHaveMethods (3 violations)
+- ✅ AvoidTrivialPropertyGetters (10 violations)
+- ✅ NoThisOutsideConstructors (5 violations)
+- ✅ NoUnnecessaryReturnVariables (5 violations)
+- ✅ NoUnnecessaryAttributeVariables (5 violations)
+- ✅ CombineNestedIfStatements (4 violations)
+- ✅ PreferSwitchOverIfElseChains (3 violations)
+- ✅ PreferPropertySyntaxOverGetterMethods (5 violations)
+- ✅ AvoidLowValueWrapperMethods (3 violations)
+- ✅ EnumMinimumValues (2 violations)
+
+### Modifier Rules (100+ violations)
+- ✅ StaticVariablesMustBeFinalAndScreamingSnakeCase (20 violations)
+- ✅ RegexPatternsMustBeStaticFinal (20 violations)
+- ✅ FinalVariablesMustBeFinal (20 violations)
+- ✅ StaticMethodsMustBeStatic (20 violations)
+- ✅ TestClassIsParallel (1 violation)
+
+### Naming Rules (100+ violations)
+- ✅ NoSingleLetterVariableNames (30 violations)
+- ✅ NoAbbreviations (50 violations)
+- ✅ VariablesMustNotShareNamesWithClasses (10 violations)
+- ✅ InnerClassesMustBeOneWord (5 violations)
+
+### Documentation Rules (50+ violations)
+- ✅ AnnotationBeforeComment (20 violations)
+- ✅ ExceptionDocumentationRequired (20 violations)
+- ✅ SingleLineDocumentationFormat (10 violations)
+
+### Method Signature Rules (30+ violations)
+- ✅ NoCustomParameterObjects (15 violations)
+- ✅ SingleParameterMustBeSingleLine (15 violations)
+
+## Design Principles
+
+### 1. Realistic Patterns
+All violations use realistic Apex code patterns that developers might actually write, making benchmarks representative of real-world performance.
+
+### 2. Multiple Violations Per Rule
+Each rule is stressed with multiple violations (typically 10-20) to:
+- Test XPath expression performance at scale
+- Measure rule efficiency with many matches
+- Detect performance regressions
+
+### 3. Complex Nesting
+Fixtures include deeply nested structures to stress test:
+- XPath traversal performance
+- AST navigation efficiency
+- Complex predicate evaluation
+
+### 4. Mixed Patterns
+Fixtures combine multiple rule violations in realistic combinations to test:
+- Rule interaction performance
+- Overall system performance
+- Memory usage patterns
+
+## Usage
+
+### Running Benchmarks
+
+```bash
+# Run all benchmarks
+npm run benchmark
+
+# Generate baseline
+npm run benchmark -- --baseline
+
+# JSON output for CI
+npm run benchmark -- --json
+
+# Compare mode (doesn't fail on regressions)
+npm run benchmark -- --compare
+```
+
+### Benchmark Output
+
+The benchmark script:
+1. Tests each rule against all fixtures
+2. Measures execution time
+3. Counts violations detected
+4. Compares against baseline (if exists)
+5. Detects performance regressions (>10% slower)
+
+### Results Location
+
+- Results: `benchmarks/results/results-{timestamp}.json`
+- Baseline: `benchmarks/results/baseline.json`
+
+## Performance Characteristics
+
+These fixtures are designed to stress:
+
+1. **XPath Expression Performance**
+   - Complex nested queries
+   - Multiple predicate evaluations
+   - Deep AST traversal
+
+2. **Rule Scalability**
+   - Large files (up to 15 KB)
+   - Many violations per file
+   - Multiple rule categories
+
+3. **Memory Efficiency**
+   - Complex object structures
+   - Deep nesting
+   - Multiple rule evaluations
+
+4. **Real-World Scenarios**
+   - Common code patterns
+   - Typical violation counts
+   - Mixed rule interactions
+
+## Maintenance
+
+When adding new rules:
+1. Add violations to `stress-test-all-rules.cls`
+2. Add focused violations to category-specific fixture
+3. Update this documentation
+4. Regenerate baseline: `npm run benchmark -- --baseline`
+
+## Notes
+
+- Fixtures use realistic Apex syntax
+- Violations are intentionally placed to stress rules
+- Some violations may overlap (realistic scenario)
+- File sizes are optimized for performance testing
+- All fixtures are formatted with Prettier
+

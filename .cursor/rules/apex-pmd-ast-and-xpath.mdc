@@ -1,0 +1,44 @@
+---
+alwaysApply: true
+---
+
+When working with PMD rules, XPath expressions, or Apex AST structure, always reference these documentation files:
+
+- **@docs/APEX_PMD_AST.md** - PMD Apex AST node types, patterns, and structure reference
+- **@docs/XPATH31.md** - XPath 3.1 syntax, functions, and expressions reference
+- **@docs/AI_AGENT_RULE_GUIDE.md** - Machine-readable rule configuration guide with examples and property documentation
+
+Use these documents to:
+- Understand how Apex code is represented in the PMD AST
+- Write correct XPath expressions that match AST nodes
+- Reference XPath 3.1 syntax and functions when writing rule queries
+- Ensure XPath expressions correctly traverse the AST structure
+- Access rule examples, violations, valid code patterns, and configuration properties
+
+When creating or modifying PMD rules:
+1. Check APEX_PMD_AST.md for the correct AST node types and patterns
+2. Use XPATH31.md for XPath 3.1 syntax and function reference
+3. Reference AI_AGENT_RULE_GUIDE.md for rule examples and configuration patterns
+4. **Every rule should use properties for things that should be configurable** - Add configurable properties (thresholds, lists, etc.) instead of hardcoding values
+5. **New subfolders can be created under rulesets/** - Make sure they follow the existing category structure (code-style, documentation, method-signatures, modifiers, naming, structure)
+6. **Every rule must have both positive and negative test cases** - Create test fixtures in `tests/fixtures/positive/` and `tests/fixtures/negative/` covering all parts of the XPath expression
+7. **All code should be linted and formatted following any changes** - Run `npm run format` and `npm run lint` (or `npm run lint:fix`)
+8. **All tests should be run and regressions checked following any changes** - Run `npm test` and verify no test regressions
+9. **README.md should be updated with any pertinent changes** - Document new rules, rule changes, or significant updates in the README
+10. Test XPath expressions against both positive and negative test cases
+11. **Benchmark stress tests must be kept up to date** - When adding or modifying rules, update the benchmark fixtures:
+    - **New rules**: Add violations to `benchmarks/fixtures/stress-test-all-rules.cls` and the appropriate category-specific fixture (e.g., `stress-code-style.cls`, `stress-structure.cls`)
+    - **Rule modifications**: Update existing violations in stress test fixtures to reflect rule changes
+    - **Target 10-20 violations per rule** in stress tests to properly benchmark performance
+    - **Use realistic code patterns** that developers might actually write
+    - **Update `benchmarks/FIXTURES.md`** with new violation counts and rule coverage
+    - **Run benchmarks after updates**: `npm run benchmark` to verify performance
+    - **Regenerate baseline if needed**: `npm run benchmark -- --baseline` after significant changes
+12. **Stress test fixtures location**: `benchmarks/fixtures/` contains comprehensive stress-test files:
+    - `stress-test-all-rules.cls` - Comprehensive fixture with violations across all rules
+    - `stress-code-style.cls` - Code style rules (200+ violations)
+    - `stress-structure.cls` - Structure rules (100+ violations)
+    - `stress-modifiers.cls` - Modifier rules (100+ violations)
+    - `stress-naming.cls` - Naming rules (100+ violations)
+    - `stress-documentation.cls` - Documentation rules (50+ violations)
+    - `stress-method-signatures.cls` - Method signature rules (30+ violations)

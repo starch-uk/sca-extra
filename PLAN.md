@@ -11,7 +11,7 @@ This project maintains additional PMD rules for testing Salesforce Apex code usi
 ```
 sca-extra/
 ├── README.md                          # Project documentation
-├── LICENSE                            # BSD 3-Clause License
+├── LICENSE.md                         # MIT License
 ├── CONTRIBUTING.md                    # Contribution guidelines
 ├── SECURITY.md                        # Security policy
 ├── package.json                       # NPM configuration and scripts
@@ -96,8 +96,8 @@ sca-extra/
    - Move `APEX_PMD_AST.md` → `docs/APEX_PMD_AST.md`
    - Keep `rulesets/` structure as-is (already well-organized)
 
-3. **Create LICENSE file**
-   - Add BSD 3-Clause License file
+3. **Create LICENSE.md file**
+   - Add MIT License file
    - Include copyright notice with year and organization
    - Reference license in README and package.json
 
@@ -761,7 +761,7 @@ jobs:
 
 ## License
 
-This project is licensed under the **BSD 3-Clause License**. See the `LICENSE` file for details.
+This project is licensed under the **MIT License**. See the `LICENSE.md` file for details.
 
 The BSD 3-Clause License allows:
 - Commercial use
