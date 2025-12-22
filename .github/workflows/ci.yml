@@ -9,6 +9,8 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    env:
+      PMD_VERSION: "7.19.0"
     steps:
       - uses: actions/checkout@v6
 
@@ -54,14 +56,26 @@ jobs:
       - name: Lint JavaScript
         run: pnpm run lint
 
+      - name: Cache PMD
+        id: cache-pmd
+        uses: actions/cache@v5
+        with:
+          path: ~/pmd
+          key: pmd-${{ env.PMD_VERSION }}
+          restore-keys: |
+            pmd-
+
       - name: Install PMD CLI
+        if: steps.cache-pmd.outputs.cache-hit != 'true'
         run: |
-          PMD_VERSION="7.19.0"
           curl -L -o pmd-bin.zip "https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-dist-${PMD_VERSION}-bin.zip"
           unzip -q pmd-bin.zip
-          sudo mv pmd-bin-${PMD_VERSION} /opt/pmd
-          sudo ln -sf /opt/pmd/bin/pmd /usr/local/bin/pmd
+          mv pmd-bin-${PMD_VERSION} ~/pmd
           rm pmd-bin.zip
+
+      - name: Setup PMD CLI
+        run: |
+          sudo ln -sf $HOME/pmd/pmd-bin-${PMD_VERSION}/bin/pmd /usr/local/bin/pmd
           pmd --version
 
       - name: Run tests
