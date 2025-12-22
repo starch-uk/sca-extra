@@ -1,26 +1,27 @@
 <?xml version="1.0" ?>
 <ruleset
-    name="Apex Naming Rules"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Naming Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description>Custom rules for Apex naming conventions</description>
+	<description>Custom rules for Apex naming conventions</description>
 
-    <rule
-        name="NoAbbreviations"
-        language="apex"
-        message="Abbreviations are not allowed. Use complete words instead. Allowed: i, c, e (exceptions), Id suffix, acronyms as words (Api, Url, Html)"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            Abbreviations are not allowed in identifiers. Use complete words instead.
-            Allowed exceptions: i, c, e (for exceptions), Id suffix, acronyms as words (Api, Url, Html).
-        </description>
-        <priority>2</priority>
-        <properties>
-            <property name="xpath">
-                <value>
+	<rule
+		name="NoAbbreviations"
+		language="apex"
+		message="Abbreviations are not allowed. Use complete words instead. Allowed: i, c, e (exceptions), Id suffix, acronyms as words (Api, Url, Html)"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Abbreviations are not allowed in identifiers. Use complete words instead.
+            Allowed exceptions: i, c, e (for exceptions), Id suffix, acronyms as
+			words (Api, Url, Html).
+		</description>
+		<priority>2</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //VariableDeclaration[
                         VariableExpression[
@@ -44,7 +45,7 @@
                     ]
                     ]]>
                 </value>
-            </property>
-        </properties>
-    </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

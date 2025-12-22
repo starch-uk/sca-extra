@@ -1,26 +1,28 @@
 <?xml version="1.0" ?>
 <ruleset
-    name="Apex Documentation Rules"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Documentation Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description>Custom rules for Apex documentation standards</description>
+	<description>Custom rules for Apex documentation standards</description>
 
-    <rule
-        name="SingleLineDocumentationFormat"
-        language="apex"
-        message="ApexDoc comments must be properly formatted: single-line comments need spaces after /** and before */, multi-line comments should be used only when necessary"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            Single-line ApexDoc comments must be formatted with spaces: /** comment */ not /**comment*/.
-            Multi-line ApexDoc comments should only be used when the content genuinely requires multiple lines.
-        </description>
-        <priority>3</priority>
-        <properties>
-            <property name="xpath">
-                <value>
+	<rule
+		name="SingleLineDocumentationFormat"
+		language="apex"
+		message="ApexDoc comments must be properly formatted: single-line comments need spaces after /** and before */, multi-line comments should be used only when necessary"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Single-line ApexDoc comments must be formatted with
+			spaces: /** comment */ not /**comment*/.
+            Multi-line ApexDoc comments should only be used when the content genuinely requires
+			multiple lines.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //FormalComment[
                         starts-with(@Image, '/**')
@@ -41,7 +43,7 @@
                     ]
                     ]]>
                 </value>
-            </property>
-        </properties>
-    </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

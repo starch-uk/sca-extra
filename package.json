@@ -1,0 +1,48 @@
+{
+  "name": "sca-extra",
+  "version": "1.0.0",
+  "description": "Additional PMD rules for Salesforce Apex code analysis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/starch-uk/sca-extra.git"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:rules": "node scripts/validate-rules.js && pnpm test",
+    "validate": "node scripts/validate-rules.js",
+    "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\"",
+    "format:check": "prettier --check \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\"",
+    "lint": "eslint tests/**/*.js scripts/**/*.js",
+    "lint:fix": "eslint --fix tests/**/*.js scripts/**/*.js",
+    "benchmark": "node scripts/benchmark.js",
+    "check-regressions": "node scripts/check-performance-regressions.js",
+    "version:bump": "node scripts/version-bump.js",
+    "changelog": "node scripts/generate-changelog.js",
+    "ci": "pnpm run format:check && pnpm run lint && pnpm test",
+    "generate-test-ruleset": "node scripts/generate-test-ruleset.js",
+    "ast-dump": "bash scripts/ast-dump.sh"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "@types/jest": "^30.0.0",
+    "eslint": "^9.39.2",
+    "@eslint/js": "^9.39.2",
+    "globals": "^16.5.0",
+    "prettier": "^3.2.5",
+    "@prettier/plugin-xml": "^3.2.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^16.2.7",
+    "xml2js": "^0.6.2",
+    "xmldom": "^0.6.0"
+  },
+  "dependencies": {},
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "unrs-resolver"
+    ]
+  }
+}
+

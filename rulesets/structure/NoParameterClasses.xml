@@ -1,35 +1,38 @@
 <?xml version="1.0" ?>
 <ruleset
-    name="Apex Structure Rules"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Structure Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description
-    >Custom rules for Apex code structure and organization</description>
+	<description>Custom rules for Apex code structure and organization</description>
 
-    <rule
-        name="NoParameterClasses"
-        language="apex"
-        message="Classes or inner classes that only have attributes and constructors with no instance methods are not allowed"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            Parameter classes (classes or inner classes that only have attributes and constructors with no instance methods) should not be created. Add instance methods to provide behavior, or refactor to use a different approach.
-        </description>
-        <priority>3</priority>
-        <properties>
-            <property name="xpath">
-                <value>
+	<rule
+		name="NoParameterClasses"
+		language="apex"
+		message="Classes or inner classes that only have attributes and constructors with no instance methods are not allowed"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Parameter classes (classes or inner classes that only have attributes and constructors
+			with no
+      instance methods) should not be created. Add instance methods to provide behavior, or refactor
+      to use a different approach.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //UserClass[
                         count(Field) > 0
                         and count(Method[@Constructor = true()]) > 0
                         and count(Method[@Constructor = false() and not(ModifierNode[@Static = true()])]) = 0
+                        and not(Method[@Constructor = false() and ModifierNode[@Static = true()]])
                     ]
                     ]]>
                 </value>
-            </property>
-        </properties>
-    </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

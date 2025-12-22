@@ -1,26 +1,25 @@
 <?xml version="1.0" ?>
 <ruleset
-    name="Apex Structure Rules"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Structure Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description
-    >Custom rules for Apex code structure and organization</description>
+	<description>Custom rules for Apex code structure and organization</description>
 
-    <rule
-        name="PreferPropertySyntaxOverGetterMethods"
-        language="apex"
-        message="Never use private fields with public getter methods. Use property syntax instead"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            Private fields with public getter methods should be replaced with property syntax.
-        </description>
-        <priority>3</priority>
-        <properties>
-            <property name="xpath">
-                <value>
+	<rule
+		name="PreferPropertySyntaxOverGetterMethods"
+		language="apex"
+		message="Never use private fields with public getter methods. Use property syntax instead"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Private fields with public getter methods should be replaced with property syntax.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //Method[
                         ModifierNode[@Public = true()]
@@ -37,7 +36,7 @@
                     ]
                     ]]>
                 </value>
-            </property>
-        </properties>
-    </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

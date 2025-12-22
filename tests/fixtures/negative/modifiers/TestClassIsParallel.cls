@@ -1,0 +1,3 @@
+@IsTest
+public class MyTestClass {}
+

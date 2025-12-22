@@ -1,34 +1,41 @@
 <?xml version="1.0" ?>
 <ruleset
-    name="Apex Structure Rules"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Structure Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description
-    >Custom rules for Apex code structure and organization</description>
+	<description>Custom rules for Apex code structure and organization</description>
 
-    <rule
-        name="InnerClassesCannotBeStatic"
-        language="apex"
-        message="Inner classes cannot be static in Apex"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            Inner classes in Apex cannot be static. Remove the static modifier from inner class declarations.
-        </description>
-        <priority>1</priority>
-        <properties>
-            <property name="xpath">
-                <value>
+	<rule
+		name="InnerClassesCannotBeStatic"
+		language="apex"
+		message="Inner classes cannot be static in Apex"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Inner classes in Apex cannot be static. Remove the static modifier from inner class
+      declarations.
+		</description>
+		<priority>1</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //UserClass[
                         @Nested = true()
                         and ModifierNode[@Static = true()]
+                        and BlockStatement
+                    ]/BlockStatement[1]
+                    |
+                    //UserClass[
+                        @Nested = true()
+                        and ModifierNode[@Static = true()]
+                        and not(BlockStatement)
                     ]
                     ]]>
                 </value>
-            </property>
-        </properties>
-    </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

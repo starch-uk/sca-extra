@@ -1,37 +1,38 @@
 <?xml version="1.0" ?>
 <ruleset
-    name="Apex Method Signature Rules"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Method Signature Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description
-    >Custom rules for Apex method signatures and parameters</description>
+	<description>Custom rules for Apex method signatures and parameters</description>
 
-    <rule
-        name="NoCustomParameterObjects"
-        language="apex"
-        message="Never create custom classes, inner classes, or wrapper objects solely for passing parameters"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            Custom parameter objects should not be created. Refactor methods to stay within 3 parameters instead.
-        </description>
-        <priority>3</priority>
-        <properties>
-            <property name="xpath">
-                <value>
+	<rule
+		name="NoCustomParameterObjects"
+		language="apex"
+		message="Never create custom classes, inner classes, or wrapper objects solely for passing parameters"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Custom parameter objects should not be created. Refactor methods to stay within 3
+			parameters
+      instead.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //UserClass[
                         count(Method) = 0
-                        and count(Field) > 0
+                        and count(Field) >= 2
                         and count(Field) < 10
                         and @Nested = true()
                         and not(Field/ModifierNode/Annotation[@Name = 'InvocableVariable'])
                     ]
                     ]]>
                 </value>
-            </property>
-        </properties>
-    </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

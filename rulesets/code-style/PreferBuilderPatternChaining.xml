@@ -1,46 +1,42 @@
 <?xml version="1.0" ?>
 <ruleset
-    name="Apex Code Style Rules"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Code Style Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description>Custom rules for Apex code style and formatting</description>
+	<description>Custom rules for Apex code style and formatting</description>
 
-    <rule
-        name="PreferBuilderPatternChaining"
-        language="apex"
-        message="Builder pattern methods should be chained instead of using intermediary variable assignments"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            When using builder patterns, prefer method chaining over multiple intermediary variable assignments.
-            Use final variables with chained method calls instead of reassigning the same variable multiple times.
-        </description>
-        <priority>3</priority>
-        <properties>
-            <property name="xpath">
-                <value>
+	<rule
+		name="PreferBuilderPatternChaining"
+		language="apex"
+		message="Builder pattern methods should be chained instead of using intermediary variable assignments"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			When using builder patterns, prefer method chaining over multiple intermediary variable
+      assignments.
+            Use final variables with chained method calls instead of reassigning the same variable
+      multiple times.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
-                    //AssignmentExpression[
+                    for $assign in //AssignmentExpression[
                         @Op = '='
                         and VariableExpression
-                        and MethodCallExpression[
-                            ReferenceExpression/@Image = ancestor::AssignmentExpression/VariableExpression/@Image
-                        ]
-                        and not(ancestor::MethodCallExpression)
-                        and not(ancestor::VariableDeclaration)
-                        and not(
-                            ancestor::Method[@Constructor = 'true']
-                        )
-                        and (
-                            some $var in ancestor::Method//VariableDeclaration
-                            satisfies $var/VariableDeclaratorId/@Image = VariableExpression/@Image
-                        )
+                        and MethodCallExpression
                     ]
+                    return if (
+                        $assign/MethodCallExpression/ReferenceExpression[1]/@Image = $assign/VariableExpression/@Image
+                        and $assign/ancestor::Method//VariableDeclarationStatements/VariableDeclaration/VariableExpression[@Image = $assign/VariableExpression/@Image]
+                        and not($assign/ancestor::Method[@Constructor = true()])
+                    ) then $assign else ()
                     ]]>
                 </value>
-            </property>
-        </properties>
-    </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>
