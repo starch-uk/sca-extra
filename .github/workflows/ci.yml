@@ -99,4 +99,5 @@ jobs:
         if: always()
         with:
           files: ./coverage/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
 
