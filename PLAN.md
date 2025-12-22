@@ -6,6 +6,27 @@ This project maintains additional PMD rules for testing Salesforce Apex code usi
 
 **Repository:** [https://github.com/starch-uk/sca-extra](https://github.com/starch-uk/sca-extra)
 
+## Implementation Status
+
+**Note:** This plan document describes the project as if it hasn't been built yet, but includes all features and capabilities that are currently implemented. The following sections document what will be built, including:
+
+- **44 PMD rules** across 6 categories (code-style, documentation, method-signatures, modifiers, naming, structure)
+- **Comprehensive test infrastructure** with positive and negative test fixtures for all rules
+- **Benchmarking system** with stress-test fixtures (580+ violations across 7 fixture files)
+- **CI/CD pipeline** with PMD 7.19.0, Java 21, Node.js 24, pnpm 10.26.1, and Codecov integration
+- **Documentation** including AI Agent-friendly rule guide, XPath 3.1 reference, and PMD AST reference
+- **Development tooling** including AST dump helper, validation scripts, version bumping, and changelog generation
+
+### Changes from Original Plan
+
+- **License:** Project uses MIT License (not BSD 3-Clause as originally planned)
+- **ESLint:** Uses ESLint 9.x with flat config (`eslint.config.mjs`) instead of ESLint 8.x
+- **Dependencies:** Updated to newer versions (Jest 30.x, Husky 9.x, etc.)
+- **CI/CD:** PMD 7.19.0 with Java 21, Node.js 24, pnpm 10.26.1 (not PMD 7.0.0 with Node 18)
+- **Benchmark PR Comments:** Not implemented in CI (benchmarking can be run manually)
+- **Performance Regression Alerts:** Not implemented in CI (can be checked manually with `pnpm run check-regressions`)
+- **Rule Count:** 44 rules implemented (more comprehensive than originally scoped)
+
 ## Project Structure
 
 ```
@@ -69,22 +90,23 @@ sca-extra/
 │       ├── naming.test.js
 │       └── structure.test.js
 ├── scripts/                           # Utility scripts
-│   ├── generate-test-ruleset.js      # Generate combined test ruleset
-│   ├── validate-rules.js             # Validate XML ruleset syntax
-│   ├── benchmark.js                  # Performance benchmarking script
-│   ├── check-performance-regressions.js  # Check for performance regressions
-│   ├── version-bump.js               # Automated version bumping
-│   ├── generate-changelog.js         # Generate changelog from commits
-│   └── ast-dump.sh                    # Helper for AST debugging
+│   ├── generate-test-ruleset.js      # Generate combined test ruleset from all rules
+│   ├── validate-rules.js             # Validate XML ruleset syntax and rule quality
+│   ├── benchmark.js                  # Performance benchmarking script (tests all rules against stress fixtures)
+│   ├── check-performance-regressions.js  # Check for performance regressions against baseline
+│   ├── version-bump.js               # Automated version bumping (major/minor/patch)
+│   ├── generate-changelog.js         # Generate changelog from git commits
+│   ├── list-test-files.js            # List test fixture files for inventory
+│   └── ast-dump.sh                    # Helper for AST debugging (PMD AST dump wrapper)
 ├── benchmarks/                        # Benchmark test files
 │   ├── fixtures/                      # Large Apex files for benchmarking
-│   │   ├── stress-test-all-rules.cls  # Comprehensive stress test (100+ violations)
-│   │   ├── stress-code-style.cls      # Code style stress test (200+ violations)
-│   │   ├── stress-structure.cls       # Structure stress test (100+ violations)
-│   │   ├── stress-modifiers.cls       # Modifier stress test (100+ violations)
-│   │   ├── stress-naming.cls          # Naming stress test (100+ violations)
-│   │   ├── stress-documentation.cls   # Documentation stress test (30+ violations)
-│   │   └── stress-method-signatures.cls # Method signature stress test (30+ violations)
+│   │   ├── stress-test-all-rules.cls  # Comprehensive stress test (100+ violations across all rules)
+│   │   ├── stress-code-style.cls      # Code style stress test (200+ violations, 18 rules)
+│   │   ├── stress-structure.cls       # Structure stress test (100+ violations, 13 rules)
+│   │   ├── stress-modifiers.cls       # Modifier stress test (100+ violations, 5 rules)
+│   │   ├── stress-naming.cls          # Naming stress test (100+ violations, 4 rules)
+│   │   ├── stress-documentation.cls   # Documentation stress test (30+ violations, 2 rules)
+│   │   └── stress-method-signatures.cls # Method signature stress test (30+ violations, 2 rules)
 │   ├── results/                      # Benchmark results (gitignored)
 │   ├── README.md                      # Benchmark documentation
 │   └── FIXTURES.md                    # Benchmark fixture documentation
@@ -105,9 +127,10 @@ sca-extra/
    - **Verify installation:** `pmd --version` and `pmd check --help`
 
 2. **PMD Requirements:**
-   - PMD version 7.0+ (supports Apex language)
+   - PMD version 7.19.0+ (supports Apex language)
    - Apex language support enabled
    - XPath 3.1 support
+   - Java 21+ (required for PMD 7.19.0)
 
 3. **Test PMD with Apex:**
    ```bash
@@ -127,14 +150,16 @@ sca-extra/
    - Create `package.json` with project metadata
    - **Important:** No runtime dependencies - PMD is external CLI tool
    - Add dev dependencies:
-     - `jest` (^29.0.0) - Test framework
-     - `@types/jest` (^29.0.0) - TypeScript definitions for Jest
-     - `eslint` (^8.0.0) - JavaScript linting
+     - `jest` (^30.0.0) - Test framework
+     - `@types/jest` (^30.0.0) - TypeScript definitions for Jest
+     - `eslint` (^9.0.0) - JavaScript linting (flat config)
+     - `@eslint/js` (^9.0.0) - ESLint JavaScript plugin
+     - `globals` (^16.0.0) - Global variables for ESLint
      - `prettier` (^3.0.0) - Code formatting
      - `@prettier/plugin-xml` (^3.0.0) - XML formatting support
-     - `husky` (^8.0.0) - Git hooks
-     - `lint-staged` (^13.0.0) - Staged file linting
-     - `xml2js` (^0.6.0) - XML parsing (if needed)
+     - `husky` (^9.0.0) - Git hooks
+     - `lint-staged` (^16.0.0) - Staged file linting
+     - `xml2js` (^0.6.0) - XML parsing
      - `xmldom` (^0.6.0) - DOM implementation for XML parsing
    - Configure pnpm scripts for testing, validation, linting, and development
    - Add Prettier for XML formatting of rulesets
@@ -175,13 +200,16 @@ sca-extra/
 
 7. **Set up GitHub Actions CI/CD**
    - Create `.github/workflows/ci.yml` workflow
-   - Run on pull requests: lint (Prettier check) and unit tests
+   - Run on pull requests and pushes to main/develop branches
+   - Setup Java 21 (required for PMD 7.19.0)
+   - Setup Node.js 24
+   - Setup pnpm 10.26.1
+   - Cache pnpm store and node_modules
+   - Install PMD CLI 7.19.0 (download and cache)
+   - Run on pull requests: lint (Prettier check), ESLint, and unit tests with coverage
    - Fail PR if files are not properly formatted or tests fail
-   - Use Node.js setup action and cache dependencies
-   - **Performance regression alerts**: Set up alerts when benchmarks show performance degradation
-     - Compare benchmark results against baseline
-     - Fail CI or add warnings for significant performance regressions
-     - Alert thresholds configurable (e.g., >10% slower)
+   - Upload coverage to Codecov (requires CODECOV_TOKEN secret)
+   - **Note:** Benchmark PR comments and performance regression alerts are not implemented in CI (benchmarking can be run manually)
 
 8. **Create `README.md`**
    - Project overview
@@ -315,6 +343,8 @@ sca-extra/
 
 ### Phase 3: Test Implementation (Priority Order)
 
+**Note:** All 44 rules will be implemented with comprehensive test coverage. The following represents the implementation order, but all rules will eventually have tests.
+
 #### P1 Rules (Start Here)
 1. **InnerClassesCannotBeStatic**
    - Positive: Inner class without static modifier
@@ -325,16 +355,62 @@ sca-extra/
    - Negative: Inner class with static method/field
 
 #### P2 Rules
-4. **NoMethodCallsInConditionals**
-5. **NoSingleLetterVariableNames** (already have example)
-6. **Multi-line formatting rules**
-7. **Modifier rules**
+3. **NoMethodCallsInConditionals**
+4. **NoSingleLetterVariableNames**
+5. **Multi-line formatting rules** (ListInitializationMustBeMultiLine, MapInitializationMustBeMultiLine, SingleArgumentMustBeSingleLine, SingleParameterMustBeSingleLine)
+6. **Modifier rules** (FinalVariablesMustBeFinal, StaticMethodsMustBeStatic, StaticVariablesMustBeFinalAndScreamingSnakeCase, RegexPatternsMustBeStaticFinal, TestClassIsParallel)
 
 #### P3 Rules
-8. **Remaining 28 rules** (code-style, documentation, naming, structure)
+7. **Code Style Rules** (18 total):
+   - AvoidOneLinerMethods
+   - ListInitializationMustBeMultiLine
+   - MapInitializationMustBeMultiLine
+   - MapShouldBeInitializedWithValues
+   - MultipleStringContainsCalls
+   - NoConsecutiveBlankLines
+   - NoMethodCallsAsArguments
+   - NoMethodCallsInConditionals
+   - NoMethodChaining
+   - PreferBuilderPatternChaining
+   - PreferConcatenationOverStringJoinWithEmpty
+   - PreferMethodCallsInLoopConditions
+   - PreferNullCoalescingOverTernary
+   - PreferSafeNavigationOperator
+   - PreferStringJoinOverConcatenation
+   - PreferStringJoinOverMultipleNewlines
+   - PreferStringJoinWithSeparatorOverEmpty
+   - SingleArgumentMustBeSingleLine
 
-#### P4 Rules
-9. **AvoidOneLinerMethods** (complex rule, test thoroughly)
+8. **Documentation Rules** (2 total):
+   - ExceptionDocumentationRequired
+   - SingleLineDocumentationFormat
+
+9. **Method Signature Rules** (2 total):
+   - NoCustomParameterObjects
+   - SingleParameterMustBeSingleLine
+
+10. **Naming Rules** (4 total):
+    - InnerClassesMustBeOneWord
+    - NoAbbreviations
+    - NoSingleLetterVariableNames
+    - VariablesMustNotShareNamesWithClasses
+
+11. **Structure Rules** (13 total):
+    - AvoidLowValueWrapperMethods
+    - AvoidTrivialPropertyGetters
+    - ClassesMustHaveMethods
+    - CombineNestedIfStatements
+    - EnumMinimumValues
+    - InnerClassesCannotBeStatic
+    - InnerClassesCannotHaveStaticMembers
+    - NoParameterClasses
+    - NoThisOutsideConstructors
+    - NoUnnecessaryAttributeVariables
+    - NoUnnecessaryReturnVariables
+    - PreferPropertySyntaxOverGetterMethods
+    - PreferSwitchOverIfElseChains
+
+**Total: 44 rules across 6 categories**
 
 ### Phase 4: Validation & Quality
 
@@ -356,7 +432,7 @@ sca-extra/
      - Generate test file inventory
 
 2. **Add linting and formatting**
-   - ESLint for JavaScript test files
+   - ESLint 9.x with flat config (`eslint.config.mjs`) for JavaScript test files
    - Prettier for XML ruleset formatting (required)
    - XML schema validation for rulesets
    - Pre-commit hooks configured (via husky) to format XML before commit
@@ -643,8 +719,10 @@ Each rule follows this structure with configurable properties and versioning:
 5. **Usage**
    - Run `pnpm run benchmark` to execute all benchmarks
    - Results stored in `benchmarks/results/` (gitignored)
-   - JSON output: `pnpm run benchmark -- --json` (for CI/CD)
-   - Compare results: `pnpm run benchmark -- --compare`
+   - JSON output: `pnpm run benchmark -- --json` (for CI/CD integration)
+   - Baseline generation: `pnpm run benchmark -- --baseline` (creates baseline.json)
+   - Compare mode: `pnpm run benchmark -- --compare` (doesn't fail on regressions)
+   - Check regressions: `pnpm run check-regressions` (compares against baseline)
 
 ## Development Workflow
 
@@ -691,8 +769,16 @@ Each rule follows this structure with configurable properties and versioning:
 
 1. **P1** (Critical): InnerClassesCannotBeStatic, InnerClassesCannotHaveStaticMembers
 2. **P2** (High): Method calls in conditionals, multi-line formatting, naming restrictions, modifier rules
-3. **P3** (Medium): 28 style/docs/modifiers/naming/structure rules
-4. **P4** (Low): AvoidOneLinerMethods
+3. **P3** (Medium): Remaining code-style, documentation, method-signatures, naming, and structure rules
+4. **P4** (Low): Complex rules requiring thorough testing (e.g., AvoidOneLinerMethods)
+
+**Total Implementation:** 44 rules across 6 categories:
+- **Code Style:** 18 rules
+- **Structure:** 13 rules
+- **Modifiers:** 5 rules
+- **Naming:** 4 rules
+- **Documentation:** 2 rules
+- **Method Signatures:** 2 rules
 
 ## GitHub Actions CI/CD
 
@@ -718,44 +804,40 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Java
+        uses: actions/setup-java@v5
         with:
-          node-version: '18'
+          distribution: "temurin"
+          java-version: "21"
       
-      - name: Cache node modules
-        uses: actions/cache@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
+          node-version: "24"
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.1
+      
+      - name: Cache pnpm store
+        uses: actions/cache@v5
+        with:
+          path: ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-pnpm-store-
       
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
       
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      
-      - name: Install PMD CLI
-        run: |
-          wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.0.0/pmd-bin-7.0.0.zip
-          unzip pmd-bin-7.0.0.zip
-          sudo mv pmd-bin-7.0.0 /opt/pmd
-          sudo ln -s /opt/pmd/bin/pmd /usr/local/bin/pmd
-          pmd --version
-        # Alternative: Use PMD installation action if available
-        # Or use package manager: sudo apt-get install pmd (if available)
+        run: pnpm install
       
       - name: Check XML formatting
         run: pnpm run format:check
@@ -763,59 +845,42 @@ jobs:
       - name: Lint JavaScript
         run: pnpm run lint
       
-      - name: Run tests
-        run: pnpm test
-      
-      - name: Run benchmarks
-        id: benchmark
-        run: pnpm run benchmark -- --json > benchmark-results.json
-        continue-on-error: true
-      
-      - name: Comment benchmark results on PR
-        if: github.event_name == 'pull_request' && steps.benchmark.outcome == 'success'
-        uses: actions/github-script@v6
+      - name: Cache PMD
+        id: cache-pmd
+        uses: actions/cache@v5
         with:
-          script: |
-            const fs = require('fs');
-            const benchmarkResults = JSON.parse(fs.readFileSync('benchmark-results.json', 'utf8'));
-            
-            let comment = '## 📊 Benchmark Results\n\n';
-            comment += '| Rule | Execution Time (ms) | Violations | Status |\n';
-            comment += '|------|-------------------|------------|--------|\n';
-            
-            benchmarkResults.rules.forEach(rule => {
-              const status = rule.regression ? '⚠️ Regression' : '✅ OK';
-              comment += `| ${rule.name} | ${rule.executionTime} | ${rule.violations} | ${status} |\n`;
-            });
-            
-            comment += `\n**Total Time:** ${benchmarkResults.totalTime}ms\n`;
-            comment += `**Baseline:** ${benchmarkResults.baselineTime}ms\n`;
-            
-            if (benchmarkResults.regressions.length > 0) {
-              comment += '\n### ⚠️ Performance Regressions Detected\n';
-              benchmarkResults.regressions.forEach(regression => {
-                comment += `- ${regression.rule}: ${regression.percentChange}% slower\n`;
-              });
-            }
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+          path: ~/pmd
+          key: pmd-${{ env.PMD_VERSION }}
+          restore-keys: |
+            pmd-
       
-      - name: Check for performance regressions
-        if: steps.benchmark.outcome == 'success'
+      - name: Install PMD CLI
+        if: steps.cache-pmd.outputs.cache-hit != 'true'
         run: |
-          node scripts/check-performance-regressions.js benchmark-results.json
-        continue-on-error: true
+          mkdir -p ~/pmd
+          curl -L -o pmd-bin.zip "https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-dist-${PMD_VERSION}-bin.zip"
+          unzip -q pmd-bin.zip
+          mv pmd-bin-${PMD_VERSION} ~/pmd
+          rm pmd-bin.zip
+      
+      - name: Setup PMD CLI
+        run: |
+          PMD_DIR="$HOME/pmd/pmd-bin-${PMD_VERSION}"
+          PMD_BIN="$PMD_DIR/bin/pmd"
+          sudo ln -sf "$PMD_BIN" /usr/local/bin/pmd
+          pmd --version
+        env:
+          PMD_VERSION: "7.19.0"
+      
+      - name: Run tests with coverage
+        run: pnpm test:coverage
       
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         if: always()
         with:
           files: ./coverage/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
 ```
 
 ### Required Checks for PRs
@@ -853,10 +918,11 @@ jobs:
 - [ ] AI Agent-friendly rule guide (`docs/AI_AGENT_RULE_GUIDE.md`) is created
 - [ ] Benchmarking infrastructure is set up and functional
 - [ ] Baseline benchmark results are established
-- [ ] Benchmark results are automatically posted as PR comments
-- [ ] Performance regression alerts are configured in CI
+- [ ] **Note:** Benchmark PR comments and performance regression alerts in CI are not implemented (benchmarking can be run manually)
 - [ ] Versioning tooling is implemented (automated version bumping, changelog generation)
 - [ ] Rule migration guides are created and documented
+- [ ] All 44 rules are implemented with comprehensive test coverage
+- [ ] Codecov integration is configured for coverage reporting
 
 ## License
 
@@ -874,6 +940,8 @@ The MIT License allows:
 With requirements:
 - Include copyright notice
 - Include license text
+
+**Note:** The original plan mentioned BSD 3-Clause License, but the project uses MIT License instead.
 
 ## README Content Requirements
 
