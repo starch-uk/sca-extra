@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: while(true) with break inside
         while (true) {
             if (!hasMore()) {

@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: Multiple concatenations with common separator
         String result = 'line1\n' + 'line2\n' + 'line3';
 

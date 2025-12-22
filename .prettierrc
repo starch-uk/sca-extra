@@ -3,12 +3,11 @@
   "xmlWhitespaceSensitivity": "ignore",
   "xmlQuoteAttributes": "double",
   "printWidth": 100,
-  "tabWidth": 2,
-  "useTabs": false,
+  "tabWidth": 4,
+  "useTabs": true,
   "semi": true,
-  "singleQuote": false,
+  "singleQuote": true,
   "trailingComma": "es5",
   "arrowParens": "always",
   "endOfLine": "lf"
 }
-

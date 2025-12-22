@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod(String value) {
+    public void method(String value) {
         // Violation: If-else chain with 3+ conditions
         if (value == 'a') {
             processA();

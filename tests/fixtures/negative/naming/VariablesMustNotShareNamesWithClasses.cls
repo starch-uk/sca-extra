@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: Variable name matches class name
         Example example = new Example();
 

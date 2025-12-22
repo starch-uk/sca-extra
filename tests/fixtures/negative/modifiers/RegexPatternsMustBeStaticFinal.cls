@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: Inline regex pattern
         Pattern p = Pattern.compile('test.*pattern');
 

@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         Account acc = getAccount();
 
         // Violation: Variable only used once, never reassigned

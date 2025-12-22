@@ -22,7 +22,6 @@ This project provides a comprehensive set of PMD rules for Salesforce Apex code 
    - Identifying potential bugs or logic errors
    - Examples:
      - `NoMethodCallsInConditionals` - Prevents side effects in conditionals
-     - `ProhibitSuppressWarnings` - Prevents hiding real issues
      - `InnerClassesCannotBeStatic` - Enforces Apex language constraints
 
 2. **Structural Issues**
@@ -148,7 +147,7 @@ Integer x = 5;  // Proper spacing
 
 3. **Reference rulesets in your project**
    - Rulesets can be referenced by relative path from your project root
-   - Example: `rulesets/structure/ProhibitSuppressWarnings.xml`
+   - Example: `rulesets/structure/InnerClassesCannotBeStatic.xml`
 
 ## Usage
 
@@ -158,7 +157,6 @@ The `code-analyzer.yml` file (Salesforce Code Analyzer configuration) should ref
 
 ```yaml
 rulesets:
-  - rulesets/structure/ProhibitSuppressWarnings.xml
   - rulesets/structure/InnerClassesCannotBeStatic.xml
   - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
   - rulesets/modifiers/FinalVariablesMustBeFinal.xml
@@ -173,7 +171,6 @@ version: 1.0.0
 
 rulesets:
   # Structure rules
-  - rulesets/structure/ProhibitSuppressWarnings.xml
   - rulesets/structure/InnerClassesCannotBeStatic.xml
   - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
   
@@ -243,7 +240,6 @@ version: 1.0.0
 
 rulesets:
   # P1 - Critical rules
-  - rulesets/structure/ProhibitSuppressWarnings.xml
   - rulesets/structure/InnerClassesCannotBeStatic.xml
   - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
   
@@ -266,25 +262,6 @@ rules:
 ## Rules Documentation
 
 ### Structure Rules
-
-#### ProhibitSuppressWarnings
-**Priority:** P1 (Critical)  
-**Description:** Prohibits the use of `@SuppressWarnings` annotation. Fix the underlying warning instead of suppressing it.
-
-**Violations:**
-```apex
-@SuppressWarnings('PMD')
-public void method() {
-    // This should trigger the rule
-}
-```
-
-**Valid Code:**
-```apex
-public void method() {
-    // No @SuppressWarnings here
-}
-```
 
 #### InnerClassesCannotBeStatic
 **Priority:** P1 (Critical)  
@@ -427,47 +404,47 @@ For a complete list of all rules, see the `rulesets/` directory. Each rule XML f
 ### Prerequisites
 
 - Node.js 18+
-- npm or yarn
+- pnpm
 
 ### Setup
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### Running Tests
 
 ```bash
-npm test              # Run all tests
-npm run test:watch    # Run tests in watch mode
-npm run test:coverage # Run tests with coverage
+pnpm test              # Run all tests
+pnpm run test:watch    # Run tests in watch mode
+pnpm run test:coverage # Run tests with coverage
 ```
 
 ### Formatting
 
 ```bash
-npm run format        # Format all files
-npm run format:check  # Check formatting without modifying
+pnpm run format        # Format all files
+pnpm run format:check  # Check formatting without modifying
 ```
 
 ### Linting
 
 ```bash
-npm run lint          # Lint JavaScript files
-npm run lint:fix      # Fix linting issues automatically
+pnpm run lint          # Lint JavaScript files
+pnpm run lint:fix      # Fix linting issues automatically
 ```
 
 ### Validation
 
 ```bash
-npm run validate      # Validate all rulesets
+pnpm run validate      # Validate all rulesets
 ```
 
 ### Benchmarking
 
 ```bash
-npm run benchmark     # Run performance benchmarks
-npm run check-regressions  # Check for performance regressions
+pnpm run benchmark     # Run performance benchmarks
+pnpm run check-regressions  # Check for performance regressions
 ```
 
 ## Contributing

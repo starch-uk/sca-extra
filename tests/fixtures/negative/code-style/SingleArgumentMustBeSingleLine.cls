@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: Single argument method call on multiple lines
         processData(
             getValue()

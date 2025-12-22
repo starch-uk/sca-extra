@@ -1,41 +1,41 @@
 <?xml version="1.0" ?>
 <ruleset
-  name="Apex Code Style Rules"
-  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Code Style Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-  <description>Custom rules for Apex code style and formatting</description>
+	<description>Custom rules for Apex code style and formatting</description>
 
-  <rule
-    name="PreferStringJoinWithSeparatorOverEmpty"
-    language="apex"
-    message="String.join() with empty separator where all strings except the last end with the same suffix should use the suffix as separator"
-    class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-  >
-    <description>
-      When using String.join() with an empty string separator and all strings in the list
+	<rule
+		name="PreferStringJoinWithSeparatorOverEmpty"
+		language="apex"
+		message="String.join() with empty separator where all strings except the last end with the same suffix should use the suffix as separator"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			When using String.join() with an empty string separator and all strings in the list
             except the last one end with the same non-empty sequence of characters, use the
             common suffix as the separator instead:
 
             Instead of: String.join('', new List &lt; String &gt; {'line1\n', 'line2\n', 'last'});
             Use: String.join('\n', new List &lt; String &gt; {'line1', 'line2', 'last'});
-    </description>
-    <priority>3</priority>
-    <properties>
-      <property name="xpath">
-        <value>
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //MethodCallExpression[
-                        @Image = 'join'
-                        and ancestor::PrimaryExpression[1]/ReferenceExpression[@Image = 'String']
-                        and .//LiteralExpression[@String = true() and (@Image = "''" or @Image = '""')]
+                        @MethodName = 'join'
+                        and @FullMethodName = 'String.join'
+                        and .//LiteralExpression[@String = true() and (string-length(@Image) = 0 or @Image = "''" or @Image = '""')]
                         and .//NewListLiteralExpression
                         and count(.//NewListLiteralExpression//LiteralExpression[@String = true()]) >= 3
                     ]
                     ]]>
                 </value>
-      </property>
-    </properties>
-  </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

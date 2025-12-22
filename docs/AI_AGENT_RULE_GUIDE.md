@@ -79,35 +79,6 @@ rules:
 
 ## Structure Rules
 
-### ProhibitSuppressWarnings
-
-**Category:** structure  
-**Priority:** P1  
-**Description:** Prohibits the use of `@SuppressWarnings` annotation. Fix the underlying warning instead of suppressing it.
-
-**Violations:**
-```apex
-@SuppressWarnings('PMD')
-public void method() {
-    // This should trigger the rule
-}
-```
-
-**Valid Code:**
-```apex
-public void method() {
-    // No @SuppressWarnings here
-}
-```
-
-**Configurable Properties:** None
-
-**Usage in code-analyzer.yml:**
-```yaml
-rulesets:
-  - rulesets/structure/ProhibitSuppressWarnings.xml
-```
-
 ### InnerClassesCannotBeStatic
 
 **Category:** structure  
@@ -305,7 +276,6 @@ version: 1.0.0
 
 rulesets:
   # P1 - Critical rules
-  - rulesets/structure/ProhibitSuppressWarnings.xml
   - rulesets/structure/InnerClassesCannotBeStatic.xml
   - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
   

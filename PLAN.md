@@ -14,7 +14,7 @@ sca-extra/
 ├── LICENSE.md                         # MIT License
 ├── CONTRIBUTING.md                    # Contribution guidelines
 ├── SECURITY.md                        # Security policy
-├── package.json                       # NPM configuration and scripts
+├── package.json                       # pnpm configuration and scripts
 ├── .gitignore                         # Git ignore patterns
 ├── .prettierrc                        # Prettier configuration
 ├── .husky/                            # Pre-commit hooks
@@ -123,7 +123,7 @@ sca-extra/
 
 ### Phase 1: Project Setup
 
-1. **Initialize NPM project**
+1. **Initialize pnpm project**
    - Create `package.json` with project metadata
    - **Important:** No runtime dependencies - PMD is external CLI tool
    - Add dev dependencies:
@@ -136,7 +136,7 @@ sca-extra/
      - `lint-staged` (^13.0.0) - Staged file linting
      - `xml2js` (^0.6.0) - XML parsing (if needed)
      - `xmldom` (^0.6.0) - DOM implementation for XML parsing
-   - Configure npm scripts for testing, validation, linting, and development
+   - Configure pnpm scripts for testing, validation, linting, and development
    - Add Prettier for XML formatting of rulesets
 
 2. **Reorganize files**
@@ -162,7 +162,7 @@ sca-extra/
 5. **Set up Prettier for XML formatting**
    - Configure Prettier with XML plugin (`@prettier/plugin-xml` or similar)
    - Create `.prettierrc` configuration for XML formatting rules
-   - Add npm script to format all XML rulesets
+   - Add pnpm script to format all XML rulesets
    - Ensure consistent XML formatting across all ruleset files
 
 6. **Set up pre-commit hooks**
@@ -289,7 +289,7 @@ sca-extra/
      - Read all rule XML files from `rulesets/` directories
      - Combine into single ruleset
      - Preserve rule structure and properties
-   - Create `npm run generate-test-ruleset` script
+   - Create `pnpm run generate-test-ruleset` script
    - Or maintain separate test runs per category (current approach)
 
 5. **Set up benchmarking infrastructure**
@@ -310,8 +310,8 @@ sca-extra/
    - Create `scripts/check-performance-regressions.js` - Regression detection
    - Results stored in `benchmarks/results/` (gitignored)
    - Support baseline comparison and JSON output for CI
-   - Create `npm run benchmark` script
-   - Create `npm run check-regressions` script
+   - Create `pnpm run benchmark` script
+   - Create `pnpm run check-regressions` script
 
 ### Phase 3: Test Implementation (Priority Order)
 
@@ -323,10 +323,6 @@ sca-extra/
 2. **InnerClassesCannotHaveStaticMembers**
    - Positive: Inner class with non-static members only
    - Negative: Inner class with static method/field
-
-3. **ProhibitSuppressWarnings**
-   - Positive: Code without @SuppressWarnings
-   - Negative: Code with @SuppressWarnings annotation
 
 #### P2 Rules
 4. **NoMethodCallsInConditionals**
@@ -437,7 +433,7 @@ This ensures:
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:rules": "node scripts/validate-rules.js && npm test",
+    "test:rules": "node scripts/validate-rules.js && pnpm test",
     "validate": "node scripts/validate-rules.js",
     "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\"",
     "format:check": "prettier --check \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\"",
@@ -447,7 +443,7 @@ This ensures:
     "check-regressions": "node scripts/check-performance-regressions.js",
     "version:bump": "node scripts/version-bump.js",
     "changelog": "node scripts/generate-changelog.js",
-    "ci": "npm run format:check && npm run lint && npm test",
+    "ci": "pnpm run format:check && pnpm run lint && pnpm test",
     "generate-test-ruleset": "node scripts/generate-test-ruleset.js",
     "ast-dump": "bash scripts/ast-dump.sh",
     "prepare": "husky install"
@@ -473,47 +469,8 @@ This ensures:
 ```javascript
 const { runPMD, parseViolations, assertViolation } = require('../helpers/pmd-helper');
 
-describe('Structure Rules', () => {
-  describe('ProhibitSuppressWarnings', () => {
-    it('should detect @SuppressWarnings annotation', async () => {
-      const violations = await runPMD(
-        'rulesets/structure/ProhibitSuppressWarnings.xml',
-        'tests/fixtures/negative/structure/ProhibitSuppressWarnings.cls'
-      );
-      assertViolation(violations, 'ProhibitSuppressWarnings', 5);
-    });
-
-    it('should not flag code without @SuppressWarnings', async () => {
-      const violations = await runPMD(
-        'rulesets/structure/ProhibitSuppressWarnings.xml',
-        'tests/fixtures/positive/structure/ProhibitSuppressWarnings.cls'
-      );
-      expect(violations.filter(v => v.rule === 'ProhibitSuppressWarnings')).toHaveLength(0);
-    });
-  });
-});
 ```
 
-### Test Fixture Examples
-
-**Positive (`tests/fixtures/positive/structure/ProhibitSuppressWarnings.cls`)**
-```apex
-public class Example {
-    public void method() {
-        // No @SuppressWarnings here
-    }
-}
-```
-
-**Negative (`tests/fixtures/negative/structure/ProhibitSuppressWarnings.cls`)**
-```apex
-public class Example {
-    @SuppressWarnings('PMD')
-    public void method() {
-        // This should trigger the rule
-    }
-}
-```
 
 ## PMD Integration
 
@@ -545,7 +502,7 @@ public class Example {
   - Checks if PMD is available
   - Outputs AST in text format
   - Optionally saves to XML file
-  - Usage: `npm run ast-dump <apex-file>` or `bash scripts/ast-dump.sh <apex-file>`
+  - Usage: `pnpm run ast-dump <apex-file>` or `bash scripts/ast-dump.sh <apex-file>`
 - **Documentation:** Document common AST patterns in `docs/APEX_PMD_AST.md`
   - Node types and relationships
   - Common XPath patterns
@@ -561,7 +518,7 @@ public class Example {
    - Descriptive and self-explanatory
    - Follow consistent naming conventions (PascalCase)
    - Clearly indicate what the rule checks
-   - Examples: `ProhibitSuppressWarnings`, `NoSingleLetterVariableNames`, `InnerClassesCannotBeStatic`
+   - Examples: `NoSingleLetterVariableNames`, `InnerClassesCannotBeStatic`
 
 3. **Comprehensive Descriptions**: Each rule must have:
    - Clear description of what the rule checks
@@ -684,10 +641,10 @@ Each rule follows this structure with configurable properties and versioning:
      - Compare against baseline and previous runs
 
 5. **Usage**
-   - Run `npm run benchmark` to execute all benchmarks
+   - Run `pnpm run benchmark` to execute all benchmarks
    - Results stored in `benchmarks/results/` (gitignored)
-   - JSON output: `npm run benchmark -- --json` (for CI/CD)
-   - Compare results: `npm run benchmark -- --compare`
+   - JSON output: `pnpm run benchmark -- --json` (for CI/CD)
+   - Compare results: `pnpm run benchmark -- --compare`
 
 ## Development Workflow
 
@@ -705,16 +662,16 @@ Each rule follows this structure with configurable properties and versioning:
 2. **Write Tests**
    - Create positive and negative fixtures
    - Write unit test
-   - Run `npm test`
+   - Run `pnpm test`
 
 3. **Validate**
    - Pre-commit hook ensures XML formatting (automatic)
-   - Run `npm run format:check` to verify formatting
-   - Run `npm run lint` to check JavaScript code style
-   - Run `npm run validate` to check XML schema and rule quality
-   - Run `npm test` to verify behavior
-   - Run `npm run benchmark` to check performance
-   - Check coverage with `npm run test:coverage`
+   - Run `pnpm run format:check` to verify formatting
+   - Run `pnpm run lint` to check JavaScript code style
+   - Run `pnpm run validate` to check XML schema and rule quality
+   - Run `pnpm test` to verify behavior
+   - Run `pnpm run benchmark` to check performance
+   - Check coverage with `pnpm run test:coverage`
 
 4. **Document**
    - **Add rule documentation to README.md** (required for all rules)
@@ -732,7 +689,7 @@ Each rule follows this structure with configurable properties and versioning:
 
 ## Priority Implementation Order
 
-1. **P1** (Critical): InnerClassesCannotBeStatic, InnerClassesCannotHaveStaticMembers, ProhibitSuppressWarnings
+1. **P1** (Critical): InnerClassesCannotBeStatic, InnerClassesCannotHaveStaticMembers
 2. **P2** (High): Method calls in conditionals, multi-line formatting, naming restrictions, modifier rules
 3. **P3** (Medium): 28 style/docs/modifiers/naming/structure rules
 4. **P4** (Low): AvoidOneLinerMethods
@@ -769,8 +726,8 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-node-
       
@@ -778,12 +735,17 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
       
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
       
       - name: Install PMD CLI
         run: |
@@ -796,17 +758,17 @@ jobs:
         # Or use package manager: sudo apt-get install pmd (if available)
       
       - name: Check XML formatting
-        run: npm run format:check
+        run: pnpm run format:check
       
       - name: Lint JavaScript
-        run: npm run lint
+        run: pnpm run lint
       
       - name: Run tests
-        run: npm test
+        run: pnpm test
       
       - name: Run benchmarks
         id: benchmark
-        run: npm run benchmark -- --json > benchmark-results.json
+        run: pnpm run benchmark -- --json > benchmark-results.json
         continue-on-error: true
       
       - name: Comment benchmark results on PR
@@ -870,7 +832,7 @@ jobs:
 
 - [ ] All P1 rules have comprehensive tests (positive + negative)
 - [ ] Test infrastructure is set up and working
-- [ ] npm test runs successfully for all implemented tests
+- [ ] pnpm test runs successfully for all implemented tests
 - [ ] Documentation is complete and accurate
 - [ ] All rulesets validate against PMD schema
 - [ ] All XML rulesets are formatted with Prettier
@@ -929,7 +891,6 @@ The README.md should include comprehensive instructions for using these rules in
    - Identifying potential bugs or logic errors
    - Examples:
      - `NoMethodCallsInConditionals` - Prevents side effects in conditionals
-     - `ProhibitSuppressWarnings` - Prevents hiding real issues
      - `InnerClassesCannotBeStatic` - Enforces Apex language constraints
 
 2. **Structural Issues**
@@ -1055,7 +1016,7 @@ Integer x = 5;  // Proper spacing
 
 3. **Reference rulesets in your project**
    - Rulesets can be referenced by relative path from your project root
-   - Example: `rulesets/structure/ProhibitSuppressWarnings.xml`
+   - Example: `rulesets/structure/InnerClassesCannotBeStatic.xml`
 
 ### Enabling Rules in code-analyzer.yml
 
@@ -1063,7 +1024,6 @@ The `code-analyzer.yml` file (Salesforce Code Analyzer configuration) should ref
 
 ```yaml
 rulesets:
-  - rulesets/structure/ProhibitSuppressWarnings.xml
   - rulesets/structure/InnerClassesCannotBeStatic.xml
   - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
   - rulesets/modifiers/FinalVariablesMustBeFinal.xml
@@ -1078,7 +1038,6 @@ version: 1.0.0
 
 rulesets:
   # Structure rules
-  - rulesets/structure/ProhibitSuppressWarnings.xml
   - rulesets/structure/InnerClassesCannotBeStatic.xml
   - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
   
@@ -1148,7 +1107,6 @@ version: 1.0.0
 
 rulesets:
   # P1 - Critical rules
-  - rulesets/structure/ProhibitSuppressWarnings.xml
   - rulesets/structure/InnerClassesCannotBeStatic.xml
   - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
   
@@ -1264,7 +1222,7 @@ The CONTRIBUTING.md file should include:
 ### Development Setup
 - Prerequisites:
   - Node.js version 18 or higher
-  - npm version 8 or higher
+  - pnpm (latest version)
   - **PMD CLI version 7.0+** (NOT an npm package - must be installed separately)
     - macOS: `brew install pmd`
     - Linux/Windows: Download from PMD website
@@ -1272,17 +1230,17 @@ The CONTRIBUTING.md file should include:
     - Must be in system PATH
 - Installation steps:
   - Clone repository
-  - Run `npm install`
-  - Run `npm run prepare` to set up husky hooks
+  - Run `pnpm install`
+  - Run `pnpm run prepare` to set up husky hooks
 - How to run tests locally:
-  - `npm test` - Run all tests
-  - `npm run test:watch` - Watch mode
-  - `npm run test:coverage` - With coverage report
+  - `pnpm test` - Run all tests
+  - `pnpm run test:watch` - Watch mode
+  - `pnpm run test:coverage` - With coverage report
 - How to run benchmarks:
-  - `npm run benchmark` - Run all benchmarks
-  - `npm run benchmark -- --baseline` - Generate baseline
-  - `npm run benchmark -- --json` - JSON output for CI
-  - `npm run check-regressions` - Check for performance regressions
+  - `pnpm run benchmark` - Run all benchmarks
+  - `pnpm run benchmark -- --baseline` - Generate baseline
+  - `pnpm run benchmark -- --json` - JSON output for CI
+  - `pnpm run check-regressions` - Check for performance regressions
 
 ### Adding New Rules
 - Step-by-step guide for creating a new rule
@@ -1367,7 +1325,7 @@ Example structure:
 ### How to Find Versions
 
 **Salesforce Code Analyzer Version:**
-- Run: `sf scanner:version` or check your `package.json` if using npm
+- Run: `sf scanner:version` or check your `package.json` if using pnpm
 - Or check the output of: `sf scanner:run --help`
 
 **Rule Version:**

@@ -30,7 +30,6 @@ Focused stress test for code-style rules with 200+ violations:
 
 ### `stress-structure.cls`
 Focused stress test for structure rules with 100+ violations:
-- ProhibitSuppressWarnings (1 violation)
 - InnerClassesCannotBeStatic (1 violation)
 - InnerClassesCannotHaveStaticMembers (2 violations)
 - InnerClassesMustBeOneWord (2 violations)
@@ -66,19 +65,19 @@ Focused stress test for naming rules with 100+ violations:
 Run benchmarks with:
 
 ```bash
-npm run benchmark
+pnpm run benchmark
 ```
 
 Generate baseline:
 
 ```bash
-npm run benchmark -- --baseline
+pnpm run benchmark -- --baseline
 ```
 
 JSON output for CI:
 
 ```bash
-npm run benchmark -- --json
+pnpm run benchmark -- --json
 ```
 
 ## Performance Characteristics

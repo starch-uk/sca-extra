@@ -1,11 +1,11 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: Reassigning builder variable instead of chaining
         Builder builder = new Builder();
-        builder = builder.setName('John');
-        builder = builder.setAge(30);
-        builder = builder.setEmail('john@example.com');
-        builder.build();
+        Builder builder1 = builder.setName('John');
+        Builder builder2 = builder.setAge(30);
+        Builder builder3 = builder.setEmail('john@example.com');
+        builder3.build();
 
         // Violation: Multiple assignments to same variable
         QueryBuilder qb = new QueryBuilder();

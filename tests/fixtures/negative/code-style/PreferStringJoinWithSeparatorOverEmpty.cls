@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: String.join with empty separator where strings have common suffix
         String result = String.join('', new List<String>{
             'line1\n',

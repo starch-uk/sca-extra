@@ -197,17 +197,17 @@ If a new property is added:
 
 1. **Run tests locally:**
    ```bash
-   npm test
+   pnpm test
    ```
 
 2. **Validate rules:**
    ```bash
-   npm run validate
+   pnpm run validate
    ```
 
 3. **Check for regressions:**
    ```bash
-   npm run check-regressions
+   pnpm run check-regressions
    ```
 
 4. **Test with your codebase:**

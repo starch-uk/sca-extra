@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: Nested if that can be combined
         if (condition1) {
             if (condition2) {

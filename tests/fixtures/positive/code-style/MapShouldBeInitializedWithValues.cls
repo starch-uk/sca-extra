@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Valid: Map initialized with values
         Map<String, String> map1 = new Map<String, String>{
             'key1' => 'value1'
@@ -13,7 +13,7 @@ public class Example {
 
         // Valid: Put called later (not immediately after creation)
         Map<String, String> map3 = new Map<String, String>();
-        // ... other code ...
+        someMethod(map3);
         map3.put('key', 'value');
     }
 }

@@ -4,9 +4,8 @@
  * multiple violations across all rule categories to benchmark performance
  */
 
-@SuppressWarnings('PMD')
 public class StressTestAllRules {
-  // Violations: ProhibitSuppressWarnings, StaticVariablesMustBeFinalAndScreamingSnakeCase
+  // Violations: StaticVariablesMustBeFinalAndScreamingSnakeCase
 
   private static Integer counter = 0;
   private static String config = 'test';

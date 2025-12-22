@@ -11,7 +11,7 @@ We appreciate your interest in improving sca-extra. Your contributions help make
 ### Prerequisites
 
 - **Node.js:** Version 18 or higher
-- **npm:** Version 8 or higher (or yarn)
+- **pnpm:** Latest version
 - **PMD:** For testing rules (Salesforce Code Analyzer)
 - **Git:** For version control
 
@@ -25,27 +25,27 @@ We appreciate your interest in improving sca-extra. Your contributions help make
 
 2. **Install dependencies**
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. **Set up pre-commit hooks**
    ```bash
-   npm run prepare
+   pnpm run prepare
    ```
 
 ### Running Tests Locally
 
 ```bash
-npm test              # Run all tests
-npm run test:watch    # Run tests in watch mode
-npm run test:coverage # Run tests with coverage report
+pnpm test              # Run all tests
+pnpm run test:watch    # Run tests in watch mode
+pnpm run test:coverage # Run tests with coverage report
 ```
 
 ### Running Benchmarks
 
 ```bash
-npm run benchmark     # Run performance benchmarks
-npm run check-regressions  # Check for performance regressions
+pnpm run benchmark     # Run performance benchmarks
+pnpm run check-regressions  # Check for performance regressions
 ```
 
 ## Adding New Rules
@@ -117,8 +117,8 @@ npm run check-regressions  # Check for performance regressions
 
 6. **Validate the rule**
    ```bash
-   npm run validate    # Validate XML syntax and rule quality
-   npm test            # Run tests
+   pnpm run validate    # Validate XML syntax and rule quality
+   pnpm test            # Run tests
    ```
 
 7. **Document the rule**
@@ -129,7 +129,7 @@ npm run check-regressions  # Check for performance regressions
 
 - Use PascalCase: `NoSingleLetterVariableNames`
 - Be descriptive: `InnerClassesCannotBeStatic`
-- Use action verbs: `ProhibitSuppressWarnings`, `PreferSafeNavigationOperator`
+- Use action verbs: `PreferSafeNavigationOperator`, `AvoidOneLinerMethods`
 - Avoid abbreviations unless widely understood
 
 ### Property Configuration Guidelines
@@ -170,9 +170,9 @@ npm run check-regressions  # Check for performance regressions
 ### Running Tests
 
 ```bash
-npm test              # Run all tests
-npm run test:watch    # Run tests in watch mode
-npm run test:coverage # Check test coverage
+pnpm test              # Run all tests
+pnpm run test:watch    # Run tests in watch mode
+pnpm run test:coverage # Check test coverage
 ```
 
 ## Pull Request Process
@@ -207,11 +207,11 @@ feat: Add NoMethodCallsInConditionals rule
 Before submitting a pull request, ensure:
 
 - [ ] Code follows project style guidelines
-- [ ] All tests pass (`npm test`)
+- [ ] All tests pass (`pnpm test`)
 - [ ] Test coverage is maintained or improved
-- [ ] XML files are formatted with Prettier (`npm run format:check`)
-- [ ] JavaScript files pass ESLint (`npm run lint`)
-- [ ] Rule validation passes (`npm run validate`)
+- [ ] XML files are formatted with Prettier (`pnpm run format:check`)
+- [ ] JavaScript files pass ESLint (`pnpm run lint`)
+- [ ] Rule validation passes (`pnpm run validate`)
 - [ ] Documentation is updated (README.md, AI_AGENT_RULE_GUIDE.md)
 - [ ] Rule has clear name and comprehensive description
 - [ ] Rule uses XPath only (no custom Java classes)
@@ -245,7 +245,7 @@ Before submitting a pull request, ensure:
 
 - All XML files are automatically formatted with Prettier
 - Pre-commit hook ensures formatting before commit
-- Run `npm run format` to format manually
+- Run `pnpm run format` to format manually
 
 ### JavaScript/TypeScript Style
 

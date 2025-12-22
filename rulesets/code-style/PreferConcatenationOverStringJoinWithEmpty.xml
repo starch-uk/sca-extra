@@ -1,38 +1,39 @@
 <?xml version="1.0" ?>
 <ruleset
-  name="Apex Code Style Rules"
-  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Code Style Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-  <description>Custom rules for Apex code style and formatting</description>
+	<description>Custom rules for Apex code style and formatting</description>
 
-  <rule
-    name="PreferConcatenationOverStringJoinWithEmpty"
-    language="apex"
-    message="String.join() with empty separator should use string concatenation instead"
-    class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-  >
-    <description>
-      When using String.join() with an empty string separator, use string concatenation instead:
+	<rule
+		name="PreferConcatenationOverStringJoinWithEmpty"
+		language="apex"
+		message="String.join() with empty separator should use string concatenation instead"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			When using String.join() with an empty string separator, use string concatenation
+			instead:
 
             Instead of: String.join('', new List &lt; String &gt; {'a', 'b', 'c'});
             Use: 'a' + 'b' + 'c';
-    </description>
-    <priority>4</priority>
-    <properties>
-      <property name="xpath">
-        <value>
+		</description>
+		<priority>4</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //MethodCallExpression[
-                        @Image = 'join'
-                        and ancestor::PrimaryExpression[1]/ReferenceExpression[@Image = 'String']
+                        @MethodName = 'join'
+                        and @FullMethodName = 'String.join'
                         and .//LiteralExpression[@String = true() and (@Image = "''" or @Image = '""' or string-length(@Image) = 0)]
                         and .//NewListLiteralExpression
                     ]
                     ]]>
                 </value>
-      </property>
-    </properties>
-  </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

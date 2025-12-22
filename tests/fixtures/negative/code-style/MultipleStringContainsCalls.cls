@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: Two contains() calls in if
         if (str.contains('a') && str.contains('b')) {
             // ...

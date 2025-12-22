@@ -43,16 +43,16 @@ When reporting a security vulnerability, please include:
 
 ### Response Time
 
-- **Initial Response:** We aim to respond within 48 hours
-- **Status Update:** We will provide status updates within 7 days
+- **Initial Response:** We aim to respond within 7 days
+- **Status Update:** We will provide status updates within 28 days
 - **Resolution:** We will work to resolve critical vulnerabilities as quickly as possible
 
 ## Disclosure Policy
 
 ### Timeline
 
-1. **Report Received:** Acknowledgment within 48 hours
-2. **Investigation:** Initial assessment within 7 days
+1. **Report Received:** Acknowledgment within 7 days
+2. **Investigation:** Initial assessment within 28 days
 3. **Fix Development:** Fix developed and tested
 4. **Disclosure:** Public disclosure after fix is available
 
@@ -89,11 +89,7 @@ Security researchers who responsibly report vulnerabilities will be:
 
 ## Regular Security Audits
 
-We conduct regular security audits:
-
-- **Dependency Audits:** Regular npm audit checks
-- **Code Reviews:** Security-focused code reviews
-- **Penetration Testing:** Periodic security testing (as needed)
+We do not conduct regular security audits.
 
 ## Security Updates
 

@@ -1,40 +1,42 @@
 <?xml version="1.0" ?>
 <ruleset
-  name="Apex Code Style Rules"
-  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Code Style Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-  <description>Custom rules for Apex code style and formatting</description>
+	<description>Custom rules for Apex code style and formatting</description>
 
-  <rule
-    name="NoMethodCallsAsArguments"
-    language="apex"
-    message="Never use method calls directly as arguments. Extract method calls to variables first"
-    class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-  >
-    <description>
-      Method calls should not be used directly as arguments to constructors, method calls, or
+	<rule
+		name="NoMethodCallsAsArguments"
+		language="apex"
+		message="Never use method calls directly as arguments. Extract method calls to variables first"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Method calls should not be used directly as arguments to constructors, method calls, or
       expressions.
             Extract method calls to variables first for better readability and debugging.
-    </description>
-    <priority>2</priority>
-    <properties>
-      <property name="xpath">
-        <value>
+		</description>
+		<priority>2</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
                     //MethodCallExpression[
                         (parent::MethodCallExpression
-                         or parent::NewClassExpression
+                         or parent::NewObjectExpression
                          or ancestor::MethodCallExpression[position() > 1]
-                         or ancestor::NewClassExpression)
-                        and not(ancestor::VariableDeclaration)
+                         or ancestor::NewObjectExpression)
+                        and not(ancestor::VariableDeclaration[VariableExpression])
                         and not(ancestor::AssignmentExpression[VariableExpression])
                         and not(parent::VariableDeclaration)
                     ]
+                    |
+                    //NewObjectExpression[.//MethodCallExpression]/MethodCallExpression
                     ]]>
                 </value>
-      </property>
-    </properties>
-  </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

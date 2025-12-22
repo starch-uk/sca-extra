@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: Map with 2+ entries on same line
         Map<String, String> map1 = new Map<String, String>{ 'key1' => 'value1', 'key2' => 'value2' };
 

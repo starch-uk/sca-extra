@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: Empty map followed by put()
         Map<String, String> map1 = new Map<String, String>();
         map1.put('key1', 'value1');

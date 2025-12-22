@@ -41,7 +41,6 @@ The benchmark fixtures are comprehensive stress-test files designed to explicitl
 - ✅ AvoidOneLinerMethods (10 violations)
 
 ### Structure Rules (100+ violations)
-- ✅ ProhibitSuppressWarnings (1 violation)
 - ✅ InnerClassesCannotBeStatic (1 violation)
 - ✅ InnerClassesCannotHaveStaticMembers (2 violations)
 - ✅ InnerClassesMustBeOneWord (2 violations)
@@ -107,16 +106,16 @@ Fixtures combine multiple rule violations in realistic combinations to test:
 
 ```bash
 # Run all benchmarks
-npm run benchmark
+pnpm run benchmark
 
 # Generate baseline
-npm run benchmark -- --baseline
+pnpm run benchmark -- --baseline
 
 # JSON output for CI
-npm run benchmark -- --json
+pnpm run benchmark -- --json
 
 # Compare mode (doesn't fail on regressions)
-npm run benchmark -- --compare
+pnpm run benchmark -- --compare
 ```
 
 ### Benchmark Output
@@ -163,7 +162,7 @@ When adding new rules:
 1. Add violations to `stress-test-all-rules.cls`
 2. Add focused violations to category-specific fixture
 3. Update this documentation
-4. Regenerate baseline: `npm run benchmark -- --baseline`
+4. Regenerate baseline: `pnpm run benchmark -- --baseline`
 
 ## Notes
 

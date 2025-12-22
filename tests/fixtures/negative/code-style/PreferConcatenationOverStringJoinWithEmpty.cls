@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: String.join with empty separator
         String result = String.join('', new List<String>{'a', 'b', 'c'});
 

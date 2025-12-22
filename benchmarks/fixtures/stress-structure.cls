@@ -3,9 +3,8 @@
  * Contains 100+ violations across all structure rules
  */
 
-@SuppressWarnings('PMD')
 public class StressStructure {
-  // Violations: ProhibitSuppressWarnings
+  // Violations:
 
   public static class StaticInner {
     // Violations: InnerClassesCannotBeStatic

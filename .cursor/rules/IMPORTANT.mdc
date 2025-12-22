@@ -19,11 +19,12 @@ When creating or modifying PMD rules:
 1. Check APEX_PMD_AST.md for the correct AST node types and patterns
 2. Use XPATH31.md for XPath 3.1 syntax and function reference
 3. Reference AI_AGENT_RULE_GUIDE.md for rule examples and configuration patterns
-4. **Every rule should use properties for things that should be configurable** - Add configurable properties (thresholds, lists, etc.) instead of hardcoding values
+4. **When fixing rules to comply with unit tests, always start by dumping the AST** - Use `scripts/ast-dump.sh` to inspect the actual AST structure of test fixtures before modifying XPath expressions. This ensures you understand the exact node structure and relationships before making changes.
+5. **Every rule should use properties for things that should be configurable** - Add configurable properties (thresholds, lists, etc.) instead of hardcoding values
 5. **New subfolders can be created under rulesets/** - Make sure they follow the existing category structure (code-style, documentation, method-signatures, modifiers, naming, structure)
 6. **Every rule must have both positive and negative test cases** - Create test fixtures in `tests/fixtures/positive/` and `tests/fixtures/negative/` covering all parts of the XPath expression
-7. **All code should be linted and formatted following any changes** - Run `npm run format` and `npm run lint` (or `npm run lint:fix`)
-8. **All tests should be run and regressions checked following any changes** - Run `npm test` and verify no test regressions
+7. **All code should be linted and formatted following any changes** - Run `pnpm run format` and `pnpm run lint` (or `pnpm run lint:fix`)
+8. **All tests should be run and regressions checked following any changes** - Run `pnpm test` and verify no test regressions
 9. **README.md should be updated with any pertinent changes** - Document new rules, rule changes, or significant updates in the README
 10. Test XPath expressions against both positive and negative test cases
 11. **Benchmark stress tests must be kept up to date** - When adding or modifying rules, update the benchmark fixtures:
@@ -32,8 +33,8 @@ When creating or modifying PMD rules:
     - **Target 10-20 violations per rule** in stress tests to properly benchmark performance
     - **Use realistic code patterns** that developers might actually write
     - **Update `benchmarks/FIXTURES.md`** with new violation counts and rule coverage
-    - **Run benchmarks after updates**: `npm run benchmark` to verify performance
-    - **Regenerate baseline if needed**: `npm run benchmark -- --baseline` after significant changes
+    - **Run benchmarks after updates**: `pnpm run benchmark` to verify performance
+    - **Regenerate baseline if needed**: `pnpm run benchmark -- --baseline` after significant changes
 12. **Stress test fixtures location**: `benchmarks/fixtures/` contains comprehensive stress-test files:
     - `stress-test-all-rules.cls` - Comprehensive fixture with violations across all rules
     - `stress-code-style.cls` - Code style rules (200+ violations)
@@ -43,14 +44,14 @@ When creating or modifying PMD rules:
     - `stress-documentation.cls` - Documentation rules (50+ violations)
     - `stress-method-signatures.cls` - Method signature rules (30+ violations)
 13. **Running specific tests**: Use Jest's `--testNamePattern` flag to run only specific tests:
-    - `npm test -- --testNamePattern="RuleName"` - Run all tests matching the pattern
-    - `npm test -- --testNamePattern="should detect"` - Run only detection tests
-    - `npm test -- --testNamePattern="RuleName.*should detect"` - Run specific test for a rule
+    - `pnpm test -- --testNamePattern="RuleName"` - Run all tests matching the pattern
+    - `pnpm test -- --testNamePattern="should detect"` - Run only detection tests
+    - `pnpm test -- --testNamePattern="RuleName.*should detect"` - Run specific test for a rule
     - Examples:
-      - `npm test -- --testNamePattern="AnnotationBeforeComment"` - Run AnnotationBeforeComment tests
-      - `npm test -- --testNamePattern="ProhibitSuppressWarnings.*should detect"` - Run specific test
+      - `pnpm test -- --testNamePattern="AnnotationBeforeComment"` - Run AnnotationBeforeComment tests
+      - `pnpm test -- --testNamePattern="ProhibitSuppressWarnings.*should detect"` - Run specific test
 14. **Using PMD AST dump tool**: Use the AST dump script to inspect the actual AST structure of Apex files:
-    - `npm run ast-dump <apex-file>` - Dump AST for a file (text format)
+    - `pnpm run ast-dump <apex-file>` - Dump AST for a file (text format)
     - `pmd ast-dump --file=<apex-file> -l apex -f xml` - Dump AST in XML format
     - `pmd ast-dump --file=<apex-file> -l apex -f xml > output.ast.xml` - Save AST to file
     - Examples:

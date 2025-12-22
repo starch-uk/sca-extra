@@ -1,43 +1,47 @@
 <?xml version="1.0" ?>
 <ruleset
-  name="Apex Code Style Rules"
-  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+	name="Apex Code Style Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-  <description>Custom rules for Apex code style and formatting</description>
+	<description>Custom rules for Apex code style and formatting</description>
 
-  <rule
-    name="MapShouldBeInitializedWithValues"
-    language="apex"
-    message="Maps should be initialized with values instead of creating empty maps and calling put() immediately"
-    class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-  >
-    <description>
-      Maps should be initialized with values directly using the map initializer syntax
+	<rule
+		name="MapShouldBeInitializedWithValues"
+		language="apex"
+		message="Maps should be initialized with values instead of creating empty maps and calling put() immediately"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Maps should be initialized with values directly using the map initializer syntax
             instead of creating an empty map and immediately calling put().
             Use: new Map &lt; String, String &gt; { 'key' => 'value' }
             Instead of: new Map &lt; String, String &gt; (); map.put('key', 'value');
-    </description>
-    <priority>3</priority>
-    <properties>
-      <property name="xpath">
-        <value>
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
                     <![CDATA[
-                    //BlockStatement[
-                        VariableDeclarationStatements/VariableDeclaration[
+                    for $stmt in //VariableDeclarationStatements[
+                        VariableDeclaration[
                             contains(@Type, 'Map')
-                            and VariableInitializer/NewMapLiteralExpression[count(MapEntryNode) = 0]
+                            and NewMapInitExpression
+                            and not(NewMapInitExpression/MapEntryNode)
+                            and VariableExpression
                         ]
-                        and following-sibling::*[1][self::ExpressionStatement[
-                            MethodCallExpression[@Image = 'put']
-                            and PrimaryExpression[1]/ReferenceExpression/@Image = 
-                                preceding-sibling::VariableDeclarationStatements/VariableDeclaration/VariableExpression/@Image
-                        ]]
                     ]
+                    return if (
+                        $stmt/following-sibling::*[1][self::ExpressionStatement]
+                        and $stmt/following-sibling::ExpressionStatement[1]/MethodCallExpression[
+                            @MethodName = 'put'
+                            and ReferenceExpression[1]/@Image = $stmt/VariableDeclaration/VariableExpression/@Image
+                        ]
+                    ) then $stmt else ()
                     ]]>
                 </value>
-      </property>
-    </properties>
-  </rule>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

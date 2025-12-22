@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: List with 2+ items on same line
         List<String> items = new List<String>{ 'item1', 'item2' };
 

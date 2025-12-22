@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Violation: String with multiple newlines
         String text = 'line1\nline2\nline3';
 
