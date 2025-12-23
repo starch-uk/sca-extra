@@ -28,8 +28,8 @@ sca-extra/
 │   │   └── rule_request.md             # New rule request template
 │   └── pull_request_template.md       # Pull request template
 ├── docs/                              # Documentation
-│   ├── XPATH31.md                     # XPath 3.1 reference (moved from root)
-│   ├── APEX_PMD_AST.md                # PMD Apex AST reference (moved from root)
+│   ├── XPATH31.md                     # XPath 3.1 reference
+│   ├── APEX_PMD_AST.md                # PMD Apex AST reference
 │   ├── AI_AGENT_RULE_GUIDE.md         # AI Agent-friendly rule configuration guide
 │   └── MIGRATION_GUIDES.md             # Rule migration guides between versions
 ├── rulesets/                          # PMD ruleset XML files (organized by category)
@@ -139,9 +139,9 @@ sca-extra/
    - Configure pnpm scripts for testing, validation, linting, and development
    - Add Prettier for XML formatting of rulesets
 
-2. **Reorganize files**
-   - Move `XPATH31.md` → `docs/XPATH31.md`
-   - Move `APEX_PMD_AST.md` → `docs/APEX_PMD_AST.md`
+2. **Documentation layout**
+   - Ensure `docs/XPATH31.md` contains the XPath 3.1 reference
+   - Ensure `docs/APEX_PMD_AST.md` contains the PMD Apex AST reference
    - Keep `rulesets/` structure as-is (already well-organized)
 
 3. **Create LICENSE.md file**
