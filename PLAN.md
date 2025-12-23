@@ -8,7 +8,7 @@ This project maintains additional PMD rules for testing Salesforce Apex code usi
 
 ## Implementation Status
 
-**Note:** This plan document describes the project as if it hasn't been built yet, but includes all features and capabilities that are currently implemented. The following sections document what will be built, including:
+This plan describes the project scope and components, including:
 
 - **44 PMD rules** across 6 categories (code-style, documentation, method-signatures, modifiers, naming, structure)
 - **Comprehensive test infrastructure** with positive and negative test fixtures for all rules
@@ -16,16 +16,6 @@ This project maintains additional PMD rules for testing Salesforce Apex code usi
 - **CI/CD pipeline** with PMD 7.19.0, Java 21, Node.js 24, pnpm 10.26.1, and Codecov integration
 - **Documentation** including AI Agent-friendly rule guide, XPath 3.1 reference, and PMD AST reference
 - **Development tooling** including AST dump helper, validation scripts, version bumping, and changelog generation
-
-### Changes from Original Plan
-
-- **License:** Project uses MIT License (not BSD 3-Clause as originally planned)
-- **ESLint:** Uses ESLint 9.x with flat config (`eslint.config.mjs`) instead of ESLint 8.x
-- **Dependencies:** Updated to newer versions (Jest 30.x, Husky 9.x, etc.)
-- **CI/CD:** PMD 7.19.0 with Java 21, Node.js 24, pnpm 10.26.1 (not PMD 7.0.0 with Node 18)
-- **Benchmark PR Comments:** Not implemented in CI (benchmarking can be run manually)
-- **Performance Regression Alerts:** Not implemented in CI (can be checked manually with `pnpm run check-regressions`)
-- **Rule Count:** 44 rules implemented (more comprehensive than originally scoped)
 
 ## Project Structure
 
@@ -521,21 +511,27 @@ This ensures:
     "changelog": "node scripts/generate-changelog.js",
     "ci": "pnpm run format:check && pnpm run lint && pnpm test",
     "generate-test-ruleset": "node scripts/generate-test-ruleset.js",
-    "ast-dump": "bash scripts/ast-dump.sh",
-    "prepare": "husky install"
+    "ast-dump": "bash scripts/ast-dump.sh"
   },
   "devDependencies": {
-    "jest": "^29.0.0",
-    "@types/jest": "^29.0.0",
-    "eslint": "^8.0.0",
-    "prettier": "^3.0.0",
-    "@prettier/plugin-xml": "^3.0.0",
-    "husky": "^8.0.0",
-    "lint-staged": "^13.0.0",
-    "xml2js": "^0.6.0",
+    "@eslint/js": "^9.39.2",
+    "@jest/test-sequencer": "^30.2.0",
+    "@prettier/plugin-xml": "^3.2.0",
+    "@types/jest": "^30.0.0",
+    "eslint": "^9.39.2",
+    "globals": "^16.5.0",
+    "husky": "^9.0.11",
+    "jest": "^30.2.0",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.2.5",
+    "xml2js": "^0.6.2",
     "xmldom": "^0.6.0"
   },
-  "dependencies": {}
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "unrs-resolver"
+    ]
+  }
 }
 ```
 
@@ -705,16 +701,11 @@ Each rule follows this structure with configurable properties and versioning:
    - Performance regression detection
 
 4. **Benchmark Reporting**
-   - Generate benchmark reports in `benchmarks/results/`
-   - **Output JSON format** for GitHub Actions integration
-   - Compare current results with baseline
-   - Track performance trends over time
-   - Include in CI/CD for performance regression detection
-   - **Automatically post results as PR comments** via GitHub Actions
-   - **Performance regression alerts**: Automatically detect and alert on performance regressions
-     - Configurable thresholds (e.g., >10% slower triggers alert)
-     - Fail CI or add warnings for significant regressions
-     - Compare against baseline and previous runs
+  - Generate benchmark reports in `benchmarks/results/`
+  - **Output JSON format** that can be consumed by CI workflows
+  - Compare current results with baseline
+  - Track performance trends over time
+  - Benchmarking is run via scripts and is not enforced as part of CI by default
 
 5. **Usage**
    - Run `pnpm run benchmark` to execute all benchmarks
@@ -909,7 +900,7 @@ jobs:
 - [ ] SECURITY.md is complete with security policy
 - [ ] GitHub issue templates are created (bug, feature, rule request)
 - [ ] GitHub pull request template is created
-- [ ] BSD 3-Clause License file is included
+- [ ] MIT License file is included
 - [ ] All rules use XPath only (no custom Java classes)
 - [ ] All rules have clear names and comprehensive descriptions
 - [ ] **All rules are versioned** (semantic versioning)
@@ -940,8 +931,6 @@ The MIT License allows:
 With requirements:
 - Include copyright notice
 - Include license text
-
-**Note:** The original plan mentioned BSD 3-Clause License, but the project uses MIT License instead.
 
 ## README Content Requirements
 
