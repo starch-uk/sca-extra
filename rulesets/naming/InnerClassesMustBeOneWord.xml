@@ -21,17 +21,16 @@
 		<priority>2</priority>
 		<properties>
 			<property name="xpath">
-				<value>
-                    <![CDATA[
-                    //UserClass[
-                        @Nested = true()
-                        and (
-                            contains(@Image, '_')
-                            or matches(@Image, '[a-z].*[A-Z]')
-                        )
-                    ]
-                    ]]>
-                </value>
+				<value
+				><![CDATA[
+					//UserClass[
+						@Nested = true()
+						and (
+							contains(@Image, '_')
+							or matches(@Image, '[a-z].*[A-Z]')
+						)
+					]
+				]]></value>
 			</property>
 		</properties>
 	</rule>

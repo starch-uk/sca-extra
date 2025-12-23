@@ -20,21 +20,13 @@
 		<priority>1</priority>
 		<properties>
 			<property name="xpath">
-				<value>
-                    <![CDATA[
-                    //UserClass[
-                        @Nested = true()
-                        and ModifierNode[@Static = true()]
-                        and BlockStatement
-                    ]/BlockStatement[1]
-                    |
-                    //UserClass[
-                        @Nested = true()
-                        and ModifierNode[@Static = true()]
-                        and not(BlockStatement)
-                    ]
-                    ]]>
-                </value>
+				<value
+				><![CDATA[
+					//UserClass[
+						@Nested = true()
+						and ModifierNode[@Static = true()]
+					]
+				]]></value>
 			</property>
 		</properties>
 	</rule>

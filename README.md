@@ -326,6 +326,30 @@ for (Integer i = 0; i < 10; i++) { }  // ✅ Loop counter allowed
 catch (Exception e) { }  // ✅ Exception variable allowed
 ```
 
+#### NoAbbreviations
+**Priority:** P2 (High)  
+**Description:** Variable names must not use abbreviations. Use complete, descriptive words so that code is clear and self-explanatory.
+
+**Violations:**
+```apex
+Integer acc = 5;      // ❌ Uses abbreviation instead of full word
+String cfg = 'test';  // ❌ Uses abbreviation instead of full word
+Boolean isMgr = true; // ❌ Uses abbreviation instead of full word
+```
+
+**Valid Code:**
+```apex
+Integer accountCount = 5;    // ✅ Descriptive and explicit
+String configuration = 'x';  // ✅ Uses full word
+Boolean isManager = true;    // ✅ Descriptive and readable
+```
+
+**Configurable Properties:**
+- `disallowedAbbreviations` (string): Comma-separated list of **exact variable names** to flag as abbreviations (e.g., `"ctx,idx,msg,cfg"`).  
+- `allowedSuffixes` (string): **Regex-style list of suffixes** (joined with `|`) that are treated as complete words when they appear at the end of a variable name (e.g., `"Id|Api|Url|Html|Dto"`).
+
+These properties are defined in `rulesets/naming/NoAbbreviations.xml` and can be customized in `code-analyzer.yml` under the `NoAbbreviations` rule.
+
 ### Code Style Rules
 
 #### NoMethodCallsInConditionals
