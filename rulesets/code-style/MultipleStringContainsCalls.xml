@@ -22,31 +22,12 @@
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
-				<value>
-                    <![CDATA[
-                    //IfBlockStatement[
-                        count(StandardCondition//MethodCallExpression[@MethodName = 'contains']) >= 2
-                    ]
-                    |
-                    //WhileLoopStatement[
-                        count(StandardCondition//MethodCallExpression[@MethodName = 'contains']) >= 2
-                    ]
-                    |
-                    //StandardCondition[
-                        count(.//MethodCallExpression[@MethodName = 'contains']) >= 2
-                    ]
-                    |
-                    //BinaryExpression[
-                        @Op = 'and'
-                        and count(.//MethodCallExpression[@MethodName = 'contains']) >= 2
-                    ]
-                    |
-                    //BinaryExpression[
-                        @Op = 'or'
-                        and count(.//MethodCallExpression[@MethodName = 'contains']) >= 2
-                    ]
-                    ]]>
-                </value>
+				<value
+				><![CDATA[
+					//StandardCondition[
+						count(.//MethodCallExpression[@MethodName = 'contains']) >= 2
+					]
+				]]></value>
 			</property>
 		</properties>
 	</rule>

@@ -21,19 +21,22 @@
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
-				<value>
-                    <![CDATA[
-                    //Method[
-                        count(Parameter) <= 1
-                        and (
-                            count(Parameter) = 0
-                            and @BeginLine != BlockStatement/@BeginLine
-                            or count(Parameter) = 1
-                            and (@BeginLine != Parameter/@BeginLine or Parameter/@BeginLine != BlockStatement/@BeginLine)
-                        )
-                    ]
-                    ]]>
-                </value>
+				<value
+				><![CDATA[
+					//Method[
+						count(Parameter) <= 1
+						and (
+							(count(Parameter) = 0 and @BeginLine != BlockStatement/@BeginLine)
+							or (
+								count(Parameter) = 1
+								and (
+									@BeginLine != Parameter/@BeginLine
+									or Parameter/@BeginLine != BlockStatement/@BeginLine
+								)
+							)
+						)
+					]
+				]]></value>
 			</property>
 		</properties>
 	</rule>

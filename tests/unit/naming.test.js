@@ -111,7 +111,7 @@ describe('Naming Rules', () => {
 				await withOverriddenNoAbbreviationsRuleset(
 					(xml) =>
 						xml.replace(
-							"then 'ctx,idx,msg,cfg,val,acc,con,opp,param,attr,elem,prev,curr,src,dest,dst,len,pos,mgr,svc,util,calc,init,ref,desc,impl,repo,col,hdr,doc,spec,req,res,resp,fmt,lbl,opt,addr,org'",
+							"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
 							"then 'ctx'"
 						),
 					async (rulesetPath) => {
@@ -156,7 +156,7 @@ public class ExampleFooBarAbbr {
 					await withOverriddenNoAbbreviationsRuleset(
 						(xml) =>
 							xml.replace(
-								"then 'ctx,idx,msg,cfg,val,acc,con,opp,param,attr,elem,prev,curr,src,dest,dst,len,pos,mgr,svc,util,calc,init,ref,desc,impl,repo,col,hdr,doc,spec,req,res,resp,fmt,lbl,opt,addr,org'",
+								"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
 								"then 'foo,bar'"
 							),
 						async (rulesetPath) => {
@@ -201,7 +201,7 @@ public class ExampleFooBarAbbrPositive {
 					await withOverriddenNoAbbreviationsRuleset(
 						(xml) =>
 							xml.replace(
-								"then 'ctx,idx,msg,cfg,val,acc,con,opp,param,attr,elem,prev,curr,src,dest,dst,len,pos,mgr,svc,util,calc,init,ref,desc,impl,repo,col,hdr,doc,spec,req,res,resp,fmt,lbl,opt,addr,org'",
+								"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
 								"then 'foo,bar'"
 							),
 						async (rulesetPath) => {
@@ -246,10 +246,10 @@ public class ExampleOverrideSuffix {
 						(xml) =>
 							xml
 								.replace(
-									"then 'ctx,idx,msg,cfg,val,acc,con,opp,param,attr,elem,prev,curr,src,dest,dst,len,pos,mgr,svc,util,calc,init,ref,desc,impl,repo,col,hdr,doc,spec,req,res,resp,fmt,lbl,opt,addr,org'",
+									"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
 									"then 'fooId'"
 								)
-								.replace("then 'Id|Api|Url|Html'", "then 'Id|Api|Url|Html'"),
+								.replace("then 'Api|Html|Id|Url'", "then 'Api|Html|Id|Url'"),
 						async (rulesetPath) => {
 							const violations = await runPMD(
 								rulesetPath,
@@ -265,10 +265,10 @@ public class ExampleOverrideSuffix {
 						(xml) =>
 							xml
 								.replace(
-									"then 'ctx,idx,msg,cfg,val,acc,con,opp,param,attr,elem,prev,curr,src,dest,dst,len,pos,mgr,svc,util,calc,init,ref,desc,impl,repo,col,hdr,doc,spec,req,res,resp,fmt,lbl,opt,addr,org'",
+									"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
 									"then 'fooId'"
 								)
-								.replace("then 'Id|Api|Url|Html'", "then 'Api|Url|Html'"),
+								.replace("then 'Api|Html|Id|Url'", "then 'Api|Url|Html'"),
 						async (rulesetPath) => {
 							const violations = await runPMD(
 								rulesetPath,
@@ -315,10 +315,10 @@ public class ExampleFooBarSuffixList {
 						(xml) =>
 							xml
 								.replace(
-									"then 'ctx,idx,msg,cfg,val,acc,con,opp,param,attr,elem,prev,curr,src,dest,dst,len,pos,mgr,svc,util,calc,init,ref,desc,impl,repo,col,hdr,doc,spec,req,res,resp,fmt,lbl,opt,addr,org'",
+									"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
 									"then 'foo,bar,baz'"
 								)
-								.replace("then 'Id|Api|Url|Html'", "then 'oo|ar'"),
+								.replace("then 'Api|Html|Id|Url'", "then 'oo|ar'"),
 						async (rulesetPath) => {
 							const violations = await runPMD(
 								rulesetPath,

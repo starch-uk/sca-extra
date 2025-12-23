@@ -26,7 +26,7 @@
 						VariableExpression[
 							some $abbr in tokenize(
 								if ('${disallowedAbbreviations}' = '${disallowedAbbreviations}')
-								then 'ctx,idx,msg,cfg,val,acc,con,opp,param,attr,elem,prev,curr,src,dest,dst,len,pos,mgr,svc,util,calc,init,ref,desc,impl,repo,col,hdr,doc,spec,req,res,resp,fmt,lbl,opt,addr,org'
+								then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'
 								else '${disallowedAbbreviations}',
 								','
 							)
@@ -37,7 +37,7 @@
 									concat(
 										'(',
 										if ('${allowedSuffixes}' = '${allowedSuffixes}')
-										then 'Id|Api|Url|Html'
+										then 'Api|Html|Id|Url'
 										else '${allowedSuffixes}',
 										')$'
 									)
