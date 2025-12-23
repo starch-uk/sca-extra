@@ -178,6 +178,42 @@ rules:
       allowedNames: "i,c,e,x,y,z"
 ```
 
+### NoAbbreviations
+
+**Category:** naming  
+**Priority:** P2  
+**Description:** Variable names must not use abbreviations. Use complete, descriptive words so that code is clear and self-explanatory.
+
+**Violations:**
+```apex
+Integer acc = 5;      // ❌ Uses abbreviation instead of full word
+String cfg = 'test';  // ❌ Uses abbreviation instead of full word
+Boolean isMgr = true; // ❌ Uses abbreviation instead of full word
+```
+
+**Valid Code:**
+```apex
+Integer accountCount = 5;    // ✅ Descriptive and explicit
+String configuration = 'x';  // ✅ Uses full word
+Boolean isManager = true;    // ✅ Descriptive and readable
+```
+
+**Configurable Properties:**
+- `disallowedAbbreviations` (string): Comma-separated list of exact variable names to flag as abbreviations. Default: `"ctx,idx,msg,cfg,val,acc,con,opp,param,attr,elem,prev,curr,src,dest,dst,len,pos,mgr,svc,util,calc,init,ref,desc,impl,repo,col,hdr,doc,spec,req,res,resp,fmt,lbl,opt,addr,org"`.  
+- `allowedSuffixes` (string): Regex-style list of suffixes (joined with `|`) that are treated as complete words when they appear at the end of a variable name. Default: `"Id|Api|Url|Html"`.
+
+**Usage in code-analyzer.yml:**
+```yaml
+rulesets:
+  - rulesets/naming/NoAbbreviations.xml
+
+rules:
+  NoAbbreviations:
+    properties:
+      disallowedAbbreviations: "foo,bar,baz"
+      allowedSuffixes: "Id|Api|Url|Html|Dto"
+```
+
 ## Code Style Rules
 
 ### NoMethodCallsInConditionals

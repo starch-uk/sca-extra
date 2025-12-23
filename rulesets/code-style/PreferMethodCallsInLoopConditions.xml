@@ -22,17 +22,16 @@
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
-				<value>
-                    <![CDATA[
-                    //WhileLoopStatement[
-                        StandardCondition/LiteralExpression[(@Boolean = true() and (@Image = 'true' or @Image = 'false'))]
-                        and BlockStatement//IfBlockStatement[
-                            BlockStatement//BreakStatement
-                            and StandardCondition//MethodCallExpression
-                        ]
-                    ]
-                    ]]>
-                </value>
+				<value
+				><![CDATA[
+					//WhileLoopStatement[
+						StandardCondition/LiteralExpression[@Boolean = true()]
+						and BlockStatement//IfBlockStatement[
+							BlockStatement//BreakStatement
+							and StandardCondition//MethodCallExpression
+						]
+					]
+				]]></value>
 			</property>
 		</properties>
 	</rule>

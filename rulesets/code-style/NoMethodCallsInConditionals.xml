@@ -22,33 +22,19 @@
 		<priority>2</priority>
 		<properties>
 			<property name="xpath">
-				<value>
-                    <![CDATA[
-                    //IfBlockStatement[
-                        StandardCondition//MethodCallExpression
-                    ]
-                    |
-                    //IfElseBlockStatement[
-                        IfBlockStatement/StandardCondition//MethodCallExpression
-                    ]
-                    |
-                    //WhileLoopStatement[
-                        StandardCondition//MethodCallExpression
-                    ]
-                    |
-                    //SwitchStatement[
-                        StandardCondition//MethodCallExpression
-                    ]
-                    |
-                    //ForLoopStatement[
-                        StandardCondition//MethodCallExpression
-                    ]
-                    |
-                    //TernaryExpression[
-                        StandardCondition//MethodCallExpression
-                    ]
-                    ]]>
-                </value>
+				<value
+				><![CDATA[
+					//(IfBlockStatement
+						| WhileLoopStatement
+						| SwitchStatement
+						| ForLoopStatement
+						| TernaryExpression
+					)[StandardCondition//MethodCallExpression]
+					|
+					//IfElseBlockStatement[
+						IfBlockStatement/StandardCondition//MethodCallExpression
+					]
+				]]></value>
 			</property>
 		</properties>
 	</rule>

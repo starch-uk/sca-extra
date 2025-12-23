@@ -17,16 +17,14 @@
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
-				<value>
-                    <![CDATA[
-                    //VariableDeclarationStatements[
-                        VariableDeclaration/VariableExpression
-                        and following-sibling::*[1][self::ReturnStatement]
-                        and following-sibling::ReturnStatement[1]/VariableExpression/@Image = 
-                            VariableDeclaration/VariableExpression/@Image
-                    ]
-                    ]]>
-                </value>
+				<value
+				><![CDATA[
+					//VariableDeclarationStatements[
+						following-sibling::*[1][self::ReturnStatement]
+						and following-sibling::ReturnStatement[1]/VariableExpression/@Image =
+							VariableDeclaration/VariableExpression/@Image
+					]
+				]]></value>
 			</property>
 		</properties>
 	</rule>

@@ -26,23 +26,22 @@
     "ast-dump": "bash scripts/ast-dump.sh"
   },
   "devDependencies": {
-    "jest": "^30.2.0",
+    "@eslint/js": "^9.39.2",
+    "@jest/test-sequencer": "^30.2.0",
+    "@prettier/plugin-xml": "^3.2.0",
     "@types/jest": "^30.0.0",
     "eslint": "^9.39.2",
-    "@eslint/js": "^9.39.2",
     "globals": "^16.5.0",
-    "prettier": "^3.2.5",
-    "@prettier/plugin-xml": "^3.2.0",
     "husky": "^9.0.11",
+    "jest": "^30.2.0",
     "lint-staged": "^16.2.7",
+    "prettier": "^3.2.5",
     "xml2js": "^0.6.2",
     "xmldom": "^0.6.0"
   },
-  "dependencies": {},
   "pnpm": {
     "onlyBuiltDependencies": [
       "unrs-resolver"
     ]
   }
 }
-

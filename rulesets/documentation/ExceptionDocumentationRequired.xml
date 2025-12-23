@@ -22,16 +22,19 @@
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
-				<value>
-                    <![CDATA[
-                    //FormalComment[
-                        starts-with(@Image, '/**')
-                        and not(contains(@Image, '@throws'))
-                        and not(contains(@Image, '@exception'))
-                        and ancestor::Method[1]//ThrowStatement
-                    ]/ancestor::Method[1]
-                    ]]>
-                </value>
+				<value
+				><![CDATA[
+					//Method[
+						FormalComment[
+							starts-with(@Image, '/**')
+							and not(
+								contains(@Image, '@throws')
+								or contains(@Image, '@exception')
+							)
+						]
+						and .//ThrowStatement
+					]
+				]]></value>
 			</property>
 		</properties>
 	</rule>

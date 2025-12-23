@@ -33,10 +33,12 @@ async function runPMD(rulesetPath, apexFilePath) {
 			return parseViolations(error.stdout);
 		}
 		// PMD CLI is required - throw error if not available
-		if (error.code === 'ENOENT' || error.message.includes('pmd')) {
-			throw new Error('PMD CLI not available. Please install PMD to run tests.');
+		if (error.code === 'ENOENT') {
+			throw new Error('PMD CLI not available. Please install PMD 7+ to run tests.');
 		}
-		throw new Error(`Error running PMD: ${error.message}`);
+		// Surface stderr if available to help diagnose XPath / ruleset issues
+		const stderr = error.stderr ? `\nPMD stderr:\n${error.stderr}` : '';
+		throw new Error(`Error running PMD: ${error.message}${stderr}`);
 	}
 }
 

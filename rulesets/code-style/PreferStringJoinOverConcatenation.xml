@@ -29,16 +29,15 @@
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
-				<value>
-                    <![CDATA[
-                    //BinaryExpression[
-                        @Op = '+'
-                        and BinaryExpression[@Op = '+']
-                        and count(.//LiteralExpression[@String = true()]) >= 3
-                        and not(ancestor::MethodCallExpression[@MethodName = 'join'])
-                    ]
-                    ]]>
-                </value>
+				<value
+				><![CDATA[
+					//BinaryExpression[
+						@Op = '+'
+						and BinaryExpression[@Op = '+']
+						and count(.//LiteralExpression[@String = true()]) >= 3
+						and not(ancestor::MethodCallExpression[@MethodName = 'join'])
+					]
+				]]></value>
 			</property>
 		</properties>
 	</rule>
