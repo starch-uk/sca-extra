@@ -10,6 +10,32 @@ Additional PMD rules for testing Salesforce Apex code using Salesforce Code Anal
 
 This project provides a comprehensive set of PMD rules for Salesforce Apex code analysis. All rules are implemented using XPath 3.1 expressions only (no custom Java classes), making them easy to understand, modify, and maintain.
 
+## Using These Rules in Your Project
+
+- **Where the rulesets live**
+  - All rules are defined as XML rulesets under the `rulesets/` directory, grouped by category (see **Rule Categories** below for an overview).
+  - You can copy the entire `rulesets/` folder into your Salesforce project, or just the specific category folders you want to enable.
+
+- **Add the rulesets to `code-analyzer.yml`**
+  - Create or update a `code-analyzer.yml` file in the root of your Salesforce project.
+  - Reference the ruleset XML files you want to enable under the top-level `rulesets:` key, using paths relative to your project root (for full examples, see **Installation** and **Usage → Enabling Rules in code-analyzer.yml** below).
+
+- **Run Salesforce Code Analyzer from the command line**
+  - Install the Salesforce Code Analyzer plugin (once per environment):
+    ```bash
+    sf plugins install code-analyzer
+    ```
+  - From your project root (where `code-analyzer.yml` lives), run:
+    ```bash
+    sf code-analyzer run
+    ```
+  - The CLI will use your `code-analyzer.yml` configuration and the custom rulesets from this repository.
+
+- **Use the VS Code Code Analyzer extension**
+  - Install the **Salesforce Code Analyzer** extension in VS Code (see the official [VS Code extension documentation](https://developer.salesforce.com/docs/platform/salesforce-code-analyzer/guide/analyze-vscode.html) for details).
+  - Open your Salesforce project in VS Code with `code-analyzer.yml` and the `rulesets/` folder present.
+  - The extension will read your `code-analyzer.yml` configuration and surface issues directly in the editor and Problems panel.
+
 ## What Makes a Good Rule vs. What Prettier Handles
 
 **Important:** PMD rules should focus on **code quality, logic, and best practices**, not formatting. Formatting concerns should be handled by Prettier or similar formatters.
