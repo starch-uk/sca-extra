@@ -212,4 +212,5 @@ engines:
 - **[Regex Engine Reference](REGEX.md)** - Regex custom rule creation
 - **[XPath 3.1 Reference](XPATH31.md)** - XPath syntax for PMD rules
 - **[PMD Apex AST Reference](APEX_PMD_AST.md)** - AST structure for PMD rules
+- **[Suppressing Warnings](SUPPRESS_WARNINGS.md)** - Suppressing PMD rule violations using annotations, comments, and rule properties
 

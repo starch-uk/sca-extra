@@ -557,6 +557,7 @@ For security vulnerabilities, please see [SECURITY.md](SECURITY.md) for reportin
 - [PMD Apex AST Reference](docs/APEX_PMD_AST.md) - PMD Apex AST node types and patterns
 - [AI Agent Rule Guide](docs/AI_AGENT_RULE_GUIDE.md) - Machine-readable rule configuration guide for AI coding assistants
 - [Regex Engine Reference](docs/REGEX.md) - Regex engine configuration and custom rule creation
+- [Suppressing Warnings](docs/SUPPRESS_WARNINGS.md) - How to suppress PMD rule violations using annotations, comments, and rule properties
 - [Migration Guides](docs/MIGRATION_GUIDES.md) - Rule migration and versioning information
 
 ## AI Agent Configuration
@@ -572,6 +573,7 @@ When setting up AI agent rules, you should reference these documentation files:
 - **[XPath 3.1 Reference](docs/XPATH31.md)** - XPath 3.1 syntax and functions for writing rule queries
 - **[PMD Apex AST Reference](docs/APEX_PMD_AST.md)** - PMD Apex AST node types and patterns
 - **[Regex Engine Reference](docs/REGEX.md)** - Regex engine configuration and custom rule creation
+- **[Suppressing Warnings](docs/SUPPRESS_WARNINGS.md)** - How to suppress PMD rule violations using annotations, comments, and rule properties
 
 ### Setting Up in Cursor
 
@@ -597,6 +599,7 @@ To configure Cursor's Agent to use this guide, create a Cursor Project Rule:
    - Reference @docs/AI_AGENT_RULE_GUIDE.md for rule information and examples
    - Reference @docs/XPATH31.md for XPath 3.1 syntax when writing rule queries
    - Reference @docs/APEX_PMD_AST.md for PMD Apex AST node types and patterns
+   - Reference @docs/SUPPRESS_WARNINGS.md for suppressing rule violations when necessary
    - Use the structured format to provide accurate rule information
    - Include code examples from the guides
    - When configuring code-analyzer.yml, use property examples from the guides
