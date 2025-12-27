@@ -554,6 +554,7 @@ For security vulnerabilities, please see [SECURITY.md](SECURITY.md) for reportin
 
 ## Documentation
 
+- [PMD Quick Reference](docs/PMD.md) - Condensed guide to PMD essentials (rulesets, CLI, CPD, configuration)
 - [Code Analyzer Configuration](docs/CODE_ANALYZER_CONFIG.md) - Quick reference for configuring `code-analyzer.yml` with all engines and properties
 - [XPath 3.1 Reference](docs/XPATH31.md) - XPath 3.1 syntax and functions
 - [PMD Apex AST Reference](docs/APEX_PMD_AST.md) - PMD Apex AST node types and patterns
@@ -572,6 +573,7 @@ The [AI Agent Rule Guide](docs/AI_AGENT_RULE_GUIDE.md) provides a machine-readab
 
 When setting up AI agent rules, you should reference these documentation files:
 
+- **[PMD Quick Reference](docs/PMD.md)** - PMD essentials (rulesets, CLI, CPD, configuration)
 - **[Code Analyzer Configuration](docs/CODE_ANALYZER_CONFIG.md)** - Complete `code-analyzer.yml` configuration reference
 - **[AI Agent Rule Guide](docs/AI_AGENT_RULE_GUIDE.md)** - Rule configuration reference with examples
 - **[XPath 3.1 Reference](docs/XPATH31.md)** - XPath 3.1 syntax and functions for writing rule queries

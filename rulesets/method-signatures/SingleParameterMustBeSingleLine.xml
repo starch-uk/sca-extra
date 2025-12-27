@@ -10,13 +10,13 @@
 	<rule
 		name="SingleParameterMustBeSingleLine"
 		language="apex"
-		message="Methods with 0-1 parameters should be formatted on a single line when variable or method names are too long"
+		message="Methods with 0-1 parameters should be formatted on a single line. Unnecessary multi-line formatting is not allowed"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Methods with 0-1 parameters should be formatted on a single line when variable or method
-			names are too long.
-            This prevents excessive line wrapping due to long identifiers.
+			Methods with 0-1 parameters should be formatted on a single line. Unnecessary multi-line
+			formatting for single parameters is not allowed as it reduces readability and wastes vertical
+			space. This prevents excessive line wrapping due to long identifiers.
 		</description>
 		<priority>3</priority>
 		<properties>

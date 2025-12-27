@@ -10,13 +10,15 @@
 	<rule
 		name="NoCustomParameterObjects"
 		language="apex"
-		message="Never create custom classes, inner classes, or wrapper objects solely for passing parameters"
+		message="Custom classes, inner classes, or wrapper objects should not be created solely for passing parameters. Refactor methods to stay within 3 parameters instead"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Custom parameter objects should not be created. Refactor methods to stay within 3
-			parameters
-      instead.
+			Custom parameter objects (classes or inner classes that only have attributes and
+			constructors
+			with no instance methods) should not be created solely for passing parameters. Instead,
+			refactor methods to stay within 3 parameters, which improves readability and follows best
+			practices for method design.
 		</description>
 		<priority>3</priority>
 		<properties>

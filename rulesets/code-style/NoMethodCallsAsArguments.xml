@@ -10,13 +10,13 @@
 	<rule
 		name="NoMethodCallsAsArguments"
 		language="apex"
-		message="Never use method calls directly as arguments. Extract method calls to variables first"
+		message="Method calls should not be used directly as arguments. Extract the method call result to a variable first for better readability and debugging"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			Method calls should not be used directly as arguments to constructors, method calls, or
-      expressions.
-            Extract method calls to variables first for better readability and debugging.
+			expressions. Extract method calls to variables first for better readability, debugging,
+			and to avoid potential side effects from multiple evaluations.
 		</description>
 		<priority>2</priority>
 		<properties>

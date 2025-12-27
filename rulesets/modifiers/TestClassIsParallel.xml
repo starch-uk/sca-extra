@@ -10,14 +10,13 @@
 	<rule
 		name="TestClassIsParallel"
 		language="apex"
-		message="Test classes must have @IsTest(IsParallel=true) annotation"
+		message="Test classes must have @IsTest(IsParallel=true) annotation to enable parallel test execution"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			Test classes must include IsParallel=true in their @IsTest annotation to enable parallel
-			test
-      execution.
-            This improves test performance by allowing tests to run in parallel.
+			test execution. This improves test performance by allowing tests to run in parallel, reducing
+			overall test execution time and improving developer productivity.
 		</description>
 		<priority>3</priority>
 		<properties>

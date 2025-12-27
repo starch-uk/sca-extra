@@ -10,14 +10,15 @@
 	<rule
 		name="ExceptionDocumentationRequired"
 		language="apex"
-		message="Methods that throw exceptions must document them with @throws tag in ApexDoc"
+		message="Methods that throw exceptions must document them with @throws tags in their ApexDoc comments"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			Methods that contain throw statements must document the exceptions they throw
-            using @throws tags in their ApexDoc comments.
-            This rule checks methods that have ApexDoc comments but are missing the required
-            @throws documentation for exceptions they throw.
+			using @throws
+			tags in their ApexDoc comments. This rule checks methods that have ApexDoc comments but
+			are missing the required @throws documentation for exceptions they throw. Proper exception
+			documentation helps developers understand what exceptions a method can throw and when.
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -10,11 +10,15 @@
 	<rule
 		name="StaticMethodsMustBeStatic"
 		language="apex"
-		message="Any method that CAN be static without adding logic MUST be static"
+		message="Methods that do not use instance state must be declared as static. Any method that can be static without adding logic must be static"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Methods that do not use instance state should be declared as static.
+			Methods that do not use instance state should be declared as static. Any method that can
+			be
+			static without adding logic must be static. This makes the method's independence from instance
+			state explicit, improves performance by avoiding unnecessary instance creation, and follows
+			best practices for method design.
 		</description>
 		<priority>3</priority>
 		<properties>

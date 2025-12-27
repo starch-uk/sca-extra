@@ -10,15 +10,17 @@
 	<rule
 		name="AvoidOneLinerMethods"
 		language="apex"
-		message="Methods that contain only a single statement should be inlined at their call sites"
+		message="Method contains only a single statement and should be inlined at its call site to reduce unnecessary indirection"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Methods that contain only a single statement should be inlined at their call sites.
-            This rule detects methods with exactly one statement in their body.
-            Exceptions: Methods that are part of interfaces, abstract methods, override
-			methods, overloaded methods, switch statements with more than one outcome, or methods
-			that update a class attribute are excluded.
+			Methods that contain only a single statement add unnecessary indirection and should be
+			inlined
+			at their call sites. This rule detects methods with exactly one statement in their body.
+			
+			Exceptions: Methods that are part of interfaces, abstract methods, override methods,
+			overloaded methods, switch statements with more than one outcome, or methods that update
+			a class attribute are excluded from this rule.
 		</description>
 		<priority>4</priority>
 		<properties>

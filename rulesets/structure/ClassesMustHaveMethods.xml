@@ -10,14 +10,15 @@
 	<rule
 		name="ClassesMustHaveMethods"
 		language="apex"
-		message="Classes, including inner classes, must have instance methods. Purely parameter classes with only attributes and constructors are not allowed"
+		message="Classes, including inner classes, must have instance methods. Classes with only attributes and constructors are not allowed"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			Classes and inner classes that only contain attributes and constructors without any
 			instance
-      methods are not allowed.
-            Add instance methods to provide behavior, or refactor to use a different approach.
+			methods are not allowed. Classes should provide behavior, not just data. Add instance methods
+			to provide behavior, or refactor to use a different approach such as using Map or a different
+			data structure.
 		</description>
 		<priority>3</priority>
 		<properties>

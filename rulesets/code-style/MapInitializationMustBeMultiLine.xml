@@ -10,13 +10,13 @@
 	<rule
 		name="MapInitializationMustBeMultiLine"
 		language="apex"
-		message="Map initializations with 2 or more entries must be formatted with each entry on its own line"
+		message="Map initialization with 2 or more entries must be formatted with each entry on its own line for better readability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			Map initializations with 2 or more entries must be formatted with each entry on its own
-			line.
-            Single entry maps can be on a single line.
+			line
+			to improve readability and maintainability. Single-entry maps may remain on a single line.
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -10,11 +10,14 @@
 	<rule
 		name="RegexPatternsMustBeStaticFinal"
 		language="apex"
-		message="All regex patterns MUST be static final constants"
+		message="Regular expression patterns must be declared as static final constants instead of inline for better performance and maintainability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Regular expression patterns should be declared as static final constants, not inline.
+			Regular expression patterns should be declared as static final constants, not
+			inline. This
+			improves performance by avoiding repeated pattern compilation, makes patterns reusable,
+			and improves maintainability by centralizing pattern definitions.
 		</description>
 		<priority>2</priority>
 		<properties>

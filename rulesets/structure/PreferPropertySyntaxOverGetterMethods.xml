@@ -10,11 +10,13 @@
 	<rule
 		name="PreferPropertySyntaxOverGetterMethods"
 		language="apex"
-		message="Never use private fields with public getter methods. Use property syntax instead"
+		message="Private fields with public getter methods should be replaced with property syntax for better code clarity and idiomatic Apex"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Private fields with public getter methods should be replaced with property syntax.
+			Private fields with public getter methods should be replaced with property syntax. Apex
+			provides property syntax that is more concise and idiomatic than Java-style getter methods.
+			Use property syntax instead of private fields with public getter methods.
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -113,4 +113,5 @@ sf scanner:run
 ## Related Documentation
 
 - **[Code Analyzer Configuration](CODE_ANALYZER_CONFIG.md)** - Complete `code-analyzer.yml` configuration reference including Regex engine settings
+- **[PMD Quick Reference](PMD.md)** - PMD essentials for AST-based code analysis (alternative to Regex for complex patterns)
 

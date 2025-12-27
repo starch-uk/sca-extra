@@ -175,6 +175,8 @@ In PMD AST, ApexDoc comments appear as **FormalComment** nodes:
 
 ## Related Documentation
 
+- **[PMD Quick Reference](PMD.md)** - PMD essentials (PMD typically ignores comments; use Regex for ApexDoc validation)
+- **[PMD Apex AST Reference](APEX_PMD_AST.md)** - PMD AST structure (ApexDoc appears as FormalComment nodes)
 - **[Salesforce ApexDoc Introduction](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_intro.htm)** - Official ApexDoc overview
 - **[ApexDoc Format](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_format.htm)** - Formatting guidelines
 - **[ApexDoc Constructs](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_constructs.htm)** - Available tags and constructs

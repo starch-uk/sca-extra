@@ -34,6 +34,8 @@ rules:
 
 ### PMD Engine
 
+For PMD rulesets, CLI usage, and configuration details, see [PMD Quick Reference](PMD.md).
+
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `disable_engine` | boolean | false | Disable PMD engine |
@@ -96,6 +98,8 @@ file_extensions:
 ```
 
 ### CPD Engine
+
+For CPD (Copy-Paste Detector) CLI usage, report formats, and suppression details, see [PMD Quick Reference](PMD.md#copy-paste-detector-cpd).
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
@@ -208,6 +212,7 @@ engines:
 
 ## Related Documentation
 
+- **[PMD Quick Reference](PMD.md)** - PMD essentials (rulesets, CLI, CPD, configuration)
 - **[AI Agent Rule Guide](AI_AGENT_RULE_GUIDE.md)** - PMD rule configuration examples
 - **[Regex Engine Reference](REGEX.md)** - Regex custom rule creation
 - **[XPath 3.1 Reference](XPATH31.md)** - XPath syntax for PMD rules

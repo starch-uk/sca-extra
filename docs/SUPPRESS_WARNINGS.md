@@ -125,6 +125,7 @@ rules:
 
 ## Related Documentation
 
+- **[PMD Quick Reference](PMD.md)** - PMD essentials (includes CPD suppression via `CPD-OFF`/`CPD-ON`)
 - **[AI Agent Rule Guide](AI_AGENT_RULE_GUIDE.md)** - Rule configuration and examples
 - **[XPath 3.1 Reference](XPATH31.md)** - XPath syntax for `violationSuppressXPath`
 - **[PMD Apex AST Reference](APEX_PMD_AST.md)** - Understanding violation node types
