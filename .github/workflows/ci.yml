@@ -123,16 +123,16 @@ jobs:
           chmod +x "${PMD_BIN}"
           
           echo "Verifying PMD installation..."
-          pmd --version
+          "${PMD_BIN}" --version
           
           echo "Verifying PMD check command..."
-          if ! pmd check --help > /dev/null 2>&1; then
+          if ! "${PMD_BIN}" check --help > /dev/null 2>&1; then
             echo "Error: PMD check command failed"
             exit 1
           fi
           
           echo "Verifying PMD with Apex language support..."
-          if ! pmd check --help | grep -q "apex"; then
+          if ! "${PMD_BIN}" check --help | grep -q "apex"; then
             echo "Warning: Apex language may not be available"
           fi
           
