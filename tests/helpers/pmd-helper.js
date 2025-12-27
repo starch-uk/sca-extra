@@ -124,10 +124,85 @@ function readFixture(category, ruleName, type) {
 	return fs.readFileSync(fixturePath, 'utf-8');
 }
 
+/**
+ * Run a Regex rule against an Apex file
+ * @param {string} regexPattern - Regular expression pattern (with flags)
+ * @param {string} apexFilePath - Path to the Apex file to test
+ * @param {string} ruleName - Name of the rule
+ * @param {string} violationMessage - Message to show for violations
+ * @returns {Promise<Array>} Array of violations
+ */
+async function runRegexRule(regexPattern, apexFilePath, ruleName, violationMessage) {
+	const fileContent = fs.readFileSync(apexFilePath, 'utf-8');
+	const violations = [];
+
+	// Parse regex pattern (format: /pattern/flags)
+	// Use [\s\S] instead of . to match newlines, and make it non-greedy
+	const regexMatch = regexPattern.match(/^\/([\s\S]+?)\/([gimsuvy]*)$/);
+	if (!regexMatch) {
+		throw new Error(
+			`Invalid regex pattern format: ${regexPattern}. Expected format: /pattern/flags`
+		);
+	}
+
+	const pattern = regexMatch[1];
+	const flags = regexMatch[2] || '';
+	const regex = new RegExp(pattern, flags);
+
+	// Find all matches
+	let match;
+	let lastIndex = 0;
+
+	// Reset regex lastIndex for global matches
+	if (flags.includes('g')) {
+		regex.lastIndex = 0;
+	}
+
+	while ((match = regex.exec(fileContent)) !== null) {
+		// Calculate line number from match index
+		const matchIndex = match.index;
+		const textBeforeMatch = fileContent.substring(0, matchIndex);
+		const lineNumber = textBeforeMatch.split('\n').length;
+		const lastNewlineIndex = textBeforeMatch.lastIndexOf('\n');
+		const column = lastNewlineIndex === -1 ? matchIndex + 1 : matchIndex - lastNewlineIndex;
+
+		// Avoid infinite loop with zero-length matches
+		if (match[0].length === 0) {
+			if (regex.lastIndex === lastIndex) {
+				regex.lastIndex++;
+			}
+			lastIndex = regex.lastIndex;
+			continue;
+		}
+
+		violations.push({
+			file: apexFilePath,
+			rule: ruleName,
+			message: violationMessage || `Match found for rule ${ruleName}`,
+			line: lineNumber,
+			column: column,
+		});
+
+		// If not global, break after first match
+		if (!flags.includes('g')) {
+			break;
+		}
+
+		// Avoid infinite loop
+		if (regex.lastIndex === lastIndex) {
+			regex.lastIndex++;
+		}
+		lastIndex = regex.lastIndex;
+	}
+
+	return violations;
+}
+
 module.exports = {
 	runPMD,
 	parseViolations,
 	assertViolation,
 	assertNoViolations,
 	readFixture,
+	runRegexRule,
 };

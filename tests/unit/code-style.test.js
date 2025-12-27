@@ -143,9 +143,12 @@ describe('Code Style Rules', () => {
 
 	describe('NoConsecutiveBlankLines', () => {
 		it('should detect consecutive blank lines', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/NoConsecutiveBlankLines.xml',
-				'tests/fixtures/negative/code-style/NoConsecutiveBlankLines.cls'
+			const { runRegexRule } = require('../helpers/pmd-helper');
+			const violations = await runRegexRule(
+				'/\\n\\s*\\n\\s*\\n/g',
+				'tests/fixtures/negative/code-style/NoConsecutiveBlankLines.cls',
+				'NoConsecutiveBlankLines',
+				'Two or more consecutive blank lines are not allowed. Use at most one blank line between statements.'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'NoConsecutiveBlankLines').length
@@ -153,9 +156,12 @@ describe('Code Style Rules', () => {
 		});
 
 		it('should not flag single blank lines', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/NoConsecutiveBlankLines.xml',
-				'tests/fixtures/positive/code-style/NoConsecutiveBlankLines.cls'
+			const { runRegexRule } = require('../helpers/pmd-helper');
+			const violations = await runRegexRule(
+				'/\\n\\s*\\n\\s*\\n/g',
+				'tests/fixtures/positive/code-style/NoConsecutiveBlankLines.cls',
+				'NoConsecutiveBlankLines',
+				'Two or more consecutive blank lines are not allowed. Use at most one blank line between statements.'
 			);
 			assertNoViolations(violations, 'NoConsecutiveBlankLines');
 		});

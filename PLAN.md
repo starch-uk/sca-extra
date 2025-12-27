@@ -1,8 +1,8 @@
-# Project Plan: Salesforce Apex PMD Rules
+# Project Plan: Salesforce Apex PMD and Regex Rules
 
 ## Overview
 
-This project maintains additional PMD rules for testing Salesforce Apex code using Salesforce Code Analyzer. The rules are implemented as XPath 3.1 expressions that operate on the PMD Apex AST.
+This project maintains additional PMD and Regex rules for testing Salesforce Apex code using Salesforce Code Analyzer. Most rules are implemented as XPath 3.1 expressions that operate on the PMD Apex AST. Some rules use the Regex engine for pattern-based matching.
 
 **Repository:** [https://github.com/starch-uk/sca-extra](https://github.com/starch-uk/sca-extra)
 
@@ -10,11 +10,11 @@ This project maintains additional PMD rules for testing Salesforce Apex code usi
 
 This plan describes the project scope and components, including:
 
-- **44 PMD rules** across 6 categories (code-style, documentation, method-signatures, modifiers, naming, structure)
-- **Comprehensive test infrastructure** with positive and negative test fixtures for all rules
+- **43 PMD rules and 1 Regex rule** across 6 categories (code-style, documentation, method-signatures, modifiers, naming, structure)
+- **Comprehensive test infrastructure** with positive and negative test fixtures for all rules, including Regex rule testing helpers
 - **Benchmarking system** with stress-test fixtures (580+ violations across 7 fixture files)
 - **CI/CD pipeline** with PMD 7.19.0, Java 21, Node.js 24, pnpm 10.26.1, and Codecov integration
-- **Documentation** including AI Agent-friendly rule guide, XPath 3.1 reference, and PMD AST reference
+- **Documentation** including AI Agent-friendly rule guide, XPath 3.1 reference, PMD AST reference, and Regex engine reference
 - **Development tooling** including AST dump helper, validation scripts, version bumping, and changelog generation
 
 ## Project Structure
@@ -41,6 +41,8 @@ sca-extra/
 ├── docs/                              # Documentation
 │   ├── XPATH31.md                     # XPath 3.1 reference
 │   ├── APEX_PMD_AST.md                # PMD Apex AST reference
+│   ├── REGEX.md                       # Regex engine reference and custom rule creation guide
+│   ├── CODE_ANALYZER_CONFIG.md        # Code Analyzer configuration reference
 │   ├── AI_AGENT_RULE_GUIDE.md         # AI Agent-friendly rule configuration guide
 │   └── MIGRATION_GUIDES.md             # Rule migration guides between versions
 ├── rulesets/                          # PMD ruleset XML files (organized by category)
@@ -50,7 +52,7 @@ sca-extra/
 │   ├── modifiers/                     # Modifier rules
 │   ├── naming/                        # Naming convention rules
 │   └── structure/                     # Code structure rules
-├── code-analyzer.yml                  # Prevents Salesforce Code Analyzer VS Code extension from running any rules
+├── code-analyzer.yml                  # Contains Regex rules configuration (rulesets disabled for repository template)
 ├── jest.config.js                     # Jest test configuration
 ├── tests/                             # Test files
 │   ├── fixtures/                      # Test Apex code files
@@ -69,7 +71,7 @@ sca-extra/
 │   │       ├── naming/                # Negative test fixtures for naming rules
 │   │       └── structure/             # Negative test fixtures for structure rules
 │   ├── helpers/                       # Test helper utilities
-│   │   └── pmd-helper.js              # PMD test helper functions
+│   │   └── pmd-helper.js              # PMD and Regex test helper functions (runPMD, runRegexRule)
 │   ├── rulesets/                      # Test-specific rulesets
 │   │   └── test-ruleset.xml           # Combined ruleset for testing (generated)
 │   └── unit/                          # Unit test files
@@ -357,7 +359,7 @@ sca-extra/
    - MapInitializationMustBeMultiLine
    - MapShouldBeInitializedWithValues
    - MultipleStringContainsCalls
-   - NoConsecutiveBlankLines
+   - NoConsecutiveBlankLines (Regex rule)
    - NoMethodCallsAsArguments
    - NoMethodCallsInConditionals
    - NoMethodChaining
@@ -447,6 +449,13 @@ sca-extra/
      - Structured format for all rules
      - Instructions for using in Cursor and other AI coding environments
      - Machine-readable format for AI agents
+   - **Regex engine reference** (`docs/REGEX.md`)
+     - Regex engine configuration guide
+     - Custom Regex rule creation instructions
+     - Pattern examples and best practices
+   - **Code Analyzer configuration reference** (`docs/CODE_ANALYZER_CONFIG.md`)
+     - Complete `code-analyzer.yml` configuration reference
+     - All engine settings and properties
    - **Rule migration guides** (`docs/MIGRATION_GUIDES.md`)
      - Guide for migrating between rule versions
      - Breaking changes documentation
@@ -763,8 +772,8 @@ Each rule follows this structure with configurable properties and versioning:
 3. **P3** (Medium): Remaining code-style, documentation, method-signatures, naming, and structure rules
 4. **P4** (Low): Complex rules requiring thorough testing (e.g., AvoidOneLinerMethods)
 
-**Total Implementation:** 44 rules across 6 categories:
-- **Code Style:** 18 rules
+**Total Implementation:** 44 rules across 6 categories (43 PMD rules + 1 Regex rule):
+- **Code Style:** 18 rules (17 PMD + 1 Regex: NoConsecutiveBlankLines)
 - **Structure:** 13 rules
 - **Modifiers:** 5 rules
 - **Naming:** 4 rules
@@ -1057,7 +1066,7 @@ Integer x=5;  // Prettier formats to:
 Integer x = 5;  // Proper spacing
 ```
 
-**Note:** Some rules may appear to overlap with formatting (e.g., `NoConsecutiveBlankLines`), but if they're about code readability and structure rather than pure formatting, they can be appropriate PMD rules. The key distinction is: **Does this affect code quality and understanding, or just appearance?**
+**Note:** Some rules may appear to overlap with formatting (e.g., `NoConsecutiveBlankLines`), but if they're about code readability and structure rather than pure formatting, they can be appropriate rules. `NoConsecutiveBlankLines` is implemented as a Regex rule for efficient pattern matching. The key distinction is: **Does this affect code quality and understanding, or just appearance?**
 
 ### Adding Rules to a Salesforce Project
 
@@ -1077,8 +1086,9 @@ Integer x = 5;  // Proper spacing
 
 ### Enabling Rules in code-analyzer.yml
 
-The `code-analyzer.yml` file (Salesforce Code Analyzer configuration) should reference the rulesets:
+The `code-analyzer.yml` file (Salesforce Code Analyzer configuration) should reference the PMD rulesets and include Regex rules:
 
+**PMD Rulesets:**
 ```yaml
 rulesets:
   - rulesets/structure/InnerClassesCannotBeStatic.xml
@@ -1087,6 +1097,9 @@ rulesets:
   - rulesets/naming/NoSingleLetterVariableNames.xml
   # Add more rulesets as needed
 ```
+
+**Regex Rules:**
+Copy the `engines.regex.custom_rules` section from the repository's `code-analyzer.yml` into your own `code-analyzer.yml`. Do NOT copy the entire repository `code-analyzer.yml` file, as it has `rulesets: []` (disabled) and is only a template for Regex rules.
 
 **Full example `code-analyzer.yml`:**
 ```yaml
@@ -1109,6 +1122,17 @@ rulesets:
   # Code style rules
   - rulesets/code-style/NoMethodCallsInConditionals.xml
   - rulesets/code-style/PreferSafeNavigationOperator.xml
+
+engines:
+  regex:
+    custom_rules:
+      NoConsecutiveBlankLines:
+        regex: /\n\s*\n\s*\n/g
+        file_extensions: [".apex", ".cls", ".trigger"]
+        description: "Prevents two or more consecutive blank lines in Apex code."
+        violation_message: "Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
+        severity: "Moderate"
+        tags: ["CodeStyle", "Recommended"]
 ```
 
 ### Configuring Rule Properties
