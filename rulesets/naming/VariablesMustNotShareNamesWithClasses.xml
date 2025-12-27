@@ -10,10 +10,15 @@
 	<rule
 		name="VariablesMustNotShareNamesWithClasses"
 		language="apex"
-		message="Variables must not share names with classes"
+		message="Variable names must not share names with classes to avoid confusion and improve code clarity"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<description>Variable names should not match class names to avoid confusion.</description>
+		<description>
+			Variable names should not match class names to avoid confusion. When a variable shares a
+			name
+			with a class, it can be unclear whether the identifier refers to the class or an instance,
+			making the code harder to read and understand.
+		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">

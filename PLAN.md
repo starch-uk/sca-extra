@@ -1,20 +1,20 @@
-# Project Plan: Salesforce Apex PMD Rules
+# Project Plan: Salesforce Apex PMD and Regex Rules
 
 ## Overview
 
-This project maintains additional PMD rules for testing Salesforce Apex code using Salesforce Code Analyzer. The rules are implemented as XPath 3.1 expressions that operate on the PMD Apex AST.
+This project will provide additional PMD and Regex rules for testing Salesforce Apex code using Salesforce Code Analyzer. Most rules will be implemented as XPath 3.1 expressions that operate on the PMD Apex AST. Some rules will use the Regex engine for pattern-based matching.
 
 **Repository:** [https://github.com/starch-uk/sca-extra](https://github.com/starch-uk/sca-extra)
 
-## Implementation Status
+## Project Scope
 
-This plan describes the project scope and components, including:
+This plan describes the project scope and components that will be implemented:
 
-- **44 PMD rules** across 6 categories (code-style, documentation, method-signatures, modifiers, naming, structure)
-- **Comprehensive test infrastructure** with positive and negative test fixtures for all rules
-- **Benchmarking system** with stress-test fixtures (580+ violations across 7 fixture files)
+- **42 PMD rules and 2 Regex rules** across 6 categories (code-style, documentation, method-signatures, modifiers, naming, structure)
+- **Comprehensive test infrastructure** with positive and negative test fixtures for all rules, including Regex rule testing helpers
+- **Benchmarking system** with stress-test fixtures targeting 580+ violations across 7 fixture files
 - **CI/CD pipeline** with PMD 7.19.0, Java 21, Node.js 24, pnpm 10.26.1, and Codecov integration
-- **Documentation** including AI Agent-friendly rule guide, XPath 3.1 reference, and PMD AST reference
+- **Documentation** including AI Agent-friendly rule guide, XPath 3.1 reference, PMD AST reference, and Regex engine reference
 - **Development tooling** including AST dump helper, validation scripts, version bumping, and changelog generation
 
 ## Project Structure
@@ -41,6 +41,8 @@ sca-extra/
 ├── docs/                              # Documentation
 │   ├── XPATH31.md                     # XPath 3.1 reference
 │   ├── APEX_PMD_AST.md                # PMD Apex AST reference
+│   ├── REGEX.md                       # Regex engine reference and custom rule creation guide
+│   ├── CODE_ANALYZER_CONFIG.md        # Code Analyzer configuration reference
 │   ├── AI_AGENT_RULE_GUIDE.md         # AI Agent-friendly rule configuration guide
 │   └── MIGRATION_GUIDES.md             # Rule migration guides between versions
 ├── rulesets/                          # PMD ruleset XML files (organized by category)
@@ -50,7 +52,7 @@ sca-extra/
 │   ├── modifiers/                     # Modifier rules
 │   ├── naming/                        # Naming convention rules
 │   └── structure/                     # Code structure rules
-├── code-analyzer.yml                  # Prevents Salesforce Code Analyzer VS Code extension from running any rules
+├── code-analyzer.yml                  # Contains Regex rules configuration (rulesets disabled for repository template)
 ├── jest.config.js                     # Jest test configuration
 ├── tests/                             # Test files
 │   ├── fixtures/                      # Test Apex code files
@@ -69,7 +71,7 @@ sca-extra/
 │   │       ├── naming/                # Negative test fixtures for naming rules
 │   │       └── structure/             # Negative test fixtures for structure rules
 │   ├── helpers/                       # Test helper utilities
-│   │   └── pmd-helper.js              # PMD test helper functions
+│   │   └── pmd-helper.js              # PMD and Regex test helper functions (runPMD, runRegexRule)
 │   ├── rulesets/                      # Test-specific rulesets
 │   │   └── test-ruleset.xml           # Combined ruleset for testing (generated)
 │   └── unit/                          # Unit test files
@@ -155,9 +157,9 @@ sca-extra/
    - Add Prettier for XML formatting of rulesets
 
 2. **Documentation layout**
-   - Ensure `docs/XPATH31.md` contains the XPath 3.1 reference
-   - Ensure `docs/APEX_PMD_AST.md` contains the PMD Apex AST reference
-   - Keep `rulesets/` structure as-is (already well-organized)
+   - Create `docs/XPATH31.md` with the XPath 3.1 reference
+   - Create `docs/APEX_PMD_AST.md` with the PMD Apex AST reference
+   - Organize `rulesets/` structure by category
 
 3. **Create LICENSE.md file**
    - Add MIT License file
@@ -199,7 +201,7 @@ sca-extra/
    - Run on pull requests: lint (Prettier check), ESLint, and unit tests with coverage
    - Fail PR if files are not properly formatted or tests fail
    - Upload coverage to Codecov (requires CODECOV_TOKEN secret)
-   - **Note:** Benchmark PR comments and performance regression alerts are not implemented in CI (benchmarking can be run manually)
+   - **Note:** Benchmark PR comments and performance regression alerts will not be implemented in CI (benchmarking can be run manually)
 
 8. **Create `README.md`**
    - Project overview
@@ -308,7 +310,7 @@ sca-extra/
      - Combine into single ruleset
      - Preserve rule structure and properties
    - Create `pnpm run generate-test-ruleset` script
-   - Or maintain separate test runs per category (current approach)
+   - Or maintain separate test runs per category (planned approach)
 
 5. **Set up benchmarking infrastructure**
    - Create `scripts/benchmark.js` to measure rule performance
@@ -333,7 +335,7 @@ sca-extra/
 
 ### Phase 3: Test Implementation (Priority Order)
 
-**Note:** All 44 rules will be implemented with comprehensive test coverage. The following represents the implementation order, but all rules will eventually have tests.
+**Note:** All 44 rules will be implemented with comprehensive test coverage. The following represents the planned implementation order.
 
 #### P1 Rules (Start Here)
 1. **InnerClassesCannotBeStatic**
@@ -357,7 +359,7 @@ sca-extra/
    - MapInitializationMustBeMultiLine
    - MapShouldBeInitializedWithValues
    - MultipleStringContainsCalls
-   - NoConsecutiveBlankLines
+   - NoConsecutiveBlankLines (Regex rule)
    - NoMethodCallsAsArguments
    - NoMethodCallsInConditionals
    - NoMethodChaining
@@ -369,6 +371,7 @@ sca-extra/
    - PreferStringJoinOverConcatenation
    - PreferStringJoinOverMultipleNewlines
    - PreferStringJoinWithSeparatorOverEmpty
+   - ProhibitSuppressWarnings (Regex rule)
    - SingleArgumentMustBeSingleLine
 
 8. **Documentation Rules** (2 total):
@@ -435,7 +438,7 @@ sca-extra/
    - Validate rule naming consistency
 
 4. **Documentation**
-   - **All rules must be documented in README.md with examples**
+   - **All rules will be documented in README.md with examples**
    - For each rule, include:
      - Rule name and category
      - Clear description of what the rule checks
@@ -447,15 +450,22 @@ sca-extra/
      - Structured format for all rules
      - Instructions for using in Cursor and other AI coding environments
      - Machine-readable format for AI agents
+   - **Regex engine reference** (`docs/REGEX.md`)
+     - Regex engine configuration guide
+     - Custom Regex rule creation instructions
+     - Pattern examples and best practices
+   - **Code Analyzer configuration reference** (`docs/CODE_ANALYZER_CONFIG.md`)
+     - Complete `code-analyzer.yml` configuration reference
+     - All engine settings and properties
    - **Rule migration guides** (`docs/MIGRATION_GUIDES.md`)
      - Guide for migrating between rule versions
      - Breaking changes documentation
      - How to update code when rules change
      - Examples of code changes needed for rule updates
      - Version-specific migration paths
-   - Update README with test coverage
-   - Add troubleshooting guide
-   - Include benchmark results in documentation
+   - README will include test coverage information
+   - Troubleshooting guide will be added
+   - Benchmark results will be included in documentation
 
 ## Pre-commit Hook Configuration
 
@@ -703,7 +713,7 @@ Each rule follows this structure with configurable properties and versioning:
 4. **Benchmark Reporting**
   - Generate benchmark reports in `benchmarks/results/`
   - **Output JSON format** that can be consumed by CI workflows
-  - Compare current results with baseline
+  - Compare results with baseline
   - Track performance trends over time
   - Benchmarking is run via scripts and is not enforced as part of CI by default
 
@@ -734,7 +744,7 @@ Each rule follows this structure with configurable properties and versioning:
    - Run `pnpm test`
 
 3. **Validate**
-   - Pre-commit hook ensures XML formatting (automatic)
+   - Pre-commit hook will ensure XML formatting (automatic)
    - Run `pnpm run format:check` to verify formatting
    - Run `pnpm run lint` to check JavaScript code style
    - Run `pnpm run validate` to check XML schema and rule quality
@@ -747,7 +757,7 @@ Each rule follows this structure with configurable properties and versioning:
    - Include code examples showing violations and valid code
    - Document all configurable properties with examples
    - Ensure rule has clear name and comprehensive description
-   - Update benchmark results if performance changed
+   - Update benchmark results if performance changes
 
 5. **Create Pull Request**
    - GitHub Actions will automatically:
@@ -763,8 +773,8 @@ Each rule follows this structure with configurable properties and versioning:
 3. **P3** (Medium): Remaining code-style, documentation, method-signatures, naming, and structure rules
 4. **P4** (Low): Complex rules requiring thorough testing (e.g., AvoidOneLinerMethods)
 
-**Total Implementation:** 44 rules across 6 categories:
-- **Code Style:** 18 rules
+**Total Planned:** 44 rules across 6 categories (42 PMD rules + 2 Regex rules):
+- **Code Style:** 18 rules (16 PMD + 2 Regex: NoConsecutiveBlankLines, ProhibitSuppressWarnings)
 - **Structure:** 13 rules
 - **Modifiers:** 5 rules
 - **Naming:** 4 rules
@@ -775,7 +785,7 @@ Each rule follows this structure with configurable properties and versioning:
 
 ### Workflow Configuration (`.github/workflows/ci.yml`)
 
-The CI workflow runs on every pull request and ensures:
+The CI workflow will run on every pull request and ensure:
 1. **Code Formatting Check**: Verifies all XML rulesets are formatted with Prettier
 2. **Linting**: Checks JavaScript/TypeScript files with ESLint
 3. **Unit Tests**: Runs all test suites and ensures they pass
@@ -886,9 +896,11 @@ jobs:
 
 ## Success Criteria
 
+The project will be considered complete when the following criteria are met:
+
 - [ ] All P1 rules have comprehensive tests (positive + negative)
 - [ ] Test infrastructure is set up and working
-- [ ] pnpm test runs successfully for all implemented tests
+- [ ] pnpm test runs successfully for all tests
 - [ ] Documentation is complete and accurate
 - [ ] All rulesets validate against PMD schema
 - [ ] All XML rulesets are formatted with Prettier
@@ -898,26 +910,26 @@ jobs:
 - [ ] README provides clear usage instructions
 - [ ] CONTRIBUTING.md is complete with contribution guidelines
 - [ ] SECURITY.md is complete with security policy
-- [ ] GitHub issue templates are created (bug, feature, rule request)
-- [ ] GitHub pull request template is created
+- [ ] GitHub issue templates will be created (bug, feature, rule request)
+- [ ] GitHub pull request template will be created
 - [ ] MIT License file is included
 - [ ] All rules use XPath only (no custom Java classes)
 - [ ] All rules have clear names and comprehensive descriptions
-- [ ] **All rules are versioned** (semantic versioning)
-- [ ] **All rules are documented in README.md with code examples** (violations and valid code)
+- [ ] All rules are versioned (semantic versioning)
+- [ ] All rules are documented in README.md with code examples (violations and valid code)
 - [ ] Configurable properties are exposed for applicable rules
-- [ ] AI Agent-friendly rule guide (`docs/AI_AGENT_RULE_GUIDE.md`) is created
+- [ ] AI Agent-friendly rule guide (`docs/AI_AGENT_RULE_GUIDE.md`) will be created
 - [ ] Benchmarking infrastructure is set up and functional
 - [ ] Baseline benchmark results are established
-- [ ] **Note:** Benchmark PR comments and performance regression alerts in CI are not implemented (benchmarking can be run manually)
-- [ ] Versioning tooling is implemented (automated version bumping, changelog generation)
-- [ ] Rule migration guides are created and documented
-- [ ] All 44 rules are implemented with comprehensive test coverage
+- [ ] Benchmark PR comments and performance regression alerts in CI will not be implemented (benchmarking can be run manually)
+- [ ] Versioning tooling will be implemented (automated version bumping, changelog generation)
+- [ ] Rule migration guides will be created and documented
+- [ ] All 44 rules will be implemented with comprehensive test coverage
 - [ ] Codecov integration is configured for coverage reporting
 
 ## License
 
-This project is licensed under the **MIT License**. See the `LICENSE.md` file for details.
+This project will be licensed under the **MIT License**. The `LICENSE.md` file will contain the full license text.
 
 **Copyright:** 2025 Beech Horn (or appropriate copyright holder)
 
@@ -934,7 +946,7 @@ With requirements:
 
 ## README Content Requirements
 
-The README.md should include comprehensive instructions for using these rules in Salesforce projects:
+The README.md will include comprehensive instructions for using these rules in Salesforce projects:
 
 ### What Makes a Good Rule vs. What Prettier Handles
 
@@ -1057,7 +1069,7 @@ Integer x=5;  // Prettier formats to:
 Integer x = 5;  // Proper spacing
 ```
 
-**Note:** Some rules may appear to overlap with formatting (e.g., `NoConsecutiveBlankLines`), but if they're about code readability and structure rather than pure formatting, they can be appropriate PMD rules. The key distinction is: **Does this affect code quality and understanding, or just appearance?**
+**Note:** Some rules may appear to overlap with formatting (e.g., `NoConsecutiveBlankLines`), but if they're about code readability and structure rather than pure formatting, they can be appropriate rules. `NoConsecutiveBlankLines` will be implemented as a Regex rule for efficient pattern matching. The key distinction is: **Does this affect code quality and understanding, or just appearance?**
 
 ### Adding Rules to a Salesforce Project
 
@@ -1077,8 +1089,9 @@ Integer x = 5;  // Proper spacing
 
 ### Enabling Rules in code-analyzer.yml
 
-The `code-analyzer.yml` file (Salesforce Code Analyzer configuration) should reference the rulesets:
+The `code-analyzer.yml` file (Salesforce Code Analyzer configuration) should reference the PMD rulesets and include Regex rules:
 
+**PMD Rulesets:**
 ```yaml
 rulesets:
   - rulesets/structure/InnerClassesCannotBeStatic.xml
@@ -1087,6 +1100,9 @@ rulesets:
   - rulesets/naming/NoSingleLetterVariableNames.xml
   # Add more rulesets as needed
 ```
+
+**Regex Rules:**
+Copy the `engines.regex.custom_rules` section from the repository's `code-analyzer.yml` into your own `code-analyzer.yml`. Do NOT copy the entire repository `code-analyzer.yml` file, as it has `rulesets: []` (disabled) and is only a template for Regex rules.
 
 **Full example `code-analyzer.yml`:**
 ```yaml
@@ -1109,6 +1125,24 @@ rulesets:
   # Code style rules
   - rulesets/code-style/NoMethodCallsInConditionals.xml
   - rulesets/code-style/PreferSafeNavigationOperator.xml
+
+engines:
+  regex:
+    custom_rules:
+      NoConsecutiveBlankLines:
+        regex: /\n\s*\n\s*\n/g
+        file_extensions: [".apex", ".cls", ".trigger"]
+        description: "Prevents two or more consecutive blank lines in Apex code. Code should have at most one blank line between statements, methods, or other code elements."
+        violation_message: "Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
+        severity: "Moderate"
+        tags: ["CodeStyle", "Recommended"]
+      ProhibitSuppressWarnings:
+        regex: /@SuppressWarnings\([^)]*\)|\/\/\s*NOPMD/gi
+        file_extensions: [".apex", ".cls", ".trigger"]
+        description: "Prohibits the use of @SuppressWarnings annotations and NOPMD comments in Apex code. Suppressions hide code quality issues; prefer fixing the underlying problems or improving rules instead."
+        violation_message: "Suppression of warnings is not allowed. Fix the underlying issue or improve the rule instead of suppressing violations."
+        severity: "High"
+        tags: ["CodeStyle", "Recommended"]
 ```
 
 ### Configuring Rule Properties
@@ -1187,7 +1221,7 @@ rules:
 
 ### Purpose
 
-Create `docs/AI_AGENT_RULE_GUIDE.md` - A concise, structured markdown file designed for AI coding assistants (like Cursor, GitHub Copilot, etc.) to help developers configure and use PMD rules effectively.
+The project will include `docs/AI_AGENT_RULE_GUIDE.md` - A concise, structured markdown file designed for AI coding assistants (like Cursor, GitHub Copilot, etc.) to help developers configure and use PMD rules effectively.
 
 ### Content Structure
 
@@ -1269,7 +1303,7 @@ This guide is designed for AI coding assistants to help developers configure PMD
 
 ## CONTRIBUTING.md Content Requirements
 
-The CONTRIBUTING.md file should include:
+The CONTRIBUTING.md file will include:
 
 ### Welcome
 - Thank contributors for their interest
@@ -1338,7 +1372,7 @@ The CONTRIBUTING.md file should include:
 
 ## SECURITY.md Content Requirements
 
-The SECURITY.md file should include:
+The SECURITY.md file will include:
 
 ### Supported Versions
 - Which versions receive security updates
@@ -1364,7 +1398,7 @@ The SECURITY.md file should include:
 
 ### Bug Report Template (`.github/ISSUE_TEMPLATE/bug_report.md`)
 
-Should include:
+Will include:
 - **Motivation/Problem**: What problem does this bug cause?
 - **Examples**: Code examples showing the bug
 - **Versions**: Code Analyzer version and rule version with instructions on how to find them
@@ -1388,7 +1422,7 @@ Example structure:
 **Rule Version:**
 - Check the rule XML file in `rulesets/{category}/{RuleName}.xml`
 - Look for version information in the rule metadata or description
-- Or check the git commit/tag where the rule was last updated
+- Or check the git commit/tag where the rule version is tracked
 
 **Please provide:**
 - Salesforce Code Analyzer version: [version here]
@@ -1398,7 +1432,7 @@ Example structure:
 
 ### Feature Request Template (`.github/ISSUE_TEMPLATE/feature_request.md`)
 
-Should include:
+Will include:
 - **Motivation**: Why is this feature needed? What problem does it solve?
 - **Examples**: Code examples showing how the feature would be used
 
@@ -1413,7 +1447,7 @@ Example structure:
 
 ### Rule Request Template (`.github/ISSUE_TEMPLATE/rule_request.md`)
 
-Should include:
+Will include:
 - **Motivation**: Why is this rule needed? What code quality issue does it address?
 - **Examples**: 
   - Code examples that SHOULD trigger the rule (violations)
@@ -1453,7 +1487,7 @@ Example structure:
 
 ## Pull Request Template (`.github/pull_request_template.md`)
 
-Should include:
+Will include:
 - **Motivation**: Why is this change needed? What problem does it solve?
 - **Examples**: Code examples demonstrating the change
 - Description of changes
@@ -1490,20 +1524,20 @@ Example structure:
 - [ ] Other (please describe)
 
 ## Testing
-<!-- Describe the tests you added/updated and how to verify the changes -->
+<!-- Describe the tests you added or updated and how to verify the changes -->
 
 - [ ] Added positive test cases
 - [ ] Added negative test cases
-- [ ] All existing tests pass
-- [ ] Test coverage maintained/improved
+- [ ] All tests pass
+- [ ] Test coverage maintained or improved
 
 ## Checklist
 - [ ] Code follows project style guidelines
 - [ ] Self-review completed
 - [ ] Comments added for complex logic
-- [ ] Documentation updated
+- [ ] Documentation updated as needed
 - [ ] No new warnings generated
-- [ ] Tests added/updated
+- [ ] Tests added or updated
 - [ ] All tests pass locally
 - [ ] Pre-commit hooks pass
 ```

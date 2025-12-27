@@ -10,16 +10,17 @@
 	<rule
 		name="PreferStringJoinWithSeparatorOverEmpty"
 		language="apex"
-		message="String.join() with empty separator where all strings except the last end with the same suffix should use the suffix as separator"
+		message="String.join() with an empty separator where all strings except the last end with the same suffix should use that suffix as the separator"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			When using String.join() with an empty string separator and all strings in the list
-            except the last one end with the same non-empty sequence of characters, use the
-            common suffix as the separator instead:
-
-            Instead of: String.join('', new List &lt; String &gt; {'line1\n', 'line2\n', 'last'});
-            Use: String.join('\n', new List &lt; String &gt; {'line1', 'line2', 'last'});
+			except the last one end with the same non-empty sequence of characters, use the common
+			suffix as the separator instead. This makes the intent clearer and removes redundant
+			characters from the strings.
+			
+			Instead of: String.join('', new List &lt; String &gt; {'line1\n', 'line2\n', 'last'});
+			Use: String.join('\n', new List &lt; String &gt; {'line1', 'line2', 'last'});
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -10,12 +10,14 @@
 	<rule
 		name="AvoidTrivialPropertyGetters"
 		language="apex"
-		message="Never create properties with custom getters that only return a backing field value"
+		message="Properties with custom getters that only return a backing field value should use auto-properties or final fields instead"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			Properties with custom getters that only return a field value should use auto-properties
-			or final fields.
+			or
+			final fields instead. Trivial getters add no value and should be replaced with Apex property
+			syntax, which is more concise and idiomatic.
 		</description>
 		<priority>3</priority>
 		<properties>

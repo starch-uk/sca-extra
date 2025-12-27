@@ -10,16 +10,15 @@
 	<rule
 		name="PreferStringJoinOverMultipleNewlines"
 		language="apex"
-		message="Strings with multiple newline characters should be replaced with String.join(strings, '\n')"
+		message="String literals with multiple newline characters should be split into separate strings and joined using String.join() for better readability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			String literals containing more than one newline character ('\n') should be split into
-            separate strings and joined using String.join() for better readability and
-      maintainability.
-
-            Instead of: 'line1\nline2\nline3'
-            Use: String.join(new List &lt; String &gt; {'line1', 'line2', 'line3'}, '\n');
+			separate strings and joined using String.join() for better readability and maintainability.
+			
+			Instead of: 'line1\nline2\nline3'
+			Use: String.join(new List &lt; String &gt; {'line1', 'line2', 'line3'}, '\n');
 		</description>
 		<priority>3</priority>
 		<properties>

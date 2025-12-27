@@ -10,14 +10,15 @@
 	<rule
 		name="NoParameterClasses"
 		language="apex"
-		message="Classes or inner classes that only have attributes and constructors with no instance methods are not allowed"
+		message="Classes or inner classes that only have attributes and constructors with no instance methods are not allowed. Add instance methods or refactor to use a different approach"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			Parameter classes (classes or inner classes that only have attributes and constructors
-			with no
-      instance methods) should not be created. Add instance methods to provide behavior, or refactor
-      to use a different approach.
+			with
+			no instance methods) should not be created. Classes should provide behavior, not just data.
+			Add instance methods to provide behavior, or refactor to use a different approach such as
+			using Map or keeping methods within the 3-parameter limit.
 		</description>
 		<priority>3</priority>
 		<properties>

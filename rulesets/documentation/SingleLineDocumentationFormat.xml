@@ -10,14 +10,15 @@
 	<rule
 		name="SingleLineDocumentationFormat"
 		language="apex"
-		message="ApexDoc comments must be properly formatted: single-line comments need spaces after /** and before */, multi-line comments should be used only when necessary"
+		message="ApexDoc comments must be properly formatted: single-line comments need spaces after /** and before */, multi-line comments should only be used when necessary"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			Single-line ApexDoc comments must be formatted with
 			spaces: /** comment */ not /**comment*/.
-            Multi-line ApexDoc comments should only be used when the content genuinely requires
-			multiple lines.
+			Multi-line ApexDoc comments should only be used when the content genuinely requires multiple
+			lines. This ensures consistent formatting and prevents unnecessary multi-line comments for
+			simple documentation.
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -41,6 +41,8 @@ pnpm run test:watch    # Run tests in watch mode
 pnpm run test:coverage # Run tests with coverage report
 ```
 
+For Jest API reference when writing tests, see [Jest 30.0 Reference](docs/JEST30.md).
+
 ### Running Benchmarks
 
 ```bash
@@ -159,6 +161,7 @@ pnpm run check-regressions  # Check for performance regressions
    - Use test helper functions: `runPMD`, `parseViolations`, `assertViolation`
    - Test both positive and negative cases
    - Test property configurations
+   - See [Jest 30.0 Reference](docs/JEST30.md) for Jest API usage
 
 ### Test Coverage Expectations
 
@@ -174,6 +177,8 @@ pnpm test              # Run all tests
 pnpm run test:watch    # Run tests in watch mode
 pnpm run test:coverage # Check test coverage
 ```
+
+For Jest API reference, see [Jest 30.0 Reference](docs/JEST30.md).
 
 ## Pull Request Process
 

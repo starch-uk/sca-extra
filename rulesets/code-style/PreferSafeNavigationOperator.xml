@@ -10,12 +10,13 @@
 	<rule
 		name="PreferSafeNavigationOperator"
 		language="apex"
-		message="Use safe navigation operator (?.) instead of explicit null checks before property access"
+		message="Use the safe navigation operator (?.) instead of explicit null checks before property access or method calls"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Always prefer the safe navigation operator ?. over null checks before accessing object
-			properties or calling methods.
+			Always prefer the safe navigation operator (?.) over null checks before accessing object
+			properties or calling methods. The safe navigation operator is more concise and clearly
+			expresses the intent of safely accessing members that may be null.
 		</description>
 		<priority>3</priority>
 		<properties>

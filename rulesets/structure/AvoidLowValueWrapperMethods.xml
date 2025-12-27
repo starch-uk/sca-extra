@@ -10,10 +10,15 @@
 	<rule
 		name="AvoidLowValueWrapperMethods"
 		language="apex"
-		message="Never create methods that only wrap a simple type check or trivial operation"
+		message="Methods that only wrap a simple type check or trivial operation should be inlined to reduce unnecessary indirection"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<description>Methods that only wrap simple operations should be inlined.</description>
+		<description>
+			Methods that only wrap simple operations (such as a single instanceof check) should be
+			inlined.
+			These wrapper methods add unnecessary indirection without providing value, making the code harder
+			to understand and maintain.
+		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">

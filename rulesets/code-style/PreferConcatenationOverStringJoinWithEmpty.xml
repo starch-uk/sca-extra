@@ -10,15 +10,16 @@
 	<rule
 		name="PreferConcatenationOverStringJoinWithEmpty"
 		language="apex"
-		message="String.join() with empty separator should use string concatenation instead"
+		message="String.join() with an empty separator should be replaced with string concatenation for better readability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			When using String.join() with an empty string separator, use string concatenation
-			instead:
-
-            Instead of: String.join('', new List &lt; String &gt; {'a', 'b', 'c'});
-            Use: 'a' + 'b' + 'c';
+			instead
+			for better readability and simplicity.
+			
+			Instead of: String.join('', new List &lt; String &gt; {'a', 'b', 'c'});
+			Use: 'a' + 'b' + 'c';
 		</description>
 		<priority>4</priority>
 		<properties>

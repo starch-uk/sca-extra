@@ -2,3 +2,21 @@ name: Salesforce Code Analyzer Configuration
 version: 1.0.0
 
 rulesets: []
+
+engines:
+  regex:
+    custom_rules:
+      NoConsecutiveBlankLines:
+        regex: /\n\s*\n\s*\n/g
+        file_extensions: [".apex", ".cls", ".trigger"]
+        description: "Prevents two or more consecutive blank lines in Apex code. Code should have at most one blank line between statements, methods, or other code elements."
+        violation_message: "Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
+        severity: "Moderate"
+        tags: ["CodeStyle", "Recommended"]
+      ProhibitSuppressWarnings:
+        regex: /@SuppressWarnings\([^)]*\)|\/\/\s*NOPMD/gi
+        file_extensions: [".apex", ".cls", ".trigger"]
+        description: "Prohibits the use of @SuppressWarnings annotations and NOPMD comments in Apex code. Suppressions hide code quality issues; prefer fixing the underlying problems or improving rules instead."
+        violation_message: "Suppression of warnings is not allowed. Fix the underlying issue or improve the rule instead of suppressing violations."
+        severity: "High"
+        tags: ["CodeStyle", "Recommended"]

@@ -1,6 +1,6 @@
 # sca-extra
 
-Additional PMD rules for testing Salesforce Apex code using Salesforce Code Analyzer. These rules are implemented as XPath 3.1 expressions that operate on the PMD Apex AST.
+Additional PMD and Regex rules for testing Salesforce Apex code using Salesforce Code Analyzer. Most rules are implemented as XPath 3.1 expressions that operate on the PMD Apex AST. Some rules use the Regex engine for pattern-based matching.
 
 **Repository:** [https://github.com/starch-uk/sca-extra](https://github.com/starch-uk/sca-extra)
 
@@ -8,17 +8,19 @@ Additional PMD rules for testing Salesforce Apex code using Salesforce Code Anal
 
 ## Overview
 
-This project provides a comprehensive set of PMD rules for Salesforce Apex code analysis. All rules are implemented using XPath 3.1 expressions only (no custom Java classes), making them easy to understand, modify, and maintain.
+This project provides a comprehensive set of PMD and Regex rules for Salesforce Apex code analysis. Most rules are implemented using XPath 3.1 expressions only (no custom Java classes), making them easy to understand, modify, and maintain. Some rules use the Regex engine for pattern-based matching (e.g., `NoConsecutiveBlankLines`).
 
 ## Using These Rules in Your Project
 
 - **Where the rulesets live**
-  - All rules are defined as XML rulesets under the `rulesets/` directory, grouped by category (see **Rule Categories** below for an overview).
+  - Most rules are defined as XML rulesets under the `rulesets/` directory, grouped by category (see **Rule Categories** below for an overview).
+  - Some rules (like `NoConsecutiveBlankLines`) are defined as Regex rules in the repository's `code-analyzer.yml` under `engines.regex.custom_rules`.
   - You can copy the entire `rulesets/` folder into your Salesforce project, or just the specific category folders you want to enable.
 
 - **Add the rulesets to `code-analyzer.yml`**
   - Create or update a `code-analyzer.yml` file in the root of your Salesforce project.
   - Reference the ruleset XML files you want to enable under the top-level `rulesets:` key, using paths relative to your project root (for full examples, see **Installation** and **Usage → Enabling Rules in code-analyzer.yml** below).
+  - **Important:** Do NOT copy the repository's `code-analyzer.yml` file in its entirety, as it has `rulesets: []` (disabled). Instead, copy only the Regex rules configuration from the `engines.regex.custom_rules` section into your own `code-analyzer.yml` (see **Regex Rules** section below).
 
 - **Run Salesforce Code Analyzer from the command line**
   - Install the Salesforce Code Analyzer plugin (once per environment):
@@ -157,7 +159,7 @@ Integer x=5;  // Prettier formats to:
 Integer x = 5;  // Proper spacing
 ```
 
-**Note:** Some rules may appear to overlap with formatting (e.g., `NoConsecutiveBlankLines`), but if they're about code readability and structure rather than pure formatting, they can be appropriate PMD rules. The key distinction is: **Does this affect code quality and understanding, or just appearance?**
+**Note:** Some rules may appear to overlap with formatting (e.g., `NoConsecutiveBlankLines`), but if they're about code readability and structure rather than pure formatting, they can be appropriate rules. `NoConsecutiveBlankLines` is implemented as a Regex rule for efficient pattern matching. The key distinction is: **Does this affect code quality and understanding, or just appearance?**
 
 ## Installation
 
@@ -257,6 +259,43 @@ rules:
 2. Look for `<property>` elements in the `<properties>` section
 3. Each property has a `name` and `description` attribute
 4. The default value is in the `<value>` element
+
+### Regex Rules
+
+Some rules are implemented using the Regex engine for pattern-based matching. These rules are defined in the repository's `code-analyzer.yml` under `engines.regex.custom_rules`.
+
+**To use Regex rules in your project:**
+
+Copy the `engines.regex.custom_rules` section from the repository's `code-analyzer.yml` into your own `code-analyzer.yml` file. Do NOT copy the entire `code-analyzer.yml` file, as the repository version has `rulesets: []` (disabled) and is only meant as a reference for Regex rules.
+
+**Example - Add to your `code-analyzer.yml`:**
+
+```yaml
+name: My Salesforce Project Code Analyzer Config
+version: 1.0.0
+
+rulesets:
+  - rulesets/structure/InnerClassesCannotBeStatic.xml
+  # ... other rulesets ...
+
+engines:
+  regex:
+    custom_rules:
+      NoConsecutiveBlankLines:
+        regex: /\n\s*\n\s*\n/
+        file_extensions: [".apex", ".cls", ".trigger"]
+        description: "Prevents two or more consecutive blank lines in Apex code. Code should have at most one blank line between statements, methods, or other code elements."
+        violation_message: "Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
+        severity: "Moderate"
+        tags: ["CodeStyle", "Recommended"]
+```
+
+Regex rules are useful for:
+- Pattern-based text matching (e.g., consecutive blank lines)
+- Finding patterns in comments (PMD ignores comments)
+- Simple string/pattern detection
+
+For more information on creating Regex rules, see the [Regex Engine Reference](docs/REGEX.md).
 
 ### Complete Example
 
@@ -470,6 +509,8 @@ pnpm run test:watch    # Run tests in watch mode
 pnpm run test:coverage # Run tests with coverage
 ```
 
+For Jest API reference, see [Jest 30.0 Reference](docs/JEST30.md).
+
 ### Formatting
 
 ```bash
@@ -513,10 +554,16 @@ For security vulnerabilities, please see [SECURITY.md](SECURITY.md) for reportin
 
 ## Documentation
 
+- [PMD Quick Reference](docs/PMD.md) - Condensed guide to PMD essentials (rulesets, CLI, CPD, configuration)
+- [Code Analyzer Configuration](docs/CODE_ANALYZER_CONFIG.md) - Quick reference for configuring `code-analyzer.yml` with all engines and properties
 - [XPath 3.1 Reference](docs/XPATH31.md) - XPath 3.1 syntax and functions
 - [PMD Apex AST Reference](docs/APEX_PMD_AST.md) - PMD Apex AST node types and patterns
 - [AI Agent Rule Guide](docs/AI_AGENT_RULE_GUIDE.md) - Machine-readable rule configuration guide for AI coding assistants
+- [Regex Engine Reference](docs/REGEX.md) - Regex engine configuration and custom rule creation
+- [ApexDoc Reference](docs/APEXDOC.md) - ApexDoc syntax, tags, and documentation format for Apex code
+- [Suppressing Warnings](docs/SUPPRESS_WARNINGS.md) - How to suppress PMD rule violations using annotations, comments, and rule properties
 - [Migration Guides](docs/MIGRATION_GUIDES.md) - Rule migration and versioning information
+- [Jest 30.0 Reference](docs/JEST30.md) - Jest 30.0 API reference for writing and running tests
 
 ## AI Agent Configuration
 
@@ -524,11 +571,16 @@ The [AI Agent Rule Guide](docs/AI_AGENT_RULE_GUIDE.md) provides a machine-readab
 
 ### Required Documentation Files
 
-When setting up AI agent rules, you should reference these three documentation files:
+When setting up AI agent rules, you should reference these documentation files:
 
+- **[PMD Quick Reference](docs/PMD.md)** - PMD essentials (rulesets, CLI, CPD, configuration)
+- **[Code Analyzer Configuration](docs/CODE_ANALYZER_CONFIG.md)** - Complete `code-analyzer.yml` configuration reference
 - **[AI Agent Rule Guide](docs/AI_AGENT_RULE_GUIDE.md)** - Rule configuration reference with examples
 - **[XPath 3.1 Reference](docs/XPATH31.md)** - XPath 3.1 syntax and functions for writing rule queries
 - **[PMD Apex AST Reference](docs/APEX_PMD_AST.md)** - PMD Apex AST node types and patterns
+- **[Regex Engine Reference](docs/REGEX.md)** - Regex engine configuration and custom rule creation
+- **[ApexDoc Reference](docs/APEXDOC.md)** - ApexDoc syntax, tags, and documentation format for Apex code
+- **[Suppressing Warnings](docs/SUPPRESS_WARNINGS.md)** - How to suppress PMD rule violations using annotations, comments, and rule properties
 
 ### Setting Up in Cursor
 
@@ -550,12 +602,14 @@ To configure Cursor's Agent to use this guide, create a Cursor Project Rule:
    ---
 
    When helping with Salesforce Code Analyzer configuration or creating PMD rules:
+   - Reference @docs/CODE_ANALYZER_CONFIG.md for `code-analyzer.yml` configuration and engine settings
    - Reference @docs/AI_AGENT_RULE_GUIDE.md for rule information and examples
    - Reference @docs/XPATH31.md for XPath 3.1 syntax when writing rule queries
    - Reference @docs/APEX_PMD_AST.md for PMD Apex AST node types and patterns
+   - Reference @docs/SUPPRESS_WARNINGS.md for suppressing rule violations when necessary
    - Use the structured format to provide accurate rule information
    - Include code examples from the guides
-   - When configuring code-analyzer.yml, use property examples from the guide
+   - When configuring code-analyzer.yml, use property examples from the guides
    - Suggest appropriate property values based on the rule's purpose
    - Provide complete YAML examples when needed
    ```

@@ -10,12 +10,15 @@
 	<rule
 		name="NoAbbreviations"
 		language="apex"
-		message="Variable names must not use abbreviations. Use complete, descriptive words instead."
+		message="Variable names must not use abbreviations. Use complete, descriptive words instead to make code clear and self-explanatory"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Variable names must not use abbreviations. Use complete, descriptive words
-			so that code is clear and self-explanatory.
+			Variable names must not use abbreviations. Use complete, descriptive words so that code
+			is
+			clear and self-explanatory. Abbreviations reduce code readability and can lead to confusion,
+			especially for developers unfamiliar with the codebase. Common exceptions like 'Api', 'Html',
+			'Id', and 'Url' are allowed as suffixes.
 		</description>
 		<priority>2</priority>
 		<properties>

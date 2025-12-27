@@ -15,9 +15,10 @@
 	>
 		<description>
 			Method calls should be used directly in loop conditionals rather than testing inside the
-			loop
-            with a break statement. Use: while (hasMore()) { ... }
-            Instead of: while (true) { if (!hasMore()) { break; } ... }
+			loop with a break statement. This makes the loop condition explicit and improves readability.
+			
+			Use: while (hasMore()) { ... }
+			Instead of: while (true) { if (!hasMore()) { break; } ... }
 		</description>
 		<priority>3</priority>
 		<properties>

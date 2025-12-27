@@ -10,12 +10,14 @@
 	<rule
 		name="InnerClassesCannotHaveStaticMembers"
 		language="apex"
-		message="Inner classes cannot have static attributes or methods in Apex"
+		message="Inner classes cannot have static attributes or methods in Apex. Remove static modifiers from inner class members"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Inner classes in Apex cannot have static attributes or methods. Remove static modifiers
-			from inner class members.
+			Inner classes in Apex cannot have static attributes or methods. This is a language
+			limitation -
+			Apex does not support static members in inner classes. Remove static modifiers from inner class
+			members. This is a compilation error that will prevent the code from compiling.
 		</description>
 		<priority>1</priority>
 		<properties>

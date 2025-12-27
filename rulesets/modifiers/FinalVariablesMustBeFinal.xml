@@ -10,10 +10,15 @@
 	<rule
 		name="FinalVariablesMustBeFinal"
 		language="apex"
-		message="Any variable that CAN be final without adding code MUST be final"
+		message="Variables that are never reassigned must be declared as final to enforce immutability and improve code clarity"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<description>Variables that are never reassigned should be declared as final.</description>
+		<description>
+			Variables that are never reassigned should be declared as final. This enforces
+			immutability,
+			improves code clarity by indicating that the variable's value won't change, and helps prevent
+			accidental reassignment bugs. Any variable that can be final without adding code must be final.
+		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">

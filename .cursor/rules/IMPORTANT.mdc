@@ -2,11 +2,22 @@
 alwaysApply: true
 ---
 
-When working with PMD rules, XPath expressions, or Apex AST structure, always reference these documentation files:
+When working with PMD rules, XPath expressions, Apex AST structure, testing, or code analysis, always reference these documentation files:
 
+**Core PMD & Rule Development:**
 - **@docs/APEX_PMD_AST.md** - PMD Apex AST node types, patterns, and structure reference
 - **@docs/XPATH31.md** - XPath 3.1 syntax, functions, and expressions reference
 - **@docs/AI_AGENT_RULE_GUIDE.md** - Machine-readable rule configuration guide with examples and property documentation
+- **@docs/REGEX.md** - Regex engine configuration and custom rule creation for pattern-based rules
+- **@docs/CODE_ANALYZER_CONFIG.md** - Quick reference for configuring `code-analyzer.yml` with all engines and properties
+
+**Documentation & Suppression:**
+- **@docs/APEXDOC.md** - ApexDoc syntax, tags, and documentation format for Apex code
+- **@docs/SUPPRESS_WARNINGS.md** - How to suppress PMD rule violations using annotations, comments, and rule properties
+
+**Testing & Development:**
+- **@docs/JEST30.md** - Jest 30.0 API reference for writing and running tests
+- **@docs/MIGRATION_GUIDES.md** - Rule migration and versioning information
 
 Use these documents to:
 - Understand how Apex code is represented in the PMD AST
@@ -14,20 +25,27 @@ Use these documents to:
 - Reference XPath 3.1 syntax and functions when writing rule queries
 - Ensure XPath expressions correctly traverse the AST structure
 - Access rule examples, violations, valid code patterns, and configuration properties
+- Configure `code-analyzer.yml` with proper engines and properties
+- Write and maintain Jest tests using the Jest 30.0 API
+- Understand ApexDoc syntax and documentation requirements
+- Suppress rule violations when necessary
 
 When creating or modifying PMD rules:
-1. Check APEX_PMD_AST.md for the correct AST node types and patterns
-2. Use XPATH31.md for XPath 3.1 syntax and function reference
-3. Reference AI_AGENT_RULE_GUIDE.md for rule examples and configuration patterns
-4. **When fixing rules to comply with unit tests, always start by dumping the AST** - Use `scripts/ast-dump.sh` to inspect the actual AST structure of test fixtures before modifying XPath expressions. This ensures you understand the exact node structure and relationships before making changes.
-5. **Every rule should use properties for things that should be configurable** - Add configurable properties (thresholds, lists, etc.) instead of hardcoding values
-5. **New subfolders can be created under rulesets/** - Make sure they follow the existing category structure (code-style, documentation, method-signatures, modifiers, naming, structure)
-6. **Every rule must have both positive and negative test cases** - Create test fixtures in `tests/fixtures/positive/` and `tests/fixtures/negative/` covering all parts of the XPath expression
-7. **All code should be linted and formatted following any changes** - Run `pnpm run format` and `pnpm run lint` (or `pnpm run lint:fix`)
-8. **All tests should be run and regressions checked following any changes** - Run `pnpm test` and verify no test regressions
-9. **README.md should be updated with any pertinent changes** - Document new rules, rule changes, or significant updates in the README
-10. Test XPath expressions against both positive and negative test cases
-11. **Benchmark stress tests must be kept up to date** - When adding or modifying rules, update the benchmark fixtures:
+1. Check **@docs/APEX_PMD_AST.md** for the correct AST node types and patterns
+2. Use **@docs/XPATH31.md** for XPath 3.1 syntax and function reference
+3. Reference **@docs/AI_AGENT_RULE_GUIDE.md** for rule examples and configuration patterns
+4. Use **@docs/CODE_ANALYZER_CONFIG.md** for configuring `code-analyzer.yml` with engines and properties
+5. Use **@docs/REGEX.md** for creating pattern-based Regex rules
+6. Reference **@docs/SUPPRESS_WARNINGS.md** when implementing suppression mechanisms
+7. **When fixing rules to comply with unit tests, always start by dumping the AST** - Use `scripts/ast-dump.sh` to inspect the actual AST structure of test fixtures before modifying XPath expressions. This ensures you understand the exact node structure and relationships before making changes.
+8. **Every rule should use properties for things that should be configurable** - Add configurable properties (thresholds, lists, etc.) instead of hardcoding values
+9. **New subfolders can be created under rulesets/** - Make sure they follow the existing category structure (code-style, documentation, method-signatures, modifiers, naming, structure)
+10. **Every rule must have both positive and negative test cases** - Create test fixtures in `tests/fixtures/positive/` and `tests/fixtures/negative/` covering all parts of the XPath expression
+11. **All code should be linted and formatted following any changes** - Run `pnpm run format` and `pnpm run lint` (or `pnpm run lint:fix`)
+12. **All tests should be run and regressions checked following any changes** - Run `pnpm test` and verify no test regressions. **IMPORTANT**: Always run tests with full permissions. Do NOT run `pnpm test` without full permissions - Jest will fail with module resolution errors (e.g., "Cannot find module '@jest/test-sequencer'") when run without full permissions due to pnpm's module resolution requiring full filesystem access. Reference **@docs/JEST30.md** for Jest API usage when writing or modifying tests.
+13. **README.md should be updated with any pertinent changes** - Document new rules, rule changes, or significant updates in the README
+14. Test XPath expressions against both positive and negative test cases
+15. **Benchmark stress tests must be kept up to date** - When adding or modifying rules, update the benchmark fixtures:
     - **New rules**: Add violations to `benchmarks/fixtures/stress-test-all-rules.cls` and the appropriate category-specific fixture (e.g., `stress-code-style.cls`, `stress-structure.cls`)
     - **Rule modifications**: Update existing violations in stress test fixtures to reflect rule changes
     - **Target 10-20 violations per rule** in stress tests to properly benchmark performance
@@ -35,7 +53,7 @@ When creating or modifying PMD rules:
     - **Update `benchmarks/FIXTURES.md`** with new violation counts and rule coverage
     - **Run benchmarks after updates**: `pnpm run benchmark` to verify performance
     - **Regenerate baseline if needed**: `pnpm run benchmark -- --baseline` after significant changes
-12. **Stress test fixtures location**: `benchmarks/fixtures/` contains comprehensive stress-test files:
+16. **Stress test fixtures location**: `benchmarks/fixtures/` contains comprehensive stress-test files:
     - `stress-test-all-rules.cls` - Comprehensive fixture with violations across all rules
     - `stress-code-style.cls` - Code style rules (200+ violations)
     - `stress-structure.cls` - Structure rules (100+ violations)
@@ -43,14 +61,15 @@ When creating or modifying PMD rules:
     - `stress-naming.cls` - Naming rules (100+ violations)
     - `stress-documentation.cls` - Documentation rules (50+ violations)
     - `stress-method-signatures.cls` - Method signature rules (30+ violations)
-13. **Running specific tests**: Use Jest's `--testNamePattern` flag to run only specific tests:
-    - `pnpm test -- --testNamePattern="RuleName"` - Run all tests matching the pattern
-    - `pnpm test -- --testNamePattern="should detect"` - Run only detection tests
-    - `pnpm test -- --testNamePattern="RuleName.*should detect"` - Run specific test for a rule
-    - Examples:
-      - `pnpm test -- --testNamePattern="AnnotationBeforeComment"` - Run AnnotationBeforeComment tests
-      - `pnpm test -- --testNamePattern="ProhibitSuppressWarnings.*should detect"` - Run specific test
-14. **Using PMD AST dump tool**: Use the AST dump script to inspect the actual AST structure of Apex files:
+17. **Running specific tests**: When debugging or working on a specific rule, use Jest's `--testNamePattern` flag to run only matching tests instead of the full test suite. This saves time and focuses output. Reference **@docs/JEST30.md** for Jest CLI options and API. The pattern matches test names using regex:
+    - **Run all tests for a specific rule**: `pnpm test -- --testNamePattern="RuleName"` (matches any test containing "RuleName")
+    - **Run only detection tests**: `pnpm test -- --testNamePattern="should detect"` (matches tests with "should detect" in the name)
+    - **Run a specific test for a rule**: `pnpm test -- --testNamePattern="RuleName.*should detect"` (matches tests starting with "RuleName" and containing "should detect")
+    - **Concrete examples**:
+      - `pnpm test -- --testNamePattern="AnnotationBeforeComment"` - Runs all AnnotationBeforeComment tests (both positive and negative cases)
+      - `pnpm test -- --testNamePattern="ProhibitSuppressWarnings.*should detect"` - Runs only the "should detect" test for ProhibitSuppressWarnings rule
+      - `pnpm test -- --testNamePattern="should not flag"` - Runs all tests that verify rules don't produce false positives
+18. **Using PMD AST dump tool**: Use the AST dump script to inspect the actual AST structure of Apex files:
     - `pnpm run ast-dump <apex-file>` - Dump AST for a file (text format)
     - `pmd ast-dump --file=<apex-file> -l apex -f xml` - Dump AST in XML format
     - `pmd ast-dump --file=<apex-file> -l apex -f xml > output.ast.xml` - Save AST to file
