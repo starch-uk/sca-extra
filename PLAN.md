@@ -10,7 +10,7 @@ This project maintains additional PMD and Regex rules for testing Salesforce Ape
 
 This plan describes the project scope and components, including:
 
-- **43 PMD rules and 1 Regex rule** across 6 categories (code-style, documentation, method-signatures, modifiers, naming, structure)
+- **42 PMD rules and 2 Regex rules** across 6 categories (code-style, documentation, method-signatures, modifiers, naming, structure)
 - **Comprehensive test infrastructure** with positive and negative test fixtures for all rules, including Regex rule testing helpers
 - **Benchmarking system** with stress-test fixtures (580+ violations across 7 fixture files)
 - **CI/CD pipeline** with PMD 7.19.0, Java 21, Node.js 24, pnpm 10.26.1, and Codecov integration
@@ -371,6 +371,7 @@ sca-extra/
    - PreferStringJoinOverConcatenation
    - PreferStringJoinOverMultipleNewlines
    - PreferStringJoinWithSeparatorOverEmpty
+   - ProhibitSuppressWarnings (Regex rule)
    - SingleArgumentMustBeSingleLine
 
 8. **Documentation Rules** (2 total):
@@ -772,8 +773,8 @@ Each rule follows this structure with configurable properties and versioning:
 3. **P3** (Medium): Remaining code-style, documentation, method-signatures, naming, and structure rules
 4. **P4** (Low): Complex rules requiring thorough testing (e.g., AvoidOneLinerMethods)
 
-**Total Implementation:** 44 rules across 6 categories (43 PMD rules + 1 Regex rule):
-- **Code Style:** 18 rules (17 PMD + 1 Regex: NoConsecutiveBlankLines)
+**Total Implementation:** 44 rules across 6 categories (42 PMD rules + 2 Regex rules):
+- **Code Style:** 18 rules (16 PMD + 2 Regex: NoConsecutiveBlankLines, ProhibitSuppressWarnings)
 - **Structure:** 13 rules
 - **Modifiers:** 5 rules
 - **Naming:** 4 rules
@@ -1129,9 +1130,16 @@ engines:
       NoConsecutiveBlankLines:
         regex: /\n\s*\n\s*\n/g
         file_extensions: [".apex", ".cls", ".trigger"]
-        description: "Prevents two or more consecutive blank lines in Apex code."
+        description: "Prevents two or more consecutive blank lines in Apex code. Code should have at most one blank line between statements, methods, or other code elements."
         violation_message: "Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
         severity: "Moderate"
+        tags: ["CodeStyle", "Recommended"]
+      ProhibitSuppressWarnings:
+        regex: /@SuppressWarnings\([^)]*\)|\/\/\s*NOPMD/gi
+        file_extensions: [".apex", ".cls", ".trigger"]
+        description: "Prohibits the use of @SuppressWarnings annotations and NOPMD comments in Apex code. Suppressions hide code quality issues; prefer fixing the underlying problems or improving rules instead."
+        violation_message: "Suppression of warnings is not allowed. Fix the underlying issue or improve the rule instead of suppressing violations."
+        severity: "High"
         tags: ["CodeStyle", "Recommended"]
 ```
 

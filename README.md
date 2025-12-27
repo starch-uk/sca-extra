@@ -509,6 +509,8 @@ pnpm run test:watch    # Run tests in watch mode
 pnpm run test:coverage # Run tests with coverage
 ```
 
+For Jest API reference, see [Jest 30.0 Reference](docs/JEST30.md).
+
 ### Formatting
 
 ```bash
@@ -557,8 +559,10 @@ For security vulnerabilities, please see [SECURITY.md](SECURITY.md) for reportin
 - [PMD Apex AST Reference](docs/APEX_PMD_AST.md) - PMD Apex AST node types and patterns
 - [AI Agent Rule Guide](docs/AI_AGENT_RULE_GUIDE.md) - Machine-readable rule configuration guide for AI coding assistants
 - [Regex Engine Reference](docs/REGEX.md) - Regex engine configuration and custom rule creation
+- [ApexDoc Reference](docs/APEXDOC.md) - ApexDoc syntax, tags, and documentation format for Apex code
 - [Suppressing Warnings](docs/SUPPRESS_WARNINGS.md) - How to suppress PMD rule violations using annotations, comments, and rule properties
 - [Migration Guides](docs/MIGRATION_GUIDES.md) - Rule migration and versioning information
+- [Jest 30.0 Reference](docs/JEST30.md) - Jest 30.0 API reference for writing and running tests
 
 ## AI Agent Configuration
 
@@ -573,6 +577,7 @@ When setting up AI agent rules, you should reference these documentation files:
 - **[XPath 3.1 Reference](docs/XPATH31.md)** - XPath 3.1 syntax and functions for writing rule queries
 - **[PMD Apex AST Reference](docs/APEX_PMD_AST.md)** - PMD Apex AST node types and patterns
 - **[Regex Engine Reference](docs/REGEX.md)** - Regex engine configuration and custom rule creation
+- **[ApexDoc Reference](docs/APEXDOC.md)** - ApexDoc syntax, tags, and documentation format for Apex code
 - **[Suppressing Warnings](docs/SUPPRESS_WARNINGS.md)** - How to suppress PMD rule violations using annotations, comments, and rule properties
 
 ### Setting Up in Cursor

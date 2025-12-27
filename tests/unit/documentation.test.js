@@ -12,7 +12,7 @@ describe('Documentation Rules', () => {
 			).toBeGreaterThan(0);
 		});
 
-		it('should not flag methods with @throws or @exception documentation', async () => {
+		it('should not flag methods with @throws documentation', async () => {
 			const violations = await runPMD(
 				'rulesets/documentation/ExceptionDocumentationRequired.xml',
 				'tests/fixtures/positive/documentation/ExceptionDocumentationRequired.cls'
