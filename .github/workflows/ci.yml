@@ -6,9 +6,18 @@ on:
   push:
     branches: [main, develop]
 
+# Cancel in-progress runs for the same workflow and branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
     env:
       PMD_VERSION: "7.19.0"
     steps:
@@ -28,7 +37,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.26.1
+          version: "10.26.1"
 
       - name: Cache pnpm store
         uses: actions/cache@v5
@@ -38,17 +47,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: Cache dependencies
-        uses: actions/cache@v5
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-
       - name: Install dependencies
-        # TODO: Once pnpm-lock.yaml is committed, change to: pnpm install --frozen-lockfile
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Check XML formatting
         run: pnpm run format:check
@@ -68,28 +68,75 @@ jobs:
       - name: Install PMD CLI
         if: steps.cache-pmd.outputs.cache-hit != 'true'
         run: |
+          set -euo pipefail
+          PMD_VERSION="${{ env.PMD_VERSION }}"
+          PMD_DIR="$HOME/pmd/pmd-bin-${PMD_VERSION}"
+          DOWNLOAD_URL="https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-dist-${PMD_VERSION}-bin.zip"
+          
+          echo "Downloading PMD ${PMD_VERSION} from ${DOWNLOAD_URL}"
           mkdir -p ~/pmd
-          curl -L -o pmd-bin.zip "https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-dist-${PMD_VERSION}-bin.zip"
+          
+          if ! curl -fsSL -o pmd-bin.zip "${DOWNLOAD_URL}"; then
+            echo "Error: Failed to download PMD ${PMD_VERSION}"
+            exit 1
+          fi
+          
+          if [ ! -f pmd-bin.zip ]; then
+            echo "Error: Download file not found"
+            exit 1
+          fi
+          
+          echo "Extracting PMD..."
           unzip -q pmd-bin.zip
-          mv pmd-bin-${PMD_VERSION} ~/pmd
-          rm pmd-bin.zip
+          
+          if [ ! -d "pmd-bin-${PMD_VERSION}" ]; then
+            echo "Error: PMD extraction failed - directory not found"
+            exit 1
+          fi
+          
+          mv "pmd-bin-${PMD_VERSION}" ~/pmd
+          rm -f pmd-bin.zip
+          echo "PMD ${PMD_VERSION} installed successfully"
 
       - name: Setup PMD CLI
         run: |
+          set -euo pipefail
+          PMD_VERSION="${{ env.PMD_VERSION }}"
           PMD_DIR="$HOME/pmd/pmd-bin-${PMD_VERSION}"
-          PMD_BIN="$PMD_DIR/bin/pmd"
-          if [ ! -d "$PMD_DIR" ]; then
-            echo "Error: PMD directory not found at $PMD_DIR"
+          PMD_BIN="${PMD_DIR}/bin/pmd"
+          
+          if [ ! -d "${PMD_DIR}" ]; then
+            echo "Error: PMD directory not found at ${PMD_DIR}"
+            echo "Contents of ~/pmd:"
             ls -la "$HOME/pmd/" || echo "PMD cache directory does not exist"
             exit 1
           fi
-          if [ ! -f "$PMD_BIN" ]; then
-            echo "Error: PMD binary not found at $PMD_BIN"
-            ls -la "$PMD_DIR/bin/" || echo "PMD bin directory does not exist"
+          
+          if [ ! -f "${PMD_BIN}" ]; then
+            echo "Error: PMD binary not found at ${PMD_BIN}"
+            echo "Contents of ${PMD_DIR}/bin:"
+            ls -la "${PMD_DIR}/bin/" || echo "PMD bin directory does not exist"
             exit 1
           fi
-          sudo ln -sf "$PMD_BIN" /usr/local/bin/pmd
-          pmd --version
+          
+          echo "${PMD_DIR}/bin" >> $GITHUB_PATH
+          chmod +x "${PMD_BIN}"
+          
+          echo "Verifying PMD installation..."
+          "${PMD_BIN}" --version
+          
+          echo "Verifying PMD check command..."
+          if ! "${PMD_BIN}" check --help > /dev/null 2>&1; then
+            echo "Error: PMD check command failed"
+            exit 1
+          fi
+          
+          echo "Verifying PMD with Apex language support..."
+          if ! "${PMD_BIN}" check --help | grep -q "apex"; then
+            echo "Warning: Apex language may not be available"
+          fi
+          
+          echo "PMD CLI setup complete (version ${PMD_VERSION})"
 
       - name: Run tests with coverage
         run: pnpm test:coverage
@@ -100,4 +147,5 @@ jobs:
         with:
           files: ./coverage/lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
 

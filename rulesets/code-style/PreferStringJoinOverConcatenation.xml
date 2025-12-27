@@ -10,21 +10,16 @@
 	<rule
 		name="PreferStringJoinOverConcatenation"
 		language="apex"
-		message="Multiple string concatenations with common separator should use String.join()"
+		message="Multiple string concatenations with a common separator should use String.join() for better readability and maintainability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			When concatenating 3 or more strings where all strings except the last end with the same
-            non-empty sequence of characters, use String.join() with the following format:
-
-            String.join(new List{
-                'line1',
-                'line2',
-                'line3'
-            }, '\n');
-
-            The second argument to String.join() should be the repeating separator pattern (not an
-      empty string).
+			non-empty sequence of characters, use String.join() for better readability and maintainability.
+			
+			Use: String.join(new List &lt; String &gt; {'line1', 'line2', 'line3'}, '\n');
+			The second argument to String.join() should be the repeating separator pattern (not an empty
+			string).
 		</description>
 		<priority>3</priority>
 		<properties>

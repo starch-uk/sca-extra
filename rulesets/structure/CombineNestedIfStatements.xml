@@ -10,13 +10,13 @@
 	<rule
 		name="CombineNestedIfStatements"
 		language="apex"
-		message="Nested if statements should be combined into a single conditional with &amp;&amp; operator"
+		message="Nested if statements should be combined into a single conditional with &amp;&amp; operator for better readability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			Nested if statements that can be combined should use a single conditional with &amp; &amp; operator
-      instead.
-            This rule detects if statements that contain only another if statement in their body.
+			instead. This rule detects if statements that contain only another if statement in their body.
+			Combining nested conditionals improves readability and reduces unnecessary indentation levels.
 		</description>
 		<priority>3</priority>
 		<properties>

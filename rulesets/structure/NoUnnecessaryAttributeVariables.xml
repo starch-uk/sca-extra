@@ -10,15 +10,15 @@
 	<rule
 		name="NoUnnecessaryAttributeVariables"
 		language="apex"
-		message="Never create a variable for a class attribute that is only used once and never reassigned"
+		message="Variables that extract a single attribute from an object and are only used once should be inlined. This rule only applies to primitive types, not collections or object instances"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			Variables that extract a single attribute from an object and are only used once should
 			be
-      inlined.
-            This rule does not apply to collection types (List, Set, Map) or object/class
-      instances, only primitive types.
+			inlined. This rule does not apply to collection types (List, Set, Map) or object/class
+			instances, only primitive types. Inlining these variables reduces unnecessary indirection
+			and improves code clarity.
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -10,11 +10,14 @@
 	<rule
 		name="NoMethodChaining"
 		language="apex"
-		message="Use intermediary variables instead of method chaining"
+		message="Method chaining should be avoided. Use intermediary variables instead for better readability and debugging"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Method chaining should be avoided. Use intermediary variables for better readability.
+			Method chaining should be avoided in favor of using intermediary variables. This
+			improves
+			readability, makes debugging easier by allowing inspection of intermediate values, and
+			reduces complexity. Exceptions are made for final variables that use method chaining.
 		</description>
 		<priority>3</priority>
 		<properties>

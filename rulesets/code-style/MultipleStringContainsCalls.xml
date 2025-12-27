@@ -10,14 +10,14 @@
 	<rule
 		name="MultipleStringContainsCalls"
 		language="apex"
-		message="Multiple String.contains() calls should be replaced with a regex pattern"
+		message="Multiple String.contains() calls in a conditional should be replaced with a single regex pattern for better performance and maintainability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Multiple String.contains() calls in conditionals should be replaced with a regex pattern
-			for
-      better performance and maintainability.
-            This rule detects when there are 2 or more contains() calls in a conditional expression.
+			Multiple String.contains() calls in conditionals should be replaced with a single regex
+			pattern
+			for better performance and maintainability. This rule detects when there are 2 or more
+			contains() calls in a conditional expression.
 		</description>
 		<priority>3</priority>
 		<properties>

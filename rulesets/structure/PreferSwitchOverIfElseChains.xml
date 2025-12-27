@@ -10,15 +10,16 @@
 	<rule
 		name="PreferSwitchOverIfElseChains"
 		language="apex"
-		message="Prefer switch statements over if-else chains when comparing the same value multiple times"
+		message="If-else chains with multiple else-if conditions should use switch statements instead for better readability and performance"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			If-else chains with more than one else-if condition should use switch statements
 			instead.
-            This detects patterns like: if (x == 'a') {} else if (x == 'b') {} else if (x == 'c') {}
-            The rule triggers when there are at least 2 else-if statements in the chain.
-            Note: This rule currently only detects if-else-if chains, not sequential if statements.
+			This detects patterns like: if (x == 'a') {} else if (x == 'b') {} else if (x == 'c') {}
+			The rule triggers when there are at least 2 else-if statements in the chain. Switch statements
+			are more readable and can be more performant than long if-else chains. Note: This rule currently
+			only detects if-else-if chains, not sequential if statements.
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -10,14 +10,16 @@
 	<rule
 		name="MapShouldBeInitializedWithValues"
 		language="apex"
-		message="Maps should be initialized with values instead of creating empty maps and calling put() immediately"
+		message="Map should be initialized with values using map literal syntax instead of creating an empty map and immediately calling put()"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Maps should be initialized with values directly using the map initializer syntax
-            instead of creating an empty map and immediately calling put().
-            Use: new Map &lt; String, String &gt; { 'key' => 'value' }
-            Instead of: new Map &lt; String, String &gt; (); map.put('key', 'value');
+			Maps should be initialized with values directly using the map literal syntax instead of
+			creating an empty map and immediately calling put(). This improves readability and reduces
+			unnecessary method calls.
+			
+			Use: new Map &lt; String, String &gt; {'key' => 'value'}
+			Instead of: new Map &lt; String, String &gt; (); map.put('key', 'value');
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -10,14 +10,14 @@
 	<rule
 		name="NoMethodCallsInConditionals"
 		language="apex"
-		message="Store method return values in variables before using them in conditions"
+		message="Method calls should not be used directly in conditional expressions. Extract the method call result to a variable first to improve readability and avoid side effects"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Method calls should not be used directly in conditional expressions. Extract to
-			variables
-      first.
-            Applies to: if, else-if, while, for, switch, and ternary expressions.
+			Method calls should not be used directly in conditional expressions. Extract method call
+			results to variables first to improve readability, avoid potential side effects from multiple
+			evaluations, and make debugging easier. This rule applies to if, else-if, while, for,
+			switch, and ternary expressions.
 		</description>
 		<priority>2</priority>
 		<properties>
