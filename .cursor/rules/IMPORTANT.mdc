@@ -24,7 +24,7 @@ When creating or modifying PMD rules:
 5. **New subfolders can be created under rulesets/** - Make sure they follow the existing category structure (code-style, documentation, method-signatures, modifiers, naming, structure)
 6. **Every rule must have both positive and negative test cases** - Create test fixtures in `tests/fixtures/positive/` and `tests/fixtures/negative/` covering all parts of the XPath expression
 7. **All code should be linted and formatted following any changes** - Run `pnpm run format` and `pnpm run lint` (or `pnpm run lint:fix`)
-8. **All tests should be run and regressions checked following any changes** - Run `pnpm test` and verify no test regressions
+8. **All tests should be run and regressions checked following any changes** - Run `pnpm test` and verify no test regressions. **IMPORTANT**: Always run tests with full permissions. Do NOT run `pnpm test` without full permissions - Jest will fail with module resolution errors (e.g., "Cannot find module '@jest/test-sequencer'") when run without full permissions due to pnpm's module resolution requiring full filesystem access.
 9. **README.md should be updated with any pertinent changes** - Document new rules, rule changes, or significant updates in the README
 10. Test XPath expressions against both positive and negative test cases
 11. **Benchmark stress tests must be kept up to date** - When adding or modifying rules, update the benchmark fixtures:

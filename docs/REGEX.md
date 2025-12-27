@@ -110,3 +110,7 @@ sf scanner:run
 - **Comments:** Regex can search comments; PMD cannot
 - **Pattern precision:** Use PMD for AST-based analysis; Regex for simple text patterns
 
+## Related Documentation
+
+- **[Code Analyzer Configuration](CODE_ANALYZER_CONFIG.md)** - Complete `code-analyzer.yml` configuration reference including Regex engine settings
+

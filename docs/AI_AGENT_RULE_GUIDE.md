@@ -11,10 +11,12 @@ When helping with Salesforce Code Analyzer configuration, use this guide to:
 ## Related Documentation
 
 When creating or modifying PMD rules, also reference these essential guides:
+- **[Code Analyzer Configuration](CODE_ANALYZER_CONFIG.md)** - Quick reference for configuring `code-analyzer.yml` with all engines and properties
 - **[XPath 3.1 Reference](XPATH31.md)** - XPath 3.1 syntax, functions, and expressions used to write rule queries
 - **[PMD Apex AST Reference](APEX_PMD_AST.md)** - PMD Apex AST node types, patterns, and structure for understanding code representation
+- **[Regex Engine Reference](REGEX.md)** - Regex engine configuration and custom rule creation for pattern-based rules
 
-These documents provide the technical foundation needed to write effective XPath expressions that operate on the PMD Apex AST.
+These documents provide the technical foundation needed to write effective XPath expressions that operate on the PMD Apex AST, or create Regex rules for pattern matching.
 
 ## Creating New Rules
 
