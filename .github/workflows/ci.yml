@@ -2,13 +2,20 @@ name: CI
 
 on:
   pull_request:
-    branches: [main, develop]
-  push:
-    branches: [main, develop]
+    branches: [main]
+
+# Cancel in-progress runs for the same workflow and branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
     env:
       PMD_VERSION: "7.19.0"
     steps:
@@ -28,7 +35,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.26.1
+          version: "10.26.1"
 
       - name: Cache pnpm store
         uses: actions/cache@v5
@@ -38,17 +45,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: Cache dependencies
-        uses: actions/cache@v5
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-
       - name: Install dependencies
-        # TODO: Once pnpm-lock.yaml is committed, change to: pnpm install --frozen-lockfile
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Check XML formatting
         run: pnpm run format:check
@@ -56,40 +54,83 @@ jobs:
       - name: Lint JavaScript
         run: pnpm run lint
 
-      - name: Cache PMD
-        id: cache-pmd
-        uses: actions/cache@v5
+      - name: Setup PMD using GitHub Action
+        uses: pmd/pmd-github-action@v2
+        id: pmd-action
+        continue-on-error: true
         with:
-          path: ~/pmd
-          key: pmd-${{ env.PMD_VERSION }}
-          restore-keys: |
-            pmd-
+          version: ${{ env.PMD_VERSION }}
+          rulesets: rulesets/code-style/AvoidOneLinerMethods.xml
+          sourcePath: tests/fixtures/positive
+          analyzeModifiedFilesOnly: false
+          createGitHubAnnotations: false
+          uploadSarifReport: false
 
-      - name: Install PMD CLI
-        if: steps.cache-pmd.outputs.cache-hit != 'true'
+      - name: Setup PMD CLI (fallback if action doesn't expose CLI)
+        if: always()
         run: |
-          mkdir -p ~/pmd
-          curl -L -o pmd-bin.zip "https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-dist-${PMD_VERSION}-bin.zip"
-          unzip -q pmd-bin.zip
-          mv pmd-bin-${PMD_VERSION} ~/pmd
-          rm pmd-bin.zip
-
-      - name: Setup PMD CLI
-        run: |
+          set -euo pipefail
+          PMD_VERSION="${{ env.PMD_VERSION }}"
+          
+          # Check if PMD is already available in PATH
+          if command -v pmd > /dev/null 2>&1; then
+            echo "PMD CLI already available in PATH"
+            pmd --version
+            exit 0
+          fi
+          
+          # Try to find PMD in common installation locations
+          PMD_PATHS=(
+            "$HOME/.pmd"
+            "$HOME/pmd"
+            "/opt/pmd"
+            "/usr/local/pmd"
+          )
+          
+          for PMD_BASE in "${PMD_PATHS[@]}"; do
+            PMD_BIN="${PMD_BASE}/pmd-bin-${PMD_VERSION}/bin/pmd"
+            if [ -f "${PMD_BIN}" ]; then
+              echo "Found PMD at ${PMD_BIN}, adding to PATH"
+              echo "$(dirname ${PMD_BIN})" >> $GITHUB_PATH
+              chmod +x "${PMD_BIN}"
+              pmd --version
+              exit 0
+            fi
+          done
+          
+          # If not found, install manually
+          echo "PMD not found, installing manually..."
           PMD_DIR="$HOME/pmd/pmd-bin-${PMD_VERSION}"
-          PMD_BIN="$PMD_DIR/bin/pmd"
-          if [ ! -d "$PMD_DIR" ]; then
-            echo "Error: PMD directory not found at $PMD_DIR"
-            ls -la "$HOME/pmd/" || echo "PMD cache directory does not exist"
-            exit 1
-          fi
-          if [ ! -f "$PMD_BIN" ]; then
-            echo "Error: PMD binary not found at $PMD_BIN"
-            ls -la "$PMD_DIR/bin/" || echo "PMD bin directory does not exist"
-            exit 1
-          fi
-          sudo ln -sf "$PMD_BIN" /usr/local/bin/pmd
+          DOWNLOAD_URL="https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-dist-${PMD_VERSION}-bin.zip"
+          
+          mkdir -p ~/pmd
+          curl -fsSL -o pmd-bin.zip "${DOWNLOAD_URL}"
+          unzip -q pmd-bin.zip
+          mv "pmd-bin-${PMD_VERSION}" ~/pmd
+          rm -f pmd-bin.zip
+          
+          echo "${PMD_DIR}/bin" >> $GITHUB_PATH
+          chmod +x "${PMD_DIR}/bin/pmd"
           pmd --version
+
+      - name: Verify PMD CLI
+        run: |
+          set -euo pipefail
+          echo "Verifying PMD CLI installation..."
+          pmd --version
+          
+          echo "Verifying PMD check command..."
+          if ! pmd check --help > /dev/null 2>&1; then
+            echo "Error: PMD check command failed"
+            exit 1
+          fi
+          
+          echo "Verifying PMD with Apex language support..."
+          if ! pmd check --help | grep -q "apex"; then
+            echo "Warning: Apex language may not be available"
+          fi
+          
+          echo "PMD CLI setup complete (version ${{ env.PMD_VERSION }})"
 
       - name: Run tests with coverage
         run: pnpm test:coverage
@@ -100,4 +141,5 @@ jobs:
         with:
           files: ./coverage/lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
 
