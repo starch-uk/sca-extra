@@ -276,6 +276,13 @@ engines:
         violation_message: "Suppression of warnings is not allowed. Fix the underlying issue or improve the rule instead of suppressing violations."
         severity: "High"
         tags: ["CodeStyle", "Recommended"]
+      NoLongLines:
+        regex: /.{81,}/gm
+        file_extensions: [".apex", ".cls", ".trigger"]
+        description: "Enforces a maximum line length of 80 characters. Lines longer than 80 characters reduce readability and make code harder to review. Use shorter class, attribute, method, and variable names to improve readability."
+        violation_message: "Line exceeds 80 characters. Use shorter class, attribute, method, and variable names to improve readability."
+        severity: "Moderate"
+        tags: ["CodeStyle", "Recommended"]
 ```
 
 Regex rules are useful for:
