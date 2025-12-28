@@ -135,7 +135,7 @@ catch (Exception exception) { }  // ✅ Use descriptive name
 
 **Before (v1.0.0) - Custom ruleset XML:**
 ```xml
-<rule ref="rulesets/naming/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames">
+<rule ref="rulesets/code-style/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames">
     <properties>
         <property name="allowedNames">
             <value>i,c</value>
@@ -146,7 +146,7 @@ catch (Exception exception) { }  // ✅ Use descriptive name
 
 **After (v2.0.0) - Update custom ruleset XML:**
 ```xml
-<rule ref="rulesets/naming/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames">
+<rule ref="rulesets/code-style/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames">
     <properties>
         <property name="allowedNames">
             <value>i,c,e</value>  <!-- Explicitly allow exception variable -->

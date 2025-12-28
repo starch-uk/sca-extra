@@ -93,7 +93,7 @@ Suppress violations where the message matches a regex:
 
 **For custom rules:**
 ```xml
-<rule ref="rulesets/structure/SomeRule.xml/SomeRule">
+<rule ref="rulesets/design/SomeRule.xml/SomeRule">
     <properties>
         <property name="violationSuppressRegex">
             <value>.*'mySpecialParameter'.*</value>
@@ -129,7 +129,7 @@ Suppress violations where XPath query matches (XPath 3.1, context node is the vi
     </rule>
     
     <!-- Suppress in classes containing "Bean" -->
-    <rule ref="rulesets/structure/SomeRule.xml/SomeRule">
+    <rule ref="rulesets/design/SomeRule.xml/SomeRule">
         <properties>
             <property name="violationSuppressXPath">
                 <value>./ancestor-or-self::ClassDeclaration[contains(@SimpleName, 'Bean')]</value>
@@ -138,7 +138,7 @@ Suppress violations where XPath query matches (XPath 3.1, context node is the vi
     </rule>
     
     <!-- Suppress in equals/hashCode methods -->
-    <rule ref="rulesets/structure/AnotherRule.xml/AnotherRule">
+    <rule ref="rulesets/design/AnotherRule.xml/AnotherRule">
         <properties>
             <property name="violationSuppressXPath">
                 <value>./ancestor-or-self::MethodDeclaration[@Name = ('equals', 'hashCode')]</value>
@@ -147,7 +147,7 @@ Suppress violations where XPath query matches (XPath 3.1, context node is the vi
     </rule>
     
     <!-- Suppress in classes ending with "Bean" (regex match) -->
-    <rule ref="rulesets/structure/YetAnotherRule.xml/YetAnotherRule">
+    <rule ref="rulesets/design/YetAnotherRule.xml/YetAnotherRule">
         <properties>
             <property name="violationSuppressXPath">
                 <value>./ancestor-or-self::ClassDeclaration[matches(@SimpleName, '^.*Bean$')]</value>
@@ -162,9 +162,9 @@ Then reference in `code-analyzer.yml`:
 engines:
   pmd:
     custom_rulesets:
-      - rulesets/structure/SomeRule.xml
-      - rulesets/structure/AnotherRule.xml
-      - rulesets/structure/YetAnotherRule.xml
+      - rulesets/design/SomeRule.xml
+      - rulesets/design/AnotherRule.xml
+      - rulesets/design/YetAnotherRule.xml
       - rulesets/suppression-rules.xml  # Custom suppression ruleset
 ```
 

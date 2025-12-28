@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Design Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>
+		Custom rules for Apex design issues (structure, method signatures, class
+		organization)
+	</description>
+	<rule
+		name="InnerClassesCannotHaveStaticMembers"
+		language="apex"
+		message="Inner classes cannot have static attributes or methods in Apex. Remove static modifiers from inner class members"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Inner classes in Apex cannot have static attributes or methods. This
+			is
+			a language limitation - Apex does not support static members in inner
+			classes. Remove static modifiers from inner class members. This is a
+			compilation error that will prevent the code from compiling.
+		</description>
+		<priority>1</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//(Field | Method)[
+						ModifierNode[@Static = true()]
+						and ancestor::UserClass[ancestor::UserClass]
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Static field in inner class (not allowed in Apex)
+			public class Outer {
+			    public class Inner {
+			        public static Integer value;  // ❌
+			    }
+			}
+			
+			// Valid: Non-static field in inner class
+			public class Outer {
+			    public class Inner {
+			        public Integer value;  // ✅
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Static method in inner class (not allowed in Apex)
+			public class Outer {
+			    public class Inner {
+			        public static void method() { }  // ❌
+			    }
+			}
+			
+			// Valid: Non-static method in inner class
+			public class Outer {
+			    public class Inner {
+			        public void method() { }  // ✅
+			    }
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>

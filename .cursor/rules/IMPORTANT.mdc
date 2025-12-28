@@ -44,7 +44,7 @@ When creating or modifying PMD rules:
 7. Reference **@docs/SUPPRESS_WARNINGS.md** when implementing suppression mechanisms
 8. **When fixing rules to comply with unit tests, always start by dumping the AST** - Use `pnpm ast-dump <apex-file>` to inspect the actual AST structure of test fixtures before modifying XPath expressions. This ensures you understand the exact node structure and relationships before making changes.
 9. **Every rule should use properties for things that should be configurable** - Add configurable properties (thresholds, lists, etc.) instead of hardcoding values
-10. **New subfolders can be created under rulesets/** - Make sure they follow the existing category structure (code-style, documentation, method-signatures, modifiers, naming, structure)
+10. **New subfolders can be created under rulesets/** - Make sure they follow PMD's 8 standard categories (best-practices, code-style, design, documentation, error-prone, multithreading, performance, security)
 11. **Every rule must have both positive and negative test cases** - Create test fixtures in `tests/fixtures/positive/` and `tests/fixtures/negative/` covering all parts of the XPath expression
 12. **XML element order must be correct** - PMD ruleset XML files must follow the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd). Elements within `<rule>` must appear in this order: `description` → `priority` → `properties` → `exclude` → `example`. Use `pnpm check-xml-order` to verify order, or `pnpm fix-xml-order` to automatically fix it. These scripts use XML libraries (`xmldom`) to properly parse and manipulate XML, ensuring all elements (including multiple examples) are preserved.
 13. **All code should be linted and formatted following any changes** - Run `pnpm format` and `pnpm lint` (or `pnpm lint:fix`). **CRITICAL**: **Always run lint commands with full permissions** - Use `required_permissions: ['all']` when running lint commands. ESLint will fail with `EPERM: operation not permitted` errors when run without full permissions due to pnpm's module resolution requiring full filesystem access to read files from `node_modules/.pnpm/`.
@@ -60,7 +60,7 @@ When creating or modifying PMD rules:
     - The current state of the project is documented in README.md and other documentation files, not in PLAN.md
 17. Test XPath expressions against both positive and negative test cases
 18. **Benchmark stress tests must be kept up to date** - When adding or modifying rules, update the benchmark fixtures:
-    - **New rules**: Add violations to `benchmarks/fixtures/stress-test-all-rules.cls` and the appropriate category-specific fixture (e.g., `stress-code-style.cls`, `stress-structure.cls`)
+    - **New rules**: Add violations to `benchmarks/fixtures/stress-test-all-rules.cls` and the appropriate category-specific fixture (e.g., `stress-code-style.cls`, `stress-design.cls`, `stress-best-practices.cls`)
     - **Rule modifications**: Update existing violations in stress test fixtures to reflect rule changes
     - **Target 10-20 violations per rule** in stress tests to properly benchmark performance
     - **Use realistic code patterns** that developers might actually write
@@ -69,12 +69,10 @@ When creating or modifying PMD rules:
     - **Regenerate baseline if needed**: `pnpm benchmark -- --baseline` after significant changes
 19. **Stress test fixtures location**: `benchmarks/fixtures/` contains comprehensive stress-test files:
     - `stress-test-all-rules.cls` - Comprehensive fixture with violations across all 43 PMD rules
-    - `stress-code-style.cls` - Code style rules (17 rules, 200+ violations)
-    - `stress-structure.cls` - Structure rules (13 rules, 100+ violations)
-    - `stress-modifiers.cls` - Modifier rules (5 rules, 100+ violations)
-    - `stress-naming.cls` - Naming rules (4 rules, 100+ violations)
+    - `stress-code-style.cls` - Code style rules (21 rules, 300+ violations, includes naming)
+    - `stress-design.cls` - Design rules (15 rules, 130+ violations, includes structure and method signatures)
+    - `stress-best-practices.cls` - Best practices rules (5 rules, 100+ violations, includes modifiers)
     - `stress-documentation.cls` - Documentation rules (2 rules, 30+ violations)
-    - `stress-method-signatures.cls` - Method signature rules (2 rules, 30+ violations)
     - **Note**: Regex rules (NoConsecutiveBlankLines, ProhibitSuppressWarnings) are not included in PMD benchmark fixtures as they use a different engine.
 20. **Running specific tests**: When debugging or working on a specific rule, use Jest's `--testNamePattern` flag to run only matching tests instead of the full test suite. This saves time and focuses output. Reference **@docs/JEST30.md** for Jest CLI options and API. The pattern matches test names using regex:
     - **Run all tests for a specific rule**: `pnpm test -- --testNamePattern="RuleName"` (matches any test containing "RuleName")
@@ -89,7 +87,7 @@ When creating or modifying PMD rules:
     - `pmd ast-dump --file=<apex-file> -l apex -f xml` - Dump AST in XML format
     - `pmd ast-dump --file=<apex-file> -l apex -f xml > output.ast.xml` - Save AST to file
     - Examples:
-      - `pnpm ast-dump tests/fixtures/negative/structure/ProhibitSuppressWarnings.cls`
+      - `pnpm ast-dump tests/fixtures/negative/code-style/ProhibitSuppressWarnings.cls`
       - `pmd ast-dump --file=tests/fixtures/positive/documentation/AnnotationBeforeComment.cls -l apex -f xml | grep -E "Method|FormalComment|Annotation"`
     - **Note**: Files with syntax errors cannot be parsed. Fix syntax errors first or use valid test files for AST inspection.
     - **Tip**: Use AST dump to understand node relationships, attributes, and structure before writing XPath expressions.

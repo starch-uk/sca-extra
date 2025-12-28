@@ -33,7 +33,7 @@ engines:
   pmd:
     custom_rulesets:
       # List of ruleset files to include
-      - rulesets/structure/InnerClassesCannotBeStatic.xml
+      - rulesets/design/InnerClassesCannotBeStatic.xml
 
 rules:
   # Rule-specific configuration (severity and tags only)
@@ -52,19 +52,19 @@ To add rules from this repository, reference the ruleset XML files under `engine
 engines:
   pmd:
     custom_rulesets:
-      # Structure rules
-      - rulesets/structure/InnerClassesCannotBeStatic.xml
-      - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
+      # Design rules
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      - rulesets/design/InnerClassesCannotHaveStaticMembers.xml
       
-      # Modifier rules
-      - rulesets/modifiers/FinalVariablesMustBeFinal.xml
-      - rulesets/modifiers/StaticMethodsMustBeStatic.xml
+      # Best practices rules
+      - rulesets/best-practices/FinalVariablesMustBeFinal.xml
+      - rulesets/best-practices/StaticMethodsMustBeStatic.xml
       
-      # Naming rules
-      - rulesets/naming/NoSingleLetterVariableNames.xml
-      - rulesets/naming/NoAbbreviations.xml
+      # Code style rules (including naming)
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
+      - rulesets/code-style/NoAbbreviations.xml
       
-      # Code style rules
+      # More code style rules
       - rulesets/code-style/NoMethodCallsInConditionals.xml
       - rulesets/code-style/PreferSafeNavigationOperator.xml
 ```
@@ -81,7 +81,7 @@ engines:
 
 **How to Customize a Rule:**
 
-1. **Locate the rule file** in the `rulesets/` directory (e.g., `rulesets/structure/EnumMinimumValues.xml`)
+1. **Locate the rule file** in the `rulesets/` directory (e.g., `rulesets/design/EnumMinimumValues.xml`)
 
 2. **Edit the XPath expression** in the `<property name="xpath">` section to change the rule's behavior
 
@@ -89,7 +89,7 @@ engines:
 
 **Example 1 - Change EnumMinimumValues threshold from 3 to 4:**
 
-Open `rulesets/structure/EnumMinimumValues.xml` and change:
+Open `rulesets/design/EnumMinimumValues.xml` and change:
 
 ```xml
 <!-- Before -->
@@ -125,7 +125,7 @@ Also update the description:
 
 **Example 2 - Change PreferSwitchOverIfElseChains threshold from 2 to 4:**
 
-Open `rulesets/structure/PreferSwitchOverIfElseChains.xml` and find all occurrences of `>= 2` in the XPath expression, then change them to `>= 4`:
+Open `rulesets/design/PreferSwitchOverIfElseChains.xml` and find all occurrences of `>= 2` in the XPath expression, then change them to `>= 4`:
 
 ```xml
 <!-- Before -->
@@ -141,7 +141,7 @@ count(IfBlockStatement) >= 4
 
 **Example 3 - Customize NoAbbreviations to flag different abbreviations:**
 
-Open `rulesets/naming/NoAbbreviations.xml` and modify the XPath expression. For example, to only flag `ctx` and `idx`:
+Open `rulesets/code-style/NoAbbreviations.xml` and modify the XPath expression. For example, to only flag `ctx` and `idx`:
 
 ```xml
 <property name="xpath">
@@ -199,8 +199,8 @@ engines:
   pmd:
     custom_rulesets:
       - rulesets/custom-disabled-defaults.xml  # Custom ruleset with disabled defaults
-      - rulesets/structure/InnerClassesCannotBeStatic.xml
-      - rulesets/naming/NoSingleLetterVariableNames.xml
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
 ```
 
 Alternatively, if you're creating a comprehensive custom ruleset, you can combine standard PMD rules with exclusions in a single XML file. Note that custom rulesets from this repository are typically referenced separately in `code-analyzer.yml` (as shown in the example below):
@@ -235,8 +235,8 @@ engines:
   pmd:
     custom_rulesets:
       - rulesets/custom-comprehensive-rules.xml  # Standard rules with exclusions
-      - rulesets/structure/InnerClassesCannotBeStatic.xml  # Custom rules
-      - rulesets/naming/NoSingleLetterVariableNames.xml
+      - rulesets/design/InnerClassesCannotBeStatic.xml  # Custom rules
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
 ```
 
 **Standard PMD category rulesets available:**
@@ -261,7 +261,7 @@ Copy the `engines.regex.custom_rules` section from the repository's `code-analyz
 engines:
   pmd:
     custom_rulesets:
-      - rulesets/structure/InnerClassesCannotBeStatic.xml
+      - rulesets/design/InnerClassesCannotBeStatic.xml
       # ... other rulesets ...
   regex:
     custom_rules:
@@ -294,7 +294,7 @@ For more information on creating Regex rules, see the [Regex Engine Reference](d
 
 **How to Customize a Rule:**
 
-1. **Locate the rule file** in the `rulesets/` directory (e.g., `rulesets/structure/EnumMinimumValues.xml`)
+1. **Locate the rule file** in the `rulesets/` directory (e.g., `rulesets/design/EnumMinimumValues.xml`)
 
 2. **Edit the XPath expression** in the `<property name="xpath">` section to change the rule's behavior
 
@@ -302,7 +302,7 @@ For more information on creating Regex rules, see the [Regex Engine Reference](d
 
 **Example 1 - Change EnumMinimumValues threshold from 3 to 4:**
 
-Open `rulesets/structure/EnumMinimumValues.xml` and change:
+Open `rulesets/design/EnumMinimumValues.xml` and change:
 
 ```xml
 <!-- Before -->
@@ -338,7 +338,7 @@ Also update the description:
 
 **Example 2 - Change PreferSwitchOverIfElseChains threshold from 2 to 4:**
 
-Open `rulesets/structure/PreferSwitchOverIfElseChains.xml` and find all occurrences of `>= 2` in the XPath expression, then change them to `>= 4`:
+Open `rulesets/design/PreferSwitchOverIfElseChains.xml` and find all occurrences of `>= 2` in the XPath expression, then change them to `>= 4`:
 
 ```xml
 <!-- Before -->
@@ -354,7 +354,7 @@ count(IfBlockStatement) >= 4
 
 **Example 3 - Customize NoAbbreviations to flag different abbreviations:**
 
-Open `rulesets/naming/NoAbbreviations.xml` and modify the XPath expression. For example, to only flag `ctx` and `idx`:
+Open `rulesets/code-style/NoAbbreviations.xml` and modify the XPath expression. For example, to only flag `ctx` and `idx`:
 
 ```xml
 <property name="xpath">
@@ -390,11 +390,11 @@ engines:
   pmd:
     custom_rulesets:
       # Custom rules from sca-extra repository
-      - rulesets/structure/InnerClassesCannotBeStatic.xml
-      - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
-      - rulesets/modifiers/FinalVariablesMustBeFinal.xml
-      - rulesets/naming/NoSingleLetterVariableNames.xml
-      - rulesets/naming/NoAbbreviations.xml
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      - rulesets/design/InnerClassesCannotHaveStaticMembers.xml
+      - rulesets/best-practices/FinalVariablesMustBeFinal.xml
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
+      - rulesets/code-style/NoAbbreviations.xml
       - rulesets/code-style/NoMethodCallsInConditionals.xml
 
 rules:
@@ -556,12 +556,12 @@ Integer x = 5;  // Proper spacing
 
 2. **Copy rulesets to your Salesforce project**
    - Copy the `rulesets/` directory to your Salesforce project root
-   - Or copy specific category folders (e.g., `rulesets/structure/`) as needed
+   - Or copy specific category folders (e.g., `rulesets/design/`) as needed
    - Maintain the directory structure for organization
 
 3. **Reference rulesets in your project**
    - Rulesets can be referenced by relative path from your project root
-   - Example: `rulesets/structure/InnerClassesCannotBeStatic.xml`
+   - Example: `rulesets/design/InnerClassesCannotBeStatic.xml`
 
 ## Usage
 
@@ -587,7 +587,7 @@ For detailed configuration instructions, including how to add rules, customize r
 
 ## Rules Documentation
 
-### Structure Rules
+### Design Rules
 
 #### InnerClassesCannotBeStatic
 **Priority:** P1 (Critical)  
@@ -633,7 +633,7 @@ public class Outer {
 }
 ```
 
-### Naming Rules
+### Code Style Rules (Naming)
 
 #### NoSingleLetterVariableNames
 **Priority:** P2 (High)  
@@ -670,7 +670,7 @@ String configuration = 'x';  // ✅ Uses full word
 Boolean isManager = true;    // ✅ Descriptive and readable
 ```
 
-**Note:** To customize this rule (e.g., change which abbreviations are flagged or which suffixes are allowed), edit the XPath expression directly in `rulesets/naming/NoAbbreviations.xml`. See the [Customizing Rules](#customizing-rules) section below for details.
+**Note:** To customize this rule (e.g., change which abbreviations are flagged or which suffixes are allowed), edit the XPath expression directly in `rulesets/code-style/NoAbbreviations.xml`. See the [Customizing Rules](#customizing-rules) section below for details.
 
 ### Code Style Rules
 
@@ -734,14 +734,16 @@ public class Utils {
 
 ## Rule Categories
 
-Rules are organized into the following categories:
+Rules are organized into PMD's 8 standard categories (consistent across languages):
 
-- **code-style/** - Code style and formatting rules
-- **documentation/** - Documentation quality rules
-- **method-signatures/** - Method signature rules
-- **modifiers/** - Modifier and access control rules
-- **naming/** - Naming convention rules
-- **structure/** - Code structure and organization rules
+- **best-practices/** - Generally accepted best practices (modifier rules, test class rules)
+- **code-style/** - Coding style enforcement (formatting, naming conventions, code style patterns)
+- **design/** - Design issue detection (code structure, method signatures, class organization)
+- **documentation/** - Code documentation rules
+- **error-prone/** - Broken/confusing/runtime-error-prone constructs (currently empty)
+- **multithreading/** - Multi-threaded execution issues (currently empty)
+- **performance/** - Suboptimal code detection (currently empty)
+- **security/** - Potential security flaws (currently empty)
 
 For a complete list of all rules, see the `rulesets/` directory. Each rule XML file contains detailed descriptions and XPath expressions.
 

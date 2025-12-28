@@ -10,11 +10,10 @@ The benchmark fixtures are comprehensive stress-test files designed to explicitl
 |---------|------|---------------------|---------------|---------------|
 | `stress-test-all-rules.cls` | 5.5 KB | 100+ | All rules (comprehensive) | All 43 PMD rules |
 | `stress-code-style.cls` | 15 KB | 200+ | Code style rules | 17 rules |
-| `stress-structure.cls` | 8.0 KB | 100+ | Structure rules | 13 rules |
-| `stress-modifiers.cls` | 5.7 KB | 100+ | Modifier rules | 5 rules |
-| `stress-naming.cls` | 3.2 KB | 100+ | Naming rules | 4 rules |
+| `stress-design.cls` | 10.3 KB | 130+ | Design rules (structure + method signatures) | 15 rules |
+| `stress-best-practices.cls` | 5.7 KB | 100+ | Best practices rules (modifiers) | 5 rules |
+| `stress-code-style.cls` | 18.2 KB | 300+ | Code style rules (including naming) | 21 rules |
 | `stress-documentation.cls` | 3.9 KB | 30+ | Documentation rules | 2 rules |
-| `stress-method-signatures.cls` | 2.3 KB | 30+ | Method signature rules | 2 rules |
 
 **Total: ~43 KB of stress-test code with 580+ potential violations across 43 PMD rules**
 
@@ -43,7 +42,13 @@ The benchmark fixtures are comprehensive stress-test files designed to explicitl
 
 **Note:** NoConsecutiveBlankLines is a Regex rule (not PMD), so it's not included in PMD benchmark fixtures.
 
-### Structure Rules (100+ violations)
+### Code Style Rules - Naming (100+ violations)
+- ✅ NoSingleLetterVariableNames (30 violations)
+- ✅ NoAbbreviations (50 violations)
+- ✅ VariablesMustNotShareNamesWithClasses (10 violations)
+- ✅ InnerClassesMustBeOneWord (5 violations)
+
+### Design Rules (130+ violations)
 - ✅ InnerClassesCannotBeStatic (1 violation)
 - ✅ InnerClassesCannotHaveStaticMembers (2 violations)
 - ✅ InnerClassesMustBeOneWord (2 violations)
@@ -58,27 +63,19 @@ The benchmark fixtures are comprehensive stress-test files designed to explicitl
 - ✅ PreferPropertySyntaxOverGetterMethods (5 violations)
 - ✅ AvoidLowValueWrapperMethods (3 violations)
 - ✅ EnumMinimumValues (2 violations)
+- ✅ NoCustomParameterObjects (15 violations)
+- ✅ SingleParameterMustBeSingleLine (15 violations)
 
-### Modifier Rules (100+ violations)
+### Best Practices Rules (100+ violations)
 - ✅ StaticVariablesMustBeFinalAndScreamingSnakeCase (20 violations)
 - ✅ RegexPatternsMustBeStaticFinal (20 violations)
 - ✅ FinalVariablesMustBeFinal (20 violations)
 - ✅ StaticMethodsMustBeStatic (20 violations)
 - ✅ TestClassIsParallel (1 violation)
 
-### Naming Rules (100+ violations)
-- ✅ NoSingleLetterVariableNames (30 violations)
-- ✅ NoAbbreviations (50 violations)
-- ✅ VariablesMustNotShareNamesWithClasses (10 violations)
-- ✅ InnerClassesMustBeOneWord (5 violations)
-
 ### Documentation Rules (30+ violations)
 - ✅ ExceptionDocumentationRequired (20 violations)
 - ✅ SingleLineDocumentationFormat (10 violations)
-
-### Method Signature Rules (30+ violations)
-- ✅ NoCustomParameterObjects (15 violations)
-- ✅ SingleParameterMustBeSingleLine (15 violations)
 
 ## Design Principles
 

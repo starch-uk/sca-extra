@@ -137,7 +137,7 @@ return sum(for $block in $allBlocks return if (...) then 1 else 0) >= 5
 
 ```markdown
 ## RuleName
-**Category:** [code-style|documentation|method-signatures|modifiers|naming|structure]
+**Category:** [best-practices|code-style|design|documentation|error-prone|multithreading|performance|security]
 **Priority:** [P1|P2|P3|P4]
 **Description:** What the rule checks
 
@@ -181,24 +181,24 @@ rules:
 
 ---
 
-## Structure Rules
+## Design Rules
 
 ### InnerClassesCannotBeStatic
-**Category:** structure | **Priority:** P1  
+**Category:** design | **Priority:** P1  
 Inner classes cannot be static. Remove static modifier.
 
 ❌ `public static class Inner { }`  
 ✅ `public class Inner { }`
 
 ### InnerClassesCannotHaveStaticMembers
-**Category:** structure | **Priority:** P1  
+**Category:** design | **Priority:** P1  
 Inner classes cannot have static members.
 
 ❌ `public class Inner { public static Integer value; }`  
 ✅ `public class Inner { public Integer value; }`
 
 ### EnumMinimumValues
-**Category:** structure | **Priority:** P3  
+**Category:** design | **Priority:** P3  
 Enums must have minimum values (default: 3).
 
 ❌ `public enum Status { ACTIVE, INACTIVE }`  
@@ -206,7 +206,7 @@ Enums must have minimum values (default: 3).
 
 
 ### PreferSwitchOverIfElseChains
-**Category:** structure | **Priority:** P3  
+**Category:** design | **Priority:** P3  
 If-else chains, consecutive ifs, or OR conditions comparing same variable should use switch.
 
 ❌ `if (x=='a') {} else if (x=='b') {} else if (x=='c') {}`  
@@ -219,10 +219,10 @@ Non-switch types like `Boolean`, `Decimal`, `Date`, `DateTime`, `Time`, `Id`, `B
 
 ---
 
-## Naming Rules
+## Code Style Rules (including Naming)
 
 ### NoSingleLetterVariableNames
-**Category:** naming | **Priority:** P2  
+**Category:** code-style | **Priority:** P2  
 No single-letter names except loop counters/exception vars.
 
 ❌ `Integer x = 5;`  
@@ -230,7 +230,7 @@ No single-letter names except loop counters/exception vars.
 
 
 ### NoAbbreviations
-**Category:** naming | **Priority:** P2  
+**Category:** code-style | **Priority:** P2  
 No abbreviations in variable names.
 
 ❌ `Integer acc = 5; String cfg = 'x'; Boolean isMgr = true;`  
@@ -238,8 +238,6 @@ No abbreviations in variable names.
 
 
 ---
-
-## Code Style Rules
 
 ### NoMethodCallsInConditionals
 **Category:** code-style | **Priority:** P2  
@@ -274,10 +272,10 @@ Replace multiple contains() with regex.
 
 ---
 
-## Method Signature Rules
+## Design Rules (Method Signatures)
 
 ### NoCustomParameterObjects
-**Category:** method-signatures | **Priority:** P3  
+**Category:** design | **Priority:** P3  
 Avoid inner classes with only fields/constructors for passing parameters.
 
 ❌ `public class Param { String f1; }` (1+ fields)  
@@ -286,17 +284,17 @@ Avoid inner classes with only fields/constructors for passing parameters.
 
 ---
 
-## Modifier Rules
+## Best Practices Rules (Modifiers)
 
 ### FinalVariablesMustBeFinal
-**Category:** modifiers | **Priority:** P2  
+**Category:** best-practices | **Priority:** P2  
 Final variables cannot be reassigned.
 
 ❌ `final Integer v = 5; v = 10;`  
 ✅ `final Integer v = 5;`
 
 ### StaticMethodsMustBeStatic
-**Category:** modifiers | **Priority:** P2  
+**Category:** best-practices | **Priority:** P2  
 Methods not using instance state should be static.
 
 ❌ `public Integer add(Integer a, Integer b) { return a+b; }`  
@@ -311,10 +309,10 @@ name: My Config
 version: 1.0.0
 
 rulesets:
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
-  - rulesets/modifiers/FinalVariablesMustBeFinal.xml
-  - rulesets/naming/NoSingleLetterVariableNames.xml
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      - rulesets/design/InnerClassesCannotHaveStaticMembers.xml
+      - rulesets/best-practices/FinalVariablesMustBeFinal.xml
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
 
 rules:
   # Override severity and tags only

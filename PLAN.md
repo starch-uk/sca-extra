@@ -10,7 +10,7 @@ This project will provide additional PMD and Regex rules for testing Salesforce 
 
 This plan describes the project scope and components that will be implemented:
 
-- **43 PMD rules and 2 Regex rules** across 6 categories (code-style, documentation, method-signatures, modifiers, naming, structure)
+- **43 PMD rules and 2 Regex rules** across PMD's 8 standard categories (best-practices, code-style, design, documentation, error-prone, multithreading, performance, security)
 - **Comprehensive test infrastructure** with positive and negative test fixtures for all rules, including Regex rule testing helpers
 - **Benchmarking system** with stress-test fixtures targeting 580+ violations across 7 fixture files
 - **CI/CD pipeline** with PMD 7.19.0, Java 21, Node.js 24, pnpm 10.26.2, and Codecov integration
@@ -53,13 +53,15 @@ sca-extra/
 │   ├── PMD.md                         # PMD quick reference
 │   ├── JEST30.md                      # Jest 30.0 API reference
 │   └── PNPM.md                        # pnpm package manager reference
-├── rulesets/                          # PMD ruleset XML files (organized by category)
-│   ├── code-style/                    # Code style rules
+├── rulesets/                          # PMD ruleset XML files (organized by PMD's 8 categories)
+│   ├── best-practices/                # Best practices rules (modifiers, test classes)
+│   ├── code-style/                    # Code style rules (formatting, naming conventions)
+│   ├── design/                        # Design rules (structure, method signatures, class organization)
 │   ├── documentation/                 # Documentation rules
-│   ├── method-signatures/             # Method signature rules
-│   ├── modifiers/                     # Modifier rules
-│   ├── naming/                        # Naming convention rules
-│   └── structure/                     # Code structure rules
+│   ├── error-prone/                   # Error-prone patterns (currently empty)
+│   ├── multithreading/                # Multithreading issues (currently empty)
+│   ├── performance/                   # Performance rules (currently empty)
+│   └── security/                      # Security rules (currently empty)
 ├── code-analyzer.yml                  # Contains Regex rules configuration (rulesets disabled for repository template)
 ├── jest.config.js                     # Jest test configuration
 ├── tests/                             # Test files
@@ -67,17 +69,21 @@ sca-extra/
 │   │   ├── positive/                  # Code that should NOT trigger rules
 │   │   │   ├── code-style/            # Positive test fixtures for code-style rules
 │   │   │   ├── documentation/         # Positive test fixtures for documentation rules
-│   │   │   ├── method-signatures/     # Positive test fixtures for method-signature rules
-│   │   │   ├── modifiers/             # Positive test fixtures for modifier rules
-│   │   │   ├── naming/                # Positive test fixtures for naming rules
-│   │   │   └── structure/             # Positive test fixtures for structure rules
+│   │   │   ├── best-practices/        # Positive test fixtures for best-practices rules
+│   │   │   ├── design/                # Positive test fixtures for design rules
+│   │   │   ├── error-prone/           # Positive test fixtures for error-prone rules
+│   │   │   ├── multithreading/        # Positive test fixtures for multithreading rules
+│   │   │   ├── performance/           # Positive test fixtures for performance rules
+│   │   │   └── security/               # Positive test fixtures for security rules
 │   │   └── negative/                  # Code that SHOULD trigger rules
+│   │       ├── best-practices/        # Negative test fixtures for best-practices rules
 │   │       ├── code-style/            # Negative test fixtures for code-style rules
+│   │       ├── design/                # Negative test fixtures for design rules
 │   │       ├── documentation/         # Negative test fixtures for documentation rules
-│   │       ├── method-signatures/     # Negative test fixtures for method-signature rules
-│   │       ├── modifiers/            # Negative test fixtures for modifier rules
-│   │       ├── naming/                # Negative test fixtures for naming rules
-│   │       └── structure/             # Negative test fixtures for structure rules
+│   │       ├── error-prone/           # Negative test fixtures for error-prone rules
+│   │       ├── multithreading/        # Negative test fixtures for multithreading rules
+│   │       ├── performance/           # Negative test fixtures for performance rules
+│   │       └── security/               # Negative test fixtures for security rules
 │   ├── helpers/                       # Test helper utilities
 │   │   └── pmd-helper.js              # PMD and Regex test helper functions (runPMD, runRegexRule)
 │   ├── rulesets/                      # Test-specific rulesets
@@ -85,10 +91,12 @@ sca-extra/
 │   └── unit/                          # Unit test files
 │       ├── code-style.test.js
 │       ├── documentation.test.js
-│       ├── method-signatures.test.js
-│       ├── modifiers.test.js
-│       ├── naming.test.js
-│       └── structure.test.js
+│       ├── best-practices.test.js
+│       ├── design.test.js
+│       ├── error-prone.test.js
+│       ├── multithreading.test.js
+│       ├── performance.test.js
+│       └── security.test.js
 ├── scripts/                           # Utility scripts
 │   ├── generate-test-ruleset.js      # Generate combined test ruleset from all rules
 │   ├── validate-rules.js             # Validate XML ruleset syntax and rule quality
@@ -105,11 +113,10 @@ sca-extra/
 │   ├── fixtures/                      # Large Apex files for benchmarking
 │   │   ├── stress-test-all-rules.cls  # Comprehensive stress test (100+ violations across all rules)
 │   │   ├── stress-code-style.cls      # Code style stress test (200+ violations, 17 rules)
-│   │   ├── stress-structure.cls       # Structure stress test (100+ violations, 13 rules)
-│   │   ├── stress-modifiers.cls       # Modifier stress test (100+ violations, 5 rules)
-│   │   ├── stress-naming.cls          # Naming stress test (100+ violations, 4 rules)
-│   │   ├── stress-documentation.cls   # Documentation stress test (30+ violations, 2 rules)
-│   │   └── stress-method-signatures.cls # Method signature stress test (30+ violations, 2 rules)
+│   │   ├── stress-design.cls          # Design stress test (130+ violations, 15 rules - structure + method signatures)
+│   │   ├── stress-best-practices.cls  # Best practices stress test (100+ violations, 5 rules - modifiers)
+│   │   ├── stress-code-style.cls      # Code style stress test (300+ violations, 21 rules - includes naming)
+│   │   └── stress-documentation.cls   # Documentation stress test (30+ violations, 2 rules)
 │   ├── results/                      # Benchmark results (gitignored)
 │   ├── README.md                      # Benchmark documentation
 │   └── FIXTURES.md                    # Benchmark fixture documentation
@@ -341,11 +348,10 @@ sca-extra/
    - Add benchmark fixtures in `benchmarks/fixtures/`:
      - `stress-test-all-rules.cls` - Comprehensive (100+ violations across all rules)
      - `stress-code-style.cls` - Code style focused (200+ violations)
-     - `stress-structure.cls` - Structure focused (100+ violations)
-     - `stress-modifiers.cls` - Modifiers focused (100+ violations)
-     - `stress-naming.cls` - Naming focused (100+ violations)
+     - `stress-design.cls` - Design focused (130+ violations - structure + method signatures)
+     - `stress-best-practices.cls` - Best practices focused (100+ violations - modifiers)
+     - `stress-code-style.cls` - Code style focused (300+ violations - includes naming)
      - `stress-documentation.cls` - Documentation focused (30+ violations)
-     - `stress-method-signatures.cls` - Method signatures focused (30+ violations)
    - Create `benchmarks/README.md` - Benchmark documentation
    - Create `benchmarks/FIXTURES.md` - Fixture statistics and coverage
    - Create `scripts/check-performance-regressions.js` - Regression detection
@@ -399,17 +405,17 @@ sca-extra/
    - ExceptionDocumentationRequired
    - SingleLineDocumentationFormat
 
-9. **Method Signature Rules** (2 total):
+9. **Design Rules - Method Signatures** (2 total):
    - NoCustomParameterObjects
    - SingleParameterMustBeSingleLine
 
-10. **Naming Rules** (4 total):
+10. **Code Style Rules - Naming** (4 total):
     - InnerClassesMustBeOneWord
     - NoAbbreviations
     - NoSingleLetterVariableNames
     - VariablesMustNotShareNamesWithClasses
 
-11. **Structure Rules** (13 total):
+11. **Design Rules - Structure** (13 total):
     - AvoidLowValueWrapperMethods
     - AvoidTrivialPropertyGetters
     - ClassesMustHaveMethods
@@ -424,7 +430,7 @@ sca-extra/
     - PreferPropertySyntaxOverGetterMethods
     - PreferSwitchOverIfElseChains
 
-**Total: 45 rules across 6 categories (43 PMD rules + 2 Regex rules)**
+**Total: 45 rules across PMD's 8 standard categories (43 PMD rules + 2 Regex rules)**
 
 ### Phase 4: Validation & Quality
 
@@ -753,16 +759,14 @@ This ensures:
 
 1. **P1** (Critical): InnerClassesCannotBeStatic, InnerClassesCannotHaveStaticMembers
 2. **P2** (High): Method calls in conditionals, multi-line formatting, naming restrictions, modifier rules
-3. **P3** (Medium): Remaining code-style, documentation, method-signatures, naming, and structure rules
+3. **P3** (Medium): Remaining code-style, documentation, design, and best practices rules
 4. **P4** (Low): Complex rules requiring thorough testing (e.g., AvoidOneLinerMethods)
 
-**Total Planned:** 45 rules across 6 categories (43 PMD rules + 2 Regex rules):
-- **Code Style:** 17 rules (15 PMD + 2 Regex: NoConsecutiveBlankLines, ProhibitSuppressWarnings)
-- **Structure:** 13 rules
-- **Modifiers:** 5 rules
-- **Naming:** 4 rules
+**Total Planned:** 45 rules across PMD's 8 standard categories (43 PMD rules + 2 Regex rules):
+- **Code Style:** 21 rules (19 PMD + 2 Regex: NoConsecutiveBlankLines, ProhibitSuppressWarnings) - includes naming
+- **Design:** 15 rules (13 structure + 2 method signatures)
+- **Best Practices:** 5 rules (modifiers)
 - **Documentation:** 2 rules
-- **Method Signatures:** 2 rules
 
 ## GitHub Actions CI/CD
 

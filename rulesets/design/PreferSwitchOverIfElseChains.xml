@@ -1,0 +1,263 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Design Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>
+		Custom rules for Apex design issues (structure, method signatures, class
+		organization)
+	</description>
+	<rule
+		name="PreferSwitchOverIfElseChains"
+		language="apex"
+		message="If-else chains, consecutive if statements, or OR conditions comparing the same variable should use switch statements instead for better readability and performance"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			If-else chains, consecutive if statements, OR conditions, or any
+			combination of these patterns with a minimum number of conditions that compare
+			the same variable should use switch statements instead. This detects patterns
+			like: if (x == 'a') {} else if (x == 'b') {} else if (x == 'c') {} or
+			consecutive if statements: if (x == 'a') {} if (x == 'b') {} if (x == 'c') {}
+			or OR conditions: if (x == 'a' || x == 'b' || x == 'c') {} or mixed patterns:
+			if (x == 'a' || x == 'b') {} if (x == 'c') {} else if (x == 'd') {} if (x ==
+			'e') {} The rule counts all conditions comparing the same variable across all
+			if statements in a method, not just within a single chain. Switch statements
+			are more readable and can be more performant than long if-else chains,
+			multiple consecutive if statements, or complex OR conditions. Note: This rule
+			only applies when all conditions compare the same variable/expression using
+			equality (==) and the variable type is compatible with switch statements
+			(Integer, Long, String, sObject, or Enum). Other types like Boolean, Decimal,
+			Date, etc. are not flagged as they cannot be used in switch statements.
+			
+			To customize this rule, edit the $minConditions variable at the beginning
+			of the XPath expression (default: 2). This sets the minimum number of
+			conditions comparing the same variable required before a switch statement is
+			recommended.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $minConditions := 2
+                    return (
+                        //IfElseBlockStatement[
+							let $firstVar := IfBlockStatement[1]/StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image,
+                                $method := ancestor::Method[1],
+                                $varDecl := ($method//VariableDeclaration[VariableExpression/@Image = $firstVar] | $method/Parameter[@Image = $firstVar])[1],
+                                $chainConditions := count(IfBlockStatement),
+                                $allStandaloneIfBlocks := $method//IfBlockStatement[not(ancestor::IfElseBlockStatement)],
+                                $standaloneConditions := sum(
+                                    for $block in $allStandaloneIfBlocks
+                                    return (
+                                        if (exists($block/StandardCondition/BooleanExpression[@Op='||'])) then
+                                            count($block/StandardCondition//BooleanExpression[@Op='==' and VariableExpression/@Image = $firstVar])
+                                        else if ($block/StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image = $firstVar) then
+                                            1
+                                        else
+                                            0
+                                    )
+                                ),
+                                $totalConditions := $chainConditions + $standaloneConditions
+							return $chainConditions >= $minConditions
+                            and count(IfBlockStatement[StandardCondition/BooleanExpression[@Op='==']/VariableExpression]) = count(IfBlockStatement)
+                            and count(IfBlockStatement[StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image = $firstVar]) = count(IfBlockStatement)
+                                and exists($varDecl)
+                                and (
+                                    $varDecl/@Type = 'Integer' 
+                                    or $varDecl/@Type = 'Long' 
+                                    or $varDecl/@Type = 'String'
+                                    or exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type])
+                                    or (
+                                        lower-case($varDecl/@Type) != 'boolean' 
+                                        and lower-case($varDecl/@Type) != 'decimal' 
+                                        and lower-case($varDecl/@Type) != 'double' 
+                                        and lower-case($varDecl/@Type) != 'date' 
+                                        and lower-case($varDecl/@Type) != 'datetime' 
+                                        and lower-case($varDecl/@Type) != 'time' 
+                                        and lower-case($varDecl/@Type) != 'id' 
+                                        and lower-case($varDecl/@Type) != 'blob' 
+                                        and lower-case($varDecl/@Type) != 'object'
+                                        and not(exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type]))
+                                        and string-length($varDecl/@Type) > 0
+                                    )
+                                )
+                                and ($totalConditions >= $minConditions or $chainConditions >= $minConditions)
+                        ]
+                        |
+                        //IfBlockStatement[
+                            StandardCondition/BooleanExpression[@Op='==']/VariableExpression
+                            and not(ancestor::IfElseBlockStatement)
+                            and not(preceding-sibling::*[1][self::IfBlockStatement[
+                                not(ancestor::IfElseBlockStatement)
+                                and StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image = 
+                                ./StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image
+                            ]])
+                            and (
+                                let $var := StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image,
+                                    $method := ancestor::Method[1],
+                                    $varDecl := ($method//VariableDeclaration[VariableExpression/@Image = $var] | $method/Parameter[@Image = $var])[1],
+                                    $allStandaloneIfBlocks := $method//IfBlockStatement[not(ancestor::IfElseBlockStatement)],
+                                    $allIfElseChains := $method//IfElseBlockStatement,
+                                    $standaloneConditions := sum(
+                                        for $block in $allStandaloneIfBlocks
+                                        return (
+                                            if (exists($block/StandardCondition/BooleanExpression[@Op='||'])) then
+                                                count($block/StandardCondition//BooleanExpression[@Op='==' and VariableExpression/@Image = $var])
+                                            else if ($block/StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image = $var) then
+                                                1
+                                            else
+                                                0
+                                        )
+                                    ),
+                                    $chainConditions := sum(
+                                        for $chain in $allIfElseChains
+                                        return (
+                                            if (count($chain/IfBlockStatement[StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image = $var]) = count($chain/IfBlockStatement) and count($chain/IfBlockStatement) > 0) then
+                                                count($chain/IfBlockStatement)
+                                            else
+                                                0
+                                        )
+                                    ),
+                                    $totalConditions := $standaloneConditions + $chainConditions
+                                return exists($varDecl)
+                                    and (
+                                        $varDecl/@Type = 'Integer' 
+                                        or $varDecl/@Type = 'Long' 
+                                        or $varDecl/@Type = 'String'
+                                        or exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type])
+                                        or (
+                                            lower-case($varDecl/@Type) != 'boolean' 
+                                            and lower-case($varDecl/@Type) != 'decimal' 
+                                            and lower-case($varDecl/@Type) != 'double' 
+                                            and lower-case($varDecl/@Type) != 'date' 
+                                            and lower-case($varDecl/@Type) != 'datetime' 
+                                            and lower-case($varDecl/@Type) != 'time' 
+                                            and lower-case($varDecl/@Type) != 'id' 
+                                            and lower-case($varDecl/@Type) != 'blob' 
+                                            and lower-case($varDecl/@Type) != 'object'
+                                            and not(exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type]))
+                                            and string-length($varDecl/@Type) > 0
+                                        )
+                                    )
+                                    and $totalConditions >= $minConditions
+                            )
+                        ]
+                        |
+                        //IfBlockStatement[
+                            StandardCondition/BooleanExpression[@Op='||']
+                            and (
+                                let $eqComparisons := StandardCondition//BooleanExpression[@Op='==' and VariableExpression],
+                                    $firstVar := $eqComparisons[1]/VariableExpression/@Image,
+                                    $method := ancestor::Method[1],
+                                    $varDecl := ($method//VariableDeclaration[VariableExpression/@Image = $firstVar] | $method/Parameter[@Image = $firstVar])[1]
+                                return count($eqComparisons) >= $minConditions
+                                    and count($eqComparisons[VariableExpression/@Image = $firstVar]) = count($eqComparisons)
+                                    and exists($varDecl)
+                                    and (
+                                        $varDecl/@Type = 'Integer' 
+                                        or $varDecl/@Type = 'Long' 
+                                        or $varDecl/@Type = 'String'
+                                        or exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type])
+                                        or (
+                                            lower-case($varDecl/@Type) != 'boolean' 
+                                            and lower-case($varDecl/@Type) != 'decimal' 
+                                            and lower-case($varDecl/@Type) != 'double' 
+                                            and lower-case($varDecl/@Type) != 'date' 
+                                            and lower-case($varDecl/@Type) != 'datetime' 
+                                            and lower-case($varDecl/@Type) != 'time' 
+                                            and lower-case($varDecl/@Type) != 'id' 
+                                            and lower-case($varDecl/@Type) != 'blob' 
+                                            and lower-case($varDecl/@Type) != 'object'
+                                            and not(exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type]))
+                                            and string-length($varDecl/@Type) > 0
+                                        )
+                                    )
+                            )
+                        ]
+                    )
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: If-else chain with 2+ conditions
+			if (status == 'active') {
+			    // ...
+			} else if (status == 'inactive') {
+			    // ...
+			} else if (status == 'pending') {
+			    // ...
+			}
+			
+			// Valid: Use switch statement instead
+			switch on status {
+			    when 'active' {
+			        // ...
+			    }
+			    when 'inactive' {
+			        // ...
+			    }
+			    when 'pending' {
+			        // ...
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Consecutive if statements comparing same variable
+			if (status == 'active') {
+			    // ...
+			}
+			if (status == 'inactive') {
+			    // ...
+			}
+			if (status == 'pending') {
+			    // ...
+			}
+			
+			// Valid: Use switch statement instead
+			switch on status {
+			    when 'active' { }
+			    when 'inactive' { }
+			    when 'pending' { }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: OR conditions with 2+ comparisons
+			if (status == 'active' || status == 'inactive' || status == 'pending') {
+			    // ...
+			}
+			
+			// Valid: Use switch statement instead
+			switch on status {
+			    when 'active', 'inactive', 'pending' {
+			        // ...
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Boolean comparisons are not flagged (cannot use switch)
+			if (isActive == true || isActive == false) {
+			    // ...
+			}
+			
+			// Valid: Different variables are not flagged
+			if (status == 'active') {
+			    // ...
+			} else if (type == 'premium') {
+			    // ...
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>

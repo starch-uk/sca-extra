@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Design Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>
+		Custom rules for Apex design issues (structure, method signatures, class
+		organization)
+	</description>
+	<rule
+		name="SingleParameterMustBeSingleLine"
+		language="apex"
+		message="Methods with 0-1 parameters should be formatted on a single line. Unnecessary multi-line formatting is not allowed"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Methods with 0-1 parameters should be formatted on a single line.
+			Unnecessary multi-line formatting for single parameters is not allowed as it
+			reduces readability and wastes vertical space. This prevents excessive line
+			wrapping due to long identifiers.
+			
+			To customize this rule, edit the $maxParams variable at the beginning
+			of the XPath expression (default: 1). This sets the maximum number of
+			parameters allowed before multi-line formatting is required.
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $maxParams := 1
+					return //Method[
+						count(Parameter) <= $maxParams
+						and (
+							(count(Parameter) = 0 and @BeginLine != BlockStatement/@BeginLine)
+							or (count(Parameter) = 1 and (@BeginLine != Parameter/@BeginLine or Parameter/@BeginLine != BlockStatement/@BeginLine))
+						)
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Method with single parameter on multiple lines
+			public void processValue(
+				String value
+			) {
+			}
+			
+			// Valid: Method with single parameter on one line
+			public void processValue(String value) {
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>

@@ -49,8 +49,8 @@ For PMD rulesets, CLI usage, and configuration details, see [PMD Quick Reference
 engines:
   pmd:
     custom_rulesets:
-      - rulesets/structure/InnerClassesCannotBeStatic.xml
-      - rulesets/naming/NoSingleLetterVariableNames.xml
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
 ```
 
 ### Regex Engine
@@ -152,8 +152,8 @@ rules:
 engines:
   pmd:
     custom_rulesets:
-      - rulesets/structure/InnerClassesCannotBeStatic.xml
-      - rulesets/naming/NoSingleLetterVariableNames.xml
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
   
   regex:
     custom_rules:

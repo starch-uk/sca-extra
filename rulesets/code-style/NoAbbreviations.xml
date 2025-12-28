@@ -1,0 +1,106 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Code Style Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>
+		Custom rules for Apex code style (formatting, naming conventions, code
+		style patterns)
+	</description>
+	<rule
+		name="NoAbbreviations"
+		language="apex"
+		message="Variable names must not use abbreviations. Use complete, descriptive words instead to make code clear and self-explanatory"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Variable names must not use abbreviations. Use complete, descriptive
+			words so that code is clear and self-explanatory. Abbreviations reduce code
+			readability and can lead to confusion, especially for developers unfamiliar
+			with the codebase. Common exceptions like 'Api', 'Html', 'Id', and 'Url' are
+			allowed as suffixes. Variables with the 'test' prefix are also allowed.
+			
+			To customize this rule, edit the variables at the beginning of the XPath
+			expression:
+			- $disallowedAbbreviations: Comma-separated list of abbreviations to
+			flag (default: 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val')
+			- $allowedSuffixes: Comma-separated list of allowed suffixes (default:
+			'Api,Html,Id,Url')
+			- $allowedPrefixes: Comma-separated list of allowed prefixes (default:
+			'test')
+		</description>
+		<priority>2</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $disallowedAbbreviations := 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val',
+						$allowedSuffixes := 'Api,Html,Id,Url',
+						$allowedPrefixes := 'test'
+					return //VariableDeclaration[
+						let $varName := VariableExpression/@Image,
+							$varNameLower := lower-case($varName)
+						return
+							(
+								contains(concat(',', $disallowedAbbreviations, ','), concat(',', $varNameLower, ','))
+								or (
+									some $abbrev in tokenize($disallowedAbbreviations, ',')
+									satisfies (
+										matches($varNameLower, concat('^', $abbrev, '[A-Z]'))
+										or matches($varNameLower, concat('[a-z]', $abbrev, '$'))
+										or matches($varNameLower, concat('[a-z]', $abbrev, '[A-Z]'))
+										or matches($varNameLower, concat('^', $abbrev, '$'))
+									)
+								)
+							)
+							and not(
+								some $suffix in tokenize($allowedSuffixes, ',')
+								satisfies matches($varName, concat($suffix, '$'), 'i')
+							)
+							and not(
+								some $prefix in tokenize($allowedPrefixes, ',')
+								satisfies starts-with(lower-case($varName), lower-case($prefix))
+							)
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Abbreviations in variable names
+			Integer acc = 5;
+			String cfg = 'test';
+			Boolean isMgr = true;
+			
+			// Valid: Use complete words
+			Integer accountCount = 5;
+			String configuration = 'test';
+			Boolean isManager = true;
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Allowed suffixes (Api, Html, Id, Url)
+			String accountId = '123';
+			String apiUrl = 'https://example.com';
+			String htmlContent = '<div></div>';
+			String userId = 'user123';
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Allowed prefixes (test)
+			String testCtx = 'value';
+			String testCfg = 'config';
+			Integer testAcc = 5;
+			
+			// Violation: Abbreviations without test prefix
+			String myCtx = 'value';  // ❌ 'ctx' not allowed without 'test' prefix
+			Integer ctx = 0;  // ❌ 'ctx' not allowed
+			]]>
+		</example>
+	</rule>
+</ruleset>

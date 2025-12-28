@@ -57,14 +57,18 @@ pnpm check-regressions # Check for performance regressions
 1. **Choose the appropriate category**
    - `code-style/` - Code style and formatting rules
    - `documentation/` - Documentation quality rules
-   - `method-signatures/` - Method signature rules
-   - `modifiers/` - Modifier and access control rules
-   - `naming/` - Naming convention rules
-   - `structure/` - Code structure and organization rules
+   - `best-practices/` - Generally accepted best practices
+   - `code-style/` - Coding style enforcement (including naming)
+   - `design/` - Design issue detection (structure, method signatures)
+   - `documentation/` - Code documentation rules
+   - `error-prone/` - Broken/confusing/runtime-error-prone constructs
+   - `multithreading/` - Multi-threaded execution issues
+   - `performance/` - Suboptimal code detection
+   - `security/` - Potential security flaws
 
 2. **Create the rule XML file**
    - File name should match the rule name (PascalCase)
-   - Example: `rulesets/structure/MyNewRule.xml`
+   - Example: `rulesets/design/MyNewRule.xml`
 
 3. **Follow the rule template**
 
