@@ -1,5 +1,5 @@
 public class Example {
-    public void testMethod() {
+    public void method() {
         // Valid: Variable name doesn't match class name (different name)
         Example instance = new Example();
 
@@ -85,6 +85,102 @@ public class Example {
             String accountName = 'Test';
             String accountId = '123';
             String accountNumber = '456';
+            // Valid: Plural is allowed
+            Account accounts = new Account();
+        }
+    }
+
+    public class Request {
+        public void method() {
+            // Valid: Single letter is allowed
+            Request r = new Request();
+            // Valid: Contains class name but is longer
+            Request requestItem = new Request();
+            Request requestData = new Request();
+            Request requestObject = new Request();
+        }
+    }
+
+    public class Response {
+        public void method() {
+            // Valid: Single letter/short name is allowed
+            Response out = new Response();
+            Response r = new Response();
+        }
+    }
+
+    public class Quote {
+        public void method() {
+            // Valid: Plural is allowed
+            Quote quotes = new Quote();
+        }
+    }
+
+    public class Opportunity {
+        public void method() {
+            // Valid: Plural is allowed
+            Opportunity opportunities = new Opportunity();
+        }
+    }
+
+    public class Product {
+        public void method() {
+            // Valid: Plural is allowed
+            Product products = new Product();
+        }
+    }
+
+    public class Dress {
+        public void method() {
+            // Valid: Plural is allowed
+            Dress dresses = new Dress();
+            // Valid: Contains class name with prefix (camelCase)
+            Dress myDress = new Dress();
+            Dress redDress = new Dress();
+            Dress blueDress = new Dress();
+            Dress newDress = new Dress();
+            // Valid: Contains class name with suffix (camelCase)
+            Dress dressItem = new Dress();
+            Dress dressObject = new Dress();
+            Dress dressInstance = new Dress();
+            Dress dressData = new Dress();
+            // Valid: Contains class name in middle
+            Dress myDressItem = new Dress();
+            Dress redDressObject = new Dress();
+            Dress newDressData = new Dress();
+            // Valid: Single letter is allowed
+            Dress d = new Dress();
+            Dress r = new Dress();
+        }
+    }
+
+    public class Order {
+        public void method() {
+            // Valid: Plural is allowed
+            Order orders = new Order();
+            // Valid: Contains class name with prefix
+            Order myOrder = new Order();
+            Order newOrder = new Order();
+            // Valid: Contains class name with suffix
+            Order orderItem = new Order();
+            Order orderData = new Order();
+            // Valid: Contains class name in middle
+            Order myOrderItem = new Order();
+        }
+    }
+
+    public class Customer {
+        public void method() {
+            // Valid: Plural is allowed
+            Customer customers = new Customer();
+            // Valid: Contains class name with prefix
+            Customer myCustomer = new Customer();
+            Customer newCustomer = new Customer();
+            // Valid: Contains class name with suffix
+            Customer customerData = new Customer();
+            Customer customerInfo = new Customer();
+            // Valid: Contains class name in middle
+            Customer myCustomerData = new Customer();
         }
     }
 }

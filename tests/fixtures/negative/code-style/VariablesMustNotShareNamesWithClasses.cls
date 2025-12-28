@@ -45,11 +45,30 @@ public class Example {
         }
     }
 
-    public class A {
+    public class Request {
         public void method() {
-            // Violation: Single letter class name match
-            A A = new A();
-            A a = new A();
+            // Violation: Variable name matches class name (exact match)
+            Request request = new Request();
+            Request Request = new Request();
+            Request REQUEST = new Request();
+        }
+    }
+
+    public class Quote {
+        public void method() {
+            // Violation: Variable name matches class name (exact match, not plural)
+            Quote quote = new Quote();
+            Quote Quote = new Quote();
+            Quote QUOTE = new Quote();
+        }
+    }
+
+    public class Account {
+        public void method() {
+            // Violation: Variable name matches class name (exact match, not plural)
+            Account account = new Account();
+            Account Account = new Account();
+            Account ACCOUNT = new Account();
         }
     }
 
@@ -59,6 +78,34 @@ public class Example {
             TestHelper TestHelper = new TestHelper();
             TestHelper testHelper = new TestHelper();
             TestHelper TESTHELPER = new TestHelper();
+        }
+    }
+
+    public class Dress {
+        public void method() {
+            // Violation: Variable name matches class name (exact match, case-insensitive)
+            Dress dress = new Dress();
+            Dress Dress = new Dress();
+            Dress DRESS = new Dress();
+            Dress DrEsS = new Dress();
+        }
+    }
+
+    public class Order {
+        public void method() {
+            // Violation: Variable name matches class name (exact match, case-insensitive)
+            Order order = new Order();
+            Order Order = new Order();
+            Order ORDER = new Order();
+        }
+    }
+
+    public class Customer {
+        public void method() {
+            // Violation: Variable name matches class name (exact match, case-insensitive)
+            Customer customer = new Customer();
+            Customer Customer = new Customer();
+            Customer CUSTOMER = new Customer();
         }
     }
 }
