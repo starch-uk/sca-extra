@@ -8,9 +8,9 @@
     "url": "https://github.com/starch-uk/sca-extra.git"
   },
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "test": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest",
+    "test:watch": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest --watch",
+    "test:coverage": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest --coverage",
     "test:rules": "node scripts/validate-rules.js && pnpm test",
     "validate": "node scripts/validate-rules.js",
     "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\"",

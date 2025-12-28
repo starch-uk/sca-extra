@@ -296,3 +296,49 @@ expect(() => {
 await expect(asyncFunction()).resolves.toBe(value);
 await expect(asyncFunction()).rejects.toThrow();
 ```
+
+## Troubleshooting
+
+### Node.js 25 `--localstorage-file` Warning
+
+**Issue:** When running Jest tests with Node.js 25+, you may see the following warning:
+```
+(node:xxxxx) Warning: `--localstorage-file` was provided without a valid path
+```
+
+**Root Cause:** Jest's Node environment (`jest-environment-node`) accesses Node.js's webstorage API during test teardown. Node.js 25 requires the `--localstorage-file` flag to have a valid path when webstorage is accessed.
+
+**Solution:** Provide a valid path for the `--localstorage-file` flag by setting `NODE_OPTIONS` in your test scripts:
+
+```json
+{
+  "scripts": {
+    "test": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest",
+    "test:watch": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest --watch",
+    "test:coverage": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest --coverage"
+  }
+}
+```
+
+**Additional Steps:**
+1. Add `.jest-localstorage` to your `.gitignore` file to prevent committing the temporary file:
+   ```
+   .jest-localstorage
+   ```
+
+2. The file will be automatically created by Node.js when Jest accesses the webstorage API.
+
+**Stack Trace Location:**
+The warning originates from:
+- `node:internal/webstorage:32:25` - Node.js webstorage module
+- `jest-util/build/index.js:417:59` - `deleteProperties` function
+- `jest-environment-node/build/index.js:265:40` - `GlobalProxy.clear` method
+- `jest-environment-node/build/index.js:213:23` - `NodeEnvironment.teardown` method
+
+**Verification:**
+To trace the warning source, use:
+```bash
+NODE_OPTIONS='--trace-warnings' pnpm test
+```
+
+This will show the full stack trace indicating where the warning originates.

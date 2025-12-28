@@ -45,6 +45,7 @@ build/
 tmp/
 temp/
 *.tmp
+.jest-localstorage
 
 # Husky
 .husky/_/
