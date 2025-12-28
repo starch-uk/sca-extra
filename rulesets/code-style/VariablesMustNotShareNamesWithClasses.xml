@@ -16,10 +16,18 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Variable names should not match class names to avoid confusion. When
-			a variable shares a name with a class, it can be unclear whether the
-			identifier refers to the class or an instance, making the code harder
-			to read and understand.
+			Variable names should not exactly match class names to avoid
+			confusion.
+			When a variable shares an exact name with a class, it can be unclear
+			whether the identifier refers to the class or an instance, making the
+			code harder to read and understand.
+
+			Allowed patterns:
+			- Plurals: If a class is called "Quote", you can call a variable "quotes"
+			- Single letters: If a class is called "Request", you can call a variable "r"
+			- Variables containing the class name: If a class is called "Dress", you
+			  can call a variable "myDress", "dressItem", "redDress", or "dresses",
+			  but not "dress" (exact match)
 
 			Version: 1.0.0
 		</description>
@@ -28,17 +36,17 @@
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//VariableDeclaration[
-						VariableExpression
-						and (
-							ancestor::ApexFile//UserClass[@Name = VariableExpression/@Image]
-							or ancestor::ApexFile//UserClass[@SimpleName = VariableExpression/@Image]
-							or ancestor::ApexFile//UserClass[@Image = VariableExpression/@Image]
-							or ancestor::ApexFile//UserClass[lower-case(@Name) = lower-case(VariableExpression/@Image)]
-							or ancestor::ApexFile//UserClass[lower-case(@SimpleName) = lower-case(VariableExpression/@Image)]
-							or ancestor::ApexFile//UserClass[lower-case(@Image) = lower-case(VariableExpression/@Image)]
+					for $var in //VariableDeclaration[VariableExpression]
+					return if (
+						let $varNameLower := lower-case($var/@Image)
+						return (
+							string-length($varNameLower) > 1
+							and $var/ancestor::ApexFile//UserClass[
+								lower-case(@Image) = $varNameLower
+								or lower-case(@SimpleName) = $varNameLower
+							]
 						)
-					]
+					) then $var else ()
 					]]>
 				</value>
 			</property>
@@ -63,7 +71,8 @@
 			    Account accountInstance = new Account();  // ✅ Different name (with suffix)
 			    Account accountBob = new Account();  // ✅ Different name (with suffix)
 			    Account myAccount = new Account();  // ✅ Different name (with prefix)
-			    Account accounts = new Account();  // ✅ Different name (plural)
+			    Account accounts = new Account();  // ✅ Valid: Plural is allowed
+			    Account r = new Account();  // ✅ Valid: Single letter is allowed
 			}
 			]]>
 		</example>
@@ -120,6 +129,32 @@
 			        String accountName = 'Test';  // ✅ Valid: accountName != Account
 			        String accountId = '123';  // ✅ Valid: accountId != Account
 			        Account accountInstance = new Account();  // ✅ Valid: accountInstance != Account
+			        Account accounts = new Account();  // ✅ Valid: Plural is allowed
+			    }
+			}
+			
+			public class Request {
+			    public void method() {
+			        Request requestItem = new Request();  // ✅ Valid: Contains class name but is longer
+			        Request request = new Request();  // ❌ Violation: Exact match
+			        Request r = new Request();  // ✅ Valid: Single letter is allowed
+			    }
+			}
+			
+			public class Quote {
+			    public void method() {
+			        Quote quotes = new Quote();  // ✅ Valid: Plural is allowed
+			        Quote quote = new Quote();  // ❌ Violation: Exact match
+			    }
+			}
+			
+			public class Dress {
+			    public void method() {
+			        Dress dresses = new Dress();  // ✅ Valid: Plural is allowed
+			        Dress myDress = new Dress();  // ✅ Valid: Contains class name with prefix
+			        Dress dressItem = new Dress();  // ✅ Valid: Contains class name with suffix
+			        Dress redDressObject = new Dress();  // ✅ Valid: Contains class name in middle
+			        Dress dress = new Dress();  // ❌ Violation: Exact match
 			    }
 			}
 			]]>
