@@ -239,6 +239,32 @@ describe('Code Style Rules', () => {
 		});
 	});
 
+	describe('NoLongLines', () => {
+		it('should detect lines longer than 80 characters', async () => {
+			const { runRegexRule } = require('../helpers/pmd-helper');
+			const violations = await runRegexRule(
+				'/.{81,}/gm',
+				'tests/fixtures/negative/code-style/NoLongLines.cls',
+				'NoLongLines',
+				'Line exceeds 80 characters. Use shorter class, attribute, method, and variable names to improve readability.'
+			);
+			expect(
+				violations.filter((v) => v.rule === 'NoLongLines').length
+			).toBeGreaterThan(0);
+		});
+
+		it('should not flag lines 80 characters or shorter', async () => {
+			const { runRegexRule } = require('../helpers/pmd-helper');
+			const violations = await runRegexRule(
+				'/.{81,}/gm',
+				'tests/fixtures/positive/code-style/NoLongLines.cls',
+				'NoLongLines',
+				'Line exceeds 80 characters. Use shorter class, attribute, method, and variable names to improve readability.'
+			);
+			assertNoViolations(violations, 'NoLongLines');
+		});
+	});
+
 	describe('NoMethodCallsAsArguments', () => {
 		it('should detect method calls used directly as arguments', async () => {
 			const violations = await runPMD(
