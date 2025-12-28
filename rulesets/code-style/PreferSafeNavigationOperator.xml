@@ -18,6 +18,8 @@
 			properties or calling methods. The safe navigation operator is more concise and
 			clearly
 			expresses the intent of safely accessing members that may be null.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

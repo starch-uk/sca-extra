@@ -17,6 +17,8 @@
 			variables. This improves readability, makes debugging easier by allowing
 			inspection of intermediate values, and reduces complexity. Exceptions are
 			made for final variables that use method chaining.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

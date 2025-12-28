@@ -20,6 +20,8 @@
 			evaluations, and make debugging easier. This rule applies to
 			if, else-if, while, for,
 			switch, and ternary expressions.
+
+			Version: 1.0.0
 		</description>
 		<priority>2</priority>
 		<properties>

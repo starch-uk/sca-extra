@@ -20,6 +20,8 @@
 			constants, not inline. This improves performance by avoiding repeated pattern
 			compilation, makes patterns reusable, and improves maintainability by
 			centralizing pattern definitions.
+
+			Version: 1.0.0
 		</description>
 		<priority>2</priority>
 		<properties>

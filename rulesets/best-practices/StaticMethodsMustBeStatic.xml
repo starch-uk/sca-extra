@@ -21,6 +21,8 @@
 			the method's independence from instance state explicit, improves performance
 			by avoiding unnecessary instance creation, and follows best practices for
 			method design.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

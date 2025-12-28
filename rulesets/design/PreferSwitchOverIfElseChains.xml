@@ -36,6 +36,8 @@
 			of the XPath expression (default: 2). This sets the minimum number of
 			conditions comparing the same variable required before a switch statement is
 			recommended.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

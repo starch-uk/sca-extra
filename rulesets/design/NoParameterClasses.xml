@@ -27,6 +27,8 @@
 			expression:
 			- $minFields: Minimum number of fields required (default: 1)
 			- $minConstructors: Minimum number of constructors required (default: 1)
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -18,6 +18,8 @@
 			and providing a default value. The null coalescing operator is more concise and
 			clearly
 			expresses the intent of providing a default value when a variable is null.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

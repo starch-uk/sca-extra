@@ -27,6 +27,8 @@
 			beginning of the XPath expression (default: 'String', 'Integer', 'Long',
 			'Double', 'Decimal', 'Boolean', 'Date', 'DateTime', 'Time', 'Id', 'Blob').
 			This sets which types are considered primitive and subject to this rule.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

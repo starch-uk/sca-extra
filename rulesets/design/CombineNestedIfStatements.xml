@@ -21,6 +21,8 @@
 			statements that contain only another if statement in their body. Combining
 			nested conditionals improves readability and reduces unnecessary indentation
 			levels.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

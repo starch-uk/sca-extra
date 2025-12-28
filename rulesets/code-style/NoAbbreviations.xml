@@ -30,6 +30,8 @@
 			'Api,Html,Id,Url')
 			- $allowedPrefixes: Comma-separated list of allowed prefixes (default:
 			'test')
+
+			Version: 1.0.0
 		</description>
 		<priority>2</priority>
 		<properties>

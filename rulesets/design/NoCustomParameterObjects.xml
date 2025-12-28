@@ -25,6 +25,8 @@
 			To customize this rule, edit the $minFields variable at the beginning of
 			the XPath expression (default: 1). This sets the minimum number of fields
 			required for a class to be flagged as a parameter object.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

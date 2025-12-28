@@ -21,6 +21,8 @@
 			enforces immutability, improves code clarity by indicating that the
 			variable's value won't change, and helps prevent accidental reassignment
 			bugs. Any variable that can be final without adding code must be final.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

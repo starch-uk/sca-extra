@@ -21,6 +21,8 @@
 			variable shares a name with a class, it can be unclear whether the
 			identifier refers to the class or an instance, making the code harder to
 			read and understand.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

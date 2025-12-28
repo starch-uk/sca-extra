@@ -28,6 +28,8 @@
 			(default: 'i,c')
 			- $allowedExceptionNames: Comma-separated list of allowed exception
 			variable names (default: 'e')
+
+			Version: 1.0.0
 		</description>
 		<priority>2</priority>
 		<properties>

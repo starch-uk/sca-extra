@@ -21,6 +21,8 @@
 			
 			Use: new Map &lt; String, String > {'key' = > 'value'}
 			Instead of: new Map &lt; String, String > (); map.put('key', 'value');
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

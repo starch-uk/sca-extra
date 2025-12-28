@@ -21,6 +21,8 @@
 			to enable parallel test execution. This improves test performance by
 			allowing tests to run in parallel, reducing overall test execution time and
 			improving developer productivity.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

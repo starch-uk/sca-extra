@@ -20,6 +20,8 @@
 			property syntax. Apex provides property syntax that is more concise and
 			idiomatic than Java-style getter methods. Use property syntax instead of
 			private fields with public getter methods.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

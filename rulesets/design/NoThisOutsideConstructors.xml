@@ -21,6 +21,8 @@
 			interface pattern), but they cannot use 'this.' to access class attributes.
 			Using 'this.' outside constructors is unnecessary and reduces code
 			readability.
+
+			Version: 1.0.0
 		</description>
 		<priority>2</priority>
 		<properties>

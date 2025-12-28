@@ -22,6 +22,8 @@
 			the XPath expression (default: 2). This sets the minimum number of
 			contains() calls required in a conditional before a regex pattern is
 			recommended.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

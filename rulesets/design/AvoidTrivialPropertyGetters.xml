@@ -21,6 +21,8 @@
 			auto-properties or final fields instead. Trivial getters add no value and
 			should be replaced with Apex property syntax, which is more concise and
 			idiomatic.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

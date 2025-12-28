@@ -20,6 +20,8 @@
 			
 			Use: while (hasMore()) { ... }
 			Instead of: while (true) { if (!hasMore()) { break; } ... }
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -19,6 +19,8 @@
 			
 			Instead of: 'line1\nline2\nline3'
 			Use: String.join(new List &lt; String > {'line1', 'line2', 'line3'}, '\n');
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

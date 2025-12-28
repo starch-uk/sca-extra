@@ -18,6 +18,8 @@
 			methods that have ApexDoc comments but are missing the required @throws
 			documentation for exceptions they throw. Proper exception documentation
 			helps developers understand what exceptions a method can throw and when.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

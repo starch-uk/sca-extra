@@ -18,6 +18,8 @@
 			
 			Instead of: String.join('', new List &lt; String > {'a', 'b', 'c'});
 			Use: 'a' + 'b' + 'c';
+
+			Version: 1.0.0
 		</description>
 		<priority>4</priority>
 		<properties>

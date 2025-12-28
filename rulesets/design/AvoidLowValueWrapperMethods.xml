@@ -20,6 +20,8 @@
 			instanceof
 			check) should be inlined. These wrapper methods add unnecessary indirection
 			without providing value, making the code harder to understand and maintain.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

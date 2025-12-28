@@ -27,7 +27,8 @@
     "ast-dump": "bash scripts/ast-dump.sh",
     "clean": "node scripts/clean.js",
     "check-xml-order": "node scripts/check-xml-order.js",
-    "fix-xml-order": "node scripts/fix-xml-element-order.js"
+    "fix-xml-order": "node scripts/fix-xml-element-order.js",
+    "add-version-info": "node scripts/add-version-info.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

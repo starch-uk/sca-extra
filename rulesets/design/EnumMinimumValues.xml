@@ -25,6 +25,8 @@
 			To customize this rule, edit the $minValues variable at the beginning of
 			the XPath expression (default: 3). This sets the minimum number of enum
 			values required.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

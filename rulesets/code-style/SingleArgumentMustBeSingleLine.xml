@@ -20,6 +20,8 @@
 			To customize this rule, edit the $maxArgs variable at the beginning of
 			the XPath expression (default: 1). This sets the maximum number of
 			arguments allowed before multi-line formatting is required.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -25,6 +25,8 @@
 			To customize this rule, edit the $minParams variable at the beginning of
 			the XPath expression (default: 1). This sets the minimum number of
 			parameters a method must have to be flagged as a one-liner.
+
+			Version: 1.0.0
 		</description>
 		<priority>4</priority>
 		<properties>

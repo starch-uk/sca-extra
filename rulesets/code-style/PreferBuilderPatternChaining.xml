@@ -19,6 +19,8 @@
 			reassigning the same
 			variable multiple times. This follows the builder pattern idiom and improves
 			code clarity.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -21,6 +21,8 @@
 			underscores only). This enforces immutability for static variables and
 			follows the standard naming convention for constants, making them easily
 			identifiable in code.
+
+			Version: 1.0.0
 		</description>
 		<priority>2</priority>
 		<properties>

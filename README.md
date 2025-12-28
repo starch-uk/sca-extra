@@ -804,6 +804,7 @@ PMD ruleset XML files must follow the [PMD Ruleset XML Schema](https://pmd.sourc
 **Scripts available:**
 - `pnpm check-xml-order` - Check if all XML files have correct element order
 - `pnpm fix-xml-order` - Automatically fix element order in all XML files
+- `pnpm add-version-info` - Add version information to all rule descriptions
 
 These scripts use XML libraries (`xmldom`) to properly parse and manipulate XML, ensuring all elements (including multiple examples) are preserved.
 
@@ -838,6 +839,7 @@ All scripts in the `scripts/` directory have convenience commands in `package.js
 **XML Management:**
 - `pnpm check-xml-order` - Check XML element order in all ruleset files
 - `pnpm fix-xml-order` - Automatically fix XML element order
+- `pnpm add-version-info` - Add version information to all rule descriptions
 
 **Testing & Utilities:**
 - `pnpm list-test-files` - List all test files to verify Jest discovery

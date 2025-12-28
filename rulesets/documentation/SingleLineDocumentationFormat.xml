@@ -19,6 +19,8 @@
 			the content genuinely requires multiple lines. This ensures consistent
 			formatting and prevents unnecessary multi-line comments for simple
 			documentation.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>

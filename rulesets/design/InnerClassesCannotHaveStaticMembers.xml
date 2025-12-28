@@ -21,6 +21,8 @@
 			a language limitation - Apex does not support static members in inner
 			classes. Remove static modifiers from inner class members. This is a
 			compilation error that will prevent the code from compiling.
+
+			Version: 1.0.0
 		</description>
 		<priority>1</priority>
 		<properties>

@@ -18,6 +18,8 @@
 			expressions. Extract method calls to variables first for better
 			readability, debugging,
 			and to avoid potential side effects from multiple evaluations.
+
+			Version: 1.0.0
 		</description>
 		<priority>2</priority>
 		<properties>
