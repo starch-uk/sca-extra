@@ -90,10 +90,6 @@ public class StressTestAllRules {
     String result = getName() != null ? getName() : 'default';
     // Violations: NoMethodCallsInConditionals, PreferNullCoalescingOverTernary
 
-    Integer size = getItems().size();
-    String name = getAccount().Name;
-    // Violations: NoMethodChaining
-
     Account account = getAccount();
     if (account != null) {
       String city = account.BillingCity;

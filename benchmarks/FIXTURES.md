@@ -8,14 +8,14 @@ The benchmark fixtures are comprehensive stress-test files designed to explicitl
 
 | Fixture | Size | Estimated Violations | Primary Focus | Rules Covered |
 |---------|------|---------------------|---------------|---------------|
-| `stress-test-all-rules.cls` | 5.5 KB | 100+ | All rules (comprehensive) | All 43 PMD rules |
-| `stress-code-style.cls` | 15 KB | 200+ | Code style rules | 17 rules |
+| `stress-test-all-rules.cls` | 5.5 KB | 100+ | All rules (comprehensive) | All 42 PMD rules |
+| `stress-code-style.cls` | 15 KB | 200+ | Code style rules | 16 rules |
 | `stress-design.cls` | 10.3 KB | 130+ | Design rules (structure + method signatures) | 15 rules |
 | `stress-best-practices.cls` | 5.7 KB | 100+ | Best practices rules (modifiers) | 5 rules |
-| `stress-code-style.cls` | 18.2 KB | 300+ | Code style rules (including naming) | 21 rules |
+| `stress-code-style.cls` | 18.2 KB | 300+ | Code style rules (including naming) | 20 rules |
 | `stress-documentation.cls` | 3.9 KB | 30+ | Documentation rules | 2 rules |
 
-**Total: ~43 KB of stress-test code with 580+ potential violations across 43 PMD rules**
+**Total: ~43 KB of stress-test code with 560+ potential violations across 42 PMD rules**
 
 **Note:** Regex rules (NoConsecutiveBlankLines, ProhibitSuppressWarnings) are not included in PMD benchmark fixtures as they use a different engine.
 
@@ -29,7 +29,6 @@ The benchmark fixtures are comprehensive stress-test files designed to explicitl
 - ✅ MultipleStringContainsCalls (10 violations)
 - ✅ NoMethodCallsAsArguments (10 violations)
 - ✅ NoMethodCallsInConditionals (20 violations)
-- ✅ NoMethodChaining (20 violations)
 - ✅ PreferBuilderPatternChaining (10 violations)
 - ✅ PreferConcatenationOverStringJoinWithEmpty (10 violations)
 - ✅ PreferMethodCallsInLoopConditions (10 violations)

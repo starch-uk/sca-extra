@@ -23,26 +23,6 @@ describe('Code Style Rules', () => {
 		});
 	});
 
-	describe('NoMethodChaining', () => {
-		it('should detect method chaining', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/NoMethodChaining.xml',
-				'tests/fixtures/negative/code-style/NoMethodChaining.cls'
-			);
-			expect(
-				violations.filter((v) => v.rule === 'NoMethodChaining').length
-			).toBeGreaterThan(0);
-		});
-
-		it('should not flag code using intermediary variables', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/NoMethodChaining.xml',
-				'tests/fixtures/positive/code-style/NoMethodChaining.cls'
-			);
-			assertNoViolations(violations, 'NoMethodChaining');
-		});
-	});
-
 	describe('PreferSafeNavigationOperator', () => {
 		it('should detect explicit null checks before property access', async () => {
 			const violations = await runPMD(
