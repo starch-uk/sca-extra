@@ -13,10 +13,11 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Prefer the null coalescing operator (??) over ternary operators when checking for null
-			and
-			providing a default value. The null coalescing operator is more concise and clearly expresses
-			the intent of providing a default value when a variable is null.
+			Prefer the null coalescing operator (??) over ternary operators when
+			checking for null
+			and providing a default value. The null coalescing operator is more concise and
+			clearly
+			expresses the intent of providing a default value when a variable is null.
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -24,10 +25,9 @@
 				<value>
 					<![CDATA[
 					//TernaryExpression[
-                        StandardCondition/BooleanExpression[@Op = '==' or @Op = '!=']
-                        and (StandardCondition/BooleanExpression/LiteralExpression[@Null = true()]
-                             or StandardCondition/BooleanExpression/VariableExpression[@Image = 'null'])
-                    ]
+						StandardCondition/BooleanExpression[@Op = '==' or @Op = '!=']
+						and (StandardCondition/BooleanExpression/LiteralExpression[@Null = true()] or StandardCondition/BooleanExpression/VariableExpression[@Image = 'null'])
+					]
 					]]>
 				</value>
 			</property>

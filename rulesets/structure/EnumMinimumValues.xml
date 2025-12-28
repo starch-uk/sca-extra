@@ -5,7 +5,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-	<description>Custom rules for Apex code structure and organization</description>
+	<description>
+		Custom rules for Apex code structure and organization
+	</description>
 	<rule
 		name="EnumMinimumValues"
 		language="apex"
@@ -13,12 +15,17 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Enums must contain at least a minimum number of values. Enums with fewer than the
-			minimum number of values should be reconsidered
-			as they may not provide sufficient flexibility or may indicate a design issue. For boolean-like
-			scenarios, consider using a boolean instead of an enum with only two values.
+			Enums must contain at least a minimum number of values. Enums with
+			fewer than the
+			minimum number of values should be reconsidered as they may not provide
+			sufficient
+			flexibility or may indicate a design issue. For boolean-like scenarios, consider
+			using
+			a boolean instead of an enum with only two values.
 			
-			To customize this rule, edit the minValues threshold in the XPath expression (default: 3).
+			To customize this rule, edit the $minValues variable in the XPath
+			expression (default:
+			3). This sets the minimum number of enum values required.
 		</description>
 		<priority>3</priority>
 		<properties>

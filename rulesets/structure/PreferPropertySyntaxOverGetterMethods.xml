@@ -5,7 +5,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-	<description>Custom rules for Apex code structure and organization</description>
+	<description>
+		Custom rules for Apex code structure and organization
+	</description>
 	<rule
 		name="PreferPropertySyntaxOverGetterMethods"
 		language="apex"
@@ -13,8 +15,10 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Private fields with public getter methods should be replaced with property syntax. Apex
-			provides property syntax that is more concise and idiomatic than Java-style getter methods.
+			Private fields with public getter methods should be replaced with
+			property syntax. Apex
+			provides property syntax that is more concise and idiomatic than Java-style
+			getter methods.
 			Use property syntax instead of private fields with public getter methods.
 		</description>
 		<priority>3</priority>
@@ -23,18 +27,17 @@
 				<value>
 					<![CDATA[
 					//Method[
-                        ModifierNode[@Public = true()]
-                        and @ReturnType != 'void'
-                        and starts-with(@Image, 'get')
-                        and count(BlockStatement//ReturnStatement) = 1
-                        and BlockStatement//ReturnStatement/VariableExpression
-                        and lower-case(BlockStatement//ReturnStatement/VariableExpression/@Image) = 
-                            lower-case(substring-after(@Image, 'get'))
-                        and not(BlockStatement//MethodCallExpression)
-                        and not(BlockStatement//IfBlockStatement)
-                        and not(BlockStatement//ForLoopStatement)
-                        and not(BlockStatement//WhileLoopStatement)
-                    ]
+						ModifierNode[@Public = true()]
+						and @ReturnType != 'void'
+						and starts-with(@Image, 'get')
+						and count(BlockStatement//ReturnStatement) = 1
+						and BlockStatement//ReturnStatement/VariableExpression
+						and lower-case(BlockStatement//ReturnStatement/VariableExpression/@Image) = lower-case(substring-after(@Image, 'get'))
+						and not(BlockStatement//MethodCallExpression)
+						and not(BlockStatement//IfBlockStatement)
+						and not(BlockStatement//ForLoopStatement)
+						and not(BlockStatement//WhileLoopStatement)
+					]
 					]]>
 				</value>
 			</property>

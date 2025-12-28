@@ -13,8 +13,10 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Test classes must include IsParallel=true in their @IsTest annotation to enable parallel
-			test execution. This improves test performance by allowing tests to run in parallel, reducing
+			Test classes must include IsParallel=true in their @IsTest
+			annotation to enable parallel
+			test execution. This improves test performance by allowing tests to run in
+			parallel, reducing
 			overall test execution time and improving developer productivity.
 		</description>
 		<priority>3</priority>
@@ -23,9 +25,9 @@
 				<value>
 					<![CDATA[
 					//UserClass[
-                        .//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
-                        and not(.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]/AnnotationParameter[@Name = 'IsParallel' and (@Value = 'true' or @Image = 'true')])
-                    ]
+						.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
+						and not(.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]/AnnotationParameter[@Name = 'IsParallel' and (@Value = 'true' or @Image = 'true')])
+					]
 					]]>
 				</value>
 			</property>

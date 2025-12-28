@@ -13,8 +13,10 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			String literals containing more than one newline character ('\n') should be split into
-			separate strings and joined using String.join() for better readability and maintainability.
+			String literals containing more than one newline
+			character ('\n') should be split into
+			separate strings and joined using String.join() for better readability and
+			maintainability.
 			
 			Instead of: 'line1\nline2\nline3'
 			Use: String.join(new List &lt; String > {'line1', 'line2', 'line3'}, '\n');
@@ -25,11 +27,11 @@
 				<value>
 					<![CDATA[
 					//LiteralExpression[
-                        @String = true()
-                        and contains(@Image, '\n')
-                        and contains(substring-after(@Image, '\n'), '\n')
-                        and not(ancestor::MethodCallExpression[@MethodName = 'join'])
-                    ]
+						@String = true()
+						and contains(@Image, '\n')
+						and contains(substring-after(@Image, '\n'), '\n')
+						and not(ancestor::MethodCallExpression[@MethodName = 'join'])
+					]
 					]]>
 				</value>
 			</property>

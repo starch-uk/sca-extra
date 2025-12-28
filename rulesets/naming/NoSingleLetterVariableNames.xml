@@ -13,14 +13,19 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Single-letter variable names are not allowed except for loop counters (i, c) or
-			exception
-			variables (e). Use descriptive names instead to improve code readability and make the code
-			self-documenting. Single-letter names provide no context about the variable's purpose.
+			Single-letter variable names are not allowed except for loop
+			counters (i, c) or
+			exception variables (e). Use descriptive names instead to improve code
+			readability and
+			make the code self-documenting. Single-letter names provide no context about the
+			variable's purpose.
 			
-			To customize this rule, edit the allowedNames lists in the XPath expression:
-			- allowedLoopNames: Comma-separated list of allowed loop counter names (default: 'i,c')
-			- allowedExceptionNames: Comma-separated list of allowed exception variable names (default: 'e')
+			To customize this rule, edit the variables in the XPath expression:
+			- $allowedLoopNames: Comma-separated list of allowed loop counter
+			names (default: 'i,c')
+			- $allowedExceptionNames: Comma-separated list of allowed exception variable
+			names
+			(default: 'e')
 		</description>
 		<priority>2</priority>
 		<properties>

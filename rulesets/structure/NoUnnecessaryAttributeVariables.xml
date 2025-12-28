@@ -5,7 +5,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-	<description>Custom rules for Apex code structure and organization</description>
+	<description>
+		Custom rules for Apex code structure and organization
+	</description>
 	<rule
 		name="NoUnnecessaryAttributeVariables"
 		language="apex"
@@ -13,46 +15,37 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Variables that extract a single attribute from an object and are only used once should
-			be
-			inlined. This rule does not apply to collection types (List, Set, Map) or object/class
-			instances, only primitive types. Inlining these variables reduces unnecessary indirection
-			and improves code clarity.
+			Variables that extract a single attribute from an object and are
+			only used once should
+			be inlined. This rule does not apply to collection types (List, Set, Map) or
+			object/class instances, only primitive types. Inlining these variables reduces
+			unnecessary indirection and improves code clarity.
+			
+			To customize this rule, edit the $primitiveTypes variable in the XPath
+			expression
+			(default: 'String', 'Integer', 'Long', 'Double', 'Decimal', 'Boolean', 'Date',
+			'DateTime', 'Time', 'Id', 'Blob'). This sets which types are considered
+			primitive and
+			subject to this rule.
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					for $var in //VariableDeclaration[
-                        VariableExpression[1]/ReferenceExpression
-                        and (
-                            @Type = 'String'
-                            or @Type = 'Integer'
-                            or @Type = 'Long'
-                            or @Type = 'Double'
-                            or @Type = 'Decimal'
-                            or @Type = 'Boolean'
-                            or @Type = 'Date'
-                            or @Type = 'DateTime'
-                            or @Type = 'Time'
-                            or @Type = 'Id'
-                            or @Type = 'Blob'
-                        )
-                        and VariableExpression[2]
-                    ]
-                    return if (
-                        not($var/ancestor::Method//AssignmentExpression[
-                            VariableExpression[@Image = $var/VariableExpression[2]/@Image]
-                            and not(ancestor::VariableDeclaration[1] = $var)
-                        ])
-                        and count(
-                            $var/ancestor::Method//VariableExpression[
-                                @Image = $var/VariableExpression[2]/@Image
-                                and not(ancestor::VariableDeclaration[1] = $var)
-                            ]
-                        ) = 1
-                    ) then $var else ()
+					let $primitiveTypes := ('String', 'Integer', 'Long', 'Double', 'Decimal', 'Boolean', 'Date', 'DateTime', 'Time', 'Id', 'Blob')
+					return for $var in //VariableDeclaration[
+						VariableExpression[1]/ReferenceExpression
+						and some $type in $primitiveTypes satisfies @Type = $type
+						and VariableExpression[2]
+					]
+					return if (
+						not($var/ancestor::Method//AssignmentExpression[
+							VariableExpression[@Image = $var/VariableExpression[2]/@Image]
+							and not(ancestor::VariableDeclaration[1] = $var)
+						])
+						and count($var/ancestor::Method//VariableExpression[@Image = $var/VariableExpression[2]/@Image and not(ancestor::VariableDeclaration[1] = $var)]) = 1
+					) then $var else ()
 					]]>
 				</value>
 			</property>

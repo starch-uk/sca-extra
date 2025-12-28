@@ -5,7 +5,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-	<description>Custom rules for Apex method signatures and parameters</description>
+	<description>
+		Custom rules for Apex method signatures and parameters
+	</description>
 	<rule
 		name="NoCustomParameterObjects"
 		language="apex"
@@ -13,13 +15,20 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Custom parameter objects (classes or inner classes that only have attributes and
-			constructors with no instance methods) should not be created solely for passing parameters.
-			Instead, refactor methods to stay within 3 parameters, which improves readability and follows best
-			practices for method design.
-			The rule flags inner classes with a minimum number of fields.
+			Custom parameter objects (classes or inner classes that only have
+			attributes and
+			constructors with no instance methods) should not be created solely for passing
+			parameters. Instead, refactor methods to stay within 3 parameters, which
+			improves
+			readability and follows best practices for method design. The rule flags inner
+			classes
+			with a minimum number of fields.
 			
-			To customize this rule, edit the minFields threshold in the XPath expression (default: 1).
+			To customize this rule, edit the $minFields variable in the XPath
+			expression (default:
+			1). This sets the minimum number of fields required for a class to be flagged as
+			a
+			parameter object.
 		</description>
 		<priority>3</priority>
 		<properties>

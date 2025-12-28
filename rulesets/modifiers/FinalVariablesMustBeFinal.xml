@@ -5,7 +5,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-	<description>Custom rules for Apex modifiers and variable declarations</description>
+	<description>
+		Custom rules for Apex modifiers and variable declarations
+	</description>
 	<rule
 		name="FinalVariablesMustBeFinal"
 		language="apex"
@@ -13,10 +15,13 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Variables that are never reassigned should be declared as final. This enforces
-			immutability,
-			improves code clarity by indicating that the variable's value won't change, and helps prevent
-			accidental reassignment bugs. Any variable that can be final without adding code must be final.
+			Variables that are never reassigned should be declared as
+			final. This enforces
+			immutability, improves code clarity by indicating that the variable's value
+			won't change,
+			and helps prevent accidental reassignment bugs. Any variable that can be final
+			without
+			adding code must be final.
 		</description>
 		<priority>3</priority>
 		<properties>

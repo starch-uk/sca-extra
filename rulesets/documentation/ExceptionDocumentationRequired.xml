@@ -13,11 +13,15 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Methods that contain throw statements must document the exceptions they throw
-			using @throws
-			tags in their ApexDoc comments. This rule checks methods that have ApexDoc comments but
-			are missing the required @throws documentation for exceptions they throw. Proper exception
-			documentation helps developers understand what exceptions a method can throw and when.
+			Methods that contain throw statements must document the exceptions
+			they throw using
+			@throws tags in their ApexDoc comments. This rule checks methods that have
+			ApexDoc
+			comments but are missing the required @throws documentation for exceptions they
+			throw.
+			Proper exception documentation helps developers understand what exceptions a
+			method can
+			throw and when.
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -25,10 +29,7 @@
 				<value>
 					<![CDATA[
 					//Method[
-						FormalComment[
-							starts-with(@Image, '/**')
-							and not(contains(@Image, '@throws'))
-						]
+						FormalComment[starts-with(@Image, '/**') and not(contains(@Image, '@throws'))]
 						and .//ThrowStatement
 					]
 					]]>

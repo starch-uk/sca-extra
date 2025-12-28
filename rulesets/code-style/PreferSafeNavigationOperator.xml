@@ -13,8 +13,10 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Always prefer the safe navigation operator (?.) over null checks before accessing object
-			properties or calling methods. The safe navigation operator is more concise and clearly
+			Always prefer the safe navigation operator (?.) over null checks
+			before accessing object
+			properties or calling methods. The safe navigation operator is more concise and
+			clearly
 			expresses the intent of safely accessing members that may be null.
 		</description>
 		<priority>3</priority>
@@ -23,14 +25,12 @@
 				<value>
 					<![CDATA[
 					//IfBlockStatement[
-                        StandardCondition/BooleanExpression[@Op = '==' or @Op = '!=']
-                        and (StandardCondition/BooleanExpression/VariableExpression[@Image = 'null']
-                             or StandardCondition/BooleanExpression/LiteralExpression[@Null = true()])
-                        and BlockStatement//MethodCallExpression
-                        and BlockStatement//MethodCallExpression/ReferenceExpression/@Image =
-                            StandardCondition/BooleanExpression/VariableExpression[@Image != 'null']/@Image
-                        and count(BlockStatement/*) = 1
-                    ]
+						StandardCondition/BooleanExpression[@Op = '==' or @Op = '!=']
+						and (StandardCondition/BooleanExpression/VariableExpression[@Image = 'null'] or StandardCondition/BooleanExpression/LiteralExpression[@Null = true()])
+						and BlockStatement//MethodCallExpression
+						and BlockStatement//MethodCallExpression/ReferenceExpression/@Image = StandardCondition/BooleanExpression/VariableExpression[@Image != 'null']/@Image
+						and count(BlockStatement/*) = 1
+					]
 					]]>
 				</value>
 			</property>

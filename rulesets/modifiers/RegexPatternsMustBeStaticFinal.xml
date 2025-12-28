@@ -5,7 +5,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-	<description>Custom rules for Apex modifiers and variable declarations</description>
+	<description>
+		Custom rules for Apex modifiers and variable declarations
+	</description>
 	<rule
 		name="RegexPatternsMustBeStaticFinal"
 		language="apex"
@@ -13,10 +15,11 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Regular expression patterns should be declared as static final constants, not
-			inline. This
-			improves performance by avoiding repeated pattern compilation, makes patterns reusable,
-			and improves maintainability by centralizing pattern definitions.
+			Regular expression patterns should be declared as static final
+			constants, not inline.
+			This improves performance by avoiding repeated pattern compilation, makes
+			patterns
+			reusable, and improves maintainability by centralizing pattern definitions.
 		</description>
 		<priority>2</priority>
 		<properties>
@@ -24,14 +27,11 @@
 				<value>
 					<![CDATA[
 					//MethodCallExpression[
-                        (
-                            (@MethodName = 'compile' and @FullMethodName = 'Pattern.compile')
-                            or (@MethodName = 'matches')
-                        )
-                        and .//LiteralExpression[@String = true()]
-                        and not(ancestor::FieldDeclarationStatements[ModifierNode[@Static = true() and @Final = true()]])
-                        and not(ancestor::Field[ModifierNode[@Static = true() and @Final = true()]])
-                    ]
+						((@MethodName = 'compile' and @FullMethodName = 'Pattern.compile') or @MethodName = 'matches')
+						and .//LiteralExpression[@String = true()]
+						and not(ancestor::FieldDeclarationStatements[ModifierNode[@Static = true() and @Final = true()]])
+						and not(ancestor::Field[ModifierNode[@Static = true() and @Final = true()]])
+					]
 					]]>
 				</value>
 			</property>

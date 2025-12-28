@@ -14,10 +14,12 @@
 	>
 		<description>
 			Single-line ApexDoc comments must be formatted with
-			spaces: /** comment */ not /**comment*/.
-			Multi-line ApexDoc comments should only be used when the content genuinely requires multiple
-			lines. This ensures consistent formatting and prevents unnecessary multi-line comments for
-			simple documentation.
+			spaces: /** comment */ not
+			/**comment*/. Multi-line ApexDoc comments should only be used when the content
+			genuinely
+			requires multiple lines. This ensures consistent formatting and prevents
+			unnecessary
+			multi-line comments for simple documentation.
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -25,22 +27,13 @@
 				<value>
 					<![CDATA[
 					//FormalComment[
-                        starts-with(@Image, '/**')
-                        and ends-with(@Image, '*/')
-                        and (
-                            (
-                                @BeginLine = @EndLine
-                                and (
-                                    not(starts-with(substring-after(@Image, '/**'), ' '))
-                                    or not(ends-with(substring-before(@Image, '*/'), ' '))
-                                )
-                            )
-                            or
-                            @BeginLine != @EndLine
-                                and contains(@Image, ' * ')
-                                and not(contains(substring-after(@Image, ' * '), ' * '))
-                        )
-                    ]
+						starts-with(@Image, '/**')
+						and ends-with(@Image, '*/')
+						and (
+							(@BeginLine = @EndLine and (not(starts-with(substring-after(@Image, '/**'), ' ')) or not(ends-with(substring-before(@Image, '*/'), ' '))))
+							or (@BeginLine != @EndLine and contains(@Image, ' * ') and not(contains(substring-after(@Image, ' * '), ' * ')))
+						)
+					]
 					]]>
 				</value>
 			</property>

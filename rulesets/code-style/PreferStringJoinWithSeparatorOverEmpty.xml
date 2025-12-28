@@ -13,15 +13,21 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			When using String.join() with an empty string separator and all strings in the list
-			except the last one end with the same non-empty sequence of characters, use the common
-			suffix as the separator instead. This makes the intent clearer and removes redundant
+			When using String.join() with an empty string separator and all
+			strings in the list
+			except the last one end with the same non-empty sequence of characters, use the
+			common
+			suffix as the separator instead. This makes the intent clearer and removes
+			redundant
 			characters from the strings.
 			
 			Instead of: String.join('', new List &lt; String > {'line1\n', 'line2\n', 'last'});
 			Use: String.join('\n', new List &lt; String > {'line1', 'line2', 'last'});
 			
-			To customize this rule, edit the minStrings threshold in the XPath expression (default: 3).
+			To customize this rule, edit the $minStrings variable in the XPath
+			expression (default: 3).
+			This sets the minimum number of strings required in the list before the rule
+			applies.
 		</description>
 		<priority>3</priority>
 		<properties>

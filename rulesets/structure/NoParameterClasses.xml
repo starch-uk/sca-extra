@@ -5,7 +5,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-	<description>Custom rules for Apex code structure and organization</description>
+	<description>
+		Custom rules for Apex code structure and organization
+	</description>
 	<rule
 		name="NoParameterClasses"
 		language="apex"
@@ -13,23 +15,31 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Parameter classes (classes or inner classes that only have attributes and constructors
-			with
-			no instance methods) should not be created. Classes should provide behavior, not just data.
-			Add instance methods to provide behavior, or refactor to use a different approach such as
-			using Map or keeping methods within the 3-parameter limit.
+			Parameter classes (classes or inner classes that only have
+			attributes and constructors
+			with no instance methods) should not be created. Classes should provide
+			behavior, not
+			just data. Add instance methods to provide behavior, or refactor to use a
+			different
+			approach such as using Map or keeping methods within the 3-parameter limit.
+			
+			To customize this rule, edit the variables in the XPath expression:
+			- $minFields: Minimum number of fields required (default: 1)
+			- $minConstructors: Minimum number of constructors required (default: 1)
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//UserClass[
-                        count(Field) > 0
-                        and count(Method[@Constructor = true()]) > 0
-                        and count(Method[@Constructor = false() and not(ModifierNode[@Static = true()])]) = 0
-                        and not(Method[@Constructor = false() and ModifierNode[@Static = true()]])
-                    ]
+					let $minFields := 1,
+						$minConstructors := 1
+					return //UserClass[
+						count(Field) >= $minFields
+						and count(Method[@Constructor = true()]) >= $minConstructors
+						and count(Method[@Constructor = false() and not(ModifierNode[@Static = true()])]) = 0
+						and not(Method[@Constructor = false() and ModifierNode[@Static = true()]])
+					]
 					]]>
 				</value>
 			</property>

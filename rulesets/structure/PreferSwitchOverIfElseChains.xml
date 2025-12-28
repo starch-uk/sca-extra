@@ -5,7 +5,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-	<description>Custom rules for Apex code structure and organization</description>
+	<description>
+		Custom rules for Apex code structure and organization
+	</description>
 	<rule
 		name="PreferSwitchOverIfElseChains"
 		language="apex"
@@ -13,25 +15,38 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			If-else chains, consecutive if statements, OR conditions, or any combination of these
-			patterns with a minimum number of conditions that compare the same variable should use switch
-			statements instead.
-			This detects patterns like: if (x == 'a') {} else if (x == 'b') {} else if (x == 'c') {}
-			or consecutive if statements: if (x == 'a') {} if (x == 'b') {} if (x == 'c') {}
-			or OR conditions: if (x == 'a' || x == 'b' || x == 'c') {}
-			or mixed patterns: if (x == 'a' || x == 'b') {} if (x == 'c') {} else
-			if (x == 'd') {} if (x == 'e') {}
-			The rule counts all conditions comparing the same variable across all if statements in a method, not
-			just within a single chain.
-			Switch statements are more readable and can be more performant than long if-else chains, multiple
-			consecutive if statements, or complex OR conditions.
-			Note: This rule only applies when all conditions compare the same variable/expression using
-			equality (==) and the variable type is compatible with switch
-			statements (Integer, Long, String, sObject, or Enum).
-			Other types like Boolean, Decimal, Date, etc. are not flagged as they cannot be used in switch
+			If-else chains, consecutive if statements, OR conditions, or any
+			combination of these
+			patterns with a minimum number of conditions that compare the same variable
+			should use
+			switch statements instead. This detects patterns like: if (x == 'a') {} else
+			if (x ==
+			'b') {} else if (x == 'c') {} or consecutive if
+			statements: if (x == 'a') {} if (x ==
+			'b') {} if (x == 'c') {} or OR
+			conditions: if (x == 'a' || x == 'b' || x == 'c') {} or
+			mixed patterns: if (x == 'a' || x == 'b') {} if (x == 'c') {} else
+			if (x == 'd') {} if
+			(x == 'e') {} The rule counts all conditions comparing the same variable across
+			all if
+			statements in a method, not just within a single chain. Switch statements are
+			more
+			readable and can be more performant than long if-else chains, multiple
+			consecutive if
+			statements, or complex OR conditions. Note: This rule only applies when all
+			conditions
+			compare the same variable/expression using equality (==) and the variable type
+			is
+			compatible with switch statements (Integer, Long, String, sObject, or
+			Enum). Other
+			types like Boolean, Decimal, Date, etc. are not flagged as they cannot be used
+			in switch
 			statements.
 			
-			To customize this rule, edit the minConditions threshold in the XPath expression (default: 2).
+			To customize this rule, edit the $minConditions variable in the XPath expression
+			(default: 2). This sets the minimum number of conditions comparing the same
+			variable
+			required before a switch statement is recommended.
 		</description>
 		<priority>3</priority>
 		<properties>

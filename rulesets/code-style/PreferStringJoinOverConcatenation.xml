@@ -13,15 +13,21 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			When concatenating a minimum number of strings where all strings except the last end
-			with the same
-			non-empty sequence of characters, use String.join() for better readability and maintainability.
+			When concatenating a minimum number of strings where all strings
+			except the last end
+			with the same non-empty sequence of characters, use String.join() for better
+			readability
+			and maintainability.
 			
 			Use: String.join(new List &lt; String > {'line1', 'line2', 'line3'}, '\n');
-			The second argument to String.join() should be the repeating separator pattern (not an empty
-			string).
+			The second argument to String.join() should be the repeating separator
+			pattern (not an
+			empty string).
 			
-			To customize this rule, edit the minStrings threshold in the XPath expression (default: 3).
+			To customize this rule, edit the $minStrings variable in the XPath
+			expression (default:
+			3). This sets the minimum number of strings required before String.join() is
+			recommended.
 		</description>
 		<priority>3</priority>
 		<properties>

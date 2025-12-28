@@ -5,7 +5,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-	<description>Custom rules for Apex code structure and organization</description>
+	<description>
+		Custom rules for Apex code structure and organization
+	</description>
 	<rule
 		name="NoThisOutsideConstructors"
 		language="apex"
@@ -13,11 +15,13 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			The 'this.' prefix should only be used inside constructors to disambiguate parameters
-			from
-			attributes. Methods may return 'this' (fluent interface pattern), but they cannot use 'this.'
-			to access class attributes. Using 'this.' outside constructors is unnecessary and reduces
-			code readability.
+			The 'this.' prefix should only be used inside constructors to
+			disambiguate parameters
+			from attributes. Methods may return 'this' (fluent interface pattern), but they
+			cannot
+			use 'this.' to access class attributes. Using 'this.' outside constructors is
+			unnecessary
+			and reduces code readability.
 		</description>
 		<priority>2</priority>
 		<properties>
@@ -25,9 +29,9 @@
 				<value>
 					<![CDATA[
 					//ThisVariableExpression[
-                        not(ancestor::Method[@Constructor = true()]) and
-                        not(ancestor::ReturnStatement)
-                    ]
+						not(ancestor::Method[@Constructor = true()])
+						and not(ancestor::ReturnStatement)
+					]
 					]]>
 				</value>
 			</property>

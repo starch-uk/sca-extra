@@ -5,7 +5,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-	<description>Custom rules for Apex code structure and organization</description>
+	<description>
+		Custom rules for Apex code structure and organization
+	</description>
 	<rule
 		name="CombineNestedIfStatements"
 		language="apex"
@@ -13,9 +15,12 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Nested if statements that can be combined should use a single conditional with &amp; &amp; operator
-			instead. This rule detects if statements that contain only another if statement in their body.
-			Combining nested conditionals improves readability and reduces unnecessary indentation levels.
+			Nested if statements that can be combined should use a single
+			conditional with &amp; &amp; operator instead. This rule detects if
+			statements that contain only another if statement
+			in their body. Combining nested conditionals improves readability and reduces
+			unnecessary
+			indentation levels.
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -23,10 +28,10 @@
 				<value>
 					<![CDATA[
 					//IfBlockStatement[
-                        BlockStatement
-                        and count(BlockStatement/*) = 1
-                        and (BlockStatement/IfBlockStatement or BlockStatement/IfElseBlockStatement[count(IfBlockStatement) = 1])
-                    ]
+						BlockStatement
+						and count(BlockStatement/*) = 1
+						and (BlockStatement/IfBlockStatement or BlockStatement/IfElseBlockStatement[count(IfBlockStatement) = 1])
+					]
 					]]>
 				</value>
 			</property>

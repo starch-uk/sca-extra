@@ -13,11 +13,17 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Multiple String.contains() calls in conditionals should be replaced with a single regex
-			pattern for better performance and maintainability. This rule detects when there are a minimum
-			number of contains() calls in a conditional expression.
+			Multiple String.contains() calls in conditionals should be replaced
+			with a single regex
+			pattern for better performance and maintainability. This rule detects when there
+			are a
+			minimum number of contains() calls in a conditional expression.
 			
-			To customize this rule, edit the minCalls threshold in the XPath expression (default: 2).
+			To customize this rule, edit the $minCalls variable in the XPath
+			expression (default:
+			2). This sets the minimum number of contains() calls required in a conditional
+			before a
+			regex pattern is recommended.
 		</description>
 		<priority>3</priority>
 		<properties>

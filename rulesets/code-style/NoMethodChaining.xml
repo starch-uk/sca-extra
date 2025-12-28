@@ -13,10 +13,13 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Method chaining should be avoided in favor of using intermediary variables. This
-			improves
-			readability, makes debugging easier by allowing inspection of intermediate values, and
-			reduces complexity. Exceptions are made for final variables that use method chaining.
+			Method chaining should be avoided in favor of using intermediary
+			variables. This
+			improves readability, makes debugging easier by allowing inspection of
+			intermediate
+			values, and reduces complexity. Exceptions are made for final variables that use
+			method
+			chaining.
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -24,13 +27,9 @@
 				<value>
 					<![CDATA[
 					//MethodCallExpression[
-                        ReferenceExpression//MethodCallExpression
-                        and not(
-                            ancestor::VariableDeclarationStatements[
-                                ModifierNode[@Final = true()]
-                            ]
-                        )
-                    ]
+						ReferenceExpression//MethodCallExpression
+						and not(ancestor::VariableDeclarationStatements[ModifierNode[@Final = true()]])
+					]
 					]]>
 				</value>
 			</property>
