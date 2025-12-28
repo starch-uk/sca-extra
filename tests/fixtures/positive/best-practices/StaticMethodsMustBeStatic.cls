@@ -672,6 +672,268 @@ public class Example {
 				Processor p = new Processor(config);
 			}
 		}
+
+		// Instance field method calls
+		private Evaluator evaluator;
+		private Renderer renderer;
+		private Processor processor;
+
+		// Valid: method call on instance field
+		public void method33() {
+			evaluator.process();
+		}
+
+		// Valid: method call on instance field with arguments
+		public void method34() {
+			evaluator.process(parserConfig, baseIndent);
+		}
+
+		// Valid: method call on instance field in conditional
+		public void method35() {
+			if (evaluator.isReady()) {
+				evaluator.process();
+			}
+		}
+
+		// Valid: method call on instance field in loop
+		public void method36() {
+			for (String item : items) {
+				evaluator.processItem(item);
+			}
+		}
+
+		// Valid: method call on instance field in return
+		public Boolean method37() {
+			return evaluator.isReady();
+		}
+
+		// Valid: method call on instance field in assignment
+		public void method38() {
+			Boolean result = evaluator.isReady();
+		}
+
+		// Valid: multiple method calls on instance fields
+		public void method39() {
+			evaluator.process();
+			renderer.render();
+		}
+
+		// Valid: method call chaining on instance field
+		public void method40() {
+			processor.getData().process();
+		}
+
+		// Valid: method call on instance field in ternary
+		public Boolean method41() {
+			return evaluator != null ? evaluator.isReady() : false;
+		}
+
+		// Valid: method call on instance field in switch
+		public void method42() {
+			switch on context {
+				when 'test' {
+					evaluator.process();
+				}
+				when else {
+					renderer.render();
+				}
+			}
+		}
+
+		// Valid: method call on instance field in try-catch
+		public void method43() {
+			try {
+				evaluator.process();
+			} catch (Exception e) {
+				renderer.renderError(e);
+			}
+		}
+
+		// Valid: method call on instance field as method argument
+		public void method44() {
+			processData(evaluator.getData());
+		}
+
+		// Valid: method call on instance field in nested expression
+		public void method45() {
+			Processor p = new Processor(evaluator.getConfig());
+		}
+
+		// Valid: property access on instance field
+		public void method46() {
+			String path = evaluator.path;
+		}
+
+		// Valid: property access on instance field in conditional
+		public void method47() {
+			if (evaluator.isReady) {
+				evaluator.process();
+			}
+		}
+
+		// Valid: property access on instance field in assignment
+		public void method48() {
+			String value = evaluator.value;
+			Integer count = renderer.count;
+		}
+
+		// Valid: property access on instance field in return
+		public String method49() {
+			return evaluator.path;
+		}
+
+		// Valid: property access on instance field in method call argument
+		public void method50() {
+			processData(evaluator.path, evaluator.value);
+		}
+
+		// Valid: property access on instance field in constructor argument
+		public void method51() {
+			Processor p = new Processor(evaluator.path, evaluator.value);
+		}
+
+		// Valid: mixed method calls and property access on instance fields
+		public void method52() {
+			if (evaluator.isReady()) {
+				String path = evaluator.path;
+				evaluator.process(path);
+				renderer.render(evaluator.value);
+			}
+		}
+
+		// Valid: method call on instance field with property access result
+		public void method53() {
+			String result = evaluator.getData().value;
+		}
+
+		// Valid: property access on instance field in ternary
+		public String method54() {
+			return evaluator != null ? evaluator.path : '';
+		}
+
+		// Valid: property access on instance field in switch
+		public void method55() {
+			switch on evaluator.status {
+				when 'active' {
+					evaluator.process();
+				}
+				when else {
+					renderer.render();
+				}
+			}
+		}
+
+		// Valid: property access on instance field in loop
+		public void method56() {
+			for (String item : items) {
+				String path = evaluator.path;
+				evaluator.processItem(item, path);
+			}
+		}
+
+		// Valid: property access on instance field in try-catch
+		public void method57() {
+			try {
+				String path = evaluator.path;
+				evaluator.process(path);
+			} catch (Exception e) {
+				renderer.renderError(evaluator.errorMessage);
+			}
+		}
+
+		// Valid: nested property access on instance field
+		public void method58() {
+			String value = evaluator.config.path;
+		}
+
+		// Valid: method call on instance field with nested property access
+		public void method59() {
+			evaluator.process(evaluator.config.path);
+		}
+	}
+
+	// Method calls and property access on instance fields (anonymized scenario)
+	public with sharing class RendererWithCallbacks {
+		private Evaluator evaluator;
+		private Renderer renderer;
+
+		public RendererWithCallbacks(Evaluator evaluatorParam, Renderer rendererParam) {
+			this.evaluator = evaluatorParam;
+			this.renderer = rendererParam;
+		}
+
+		public void renderEntry(String key, Map<String, Object> valueMap, Set<String> siblingKeys) {
+			final Set<String> otherSiblings = new Set<String>(siblingKeys);
+			otherSiblings.remove(key);
+			final Boolean success = evaluator.tryCreateData(
+				key,
+				valueMap,
+				otherSiblings
+			);
+			if (success) {
+				renderer.renderValue(
+					evaluator.path,
+					evaluator.value,
+					siblingKeys
+				);
+				return;
+			}
+			final Boolean shouldFlatten = evaluator.shouldFlatten(
+				key,
+				valueMap,
+				otherSiblings
+			);
+			if (shouldFlatten) {
+				renderFlattenedEntries(key, valueMap, otherSiblings);
+				return;
+			}
+			renderer.renderValue(key, valueMap, siblingKeys);
+		}
+
+		public void renderFlattenedEntries(
+			String prefix,
+			Map<String, Object> valueMap,
+			Set<String> siblingKeys
+		) {
+			final Boolean isEmpty = valueMap.isEmpty();
+			if (isEmpty) {
+				return;
+			}
+			for (String key : valueMap.keySet()) {
+				String combinedKey = Utils.buildKey(prefix, key);
+				Object value = valueMap.get(key);
+				final Boolean rendered = tryRenderNested(
+					combinedKey,
+					value,
+					siblingKeys
+				);
+				if (rendered) {
+					continue;
+				}
+				renderer.renderValue(combinedKey, value, siblingKeys);
+			}
+		}
+
+		private Boolean tryRenderNested(
+			String combinedKey,
+			Object value,
+			Set<String> siblingKeys
+		) {
+			if (!(value instanceof Map<String, Object>)) {
+				return false;
+			}
+			final Map<String, Object> valueAsMap = (Map<String, Object>) value;
+			final Boolean shouldFlatten = evaluator.shouldFlatten(
+				combinedKey,
+				valueAsMap,
+				siblingKeys
+			);
+			if (!shouldFlatten) {
+				return false;
+			}
+			renderFlattenedEntries(combinedKey, valueAsMap, siblingKeys);
+			return true;
+		}
 	}
 
 	// Instance field in multi-line constructor with with sharing modifier (as inner class)

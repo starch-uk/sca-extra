@@ -155,6 +155,223 @@ catch (Exception exception) { }  // ✅ Use descriptive name
 </rule>
 ```
 
+## Configuring XPath Variables
+
+Many rules use configurable variables at the beginning of their XPath expressions. These variables allow you to customize rule behavior without modifying the core XPath logic.
+
+### How XPath Variables Work
+
+XPath variables are defined using the `let` expression at the beginning of the XPath:
+
+```xpath
+let $variableName := value
+return //XPathExpression[...]
+```
+
+### Finding Configurable Variables
+
+To find configurable variables in a rule:
+
+1. **Open the rule XML file**: `rulesets/{category}/{RuleName}.xml`
+2. **Look for `let` statements** at the beginning of the XPath expression
+3. **Check the rule description** - it often documents available variables
+
+### Example: MultipleStringContainsCalls
+
+**Rule XML:**
+```xml
+<property name="xpath">
+    <value>
+        <![CDATA[
+        let $minCalls := 2
+        return //StandardCondition[
+            count(.//MethodCallExpression[@MethodName = 'contains']) >= $minCalls
+        ]
+        ]]>
+    </value>
+</property>
+```
+
+**Description:**
+> To customize this rule, edit the $minCalls variable at the beginning of the XPath expression (default: 2).
+
+### Customizing Variables
+
+To customize a rule's behavior:
+
+1. **Copy the rule XML file** to your project (if you haven't already)
+2. **Edit the variable value** in the XPath expression
+3. **Update your ruleset** to reference your customized rule
+
+**Example: Change minimum calls from 2 to 3**
+
+**Before:**
+```xml
+<property name="xpath">
+    <value>
+        <![CDATA[
+        let $minCalls := 2
+        return //StandardCondition[...]
+        ]]>
+    </value>
+</property>
+```
+
+**After:**
+```xml
+<property name="xpath">
+    <value>
+        <![CDATA[
+        let $minCalls := 3
+        return //StandardCondition[...]
+        ]]>
+    </value>
+</property>
+```
+
+### Common Variable Patterns
+
+#### Numeric Thresholds
+
+Many rules use numeric thresholds:
+
+- **`$minItems`** - Minimum number of items (e.g., `ListInitializationMustBeMultiLine`)
+- **`$minCalls`** - Minimum number of method calls (e.g., `MultipleStringContainsCalls`)
+- **`$minValues`** - Minimum number of enum values (e.g., `EnumMinimumValues`)
+- **`$maxArgs`** - Maximum number of arguments (e.g., `SingleArgumentMustBeSingleLine`)
+
+**Example:**
+```xpath
+let $minItems := 2
+let $maxArgs := 1
+return //SomeExpression[...]
+```
+
+#### String Lists
+
+Some rules use lists of allowed or excluded values:
+
+**Example:**
+```xpath
+let $allowedNames := ('i', 'j', 'k', 'e')
+return //VariableExpression[
+    not(@Image = $allowedNames)
+]
+```
+
+### Migration When Variables Change
+
+When a rule version introduces new variables or changes default values:
+
+#### New Variable Added
+
+1. **Check the rule description** for the new variable
+2. **Review default value** in the XPath expression
+3. **Customize if needed** - edit the variable in your custom rule copy
+
+**Example: Version 1.0.0 → 1.1.0 adds `$maxDepth` variable**
+
+**Before (v1.0.0):**
+```xpath
+let $minItems := 2
+return //SomeExpression[...]
+```
+
+**After (v1.1.0) - with new variable:**
+```xpath
+let $minItems := 2
+let $maxDepth := 5
+return //SomeExpression[...]
+```
+
+**Migration:** If you customized the rule, add the new variable with an appropriate default value.
+
+#### Default Value Changed
+
+1. **Review changelog** for the new default value
+2. **Test your codebase** with the new default
+3. **Customize if needed** - override the default in your custom rule copy
+
+**Example: Version 1.0.0 → 1.1.0 changes default from 2 to 3**
+
+**Before (v1.0.0):**
+```xpath
+let $minItems := 2
+return //SomeExpression[...]
+```
+
+**After (v1.1.0) - new default:**
+```xpath
+let $minItems := 3
+return //SomeExpression[...]
+```
+
+**Migration:** 
+- If you didn't customize: No action needed (new default applies)
+- If you customized: Review if your custom value is still appropriate
+
+#### Variable Removed
+
+1. **Review changelog** for why the variable was removed
+2. **Remove the variable** from your custom rule copy
+3. **Update XPath** to remove references to the variable
+
+**Example: Version 1.0.0 → 2.0.0 removes `$maxDepth` variable**
+
+**Before (v1.0.0):**
+```xpath
+let $minItems := 2
+let $maxDepth := 5
+return //SomeExpression[
+    count(*) >= $minItems
+    and depth() <= $maxDepth
+]
+```
+
+**After (v2.0.0) - variable removed:**
+```xpath
+let $minItems := 2
+return //SomeExpression[
+    count(*) >= $minItems
+]
+```
+
+**Migration:** Remove the `$maxDepth` variable and any references to it in your custom rule copy.
+
+### Best Practices
+
+1. **Document your customizations** - Add comments in your custom rule XML explaining why you changed values
+2. **Version control** - Track your custom rule files in version control
+3. **Test after updates** - Always test your codebase after updating rule versions
+4. **Review defaults** - Check if new defaults work for your codebase before customizing
+
+**Example with documentation:**
+```xml
+<property name="xpath">
+    <value>
+        <![CDATA[
+        <!-- Customized: Increased from default 2 to 3 for our codebase -->
+        let $minItems := 3
+        return //NewListLiteralExpression[
+            count(*) >= $minItems
+            and @BeginLine = @EndLine
+        ]
+        ]]>
+    </value>
+</property>
+```
+
+### Examples of Rules with Configurable Variables
+
+- **`ListInitializationMustBeMultiLine`** - `$minItems` (default: 2)
+- **`MapInitializationMustBeMultiLine`** - `$minEntries` (default: 2)
+- **`MultipleStringContainsCalls`** - `$minCalls` (default: 2)
+- **`EnumMinimumValues`** - `$minValues` (default: 3)
+- **`SingleArgumentMustBeSingleLine`** - `$maxArgs` (default: 1)
+- **`PreferStringJoinWithSeparatorOverEmpty`** - `$minStrings` (default: 3)
+
+Check each rule's description for available variables and their default values.
+
 ## Property Changes
 
 ### Renamed Properties
