@@ -24,12 +24,18 @@
 			
 			This rule excludes methods that access instance state, including:
 			- Instance fields (both regular fields and property fields), including when
-			used as arguments to constructors, method calls, or in nested expressions
+			used as arguments to constructors, method calls, or in nested expressions.
+			The rule correctly distinguishes between instance fields and local variables
+			with the same name.
 			- The 'this' keyword
 			- Methods that are part of property declarations
 			- Abstract methods, constructors, and inner class methods
+			
+			Note: The rule correctly handles cases where local variables shadow instance
+			fields - if an instance field is accessed before a local variable with the
+			same name is declared, the method is still excluded from the rule.
 
-			Version: 1.2.0
+			Version: 1.3.0
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -46,16 +52,17 @@
 						and not(BlockStatement//ThisVariableExpression)
 						and not(BlockStatement//PrimaryExpression[ThisVariableExpression])
 						and not(
-							BlockStatement//VariableExpression[
-								@Image != 'this'
+							some $varExpr in BlockStatement//VariableExpression
+							satisfies (
+								$varExpr/@Image != 'this'
+								and not($varExpr/ancestor::Method/Parameter[@Image = $varExpr/@Image])
+								and not($varExpr/ancestor::BlockStatement//VariableDeclarationStatements/VariableDeclaration[@Image = $varExpr/@Image])
 								and (
-									ancestor::UserClass//Field[@Name = ./@Image or @Image = ./@Image]
-									or ancestor::UserClass//FieldDeclaration[@Name = ./@Image or @Image = ./@Image]
-									or ancestor::UserClass//Property/Field[@Name = ./@Image or @Image = ./@Image]
+									exists(ancestor::UserClass[1]//Field[@Name = $varExpr/@Image or @Image = $varExpr/@Image])
+									or exists(ancestor::UserClass[1]//FieldDeclaration[@Name = $varExpr/@Image or @Image = $varExpr/@Image])
+									or exists(ancestor::UserClass[1]//Property/Field[@Name = $varExpr/@Image or @Image = $varExpr/@Image])
 								)
-								and not(ancestor::Method/Parameter[@Image = ./@Image])
-								and not(ancestor::BlockStatement//VariableDeclaration[@Image = ./@Image])
-							]
+							)
 						)
 					]
 					]]>
