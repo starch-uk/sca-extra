@@ -374,4 +374,22 @@ describe('Design Rules - Structure', () => {
 			assertNoViolations(violations, 'SingleParameterMustBeSingleLine');
 		});
 	});
+
+	describe('NoInterfacesEndingWithCallback', () => {
+		it('should detect interfaces ending with Callback', async () => {
+			const violations = await runPMD(
+				'rulesets/design/NoInterfacesEndingWithCallback.xml',
+				'tests/fixtures/negative/design/NoInterfacesEndingWithCallback.cls'
+			);
+			assertViolation(violations, 'NoInterfacesEndingWithCallback', 6);
+		});
+
+		it('should not flag interfaces not ending with Callback or regular classes', async () => {
+			const violations = await runPMD(
+				'rulesets/design/NoInterfacesEndingWithCallback.xml',
+				'tests/fixtures/positive/design/NoInterfacesEndingWithCallback.cls'
+			);
+			assertNoViolations(violations, 'NoInterfacesEndingWithCallback');
+		});
+	});
 });
