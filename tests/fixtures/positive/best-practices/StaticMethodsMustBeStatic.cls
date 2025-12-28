@@ -1132,5 +1132,62 @@ public class Example {
 				return new Processor(c);
 			}
 		}
+
+		// Valid: Methods that call other instance methods in the same class (cannot be static)
+		public class InstanceMethodCallExample {
+			private Config config;
+			private Integer depth;
+			private Set<String> contextKeys;
+			private String effectiveRootKey;
+			private Set<String> rootKeys;
+			private String rootKey;
+
+			private void buildEffectiveContext(String key, Set<String> siblingKeys) {
+				// Uses instance fields
+				contextKeys = rootKeys ?? siblingKeys;
+				effectiveRootKey = rootKey ?? key;
+			}
+
+			private Boolean isValidFlattenCandidate(String baseKey, String childKey) {
+				// Uses instance fields
+				return config != null && depth > 0;
+			}
+
+			private Boolean canContinueFolding(String nextPath) {
+				// Uses instance fields
+				return config != null && depth > 0;
+			}
+
+			public Boolean shouldFlattenMap(
+				String key,
+				Map<String, Object> valueMap,
+				Set<String> otherSiblings
+			) {
+				// Valid: calls instance methods that use instance fields
+				buildEffectiveContext(key, otherSiblings);
+				for (String childKey : valueMap.keySet()) {
+					final Boolean valid = isValidFlattenCandidate(key, childKey);
+					if (!valid) {
+						return false;
+					}
+				}
+				return true;
+			}
+
+			public Map<String, Object> traverseFoldChain(
+				String currentPath,
+				Map<String, Object> currentMap
+			) {
+				// Valid: calls instance method that uses instance fields
+				final Boolean canContinue = canContinueFolding(currentPath);
+				if (!canContinue) {
+					return null;
+				}
+				return new Map<String, Object>{
+					'path' => currentPath,
+					'value' => currentMap
+				};
+			}
+		}
 	}
 }
