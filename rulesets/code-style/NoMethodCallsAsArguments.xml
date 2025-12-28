@@ -12,22 +12,12 @@
 		message="Method calls should not be used directly as arguments. Extract the method call result to a variable first for better readability and debugging"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>2</priority>
 		<description>
 			Method calls should not be used directly as arguments to constructors, method calls, or
 			expressions. Extract method calls to variables first for better readability, debugging,
 			and to avoid potential side effects from multiple evaluations.
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: Method call as argument
-			String result = processValue(getValue());
-			
-			// Valid: Extract method call to variable
-			Integer value = getValue();
-			String result = processValue(value);
-			]]>
-		</example>
+		<priority>2</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -51,5 +41,15 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Method call as argument
+			String result = processValue(getValue());
+			
+			// Valid: Extract method call to variable
+			Integer value = getValue();
+			String result = processValue(value);
+			]]>
+		</example>
 	</rule>
 </ruleset>

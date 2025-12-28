@@ -12,13 +12,28 @@
 		message="Inner class names must be a single word. They cannot contain underscores or multiple words in PascalCase"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>2</priority>
 		<description>
 			Inner class names must be a single word. They cannot contain underscores or multiple
 			words
 			in PascalCase. This naming convention helps distinguish inner classes from regular classes
 			and improves code readability.
 		</description>
+		<priority>2</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//UserClass[
+						@Nested = true()
+						and (
+							contains(@Image, '_')
+							or matches(@Image, '[a-z].*[A-Z]')
+						)
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Inner class with underscore
@@ -59,20 +74,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					//UserClass[
-						@Nested = true()
-						and (
-							contains(@Image, '_')
-							or matches(@Image, '[a-z].*[A-Z]')
-						)
-					]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

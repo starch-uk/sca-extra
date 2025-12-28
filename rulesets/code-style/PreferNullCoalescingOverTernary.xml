@@ -12,22 +12,13 @@
 		message="Use the null coalescing operator (??) instead of ternary operators for null checks to improve readability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Prefer the null coalescing operator (??) over ternary operators when checking for null
 			and
 			providing a default value. The null coalescing operator is more concise and clearly expresses
 			the intent of providing a default value when a variable is null.
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: Ternary operator for null check
-			String value = obj != null ? obj.getName() : 'default';
-			
-			// Valid: Use null coalescing operator
-			String value = obj?.getName() ?? 'default';
-			]]>
-		</example>
+		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -41,5 +32,14 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Ternary operator for null check
+			String value = obj != null ? obj.getName() : 'default';
+			
+			// Valid: Use null coalescing operator
+			String value = obj?.getName() ?? 'default';
+			]]>
+		</example>
 	</rule>
 </ruleset>

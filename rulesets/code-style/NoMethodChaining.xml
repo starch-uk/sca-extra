@@ -12,24 +12,13 @@
 		message="Method chaining should be avoided. Use intermediary variables instead for better readability and debugging"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Method chaining should be avoided in favor of using intermediary variables. This
 			improves
 			readability, makes debugging easier by allowing inspection of intermediate values, and
 			reduces complexity. Exceptions are made for final variables that use method chaining.
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: Method chaining
-			String result = getValue().toString().trim();
-			
-			// Valid: Use intermediary variables
-			Object value = getValue();
-			String str = value.toString();
-			String result = str.trim();
-			]]>
-		</example>
+		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -46,5 +35,16 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Method chaining
+			String result = getValue().toString().trim();
+			
+			// Valid: Use intermediary variables
+			Object value = getValue();
+			String str = value.toString();
+			String result = str.trim();
+			]]>
+		</example>
 	</rule>
 </ruleset>

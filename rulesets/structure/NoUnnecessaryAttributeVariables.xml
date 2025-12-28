@@ -12,7 +12,6 @@
 		message="Variables that extract a single attribute from an object and are only used once should be inlined. This rule only applies to primitive types, not collections or object instances"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Variables that extract a single attribute from an object and are only used once should
 			be
@@ -20,16 +19,7 @@
 			instances, only primitive types. Inlining these variables reduces unnecessary indirection
 			and improves code clarity.
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: Variable used only once
-			String name = account.Name;
-			processName(name);
-			
-			// Valid: Inline the attribute access
-			processName(account.Name);
-			]]>
-		</example>
+		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -67,5 +57,15 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Variable used only once
+			String name = account.Name;
+			processName(name);
+			
+			// Valid: Inline the attribute access
+			processName(account.Name);
+			]]>
+		</example>
 	</rule>
 </ruleset>

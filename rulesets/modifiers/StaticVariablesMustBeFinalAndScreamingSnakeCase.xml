@@ -12,25 +12,13 @@
 		message="Static variables must be declared as final and use SCREAMING_SNAKE_CASE naming convention (uppercase letters, numbers, and underscores only)"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>2</priority>
 		<description>
 			All static variables must be declared as final and follow SCREAMING_SNAKE_CASE naming
 			convention (uppercase letters, numbers, and underscores only). This enforces immutability
 			for static variables and follows the standard naming convention for constants, making them
 			easily identifiable in code.
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: Static variable not final
-			private static String DEFAULT_VALUE = 'test';
-			
-			// Violation: Static variable not in SCREAMING_SNAKE_CASE
-			private static final String defaultValue = 'test';
-			
-			// Valid: Static final variable in SCREAMING_SNAKE_CASE
-			private static final String DEFAULT_VALUE = 'test';
-			]]>
-		</example>
+		<priority>2</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -46,5 +34,17 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Static variable not final
+			private static String DEFAULT_VALUE = 'test';
+			
+			// Violation: Static variable not in SCREAMING_SNAKE_CASE
+			private static final String defaultValue = 'test';
+			
+			// Valid: Static final variable in SCREAMING_SNAKE_CASE
+			private static final String DEFAULT_VALUE = 'test';
+			]]>
+		</example>
 	</rule>
 </ruleset>

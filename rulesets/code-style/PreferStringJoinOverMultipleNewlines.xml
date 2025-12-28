@@ -12,23 +12,14 @@
 		message="String literals with multiple newline characters should be split into separate strings and joined using String.join() for better readability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			String literals containing more than one newline character ('\n') should be split into
 			separate strings and joined using String.join() for better readability and maintainability.
 			
 			Instead of: 'line1\nline2\nline3'
-			Use: String.join(new List &lt; String &gt; {'line1', 'line2', 'line3'}, '\n');
+			Use: String.join(new List &lt; String > {'line1', 'line2', 'line3'}, '\n');
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: Multiple newlines in string literal
-			String text = 'line1\nline2\nline3';
-			
-			// Valid: Use String.join()
-			String text = String.join(new List<String> {'line1', 'line2', 'line3'}, '\n');
-			]]>
-		</example>
+		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -43,5 +34,14 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Multiple newlines in string literal
+			String text = 'line1\nline2\nline3';
+			
+			// Valid: Use String.join()
+			String text = String.join(new List<String> {'line1', 'line2', 'line3'}, '\n');
+			]]>
+		</example>
 	</rule>
 </ruleset>

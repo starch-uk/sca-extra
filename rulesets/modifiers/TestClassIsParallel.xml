@@ -12,12 +12,24 @@
 		message="Test classes must have @IsTest(IsParallel=true) annotation to enable parallel test execution"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Test classes must include IsParallel=true in their @IsTest annotation to enable parallel
 			test execution. This improves test performance by allowing tests to run in parallel, reducing
 			overall test execution time and improving developer productivity.
 		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//UserClass[
+                        .//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
+                        and not(.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]/AnnotationParameter[@Name = 'IsParallel' and (@Value = 'true' or @Image = 'true')])
+                    ]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Test class without IsParallel=true
@@ -31,17 +43,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					//UserClass[
-                        .//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
-                        and not(.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]/AnnotationParameter[@Name = 'IsParallel' and (@Value = 'true' or @Image = 'true')])
-                    ]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

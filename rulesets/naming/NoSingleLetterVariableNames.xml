@@ -12,7 +12,6 @@
 		message="Single-letter variable names are not allowed except for loop counters (i, c) or exception variables (e). Use descriptive names instead"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>2</priority>
 		<description>
 			Single-letter variable names are not allowed except for loop counters (i, c) or
 			exception
@@ -23,6 +22,34 @@
 			- allowedLoopNames: Comma-separated list of allowed loop counter names (default: 'i,c')
 			- allowedExceptionNames: Comma-separated list of allowed exception variable names (default: 'e')
 		</description>
+		<priority>2</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $allowedLoopNames := 'i,c',
+						$allowedExceptionNames := 'e'
+					return (
+						//VariableDeclaration[
+							let $varName := @Image,
+								$isInCatchBlock := exists(ancestor::CatchBlockStatement)
+							return string-length($varName) = 1
+							and (
+								($isInCatchBlock and not(contains($allowedExceptionNames, $varName)))
+								or (not($isInCatchBlock) and not(contains($allowedLoopNames, $varName)))
+							)
+						]
+						|
+						//CatchBlockStatement[
+							let $varName := @VariableName
+							return string-length($varName) = 1
+							and not(contains($allowedExceptionNames, $varName))
+						]
+					)
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Single-letter variable names
@@ -69,32 +96,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					let $allowedLoopNames := 'i,c',
-						$allowedExceptionNames := 'e'
-					return (
-						//VariableDeclaration[
-							let $varName := @Image,
-								$isInCatchBlock := exists(ancestor::CatchBlockStatement)
-							return string-length($varName) = 1
-							and (
-								($isInCatchBlock and not(contains($allowedExceptionNames, $varName)))
-								or (not($isInCatchBlock) and not(contains($allowedLoopNames, $varName)))
-							)
-						]
-						|
-						//CatchBlockStatement[
-							let $varName := @VariableName
-							return string-length($varName) = 1
-							and not(contains($allowedExceptionNames, $varName))
-						]
-					)
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

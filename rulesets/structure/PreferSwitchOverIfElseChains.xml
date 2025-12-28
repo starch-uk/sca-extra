@@ -12,7 +12,6 @@
 		message="If-else chains, consecutive if statements, or OR conditions comparing the same variable should use switch statements instead for better readability and performance"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			If-else chains, consecutive if statements, OR conditions, or any combination of these
 			patterns with a minimum number of conditions that compare the same variable should use switch
@@ -34,82 +33,7 @@
 			
 			To customize this rule, edit the minConditions threshold in the XPath expression (default: 2).
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: If-else chain with 2+ conditions
-			if (status == 'active') {
-			    // ...
-			} else if (status == 'inactive') {
-			    // ...
-			} else if (status == 'pending') {
-			    // ...
-			}
-			
-			// Valid: Use switch statement instead
-			switch on status {
-			    when 'active' {
-			        // ...
-			    }
-			    when 'inactive' {
-			        // ...
-			    }
-			    when 'pending' {
-			        // ...
-			    }
-			}
-			]]>
-		</example>
-		<example>
-			<![CDATA[
-			// Violation: Consecutive if statements comparing same variable
-			if (status == 'active') {
-			    // ...
-			}
-			if (status == 'inactive') {
-			    // ...
-			}
-			if (status == 'pending') {
-			    // ...
-			}
-			
-			// Valid: Use switch statement instead
-			switch on status {
-			    when 'active' { }
-			    when 'inactive' { }
-			    when 'pending' { }
-			}
-			]]>
-		</example>
-		<example>
-			<![CDATA[
-			// Violation: OR conditions with 2+ comparisons
-			if (status == 'active' || status == 'inactive' || status == 'pending') {
-			    // ...
-			}
-			
-			// Valid: Use switch statement instead
-			switch on status {
-			    when 'active', 'inactive', 'pending' {
-			        // ...
-			    }
-			}
-			]]>
-		</example>
-		<example>
-			<![CDATA[
-			// Valid: Boolean comparisons are not flagged (cannot use switch)
-			if (isActive == true || isActive == false) {
-			    // ...
-			}
-			
-			// Valid: Different variables are not flagged
-			if (status == 'active') {
-			    // ...
-			} else if (type == 'premium') {
-			    // ...
-			}
-			]]>
-		</example>
+		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -255,5 +179,81 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: If-else chain with 2+ conditions
+			if (status == 'active') {
+			    // ...
+			} else if (status == 'inactive') {
+			    // ...
+			} else if (status == 'pending') {
+			    // ...
+			}
+			
+			// Valid: Use switch statement instead
+			switch on status {
+			    when 'active' {
+			        // ...
+			    }
+			    when 'inactive' {
+			        // ...
+			    }
+			    when 'pending' {
+			        // ...
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Consecutive if statements comparing same variable
+			if (status == 'active') {
+			    // ...
+			}
+			if (status == 'inactive') {
+			    // ...
+			}
+			if (status == 'pending') {
+			    // ...
+			}
+			
+			// Valid: Use switch statement instead
+			switch on status {
+			    when 'active' { }
+			    when 'inactive' { }
+			    when 'pending' { }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: OR conditions with 2+ comparisons
+			if (status == 'active' || status == 'inactive' || status == 'pending') {
+			    // ...
+			}
+			
+			// Valid: Use switch statement instead
+			switch on status {
+			    when 'active', 'inactive', 'pending' {
+			        // ...
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Boolean comparisons are not flagged (cannot use switch)
+			if (isActive == true || isActive == false) {
+			    // ...
+			}
+			
+			// Valid: Different variables are not flagged
+			if (status == 'active') {
+			    // ...
+			} else if (type == 'premium') {
+			    // ...
+			}
+			]]>
+		</example>
 	</rule>
 </ruleset>

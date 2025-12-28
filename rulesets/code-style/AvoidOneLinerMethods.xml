@@ -12,7 +12,6 @@
 		message="Method contains only a single statement and should be inlined at its call site to reduce unnecessary indirection"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>4</priority>
 		<description>
 			Methods that contain only a single statement add unnecessary indirection and should be
 			inlined
@@ -22,20 +21,7 @@
 			overloaded methods, switch statements with more than one outcome, or methods that update
 			a class attribute are excluded from this rule.
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: One-liner method that should be inlined
-			public Integer getValue() {
-				return 5;
-			}
-			
-			// Valid: Method with multiple statements or exceptions
-			public Integer getValue() {
-				Integer value = calculateValue();
-				return value * 2;
-			}
-			]]>
-		</example>
+		<priority>4</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -84,5 +70,19 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: One-liner method that should be inlined
+			public Integer getValue() {
+				return 5;
+			}
+			
+			// Valid: Method with multiple statements or exceptions
+			public Integer getValue() {
+				Integer value = calculateValue();
+				return value * 2;
+			}
+			]]>
+		</example>
 	</rule>
 </ruleset>

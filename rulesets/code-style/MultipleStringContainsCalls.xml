@@ -12,7 +12,6 @@
 		message="Multiple String.contains() calls (at least {0}) in a conditional should be replaced with a single regex pattern for better performance and maintainability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Multiple String.contains() calls in conditionals should be replaced with a single regex
 			pattern for better performance and maintainability. This rule detects when there are a minimum
@@ -20,6 +19,19 @@
 			
 			To customize this rule, edit the minCalls threshold in the XPath expression (default: 2).
 		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $minCalls := 2
+					return //StandardCondition[
+						count(.//MethodCallExpression[@MethodName = 'contains']) >= $minCalls
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Multiple contains() calls with OR
@@ -62,17 +74,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					let $minCalls := 2
-					return //StandardCondition[
-						count(.//MethodCallExpression[@MethodName = 'contains']) >= $minCalls
-					]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

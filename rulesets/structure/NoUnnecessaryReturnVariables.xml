@@ -12,13 +12,26 @@
 		message="Variables created solely for return statements should be inlined. Return the expression directly instead"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Variables created solely for return statements should be inlined. Return the expression
 			directly
 			instead of creating an intermediate variable. This reduces unnecessary indirection and improves
 			code clarity.
 		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//VariableDeclarationStatements[
+						following-sibling::*[1][self::ReturnStatement]
+						and following-sibling::ReturnStatement[1]/VariableExpression/@Image =
+							VariableDeclaration/VariableExpression/@Image
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Variable created just for return
@@ -33,18 +46,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					//VariableDeclarationStatements[
-						following-sibling::*[1][self::ReturnStatement]
-						and following-sibling::ReturnStatement[1]/VariableExpression/@Image =
-							VariableDeclaration/VariableExpression/@Image
-					]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

@@ -12,25 +12,15 @@
 		message="Map should be initialized with values using map literal syntax instead of creating an empty map and immediately calling put()"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Maps should be initialized with values directly using the map literal syntax instead of
 			creating an empty map and immediately calling put(). This improves readability and reduces
 			unnecessary method calls.
 			
-			Use: new Map &lt; String, String &gt; {'key' = &gt; 'value'}
-			Instead of: new Map &lt; String, String &gt; (); map.put('key', 'value');
+			Use: new Map &lt; String, String > {'key' = > 'value'}
+			Instead of: new Map &lt; String, String > (); map.put('key', 'value');
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: Empty map followed by put()
-			Map<String, String> map = new Map<String, String>();
-			map.put('key', 'value');
-			
-			// Valid: Initialize with values directly
-			Map<String, String> map = new Map<String, String> {'key' => 'value'};
-			]]>
-		</example>
+		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -54,5 +44,15 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Empty map followed by put()
+			Map<String, String> map = new Map<String, String>();
+			map.put('key', 'value');
+			
+			// Valid: Initialize with values directly
+			Map<String, String> map = new Map<String, String> {'key' => 'value'};
+			]]>
+		</example>
 	</rule>
 </ruleset>

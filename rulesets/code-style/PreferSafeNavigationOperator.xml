@@ -12,23 +12,12 @@
 		message="Use the safe navigation operator (?.) instead of explicit null checks before property access or method calls"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Always prefer the safe navigation operator (?.) over null checks before accessing object
 			properties or calling methods. The safe navigation operator is more concise and clearly
 			expresses the intent of safely accessing members that may be null.
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: Explicit null check before method call
-			if (obj != null) {
-				obj.doSomething();
-			}
-			
-			// Valid: Use safe navigation operator
-			obj?.doSomething();
-			]]>
-		</example>
+		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -46,5 +35,16 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Explicit null check before method call
+			if (obj != null) {
+				obj.doSomething();
+			}
+			
+			// Valid: Use safe navigation operator
+			obj?.doSomething();
+			]]>
+		</example>
 	</rule>
 </ruleset>

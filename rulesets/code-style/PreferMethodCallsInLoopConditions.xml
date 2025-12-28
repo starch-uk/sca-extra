@@ -12,7 +12,6 @@
 		message="Prefer using method calls directly in loop conditions rather than testing inside the loop with a break statement"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Method calls should be used directly in loop conditionals rather than testing inside the
 			loop with a break statement. This makes the loop condition explicit and improves readability.
@@ -20,6 +19,22 @@
 			Use: while (hasMore()) { ... }
 			Instead of: while (true) { if (!hasMore()) { break; } ... }
 		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//WhileLoopStatement[
+						StandardCondition/LiteralExpression[@Boolean = true()]
+						and BlockStatement//IfBlockStatement[
+							BlockStatement//BreakStatement
+							and StandardCondition//MethodCallExpression
+						]
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: while(true) with break inside
@@ -36,20 +51,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					//WhileLoopStatement[
-						StandardCondition/LiteralExpression[@Boolean = true()]
-						and BlockStatement//IfBlockStatement[
-							BlockStatement//BreakStatement
-							and StandardCondition//MethodCallExpression
-						]
-					]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

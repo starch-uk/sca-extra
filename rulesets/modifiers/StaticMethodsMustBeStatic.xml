@@ -12,7 +12,6 @@
 		message="Methods that do not use instance state must be declared as static. Any method that can be static without adding logic must be static"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Methods that do not use instance state should be declared as static. Any method that can
 			be
@@ -20,6 +19,33 @@
 			state explicit, improves performance by avoiding unnecessary instance creation, and follows
 			best practices for method design.
 		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//Method[
+                        not(ModifierNode[@Static = true()])
+                        and not(ModifierNode[@Abstract = true()])
+                        and not(@Constructor = true())
+                        and not(ancestor::UserClass[@Abstract = 'true'])
+                        and not(ancestor::UserClass[ancestor::UserClass])
+                        and not(ancestor::Property)
+                        and not(BlockStatement//ThisVariableExpression)
+                        and not(BlockStatement//PrimaryExpression[ThisVariableExpression])
+                        and not(
+                            BlockStatement//VariableExpression[
+                                @Image != 'this'
+                                and ancestor::UserClass/Field[@Name = ./@Image]
+                                and not(ancestor::Method/Parameter[@Image = ./@Image])
+                                and not(ancestor::BlockStatement//VariableDeclaration[@Image = ./@Image])
+                            ]
+                        )
+                    ]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Method doesn't use instance state but not static
@@ -82,31 +108,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					//Method[
-                        not(ModifierNode[@Static = true()])
-                        and not(ModifierNode[@Abstract = true()])
-                        and not(@Constructor = true())
-                        and not(ancestor::UserClass[@Abstract = 'true'])
-                        and not(ancestor::UserClass[ancestor::UserClass])
-                        and not(ancestor::Property)
-                        and not(BlockStatement//ThisVariableExpression)
-                        and not(BlockStatement//PrimaryExpression[ThisVariableExpression])
-                        and not(
-                            BlockStatement//VariableExpression[
-                                @Image != 'this'
-                                and ancestor::UserClass/Field[@Name = ./@Image]
-                                and not(ancestor::Method/Parameter[@Image = ./@Image])
-                                and not(ancestor::BlockStatement//VariableDeclaration[@Image = ./@Image])
-                            ]
-                        )
-                    ]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

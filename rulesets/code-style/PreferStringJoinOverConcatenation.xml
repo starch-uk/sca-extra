@@ -12,18 +12,33 @@
 		message="Multiple string concatenations with a common separator should use String.join() for better readability and maintainability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			When concatenating a minimum number of strings where all strings except the last end
 			with the same
 			non-empty sequence of characters, use String.join() for better readability and maintainability.
 			
-			Use: String.join(new List &lt; String &gt; {'line1', 'line2', 'line3'}, '\n');
+			Use: String.join(new List &lt; String > {'line1', 'line2', 'line3'}, '\n');
 			The second argument to String.join() should be the repeating separator pattern (not an empty
 			string).
 			
 			To customize this rule, edit the minStrings threshold in the XPath expression (default: 3).
 		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $minStrings := 3
+					return //BinaryExpression[
+						@Op = '+'
+						and BinaryExpression[@Op = '+']
+						and count(.//LiteralExpression[@String = true()]) >= $minStrings
+						and not(ancestor::MethodCallExpression[@MethodName = 'join'])
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Multiple string concatenations with common separator
@@ -51,20 +66,5 @@
 			String result = 'a' + 'b' + 'c';  // ✅ No separator
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					let $minStrings := 3
-					return //BinaryExpression[
-						@Op = '+'
-						and BinaryExpression[@Op = '+']
-						and count(.//LiteralExpression[@String = true()]) >= $minStrings
-						and not(ancestor::MethodCallExpression[@MethodName = 'join'])
-					]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

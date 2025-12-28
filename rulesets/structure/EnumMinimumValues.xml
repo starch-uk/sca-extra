@@ -12,7 +12,6 @@
 		message="Enum must contain at least {0} values. Enums with fewer than {0} values may indicate a design issue"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Enums must contain at least a minimum number of values. Enums with fewer than the
 			minimum number of values should be reconsidered
@@ -21,6 +20,19 @@
 			
 			To customize this rule, edit the minValues threshold in the XPath expression (default: 3).
 		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $minValues := 3
+					return //UserEnum[
+						count(Field) < $minValues
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Enum with only 2 values
@@ -72,17 +84,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					let $minValues := 3
-					return //UserEnum[
-						count(Field) < $minValues
-					]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

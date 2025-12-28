@@ -12,13 +12,49 @@
 		message="Variables that are never reassigned must be declared as final to enforce immutability and improve code clarity"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Variables that are never reassigned should be declared as final. This enforces
 			immutability,
 			improves code clarity by indicating that the variable's value won't change, and helps prevent
 			accidental reassignment bugs. Any variable that can be final without adding code must be final.
 		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					for $var in //VariableDeclaration[
+                        not(ModifierNode[@Final = true()])
+                        and not(ancestor::*[ModifierNode[@Final = true()]])
+                        and not(ancestor::Parameter)
+                        and not(ancestor::ForLoopStatement)
+                        and not(ancestor::ForEachStatement)
+                        and ancestor::Method
+                    ]
+                    return if (not(
+                        $var/ancestor::Method//AssignmentExpression[
+                            .//VariableExpression/@Image = $var/VariableExpression/@Image
+                            and @BeginLine > $var/@BeginLine
+                        ] or
+                        $var/ancestor::Method//UnaryExpression[
+                            .//VariableExpression/@Image = $var/VariableExpression/@Image
+                            and @BeginLine > $var/@BeginLine
+                        ] or
+                        $var/ancestor::Method//BinaryExpression[
+                            @Op = ('+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '>>>=', '&amp;=', '^=', '|=')
+                            and .//VariableExpression/@Image = $var/VariableExpression/@Image
+                            and @BeginLine > $var/@BeginLine
+                        ] or
+                        $var/ancestor::Method//*[
+                            (@Op = ('++', '--') or local-name() = 'PostfixExpression' or local-name() = 'PrefixExpression')
+                            and .//VariableExpression/@Image = $var/VariableExpression/@Image
+                            and @BeginLine > $var/@BeginLine
+                        ]
+                    )) then $var else ()
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Variable never reassigned but not declared final
@@ -66,41 +102,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					for $var in //VariableDeclaration[
-                        not(ModifierNode[@Final = true()])
-                        and not(ancestor::*[ModifierNode[@Final = true()]])
-                        and not(ancestor::Parameter)
-                        and not(ancestor::ForLoopStatement)
-                        and not(ancestor::ForEachStatement)
-                        and ancestor::Method
-                    ]
-                    return if (not(
-                        $var/ancestor::Method//AssignmentExpression[
-                            .//VariableExpression/@Image = $var/VariableExpression/@Image
-                            and @BeginLine > $var/@BeginLine
-                        ] or
-                        $var/ancestor::Method//UnaryExpression[
-                            .//VariableExpression/@Image = $var/VariableExpression/@Image
-                            and @BeginLine > $var/@BeginLine
-                        ] or
-                        $var/ancestor::Method//BinaryExpression[
-                            @Op = ('+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '>>>=', '&amp;=', '^=', '|=')
-                            and .//VariableExpression/@Image = $var/VariableExpression/@Image
-                            and @BeginLine > $var/@BeginLine
-                        ] or
-                        $var/ancestor::Method//*[
-                            (@Op = ('++', '--') or local-name() = 'PostfixExpression' or local-name() = 'PrefixExpression')
-                            and .//VariableExpression/@Image = $var/VariableExpression/@Image
-                            and @BeginLine > $var/@BeginLine
-                        ]
-                    )) then $var else ()
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

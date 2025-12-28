@@ -12,25 +12,12 @@
 		message="Builder pattern methods should be chained instead of using multiple intermediary variable assignments. Use a final variable with chained method calls"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			When using builder patterns, prefer method chaining over multiple intermediary variable
 			assignments. Use final variables with chained method calls instead of reassigning the same
 			variable multiple times. This follows the builder pattern idiom and improves code clarity.
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: Multiple assignments to same variable
-			Builder builder = new Builder();
-			builder = builder.setName('test');
-			builder = builder.setValue(5);
-			
-			// Valid: Use method chaining with final variable
-			final Builder builder = new Builder()
-				.setName('test')
-				.setValue(5);
-			]]>
-		</example>
+		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -49,5 +36,18 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Multiple assignments to same variable
+			Builder builder = new Builder();
+			builder = builder.setName('test');
+			builder = builder.setValue(5);
+			
+			// Valid: Use method chaining with final variable
+			final Builder builder = new Builder()
+				.setName('test')
+				.setValue(5);
+			]]>
+		</example>
 	</rule>
 </ruleset>

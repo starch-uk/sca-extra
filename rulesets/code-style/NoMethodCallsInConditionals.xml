@@ -12,13 +12,31 @@
 		message="Method calls should not be used directly in conditional expressions. Extract the method call result to a variable first to improve readability and avoid side effects"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>2</priority>
 		<description>
 			Method calls should not be used directly in conditional expressions. Extract method call
 			results to variables first to improve readability, avoid potential side effects from multiple
 			evaluations, and make debugging easier. This rule applies to if, else-if, while, for,
 			switch, and ternary expressions.
 		</description>
+		<priority>2</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//(IfBlockStatement
+						| WhileLoopStatement
+						| SwitchStatement
+						| ForLoopStatement
+						| TernaryExpression
+					)[StandardCondition//MethodCallExpression]
+					|
+					//IfElseBlockStatement[
+						IfBlockStatement/StandardCondition//MethodCallExpression
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Method call in if statement
@@ -71,23 +89,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					//(IfBlockStatement
-						| WhileLoopStatement
-						| SwitchStatement
-						| ForLoopStatement
-						| TernaryExpression
-					)[StandardCondition//MethodCallExpression]
-					|
-					//IfElseBlockStatement[
-						IfBlockStatement/StandardCondition//MethodCallExpression
-					]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

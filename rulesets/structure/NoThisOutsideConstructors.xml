@@ -12,7 +12,6 @@
 		message="The 'this.' prefix should only be used inside constructors to disambiguate parameters from attributes. Methods may return 'this' but cannot use 'this.' to access class attributes"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>2</priority>
 		<description>
 			The 'this.' prefix should only be used inside constructors to disambiguate parameters
 			from
@@ -20,6 +19,19 @@
 			to access class attributes. Using 'this.' outside constructors is unnecessary and reduces
 			code readability.
 		</description>
+		<priority>2</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//ThisVariableExpression[
+                        not(ancestor::Method[@Constructor = true()]) and
+                        not(ancestor::ReturnStatement)
+                    ]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Using this. outside constructor
@@ -38,17 +50,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					//ThisVariableExpression[
-                        not(ancestor::Method[@Constructor = true()]) and
-                        not(ancestor::ReturnStatement)
-                    ]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

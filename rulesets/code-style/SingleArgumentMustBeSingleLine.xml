@@ -12,23 +12,12 @@
 		message="Method calls with 0-1 arguments must be formatted on a single line. Unnecessary multi-line formatting is not allowed"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Method calls with 0-1 arguments must be formatted on a single line. Unnecessary
 			multi-line
 			formatting for single arguments is not allowed as it reduces readability and wastes vertical space.
 		</description>
-		<example>
-			<![CDATA[
-			// Violation: Single argument on multiple lines
-			String result = processValue(
-				value
-			);
-			
-			// Valid: Single argument on one line
-			String result = processValue(value);
-			]]>
-		</example>
+		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
@@ -41,5 +30,16 @@
 				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Single argument on multiple lines
+			String result = processValue(
+				value
+			);
+			
+			// Valid: Single argument on one line
+			String result = processValue(value);
+			]]>
+		</example>
 	</rule>
 </ruleset>

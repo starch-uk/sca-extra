@@ -12,7 +12,6 @@
 		message="Map initialization with {0} or more entries must be formatted with each entry on its own line for better readability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Map initializations with a minimum number of entries must be formatted with each entry
 			on its own line to improve readability and maintainability.
@@ -20,6 +19,20 @@
 			
 			To customize this rule, edit the minEntries threshold in the XPath expression (default: 2).
 		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $minEntries := 2
+					return //NewMapLiteralExpression[
+						count(MapEntryNode) >= $minEntries
+						and @BeginLine = @EndLine
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Map with 2+ entries on single line
@@ -54,18 +67,5 @@
 			};
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					let $minEntries := 2
-					return //NewMapLiteralExpression[
-						count(MapEntryNode) >= $minEntries
-						and @BeginLine = @EndLine
-					]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

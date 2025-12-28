@@ -12,7 +12,6 @@
 		message="Classes, including inner classes, must have instance methods. Classes with only attributes and constructors are not allowed"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Classes and inner classes that only contain attributes and constructors without any
 			instance
@@ -20,6 +19,20 @@
 			to provide behavior, or refactor to use a different approach such as using Map or a different
 			data structure.
 		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//UserClass[
+                        count(Field) > 0
+                        and count(Method[@Constructor = true()]) > 0
+                        and count(Method[@Constructor = false() and not(ModifierNode[@Static = true()])]) = 0
+                    ]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Class with only fields and constructor
@@ -49,18 +62,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					//UserClass[
-                        count(Field) > 0
-                        and count(Method[@Constructor = true()]) > 0
-                        and count(Method[@Constructor = false() and not(ModifierNode[@Static = true()])]) = 0
-                    ]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>

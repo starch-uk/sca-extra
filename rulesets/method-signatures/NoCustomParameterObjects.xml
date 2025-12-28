@@ -12,7 +12,6 @@
 		message="Custom classes, inner classes, or wrapper objects should not be created solely for passing parameters. Refactor methods to stay within 3 parameters instead"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
-		<priority>3</priority>
 		<description>
 			Custom parameter objects (classes or inner classes that only have attributes and
 			constructors with no instance methods) should not be created solely for passing parameters.
@@ -22,6 +21,22 @@
 			
 			To customize this rule, edit the minFields threshold in the XPath expression (default: 1).
 		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $minFields := 1
+					return //UserClass[
+						count(Method) = 0
+						and count(Field) >= $minFields
+						and @Nested = true()
+						and not(Field/ModifierNode/Annotation[@Name = 'InvocableVariable'])
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
 		<example>
 			<![CDATA[
 			// Violation: Custom parameter class with only fields
@@ -77,20 +92,5 @@
 			}
 			]]>
 		</example>
-		<properties>
-			<property name="xpath">
-				<value>
-					<![CDATA[
-					let $minFields := 1
-					return //UserClass[
-						count(Method) = 0
-						and count(Field) >= $minFields
-						and @Nested = true()
-						and not(Field/ModifierNode/Annotation[@Name = 'InvocableVariable'])
-					]
-					]]>
-				</value>
-			</property>
-		</properties>
 	</rule>
 </ruleset>
