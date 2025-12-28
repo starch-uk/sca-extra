@@ -16,7 +16,6 @@ Focused stress test for code-style rules (including naming) with 300+ violations
 - MultipleStringContainsCalls (10 violations)
 - NoMethodCallsAsArguments (10 violations)
 - NoMethodCallsInConditionals (20 violations)
-- NoMethodChaining (20 violations)
 - PreferBuilderPatternChaining (10 violations)
 - PreferConcatenationOverStringJoinWithEmpty (10 violations)
 - PreferMethodCallsInLoopConditions (10 violations)

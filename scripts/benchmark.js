@@ -487,8 +487,6 @@ function simulateViolations(rule, fixturePath) {
 		estimatedViolations =
 			(content.match(/if\s*\([^)]*\([^)]*\)/g) || []).length +
 			(content.match(/while\s*\([^)]*\([^)]*\)/g) || []).length;
-	} else if (ruleName === 'NoMethodChaining') {
-		estimatedViolations = (content.match(/\.\w+\(\)\.\w+/g) || []).length;
 	} else if (ruleName === 'NoSingleLetterVariableNames') {
 		// Count single-letter variables (excluding i, c, e in loops/catch)
 		estimatedViolations = (

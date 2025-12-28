@@ -10,7 +10,7 @@ This project will provide additional PMD and Regex rules for testing Salesforce 
 
 This plan describes the project scope and components that will be implemented:
 
-- **43 PMD rules and 2 Regex rules** across PMD's 8 standard categories (best-practices, code-style, design, documentation, error-prone, multithreading, performance, security)
+- **42 PMD rules and 2 Regex rules** across PMD's 8 standard categories (best-practices, code-style, design, documentation, error-prone, multithreading, performance, security)
 - **Comprehensive test infrastructure** with positive and negative test fixtures for all rules, including Regex rule testing helpers
 - **Benchmarking system** with stress-test fixtures targeting 580+ violations across 7 fixture files
 - **CI/CD pipeline** with PMD 7.19.0, Java 21, Node.js 24, pnpm 10.26.2, and Codecov integration
@@ -362,7 +362,7 @@ sca-extra/
 
 ### Phase 3: Rule Implementation
 
-**Note:** All 45 rules will be implemented with comprehensive test coverage. The following represents the planned implementation order.
+**Note:** All 44 rules will be implemented with comprehensive test coverage. The following represents the planned implementation order.
 
 #### P1 Rules (Start Here)
 1. **InnerClassesCannotBeStatic**
@@ -389,7 +389,6 @@ sca-extra/
    - NoConsecutiveBlankLines (Regex rule)
    - NoMethodCallsAsArguments
    - NoMethodCallsInConditionals
-   - NoMethodChaining
    - PreferBuilderPatternChaining
    - PreferConcatenationOverStringJoinWithEmpty
    - PreferMethodCallsInLoopConditions
@@ -430,7 +429,7 @@ sca-extra/
     - PreferPropertySyntaxOverGetterMethods
     - PreferSwitchOverIfElseChains
 
-**Total: 45 rules across PMD's 8 standard categories (43 PMD rules + 2 Regex rules)**
+**Total: 44 rules across PMD's 8 standard categories (42 PMD rules + 2 Regex rules)**
 
 ### Phase 4: Validation & Quality
 
@@ -762,8 +761,8 @@ This ensures:
 3. **P3** (Medium): Remaining code-style, documentation, design, and best practices rules
 4. **P4** (Low): Complex rules requiring thorough testing (e.g., AvoidOneLinerMethods)
 
-**Total Planned:** 45 rules across PMD's 8 standard categories (43 PMD rules + 2 Regex rules):
-- **Code Style:** 21 rules (19 PMD + 2 Regex: NoConsecutiveBlankLines, ProhibitSuppressWarnings) - includes naming
+**Total Planned:** 44 rules across PMD's 8 standard categories (42 PMD rules + 2 Regex rules):
+- **Code Style:** 20 rules (18 PMD + 2 Regex: NoConsecutiveBlankLines, ProhibitSuppressWarnings) - includes naming
 - **Design:** 15 rules (13 structure + 2 method signatures)
 - **Best Practices:** 5 rules (modifiers)
 - **Documentation:** 2 rules
@@ -974,7 +973,7 @@ The project will be considered complete when the following criteria are met:
 - [ ] Benchmark PR comments and performance regression alerts in CI will not be implemented (benchmarking can be run manually)
 - [ ] Versioning tooling is implemented (automated version bumping, changelog generation)
 - [ ] Rule migration guides are created and documented
-- [ ] All 45 rules are implemented with comprehensive test coverage
+- [ ] All 44 rules are implemented with comprehensive test coverage
 - [ ] Codecov integration is configured for coverage reporting
 
 ## License

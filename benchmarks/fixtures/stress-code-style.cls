@@ -30,30 +30,6 @@ public class StressCodeStyle {
     if (getValue() != 0 && isValid()) {}
   }
 
-  public void stressNoMethodChaining() {
-    // 20 violations: NoMethodChaining
-    Integer s1 = getItems().size();
-    Integer s2 = getList().size();
-    String n1 = getAccount().Name;
-    String n2 = getContact().Name;
-    String r1 = getValue().toString();
-    String r2 = getCount().toString();
-    List<String> c1 = getItems().clone();
-    List<String> c2 = getList().clone();
-    String u1 = getValue().toString().toUpperCase();
-    String u2 = getName().toLowerCase();
-    Integer h1 = getAccount().Contacts.size();
-    Integer h2 = getContact().Accounts.size();
-    String f1 = getItems().get(0);
-    String f2 = getList().get(0);
-    Boolean e1 = getItems().isEmpty();
-    Boolean e2 = getList().isEmpty();
-    String j1 = String.join(getItems(), ',');
-    String j2 = String.join(getList(), ',');
-    Integer i1 = getItems().indexOf('test');
-    Integer i2 = getList().indexOf('test');
-  }
-
   public void stressPreferSafeNavigationOperator() {
     // 15 violations: PreferSafeNavigationOperator
     Account a1 = getAccount();
