@@ -29,6 +29,7 @@
 			with the same name.
 			- Method calls on instance fields (e.g., instanceField.method())
 			- Property access on instance fields (e.g., instanceField.property)
+			- Calls to other instance methods in the same class (e.g., buildContext())
 			- The 'this' keyword
 			- Methods that are part of property declarations
 			- Abstract methods, constructors, and inner class methods
@@ -37,7 +38,7 @@
 			fields - if an instance field is accessed before a local variable with the
 			same name is declared, the method is still excluded from the rule.
 
-			Version: 1.4.0
+			Version: 1.5.0
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -49,9 +50,24 @@
 						and not($context/ancestor::Method/Parameter[@Image = $fieldName])
 						and not($context/ancestor::BlockStatement//VariableDeclarationStatements/VariableDeclaration[@Image = $fieldName])
 						and (
-							exists($context/ancestor::UserClass[1]//Field[@Name = $fieldName or @Image = $fieldName])
-							or exists($context/ancestor::UserClass[1]//FieldDeclaration[@Name = $fieldName or @Image = $fieldName])
-							or exists($context/ancestor::UserClass[1]//Property/Field[@Name = $fieldName or @Image = $fieldName])
+							let $class := $context/ancestor::UserClass[1]
+							return exists($class//(Field | FieldDeclaration | Property/Field)[@Name = $fieldName or @Image = $fieldName])
+						)
+					},
+					$isInstanceMethodCall := function($methodCall, $currentMethod) {
+						let $receiver := $methodCall/ReferenceExpression[1]
+						return (
+							empty($receiver)
+							or $receiver/@Image = 'this'
+							or exists($receiver/ancestor::PrimaryExpression[ThisVariableExpression])
+						)
+						and exists(
+							$currentMethod/ancestor::UserClass[1]//Method[
+								(@Image = $methodCall/@MethodName or @Image = $methodCall/@Image or @MethodName = $methodCall/@MethodName or @MethodName = $methodCall/@Image)
+								and not(ModifierNode[@Static = true()])
+								and not(@Constructor = true())
+								and not(ancestor::Property)
+							]
 						)
 					}
 					return //Method[
@@ -80,6 +96,10 @@
 								$varExpr/ReferenceExpression
 								and $isInstanceField($varExpr/ReferenceExpression/@Image, $varExpr/ReferenceExpression)
 							)
+						)
+						and not(
+							some $methodCall in BlockStatement//MethodCallExpression
+							satisfies $isInstanceMethodCall($methodCall, .)
 						)
 					]
 					]]>
@@ -200,6 +220,29 @@
 			            evaluator.process(path);
 			            renderer.render(evaluator.value);
 			        }
+			    }
+			}
+			
+			// Valid: Methods that call other instance methods in the same class (cannot be static)
+			public class Evaluator {
+			    private Config config;
+			    private Integer depth;
+			    
+			    private void buildContext(String key) {  // Instance method
+			        // Uses instance fields
+			        if (config != null && depth > 0) {
+			            // ...
+			        }
+			    }
+			    
+			    private Boolean isValid(String key) {  // Instance method
+			        // Uses instance fields
+			        return config != null && depth > 0;
+			    }
+			    
+			    public Boolean shouldFlatten(String key, Map<String, Object> map) {  // ✅ Calls instance methods
+			        buildContext(key);  // Calls instance method
+			        return isValid(key);  // Calls instance method
 			    }
 			}
 			]]>
