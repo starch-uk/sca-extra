@@ -2,6 +2,8 @@
 
 Condensed guide to PMD (source code analyzer) essentials for Salesforce Code Analyzer integration.
 
+**Schema Reference:** PMD rulesets follow the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd). This schema defines the structure of rulesets, rules, properties, and example elements.
+
 ## Related Documentation
 
 - **[Code Analyzer Configuration](CODE_ANALYZER_CONFIG.md)** - `code-analyzer.yml` configuration reference
@@ -28,7 +30,7 @@ engines:
 
 ### Ruleset Structure
 
-Basic ruleset template:
+Basic ruleset template (based on [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd)):
 
 ```xml
 <?xml version="1.0"?>
@@ -37,9 +39,18 @@ Basic ruleset template:
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
     <description>My custom rules</description>
+    <!-- Optional: File filtering patterns -->
+    <exclude-pattern>.*/test/.*</exclude-pattern>
+    <include-pattern>.*/src/.*</include-pattern>
     <!-- Rules here -->
 </ruleset>
 ```
+
+**Ruleset Elements (per schema):**
+- `<description>` (required): Ruleset description
+- `<exclude-pattern>` (optional, multiple): File exclusion patterns
+- `<include-pattern>` (optional, multiple): File inclusion patterns
+- `<rule>` (required, multiple): Rule definitions
 
 ### Referencing Rules
 
@@ -80,7 +91,16 @@ Priority (1=High, 5=Low) filters rules via `--minimum-priority` CLI option:
 
 ### Properties
 
-Override rule properties:
+Override rule properties. According to the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd), property elements support:
+
+**Property Element Attributes:**
+- `name` (required): Property name (NMTOKEN type)
+- `value` (optional): Property value (can be attribute or child element)
+- `description` (optional): Property description
+- `type` (optional): Property type
+- `delimiter` (optional): Delimiter for multivalued properties
+- `min` (optional): Minimum value
+- `max` (optional): Maximum value
 
 **Important:** Salesforce Code Analyzer does not support property overrides for PMD rules via `code-analyzer.yml`. Only `severity` and `tags` can be overridden in `code-analyzer.yml`.
 
@@ -93,6 +113,17 @@ Override rule properties:
         </property>
     </properties>
 </rule>
+```
+
+**Property value can be specified as attribute or child element:**
+```xml
+<!-- Using child element (recommended) -->
+<property name="reportLevel">
+    <value>150</value>
+</property>
+
+<!-- Using attribute (also valid) -->
+<property name="reportLevel" value="150" />
 ```
 
 **For custom rules (using ref= syntax):**
@@ -187,6 +218,38 @@ When the property is not defined, `${propertyName}` remains as a literal string,
 
 See [AI Agent Rule Guide](AI_AGENT_RULE_GUIDE.md#property-configuration-for-xpathrule) for detailed examples.
 
+### Examples
+
+Add example code snippets to rules using the `<example>` element. Multiple examples are supported (per [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd)):
+
+```xml
+<rule name="MyRule" language="apex" ...>
+    <description>Rule description</description>
+    <example>
+        <![CDATA[
+        // Violation: Code that triggers the rule
+        public void badExample() {
+            // ...
+        }
+        
+        // Valid: Code that doesn't trigger the rule
+        public void goodExample() {
+            // ...
+        }
+        ]]>
+    </example>
+    <properties>
+        <!-- XPath or other properties -->
+    </properties>
+</rule>
+```
+
+**Example Element:**
+- Optional: Can be omitted if not needed
+- Multiple: Can include multiple `<example>` elements per rule
+- Content: Plain text or CDATA (recommended for code examples)
+- Purpose: Helps users understand what the rule checks
+
 ### Custom Messages
 
 Override rule violation messages:
@@ -195,6 +258,31 @@ Override rule violation messages:
 <rule ref="category/apex/errorprone.xml/EmptyCatchBlock"
       message="Empty catch blocks should be avoided" />
 ```
+
+### Rule Element Structure
+
+According to the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd), a rule element supports:
+
+**Child Elements:**
+- `<description>` (optional): Rule description
+- `<priority>` (optional, default: 5): Priority level (1-5)
+- `<properties>` (optional): Rule properties configuration
+- `<exclude>` (optional, multiple): Exclude specific rules when referencing categories
+- `<example>` (optional, multiple): Example code snippets showing violations and valid code
+
+**Attributes:**
+- `name` (optional): Rule name (ID type)
+- `language` (optional): Target language (e.g., "apex")
+- `minimumLanguageVersion` (optional): Minimum language version
+- `maximumLanguageVersion` (optional): Maximum language version
+- `ref` (optional): Reference to another rule
+- `message` (optional): Custom violation message
+- `class` (optional): Rule implementation class
+- `since` (optional): Version when rule was introduced
+- `externalInfoUrl` (optional): URL to external documentation
+- `deprecated` (optional, default: false): Whether rule is deprecated
+- `dfa` (optional): Whether rule uses dataflow analysis
+- `typeResolution` (optional, default: false): Whether rule uses type resolution
 
 ## CLI Usage
 

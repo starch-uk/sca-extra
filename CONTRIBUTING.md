@@ -67,6 +67,9 @@ pnpm run check-regressions  # Check for performance regressions
    - Example: `rulesets/structure/MyNewRule.xml`
 
 3. **Follow the rule template**
+
+   **Note:** This template follows the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd). The `<example>` element is optional but recommended, and multiple examples are supported.
+
    ```xml
    <?xml version="1.0" ?>
    <ruleset
@@ -87,22 +90,34 @@ pnpm run check-regressions  # Check for performance regressions
                Detailed description explaining what the rule checks and why it exists.
                Include examples of violations if helpful.
                
+               To customize this rule, edit the configurable values in the XPath expression (if applicable).
+               
                Version: 1.0.0
            </description>
            <priority>1-5</priority>
+           <example>
+               <![CDATA[
+               // Violation: Code that triggers the rule
+               public void badExample() {
+                   // ...
+               }
+               
+               // Valid: Code that doesn't trigger the rule
+               public void goodExample() {
+                   // ...
+               }
+               ]]>
+           </example>
+           <!-- Multiple examples are supported (per PMD Ruleset XML Schema) -->
            <properties>
                <property name="xpath">
                    <value><![CDATA[
                    //XPath expression
-                   // Use property substitution with default pattern:
-                   // if ('${propertyName}' = '${propertyName}') then 'default' else '${propertyName}'
+                   // For rules with configurable thresholds, use let expressions:
+                   // let $threshold := 3
+                   // return count(*) >= $threshold
                    ]]></value>
                </property>
-               <!-- 
-                   NOTE: PMD 7.x doesn't validate custom properties for XPathRule.
-                   Do NOT define properties here - use property substitution in XPath instead.
-                   See Property Configuration Guidelines below for details.
-               -->
            </properties>
        </rule>
    </ruleset>
@@ -112,8 +127,9 @@ pnpm run check-regressions  # Check for performance regressions
    - **XPath Only**: All rules MUST use XPath 3.1 expressions only. No custom Java classes.
    - **Clear Naming**: Use PascalCase and descriptive names (e.g., `NoSingleLetterVariableNames`)
    - **Comprehensive Description**: Include what the rule checks, why it exists, and examples
+   - **Examples**: Include `<example>` elements showing violations and valid code (per [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd))
    - **Versioning**: Include version in description (semantic versioning: major.minor.patch)
-   - **Configurable Properties**: Expose properties for thresholds, exceptions, and behavior toggles
+   - **Easy to Edit**: Use variables at the top of XPath expressions for configurable thresholds (e.g., `let $minValues := 3`)
 
 5. **Write tests**
    - Create positive test case: `tests/fixtures/positive/{category}/{RuleName}.cls`
@@ -137,67 +153,6 @@ pnpm run check-regressions  # Check for performance regressions
 - Use action verbs: `PreferSafeNavigationOperator`, `AvoidOneLinerMethods`
 - Avoid abbreviations unless widely understood
 
-### Property Configuration Guidelines
-
-**Important:** PMD 7.x does not validate custom properties for `XPathRule` when they're not defined. To make properties configurable, use property substitution in XPath with a default pattern.
-
-**Pattern for Configurable Properties:**
-
-1. **Define properties in the XML** - Properties must be defined in the rule XML for PMD to accept overrides via `ref=` syntax in override rulesets. Use empty default values.
-2. **Use property substitution in XPath** with a default value pattern:
-   ```xpath
-   if ('${propertyName}' = '${propertyName}') then 'defaultValue' else '${propertyName}'
-   ```
-
-3. **How it works:**
-   - When property is not defined: `${propertyName}` stays as literal string
-   - The check `'${propertyName}' = '${propertyName}'` evaluates to `true`
-   - Default value is used
-   - When property is defined (manually added to XML): Substitution occurs, custom value is used
-
-**Example:**
-
-```xml
-<property name="xpath">
-    <value><![CDATA[
-    //SomeNode[
-        count(*) >= number(
-            if ('${minItems}' = '${minItems}') 
-            then '2' 
-            else '${minItems}'
-        )
-    ]
-    ]]></value>
-</property>
-```
-
-**To configure the property:**
-
-1. **For end users:** Create a custom ruleset XML file that references the original rule and overrides properties using `ref=` syntax (see README.md for examples).
-
-2. **For testing:** Create override ruleset files in `tests/rulesets/` with the naming pattern `RuleName_DetailsOfPropertyChanges.xml`. These files use `ref=` to reference the original rule and override properties. Example:
-
-   ```xml
-   <?xml version="1.0"?>
-   <ruleset name="Test Ruleset Override" ...>
-       <rule ref="rulesets/code-style/ListInitializationMustBeMultiLine.xml/ListInitializationMustBeMultiLine">
-           <properties>
-               <property name="minItems">
-                   <value>3</value>
-               </property>
-           </properties>
-       </rule>
-   </ruleset>
-   ```
-
-   Then use `runPMD('tests/rulesets/ListInitializationMustBeMultiLine_MinItems3.xml', 'tests/fixtures/...')` in your tests.
-
-**Guidelines:**
-- Use properties for configurable thresholds or lists
-- Provide sensible defaults in the XPath expression
-- Document each property in the rule description
-- Consider backward compatibility when changing defaults
-
 ## Testing Requirements
 
 ### All Rules Must Have:
@@ -205,19 +160,15 @@ pnpm run check-regressions  # Check for performance regressions
 1. **Positive Test Cases** - Code that should NOT trigger the rule
    - Verify rule doesn't produce false positives
    - Test edge cases and exceptions
-   - Test with different property configurations
 
 2. **Negative Test Cases** - Code that SHOULD trigger the rule
    - Verify rule detects violations correctly
    - Test at correct line numbers
    - Test multiple violations in same file
-   - Test with different property configurations
 
 3. **Unit Tests** - Automated test cases
    - Use test helper functions: `runPMD`, `parseViolations`, `assertViolation`, `assertNoViolations`
    - Test both positive and negative cases
-   - Test property configurations using pre-created override ruleset files in `tests/rulesets/`
-   - For property override tests, create override ruleset files with naming pattern `RuleName_DetailsOfPropertyChanges.xml` and use `runPMD()` directly with the override file path
    - See [Jest 30.0 Reference](docs/JEST30.md) for Jest API usage
 
 ### Test Coverage Expectations
@@ -225,7 +176,6 @@ pnpm run check-regressions  # Check for performance regressions
 - All rules must have positive and negative test cases
 - Test coverage should be > 80% for test utilities
 - Edge cases should be tested
-- Property configurations should be tested
 
 ### Running Tests
 
@@ -277,7 +227,6 @@ Before submitting a pull request, ensure:
 - [ ] Documentation is updated (README.md, AI_AGENT_RULE_GUIDE.md)
 - [ ] Rule has clear name and comprehensive description
 - [ ] Rule uses XPath only (no custom Java classes)
-- [ ] Configurable properties are exposed where applicable
 - [ ] Rule is versioned (semantic versioning)
 - [ ] Positive and negative test cases are included
 - [ ] No merge conflicts
@@ -320,7 +269,6 @@ Before submitting a pull request, ensure:
 
 - All rules must be documented in README.md
 - Include code examples (violations and valid code)
-- Document all configurable properties
 - Update AI_AGENT_RULE_GUIDE.md for new rules
 
 ## Community-Contributed Rules
@@ -332,7 +280,6 @@ We welcome community-contributed rules! All community rules must meet the same r
 - Must be versioned (semantic versioning)
 - Must have comprehensive tests (positive and negative)
 - Must be documented in README.md
-- Must expose configurable properties where applicable
 
 ### Proposing New Rules
 

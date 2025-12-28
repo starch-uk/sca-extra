@@ -6,13 +6,13 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="PreferConcatenationOverStringJoinWithEmpty"
 		language="apex"
 		message="String.join() with an empty separator should be replaced with string concatenation for better readability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>4</priority>
 		<description>
 			When using String.join() with an empty string separator, use string concatenation
 			instead
@@ -21,19 +21,27 @@
 			Instead of: String.join('', new List &lt; String &gt; {'a', 'b', 'c'});
 			Use: 'a' + 'b' + 'c';
 		</description>
-		<priority>4</priority>
+		<example>
+			<![CDATA[
+			// Violation: String.join with empty separator
+			String result = String.join('', new List<String> {'a', 'b', 'c'});
+			
+			// Valid: Use string concatenation
+			String result = 'a' + 'b' + 'c';
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //MethodCallExpression[
+					<![CDATA[
+					//MethodCallExpression[
                         @MethodName = 'join'
                         and @FullMethodName = 'String.join'
                         and .//LiteralExpression[@String = true() and (@Image = "''" or @Image = '""' or string-length(@Image) = 0)]
                         and .//NewListLiteralExpression
                     ]
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

@@ -6,32 +6,94 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex naming conventions</description>
-
 	<rule
 		name="NoSingleLetterVariableNames"
 		language="apex"
 		message="Single-letter variable names are not allowed except for loop counters (i, c) or exception variables (e). Use descriptive names instead"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>2</priority>
 		<description>
 			Single-letter variable names are not allowed except for loop counters (i, c) or
 			exception
 			variables (e). Use descriptive names instead to improve code readability and make the code
 			self-documenting. Single-letter names provide no context about the variable's purpose.
+			
+			To customize this rule, edit the allowedNames lists in the XPath expression:
+			- allowedLoopNames: Comma-separated list of allowed loop counter names (default: 'i,c')
+			- allowedExceptionNames: Comma-separated list of allowed exception variable names (default: 'e')
 		</description>
-		<priority>2</priority>
+		<example>
+			<![CDATA[
+			// Violation: Single-letter variable names
+			Integer x = 5;
+			String s = 'test';
+			Boolean b = true;
+			
+			// Valid: Descriptive names
+			Integer index = 5;
+			String status = 'test';
+			Boolean isActive = true;
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Loop counters (i, c)
+			for (Integer i = 0; i < 10; i++) {
+			    // ...
+			}
+			for (Integer c = 0; c < items.size(); c++) {
+			    // ...
+			}
+			
+			// Violation: Other single letters in loops
+			for (Integer j = 0; j < 10; j++) {  // ❌ Use 'i' or 'c' instead
+			    // ...
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Exception variable (e)
+			try {
+			    // ...
+			} catch (Exception e) {
+			    // ...
+			}
+			
+			// Violation: Other single letters in catch blocks
+			try {
+			    // ...
+			} catch (Exception x) {  // ❌ Use 'e' instead
+			    // ...
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //VariableDeclaration[
-                        string-length(@Image) = 1
-                        and @Image != 'i'
-                        and @Image != 'c'
-                        and not(ancestor::CatchBlockStatement)
-                    ]
-                    ]]>
-                </value>
+					<![CDATA[
+					let $allowedLoopNames := 'i,c',
+						$allowedExceptionNames := 'e'
+					return (
+						//VariableDeclaration[
+							let $varName := @Image,
+								$isInCatchBlock := exists(ancestor::CatchBlockStatement)
+							return string-length($varName) = 1
+							and (
+								($isInCatchBlock and not(contains($allowedExceptionNames, $varName)))
+								or (not($isInCatchBlock) and not(contains($allowedLoopNames, $varName)))
+							)
+						]
+						|
+						//CatchBlockStatement[
+							let $varName := @VariableName
+							return string-length($varName) = 1
+							and not(contains($allowedExceptionNames, $varName))
+						]
+					)
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

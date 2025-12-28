@@ -6,25 +6,71 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex modifiers and variable declarations</description>
-
 	<rule
 		name="FinalVariablesMustBeFinal"
 		language="apex"
 		message="Variables that are never reassigned must be declared as final to enforce immutability and improve code clarity"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Variables that are never reassigned should be declared as final. This enforces
 			immutability,
 			improves code clarity by indicating that the variable's value won't change, and helps prevent
 			accidental reassignment bugs. Any variable that can be final without adding code must be final.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Variable never reassigned but not declared final
+			public void method() {
+			    Integer value = 5;  // ❌ Should be final
+			    String name = 'test';  // ❌ Should be final
+			    // value and name are never reassigned
+			}
+			
+			// Valid: Variables declared as final
+			public void method() {
+			    final Integer value = 5;  // ✅
+			    final String name = 'test';  // ✅
+			    // value and name are never reassigned
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Variable that is reassigned (cannot be final)
+			public void method() {
+			    Integer value = 5;
+			    value = 10;  // Reassigned, so cannot be final
+			}
+			
+			// Valid: Variable with increment/decrement (cannot be final)
+			public void method() {
+			    Integer count = 0;
+			    count++;  // Modified, so cannot be final
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Loop variables are excluded (cannot be final)
+			public void method() {
+			    for (Integer i = 0; i < 10; i++) {
+			        // Loop variable 'i' is excluded
+			    }
+			}
+			
+			// Valid: Parameters are excluded (cannot be final in this context)
+			public void method(Integer param) {
+			    // Parameter 'param' is excluded
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    for $var in //VariableDeclaration[
+					<![CDATA[
+					for $var in //VariableDeclaration[
                         not(ModifierNode[@Final = true()])
                         and not(ancestor::*[ModifierNode[@Final = true()]])
                         and not(ancestor::Parameter)
@@ -42,7 +88,7 @@
                             and @BeginLine > $var/@BeginLine
                         ] or
                         $var/ancestor::Method//BinaryExpression[
-                            @Op = ('+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '>>>=', '&=', '^=', '|=')
+                            @Op = ('+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '>>>=', '&amp;=', '^=', '|=')
                             and .//VariableExpression/@Image = $var/VariableExpression/@Image
                             and @BeginLine > $var/@BeginLine
                         ] or
@@ -52,8 +98,8 @@
                             and @BeginLine > $var/@BeginLine
                         ]
                     )) then $var else ()
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

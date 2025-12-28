@@ -6,13 +6,13 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex documentation standards</description>
-
 	<rule
 		name="SingleLineDocumentationFormat"
 		language="apex"
 		message="ApexDoc comments must be properly formatted: single-line comments need spaces after /** and before */, multi-line comments should only be used when necessary"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Single-line ApexDoc comments must be formatted with
 			spaces: /** comment */ not /**comment*/.
@@ -20,12 +20,32 @@
 			lines. This ensures consistent formatting and prevents unnecessary multi-line comments for
 			simple documentation.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Missing spaces in single-line comment
+			/**comment*/
+			public void method() {
+			}
+			
+			// Valid: Properly formatted single-line comment
+			/** Comment */
+			public void method() {
+			}
+			
+			// Valid: Multi-line comment when needed
+			/**
+			 * Longer comment that requires
+			 * multiple lines.
+			 */
+			public void method() {
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //FormalComment[
+					<![CDATA[
+					//FormalComment[
                         starts-with(@Image, '/**')
                         and ends-with(@Image, '*/')
                         and (
@@ -42,8 +62,8 @@
                                 and not(contains(substring-after(@Image, ' * '), ' * '))
                         )
                     ]
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

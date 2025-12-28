@@ -6,27 +6,36 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="MapShouldBeInitializedWithValues"
 		language="apex"
 		message="Map should be initialized with values using map literal syntax instead of creating an empty map and immediately calling put()"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Maps should be initialized with values directly using the map literal syntax instead of
 			creating an empty map and immediately calling put(). This improves readability and reduces
 			unnecessary method calls.
 			
-			Use: new Map &lt; String, String &gt; {'key' => 'value'}
+			Use: new Map &lt; String, String &gt; {'key' = &gt; 'value'}
 			Instead of: new Map &lt; String, String &gt; (); map.put('key', 'value');
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Empty map followed by put()
+			Map<String, String> map = new Map<String, String>();
+			map.put('key', 'value');
+			
+			// Valid: Initialize with values directly
+			Map<String, String> map = new Map<String, String> {'key' => 'value'};
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    for $stmt in //VariableDeclarationStatements[
+					<![CDATA[
+					for $stmt in //VariableDeclarationStatements[
                         VariableDeclaration[
                             contains(@Type, 'Map')
                             and NewMapInitExpression
@@ -41,8 +50,8 @@
                             and ReferenceExpression[1]/@Image = $stmt/VariableDeclaration/VariableExpression/@Image
                         ]
                     ) then $stmt else ()
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

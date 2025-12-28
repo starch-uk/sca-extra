@@ -35,6 +35,15 @@ public class Example {
 
     String dest = 'destination';
     // Violation: abbreviation 'dest' not allowed
+
+    String myCtx = 'value';
+    // Violation: 'ctx' abbreviation not allowed without 'test' prefix
+
+    Integer myCfg = 10;
+    // Violation: 'cfg' abbreviation not allowed without 'test' prefix
+
+    Account myAcc = new Account();
+    // Violation: 'acc' abbreviation not allowed without 'test' prefix
   }
 }
 

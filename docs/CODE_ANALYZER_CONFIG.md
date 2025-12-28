@@ -36,6 +36,8 @@ rules:
 
 For PMD rulesets, CLI usage, and configuration details, see [PMD Quick Reference](PMD.md).
 
+**Ruleset XML Format:** PMD rulesets follow the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd). Rules can include `<example>` elements (optional, multiple allowed) to show violations and valid code patterns.
+
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `disable_engine` | boolean | false | Disable PMD engine |
@@ -182,11 +184,19 @@ engines:
 
 **Important:** Salesforce Code Analyzer does not support property overrides for PMD rules via `code-analyzer.yml`. Only `severity` and `tags` can be overridden.
 
-To override rule properties, create a custom ruleset XML file that references the original rule using PMD's `ref=` syntax:
+**For XPathRule (custom rules in this repository):**
+- PMD 7+ does not support dynamic properties for `XPathRule`
+- To customize rules, edit the XPath expression directly in the rule XML file
+- Rules use easy-to-edit variables at the top of XPath expressions (e.g., `let $minValues := 3`)
+- See [Customizing Rules](#customizing-rules) section in README.md for examples
 
-**Example - Override Multiple Rule Properties:**
+**For Java-based PMD rules (standard PMD rules):**
+- Property overrides are supported using `ref=` syntax in custom ruleset XML files
+- Create a custom ruleset that references the original rule and overrides properties
 
-1. Create `rulesets/custom-overrides.xml`:
+**Example - Override Java-based Rule Properties:**
+
+1. Create `rulesets/custom-overrides.xml` (per [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd)):
 
 ```xml
 <?xml version="1.0"?>
@@ -196,31 +206,13 @@ To override rule properties, create a custom ruleset XML file that references th
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
-    <description>Custom property overrides for rules</description>
+    <description>Custom property overrides for Java-based PMD rules</description>
     
-    <!-- Override EnumMinimumValues to require 4 values instead of default 3 -->
-    <rule ref="rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues">
+    <!-- Override a Java-based rule property -->
+    <rule ref="category/apex/design.xml/NPathComplexity">
         <properties>
-            <property name="minValues">
-                <value>4</value>
-            </property>
-        </properties>
-    </rule>
-    
-    <!-- Override PreferSwitchOverIfElseChains to require 4 conditions instead of default 2 -->
-    <rule ref="rulesets/structure/PreferSwitchOverIfElseChains.xml/PreferSwitchOverIfElseChains">
-        <properties>
-            <property name="minElseIfStatements">
-                <value>4</value>
-            </property>
-        </properties>
-    </rule>
-    
-    <!-- Override ListInitializationMustBeMultiLine to require 3 items instead of default 2 -->
-    <rule ref="rulesets/code-style/ListInitializationMustBeMultiLine.xml/ListInitializationMustBeMultiLine">
-        <properties>
-            <property name="minItems">
-                <value>3</value>
+            <property name="reportLevel">
+                <value>150</value>
             </property>
         </properties>
     </rule>
@@ -233,20 +225,13 @@ To override rule properties, create a custom ruleset XML file that references th
 engines:
   pmd:
     custom_rulesets:
-      # Original rules (must be listed first)
-      - rulesets/structure/EnumMinimumValues.xml
-      - rulesets/structure/PreferSwitchOverIfElseChains.xml
-      - rulesets/code-style/ListInitializationMustBeMultiLine.xml
-      # Override ruleset (must come after the original rules)
       - rulesets/custom-overrides.xml
 ```
 
 **Key Points:**
-- The `ref` attribute format is `{ruleset-path}/{rule-name}` (e.g., `rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues`)
-- The ruleset path should be relative to your project root
-- The override ruleset must be listed **after** the original ruleset in `custom_rulesets`
-- Property values in XML use `<value>` tags (strings don't need quotes, but can have them)
-- You can override multiple rules in a single custom ruleset file
+- The `ref` attribute format is `{ruleset-path}/{rule-name}` (e.g., `category/apex/design.xml/NPathComplexity`)
+- Property values in XML use `<value>` tags (per [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd))
+- Property elements support attributes: `name` (required), `value` (optional), `description`, `type`, `delimiter`, `min`, `max`
 
 **Override Severity and Tags (supported in code-analyzer.yml):**
 

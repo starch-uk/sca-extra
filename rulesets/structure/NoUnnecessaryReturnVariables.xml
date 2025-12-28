@@ -6,30 +6,44 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code structure and organization</description>
-
 	<rule
 		name="NoUnnecessaryReturnVariables"
 		language="apex"
 		message="Variables created solely for return statements should be inlined. Return the expression directly instead"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Variables created solely for return statements should be inlined. Return the expression
 			directly
 			instead of creating an intermediate variable. This reduces unnecessary indirection and improves
 			code clarity.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Variable created just for return
+			public Integer getValue() {
+				Integer result = calculateValue();
+				return result;
+			}
+			
+			// Valid: Return expression directly
+			public Integer getValue() {
+				return calculateValue();
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
-				<value
-				><![CDATA[
+				<value>
+					<![CDATA[
 					//VariableDeclarationStatements[
 						following-sibling::*[1][self::ReturnStatement]
 						and following-sibling::ReturnStatement[1]/VariableExpression/@Image =
 							VariableDeclaration/VariableExpression/@Image
 					]
-				]]></value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

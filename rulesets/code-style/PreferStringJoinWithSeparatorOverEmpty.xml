@@ -6,13 +6,13 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="PreferStringJoinWithSeparatorOverEmpty"
 		language="apex"
 		message="String.join() with an empty separator where all strings except the last end with the same suffix should use that suffix as the separator"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			When using String.join() with an empty string separator and all strings in the list
 			except the last one end with the same non-empty sequence of characters, use the common
@@ -21,21 +21,50 @@
 			
 			Instead of: String.join('', new List &lt; String &gt; {'line1\n', 'line2\n', 'last'});
 			Use: String.join('\n', new List &lt; String &gt; {'line1', 'line2', 'last'});
+			
+			To customize this rule, edit the minStrings threshold in the XPath expression (default: 3).
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: String.join() with empty separator and common suffix
+			String result = String.join('', new List<String>{ 'line1\n', 'line2\n', 'last' });
+			
+			// Valid: Use the common suffix as separator
+			String result = String.join('\n', new List<String>{ 'line1', 'line2', 'last' });
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Empty separator with common comma suffix
+			String csv = String.join('', new List<String>{ 'col1,', 'col2,', 'col3' });
+			
+			// Valid: Use comma as separator
+			String csv = String.join(',', new List<String>{ 'col1', 'col2', 'col3' });
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Non-empty separator is allowed
+			String result = String.join('\n', new List<String>{ 'line1', 'line2' });  // ✅
+			
+			// Valid: No common suffix pattern
+			String result = String.join('', new List<String>{ 'a', 'b', 'c' });  // ✅
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //MethodCallExpression[
-                        @MethodName = 'join'
-                        and @FullMethodName = 'String.join'
-                        and .//LiteralExpression[@String = true() and (string-length(@Image) = 0 or @Image = "''" or @Image = '""')]
-                        and .//NewListLiteralExpression
-                        and count(.//NewListLiteralExpression//LiteralExpression[@String = true()]) >= 3
-                    ]
-                    ]]>
-                </value>
+					<![CDATA[
+					let $minStrings := 3
+					return //MethodCallExpression[
+						@MethodName = 'join'
+						and @FullMethodName = 'String.join'
+						and .//LiteralExpression[@String = true() and (string-length(@Image) = 0 or @Image = "''" or @Image = '""')]
+						and .//NewListLiteralExpression
+						and count(.//NewListLiteralExpression//LiteralExpression[@String = true()]) >= $minStrings
+					]
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

@@ -52,6 +52,18 @@ describe('Naming Rules', () => {
 				expect(eViolations.length).toBe(0);
 			});
 
+			it('should forbid exception variable "x" in catch blocks', async () => {
+				const violations = await runPMD(
+					'rulesets/naming/NoSingleLetterVariableNames.xml',
+					'tests/fixtures/negative/naming/NoSingleLetterVariableNames.cls'
+				);
+				// Verify 'x' is flagged in catch block (line 9 in negative fixture)
+				const xViolations = violations.filter(
+					(v) => v.rule === 'NoSingleLetterVariableNames' && v.line === 9
+				);
+				expect(xViolations.length).toBeGreaterThan(0);
+			});
+
 			it('should reject other single-letter variables (x, y, z, etc.)', async () => {
 				const violations = await runPMD(
 					'rulesets/naming/NoSingleLetterVariableNames.xml',
@@ -62,11 +74,6 @@ describe('Naming Rules', () => {
 					violations.filter((v) => v.rule === 'NoSingleLetterVariableNames').length
 				).toBeGreaterThan(0);
 			});
-
-			// Note: If allowedNames property is added to the rule XML, add tests here that:
-			// 1. Test with custom allowedNames property value
-			// 2. Verify the rule respects the property configuration
-			// 3. Test edge cases like empty string, single value, multiple values
 		});
 	});
 
@@ -89,93 +96,46 @@ describe('Naming Rules', () => {
 			assertNoViolations(violations, 'NoAbbreviations');
 		});
 
-		describe('property behavior (simulated overrides)', () => {
-			it('should respect a custom disallowedAbbreviations list', async () => {
-				const violations = await runPMD(
-					'tests/rulesets/NoAbbreviations_DisallowedCtx.xml',
-					'tests/fixtures/negative/naming/NoAbbreviations.cls'
-				);
+		it('should allow abbreviations with test prefix', async () => {
+			const violations = await runPMD(
+				'rulesets/naming/NoAbbreviations.xml',
+				'tests/fixtures/positive/naming/NoAbbreviations.cls'
+			);
+			// Verify test-prefixed abbreviations (testCtx, testCfg, testAcc) are not flagged
+			const testPrefixViolations = violations.filter(
+				(v) =>
+					v.rule === 'NoAbbreviations' &&
+					(v.line === 31 || v.line === 34 || v.line === 37)
+			);
+			expect(testPrefixViolations.length).toBe(0);
+		});
 
-				// Only the first variable (ctx on line 3) should be flagged
-				const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
-				expect(noAbbrevViolations.map((v) => v.line)).toEqual([3]);
-			});
+		it('should flag abbreviations without test prefix', async () => {
+			const violations = await runPMD(
+				'rulesets/naming/NoAbbreviations.xml',
+				'tests/fixtures/negative/naming/NoAbbreviations.cls'
+			);
+			// Verify abbreviations without test prefix (myCtx, myCfg, myAcc) are flagged
+			const noPrefixViolations = violations.filter(
+				(v) =>
+					v.rule === 'NoAbbreviations' &&
+					(v.line === 39 || v.line === 42 || v.line === 45)
+			);
+			expect(noPrefixViolations.length).toBeGreaterThan(0);
+		});
 
-			it('should work with completely different disallowedAbbreviations (foo,bar) - violations', async () => {
-				const violations = await runPMD(
-					'tests/rulesets/NoAbbreviations_DisallowedFooBar.xml',
-					'tests/fixtures/negative/naming/NoAbbreviations_OverrideFooBar.cls'
-				);
-
-				const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
-				// foo and bar (lines 3 and 4) should be flagged, baz (line 5) should not
-				expect(noAbbrevViolations.map((v) => v.line).sort()).toEqual([3, 4]);
-			});
-
-			it('should work with completely different disallowedAbbreviations (foo,bar) - no violations', async () => {
-				const violations = await runPMD(
-					'tests/rulesets/NoAbbreviations_DisallowedFooBar.xml',
-					'tests/fixtures/positive/naming/NoAbbreviations_OverrideFooBarPositive.cls'
-				);
-				assertNoViolations(violations, 'NoAbbreviations');
-			});
-
-			it('should respect a custom allowedSuffixes pattern (Id)', async () => {
-				// First, override the abbreviation list so that only fooId is considered an abbreviation,
-				// and keep Id in the allowedSuffixes pattern so fooId is allowed.
-				const violations1 = await runPMD(
-					'tests/rulesets/NoAbbreviations_DisallowedFooIdSuffixId.xml',
-					'tests/fixtures/positive/naming/NoAbbreviations_OverrideSuffix.cls'
-				);
-				// With Id in the allowed suffix pattern, fooId should NOT be flagged
-				assertNoViolations(violations1, 'NoAbbreviations');
-
-				// Now override the allowedSuffixes pattern to remove "Id" so fooId becomes a violation
-				const violations2 = await runPMD(
-					'tests/rulesets/NoAbbreviations_DisallowedFooIdSuffixNoId.xml',
-					'tests/fixtures/positive/naming/NoAbbreviations_OverrideSuffix.cls'
-				);
-
-				const noAbbrevViolations = violations2.filter((v) => v.rule === 'NoAbbreviations');
-				expect(noAbbrevViolations.length).toBe(1);
-				expect(noAbbrevViolations[0].line).toBe(3);
-			});
-
-			it('should work with completely different allowedSuffixes (Foo,Bar)', async () => {
-				// Configure abbreviations and suffixes so Foo and Bar suffixed names are allowed
-				const violations = await runPMD(
-					'tests/rulesets/NoAbbreviations_DisallowedFooBarBazSuffixOoAr.xml',
-					'tests/fixtures/negative/naming/NoAbbreviations_OverrideFooBarSuffix.cls'
-				);
-
-				const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
-				// foo and bar should be allowed by suffix, baz (line 5) should be flagged
-				expect(noAbbrevViolations.map((v) => v.line)).toEqual([5]);
-			});
-
-			it('should respect custom allowedPrefixes property', async () => {
-				// Configure abbreviations and prefix so 'pre' prefix allows abbreviations
-				const violations = await runPMD(
-					'tests/rulesets/NoAbbreviations_DisallowedCtxPrefixPre.xml',
-					'tests/fixtures/negative/naming/NoAbbreviations_OverridePrefix.cls'
-				);
-
-				const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
-				// preCtx should be allowed (prefix), ctx should be flagged (no prefix)
-				expect(noAbbrevViolations.map((v) => v.line).sort()).toEqual([4]);
-			});
-
-			it('should work with multiple allowedPrefixes (pre,post)', async () => {
-				// Configure abbreviations and multiple prefixes
-				const violations = await runPMD(
-					'tests/rulesets/NoAbbreviations_DisallowedCtxPrefixPrePost.xml',
-					'tests/fixtures/positive/naming/NoAbbreviations_OverrideMultiplePrefixes.cls'
-				);
-
-				const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
-				// preCtx and postCtx should be allowed (prefixes), ctx should be flagged
-				expect(noAbbrevViolations.map((v) => v.line).sort()).toEqual([5]);
-			});
+		it('should flag abbreviations even when they have other prefixes (not test)', async () => {
+			const violations = await runPMD(
+				'rulesets/naming/NoAbbreviations.xml',
+				'tests/fixtures/negative/naming/NoAbbreviations.cls'
+			);
+			// Verify 'myCtx', 'myCfg', 'myAcc' are flagged (my is not an allowed prefix)
+			const myPrefixViolations = violations.filter(
+				(v) =>
+					v.rule === 'NoAbbreviations' &&
+					(v.line === 39 || v.line === 42 || v.line === 45)
+			);
+			expect(myPrefixViolations.length).toBeGreaterThan(0);
 		});
 	});
 

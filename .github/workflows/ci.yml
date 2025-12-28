@@ -35,13 +35,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: "10.26.1"
-
-      - name: Install Salesforce CLI
-        run: pnpm add -g @salesforce/cli@latest
-
-      - name: Install Salesforce Code Analyzer CLI Plugin
-        run: sf plugins install @salesforce/plugin-code-analyzer@latest
+          version: "10.26.2"
 
       - name: Cache pnpm store
         uses: actions/cache@v5

@@ -6,13 +6,13 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code structure and organization</description>
-
 	<rule
 		name="NoUnnecessaryAttributeVariables"
 		language="apex"
 		message="Variables that extract a single attribute from an object and are only used once should be inlined. This rule only applies to primitive types, not collections or object instances"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Variables that extract a single attribute from an object and are only used once should
 			be
@@ -20,12 +20,21 @@
 			instances, only primitive types. Inlining these variables reduces unnecessary indirection
 			and improves code clarity.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Variable used only once
+			String name = account.Name;
+			processName(name);
+			
+			// Valid: Inline the attribute access
+			processName(account.Name);
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    for $var in //VariableDeclaration[
+					<![CDATA[
+					for $var in //VariableDeclaration[
                         VariableExpression[1]/ReferenceExpression
                         and (
                             @Type = 'String'
@@ -54,8 +63,8 @@
                             ]
                         ) = 1
                     ) then $var else ()
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

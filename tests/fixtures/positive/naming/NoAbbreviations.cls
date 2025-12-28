@@ -27,6 +27,15 @@ public class Example {
     } catch (Exception e) {
       // Valid: 'e' is allowed for exceptions
     }
+
+    String testCtx = 'value';
+    // Valid: 'test' prefix allows abbreviations like 'ctx'
+
+    String testCfg = 'config';
+    // Valid: 'test' prefix allows abbreviations like 'cfg'
+
+    Integer testAcc = 5;
+    // Valid: 'test' prefix allows abbreviations like 'acc'
   }
 }
 

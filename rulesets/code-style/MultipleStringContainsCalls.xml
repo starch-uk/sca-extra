@@ -6,34 +6,72 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="MultipleStringContainsCalls"
 		language="apex"
 		message="Multiple String.contains() calls (at least {0}) in a conditional should be replaced with a single regex pattern for better performance and maintainability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Multiple String.contains() calls in conditionals should be replaced with a single regex
 			pattern for better performance and maintainability. This rule detects when there are a minimum
-			number (configurable via minCalls property) or more contains() calls in a conditional expression.
+			number of contains() calls in a conditional expression.
+			
+			To customize this rule, edit the minCalls threshold in the XPath expression (default: 2).
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Multiple contains() calls with OR
+			if (str.contains('a') || str.contains('b') || str.contains('c')) {
+			    // ...
+			}
+			
+			// Valid: Use regex pattern instead
+			if (Pattern.matches('.*(a|b|c).*', str)) {
+			    // ...
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Multiple contains() calls with AND
+			if (str.contains('prefix') &amp;&amp; str.contains('suffix')) {
+			    // ...
+			}
+			
+			// Valid: Use regex pattern instead
+			if (Pattern.matches('.*prefix.*suffix.*', str)) {
+			    // ...
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Single contains() call is allowed
+			if (str.contains('test')) {
+			    // ...
+			}
+			
+			// Valid: Contains() calls in different conditionals are allowed
+			if (str.contains('a')) {
+			    // ...
+			}
+			if (str.contains('b')) {
+			    // ...
+			}
+			]]>
+		</example>
 		<properties>
-			<property
-				name="minCalls"
-				type="String"
-				description="Minimum number of contains() calls required to trigger the rule"
-			>
-				<value />
-			</property>
 			<property name="xpath">
-				<value
-				><![CDATA[
-					//StandardCondition[
-						count(.//MethodCallExpression[@MethodName = 'contains']) >= number(if ('${minCalls}' = '') then '2' else '${minCalls}')
+				<value>
+					<![CDATA[
+					let $minCalls := 2
+					return //StandardCondition[
+						count(.//MethodCallExpression[@MethodName = 'contains']) >= $minCalls
 					]
-				]]></value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

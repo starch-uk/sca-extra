@@ -6,23 +6,32 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="NoMethodCallsAsArguments"
 		language="apex"
 		message="Method calls should not be used directly as arguments. Extract the method call result to a variable first for better readability and debugging"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>2</priority>
 		<description>
 			Method calls should not be used directly as arguments to constructors, method calls, or
 			expressions. Extract method calls to variables first for better readability, debugging,
 			and to avoid potential side effects from multiple evaluations.
 		</description>
-		<priority>2</priority>
+		<example>
+			<![CDATA[
+			// Violation: Method call as argument
+			String result = processValue(getValue());
+			
+			// Valid: Extract method call to variable
+			Integer value = getValue();
+			String result = processValue(value);
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
-				<value
-				><![CDATA[
+				<value>
+					<![CDATA[
 					//MethodCallExpression[
 						(
 							parent::MethodCallExpression
@@ -38,7 +47,8 @@
 					]
 					|
 					//NewObjectExpression[.//MethodCallExpression]/MethodCallExpression
-				]]></value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

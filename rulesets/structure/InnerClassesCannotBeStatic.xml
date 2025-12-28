@@ -6,29 +6,46 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code structure and organization</description>
-
 	<rule
 		name="InnerClassesCannotBeStatic"
 		language="apex"
 		message="Inner classes cannot be static in Apex. Remove the static modifier from inner class declarations"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>1</priority>
 		<description>
 			Inner classes in Apex cannot be static. This is a language limitation - Apex does not
 			support
 			static inner classes. Remove the static modifier from inner class declarations. This is a
 			compilation error that will prevent the code from compiling.
 		</description>
-		<priority>1</priority>
+		<example>
+			<![CDATA[
+			// Violation: Static inner class (not allowed in Apex)
+			public class Outer {
+			    public static class Inner {
+			        // ...
+			    }
+			}
+			
+			// Valid: Non-static inner class
+			public class Outer {
+			    public class Inner {
+			        // ...
+			    }
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
-				<value
-				><![CDATA[
+				<value>
+					<![CDATA[
 					//UserClass[
 						@Nested = true()
 						and ModifierNode[@Static = true()]
 					]
-				]]></value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

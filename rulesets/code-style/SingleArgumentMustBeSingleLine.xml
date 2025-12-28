@@ -6,29 +6,39 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="SingleArgumentMustBeSingleLine"
 		language="apex"
 		message="Method calls with 0-1 arguments must be formatted on a single line. Unnecessary multi-line formatting is not allowed"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Method calls with 0-1 arguments must be formatted on a single line. Unnecessary
 			multi-line
 			formatting for single arguments is not allowed as it reduces readability and wastes vertical space.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Single argument on multiple lines
+			String result = processValue(
+				value
+			);
+			
+			// Valid: Single argument on one line
+			String result = processValue(value);
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //MethodCallExpression[
+					<![CDATA[
+					//MethodCallExpression[
                         @InputParametersSize <= 1
                         and @BeginLine != @EndLine
                     ]
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

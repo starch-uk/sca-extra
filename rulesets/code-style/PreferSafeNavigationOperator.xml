@@ -6,24 +6,34 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="PreferSafeNavigationOperator"
 		language="apex"
 		message="Use the safe navigation operator (?.) instead of explicit null checks before property access or method calls"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Always prefer the safe navigation operator (?.) over null checks before accessing object
 			properties or calling methods. The safe navigation operator is more concise and clearly
 			expresses the intent of safely accessing members that may be null.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Explicit null check before method call
+			if (obj != null) {
+				obj.doSomething();
+			}
+			
+			// Valid: Use safe navigation operator
+			obj?.doSomething();
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //IfBlockStatement[
+					<![CDATA[
+					//IfBlockStatement[
                         StandardCondition/BooleanExpression[@Op = '==' or @Op = '!=']
                         and (StandardCondition/BooleanExpression/VariableExpression[@Image = 'null']
                              or StandardCondition/BooleanExpression/LiteralExpression[@Null = true()])
@@ -32,8 +42,8 @@
                             StandardCondition/BooleanExpression/VariableExpression[@Image != 'null']/@Image
                         and count(BlockStatement/*) = 1
                     ]
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

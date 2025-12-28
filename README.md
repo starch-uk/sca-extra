@@ -75,91 +75,100 @@ engines:
 - You can include as many or as few rules as needed
 - Use `engines.pmd.custom_rulesets` (not `rulesets:`) to reference PMD rulesets
 
-### Configuring Rule Properties
+### Customizing Rules
 
-**Important:** Salesforce Code Analyzer does not support property overrides for PMD rules via `code-analyzer.yml`. Only `severity` and `tags` can be overridden in `code-analyzer.yml`.
+**Important:** PMD 7+ does not support dynamic properties for XPath rules. To customize rules (e.g., change thresholds, modify behavior), you need to edit the XPath expression directly in the rule XML file.
 
-To override rule properties, you must create a custom ruleset XML file that references the original rule using PMD's `ref=` syntax.
+**How to Customize a Rule:**
 
-**Example - Override Multiple Rule Properties:**
+1. **Locate the rule file** in the `rulesets/` directory (e.g., `rulesets/structure/EnumMinimumValues.xml`)
 
-1. Create a custom ruleset file (e.g., `rulesets/custom-property-overrides.xml`):
+2. **Edit the XPath expression** in the `<property name="xpath">` section to change the rule's behavior
+
+3. **Update the rule description** to reflect your changes
+
+**Example 1 - Change EnumMinimumValues threshold from 3 to 4:**
+
+Open `rulesets/structure/EnumMinimumValues.xml` and change:
 
 ```xml
-<?xml version="1.0"?>
-<ruleset
-    name="Custom Property Overrides"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
->
-    <description>Custom property overrides for rules</description>
-    
-    <!-- Override EnumMinimumValues to require 4 values instead of default 3 -->
-    <rule ref="rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues">
-        <properties>
-            <property name="minValues">
-                <value>4</value>
-            </property>
-        </properties>
-    </rule>
-    
-    <!-- Override PreferSwitchOverIfElseChains to require 4 conditions instead of default 2 -->
-    <rule ref="rulesets/structure/PreferSwitchOverIfElseChains.xml/PreferSwitchOverIfElseChains">
-        <properties>
-            <property name="minElseIfStatements">
-                <value>4</value>
-            </property>
-        </properties>
-    </rule>
-    
-    <!-- Override ListInitializationMustBeMultiLine to require 3 items instead of default 2 -->
-    <rule ref="rulesets/code-style/ListInitializationMustBeMultiLine.xml/ListInitializationMustBeMultiLine">
-        <properties>
-            <property name="minItems">
-                <value>3</value>
-            </property>
-        </properties>
-    </rule>
-</ruleset>
+<!-- Before -->
+<property name="xpath">
+    <value>
+        <![CDATA[
+        //UserEnum[count(Field) < 3]
+        ]]>
+    </value>
+</property>
 ```
 
-2. Reference the override ruleset in your `code-analyzer.yml`:
+To:
 
-```yaml
-engines:
-  pmd:
-    custom_rulesets:
-      # Original rules
-      - rulesets/structure/EnumMinimumValues.xml
-      - rulesets/structure/PreferSwitchOverIfElseChains.xml
-      - rulesets/code-style/ListInitializationMustBeMultiLine.xml
-      # Custom override ruleset (must come after the original rules)
-      - rulesets/custom-property-overrides.xml
-
-rules:
-  # Override severity and tags (properties are NOT supported here)
-  EnumMinimumValues:
-    severity: "High"
-    tags: ["Recommended", "Structure"]
+```xml
+<!-- After -->
+<property name="xpath">
+    <value>
+        <![CDATA[
+        //UserEnum[count(Field) < 4]
+        ]]>
+    </value>
+</property>
 ```
 
-**Key Points:**
-- The `ref` attribute format is `{ruleset-path}/{rule-name}` (e.g., `rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues`)
-- The ruleset path should be relative to your project root
-- The override ruleset must be listed **after** the original ruleset in `custom_rulesets`
-- Property values in XML use `<value>` tags (strings don't need quotes, but can have them)
+Also update the description:
 
-**Finding available properties:**
-1. Open the rule XML file (e.g., `rulesets/structure/EnumMinimumValues.xml`)
-2. Look for property substitution patterns in the XPath expression (e.g., `'${propertyName}'`)
-3. Check the rule description for property documentation
-4. Default values are embedded in the XPath expression using the pattern: `if ('${propertyName}' = '${propertyName}') then 'default' else '${propertyName}'`
+```xml
+<description>
+    Enums must contain at least 4 values. Enums with fewer than 4 values should be reconsidered...
+</description>
+```
 
-**Property types in XML:**
-- **Strings**: `<value>i,c,e,x</value>` or `<value>"i,c,e,x"</value>`
-- **Integers**: `<value>4</value>`
-- **Booleans**: `<value>true</value>` or `<value>false</value>`
+**Example 2 - Change PreferSwitchOverIfElseChains threshold from 2 to 4:**
+
+Open `rulesets/structure/PreferSwitchOverIfElseChains.xml` and find all occurrences of `>= 2` in the XPath expression, then change them to `>= 4`:
+
+```xml
+<!-- Before -->
+count(IfBlockStatement) >= 2
+```
+
+To:
+
+```xml
+<!-- After -->
+count(IfBlockStatement) >= 4
+```
+
+**Example 3 - Customize NoAbbreviations to flag different abbreviations:**
+
+Open `rulesets/naming/NoAbbreviations.xml` and modify the XPath expression. For example, to only flag `ctx` and `idx`:
+
+```xml
+<property name="xpath">
+    <value><![CDATA[
+        //VariableDeclaration[
+            VariableExpression[
+                (@Image = 'ctx' or @Image = 'idx')
+                and not(matches(@Image, 'Api$') or matches(@Image, 'Html$') or matches(@Image, 'Id$') or matches(@Image, 'Url$'))
+            ]
+        ]
+    ]]></value>
+</property>
+```
+
+**Best Practices:**
+- **Keep a backup** of the original rule file before making changes
+- **Document your changes** in comments or commit messages
+- **Test your changes** by running `sf code-analyzer run` on your codebase
+- **Consider version control** - if you customize rules, you may want to maintain your own fork or keep custom rules in a separate directory
+- **Update rule descriptions** to reflect your customizations
+
+**Note:** If you need different behavior for different parts of your codebase, you can:
+1. Create multiple copies of the rule with different names (e.g., `EnumMinimumValues4.xml`, `EnumMinimumValues5.xml`)
+2. Reference both in your `code-analyzer.yml`
+3. Use PMD's exclusion patterns if needed
+
+**Rule Examples:** All rules include `<example>` sections in their XML files showing violations and valid code patterns. These examples help clarify the rule's intent. Rules with configurable thresholds (like `EnumMinimumValues`, `PreferSwitchOverIfElseChains`, `NoAbbreviations`) use easy-to-edit variables at the top of the XPath expression, making customization straightforward.
 
 ### Disabling Default Rules
 
@@ -272,81 +281,98 @@ Regex rules are useful for:
 
 For more information on creating Regex rules, see the [Regex Engine Reference](docs/REGEX.md).
 
-### Overriding Rule Properties
+### Customizing Rules
 
-**Important:** Salesforce Code Analyzer does not support property overrides for PMD rules via `code-analyzer.yml`. Only `severity` and `tags` can be overridden in `code-analyzer.yml` for PMD rules.
+**Important:** PMD 7+ does not support dynamic properties for XPath rules. To customize rules (e.g., change thresholds, modify behavior), you need to edit the XPath expression directly in the rule XML file.
 
-To override rule properties, you must create a custom ruleset XML file that references the original rule and overrides its properties using PMD's `ref=` syntax (similar to the [unhappy-soup approach](https://github.com/rsoesemann/unhappy-soup/blob/master/ruleset.xml)).
+**How to Customize a Rule:**
 
-**Example - Override Multiple Rule Properties:**
+1. **Locate the rule file** in the `rulesets/` directory (e.g., `rulesets/structure/EnumMinimumValues.xml`)
 
-1. Create a custom ruleset file (e.g., `rulesets/custom-overrides.xml`):
+2. **Edit the XPath expression** in the `<property name="xpath">` section to change the rule's behavior
+
+3. **Update the rule description** to reflect your changes
+
+**Example 1 - Change EnumMinimumValues threshold from 3 to 4:**
+
+Open `rulesets/structure/EnumMinimumValues.xml` and change:
 
 ```xml
-<?xml version="1.0"?>
-<ruleset
-    name="Custom Rule Overrides"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
->
-    <description>Custom property overrides for rules</description>
-    
-    <!-- Override EnumMinimumValues to require 4 values instead of default 3 -->
-    <rule ref="rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues">
-        <properties>
-            <property name="minValues">
-                <value>4</value>
-            </property>
-        </properties>
-    </rule>
-    
-    <!-- Override PreferSwitchOverIfElseChains to require 4 conditions instead of default 2 -->
-    <rule ref="rulesets/structure/PreferSwitchOverIfElseChains.xml/PreferSwitchOverIfElseChains">
-        <properties>
-            <property name="minElseIfStatements">
-                <value>4</value>
-            </property>
-        </properties>
-    </rule>
-    
-    <!-- Override ListInitializationMustBeMultiLine to require 3 items instead of default 2 -->
-    <rule ref="rulesets/code-style/ListInitializationMustBeMultiLine.xml/ListInitializationMustBeMultiLine">
-        <properties>
-            <property name="minItems">
-                <value>3</value>
-            </property>
-        </properties>
-    </rule>
-</ruleset>
+<!-- Before -->
+<property name="xpath">
+    <value>
+        <![CDATA[
+        //UserEnum[count(Field) < 3]
+        ]]>
+    </value>
+</property>
 ```
 
-2. Reference the override ruleset in your `code-analyzer.yml`:
+To:
 
-```yaml
-engines:
-  pmd:
-    custom_rulesets:
-      # Original rules (must be listed first)
-      - rulesets/structure/EnumMinimumValues.xml
-      - rulesets/structure/PreferSwitchOverIfElseChains.xml
-      - rulesets/code-style/ListInitializationMustBeMultiLine.xml
-      # Override ruleset (must come after the original rules)
-      - rulesets/custom-overrides.xml
-
-rules:
-  # Override severity and tags (properties are NOT supported here)
-  EnumMinimumValues:
-    severity: "High"
-    tags: ["Recommended", "Structure"]
+```xml
+<!-- After -->
+<property name="xpath">
+    <value>
+        <![CDATA[
+        //UserEnum[count(Field) < 4]
+        ]]>
+    </value>
+</property>
 ```
 
-**Key Points:**
-- The `ref` attribute format is `{ruleset-path}/{rule-name}` (e.g., `rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues`)
-- The ruleset path should be relative to your project root
-- The override ruleset must be listed **after** the original ruleset in `custom_rulesets`
-- Property values in XML use `<value>` tags (strings don't need quotes, but can have them)
-- You can override multiple rules in a single custom ruleset file
+Also update the description:
+
+```xml
+<description>
+    Enums must contain at least 4 values. Enums with fewer than 4 values should be reconsidered...
+</description>
+```
+
+**Example 2 - Change PreferSwitchOverIfElseChains threshold from 2 to 4:**
+
+Open `rulesets/structure/PreferSwitchOverIfElseChains.xml` and find all occurrences of `>= 2` in the XPath expression, then change them to `>= 4`:
+
+```xml
+<!-- Before -->
+count(IfBlockStatement) >= 2
+```
+
+To:
+
+```xml
+<!-- After -->
+count(IfBlockStatement) >= 4
+```
+
+**Example 3 - Customize NoAbbreviations to flag different abbreviations:**
+
+Open `rulesets/naming/NoAbbreviations.xml` and modify the XPath expression. For example, to only flag `ctx` and `idx`:
+
+```xml
+<property name="xpath">
+    <value><![CDATA[
+        //VariableDeclaration[
+            VariableExpression[
+                (@Image = 'ctx' or @Image = 'idx')
+                and not(matches(@Image, 'Api$') or matches(@Image, 'Html$') or matches(@Image, 'Id$') or matches(@Image, 'Url$'))
+            ]
+        ]
+    ]]></value>
+</property>
+```
+
+**Best Practices:**
+- **Keep a backup** of the original rule file before making changes
+- **Document your changes** in comments or commit messages
+- **Test your changes** by running `sf code-analyzer run` on your codebase
+- **Consider version control** - if you customize rules, you may want to maintain your own fork or keep custom rules in a separate directory
+- **Update rule descriptions** to reflect your customizations
+
+**Note:** If you need different behavior for different parts of your codebase, you can:
+1. Create multiple copies of the rule with different names (e.g., `EnumMinimumValues4.xml`, `EnumMinimumValues5.xml`)
+2. Reference both in your `code-analyzer.yml`
+3. Use PMD's exclusion patterns if needed
 
 ### Complete Example
 
@@ -363,17 +389,17 @@ engines:
       - rulesets/naming/NoSingleLetterVariableNames.xml
       - rulesets/naming/NoAbbreviations.xml
       - rulesets/code-style/NoMethodCallsInConditionals.xml
-      # Custom override ruleset (if you need property overrides)
-      - rulesets/custom-overrides.xml
 
 rules:
-  # Override severity and tags (properties are NOT supported here)
+  # Override severity and tags
   NoSingleLetterVariableNames:
     severity: "High"
     tags: ["Recommended", "Naming"]
 ```
 
 **For more examples:** See the [unhappy-soup ruleset](https://github.com/rsoesemann/unhappy-soup/blob/master/ruleset.xml) for a comprehensive example of combining standard PMD rules with custom rules and configuration.
+
+**To customize rule behavior:** See the [Customizing Rules](#customizing-rules) section above for instructions on editing XPath expressions directly.
 
 ## Quick Start
 
@@ -383,7 +409,7 @@ rules:
 
 2. **Configure `code-analyzer.yml`**
    - Create or update `code-analyzer.yml` in your project root
-   - Add rulesets, configure properties, and disable default rules as needed
+   - Add rulesets and disable default rules as needed
    - See [Configuring code-analyzer.yml](#configuring-code-analyzeryml) for detailed instructions
 
 3. **Run the analyzer**
@@ -550,7 +576,7 @@ sf code-analyzer run
 - Open your Salesforce project with `code-analyzer.yml` and the `rulesets/` folder present
 - The extension will automatically analyze your code and surface issues in the editor
 
-For detailed configuration instructions, including how to add rules, configure properties, disable default rules, and use Regex rules, see the [Configuring code-analyzer.yml](#configuring-code-analyzeryml) section above.
+For detailed configuration instructions, including how to add rules, customize rules, disable default rules, and use Regex rules, see the [Configuring code-analyzer.yml](#configuring-code-analyzeryml) section above.
 
 ## Rules Documentation
 
@@ -637,12 +663,7 @@ String configuration = 'x';  // ✅ Uses full word
 Boolean isManager = true;    // ✅ Descriptive and readable
 ```
 
-**Configurable Properties:**
-- `disallowedAbbreviations` (string): Comma-separated list of **exact variable names** to flag as abbreviations (e.g., `"ctx,idx,msg,cfg"`).  
-- `allowedSuffixes` (string): **Comma-separated list of suffixes** that are treated as complete words when they appear at the end of a variable name (e.g., `"Id,Api,Url,Html,Dto"`). Default: `"Api,Html,Id,Url"`.
-- `allowedPrefixes` (string): **Comma-separated list of prefixes** that are treated as complete words when they appear at the start of a variable name (e.g., `"pre,post"`). Default: empty (no prefixes allowed).
-
-These properties are defined in `rulesets/naming/NoAbbreviations.xml` and can be customized in `code-analyzer.yml` under the `NoAbbreviations` rule.
+**Note:** To customize this rule (e.g., change which abbreviations are flagged or which suffixes are allowed), edit the XPath expression directly in `rulesets/naming/NoAbbreviations.xml`. See the [Customizing Rules](#customizing-rules) section below for details.
 
 ### Code Style Rules
 

@@ -6,24 +6,36 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="PreferBuilderPatternChaining"
 		language="apex"
 		message="Builder pattern methods should be chained instead of using multiple intermediary variable assignments. Use a final variable with chained method calls"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			When using builder patterns, prefer method chaining over multiple intermediary variable
 			assignments. Use final variables with chained method calls instead of reassigning the same
 			variable multiple times. This follows the builder pattern idiom and improves code clarity.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Multiple assignments to same variable
+			Builder builder = new Builder();
+			builder = builder.setName('test');
+			builder = builder.setValue(5);
+			
+			// Valid: Use method chaining with final variable
+			final Builder builder = new Builder()
+				.setName('test')
+				.setValue(5);
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    for $assign in //AssignmentExpression[
+					<![CDATA[
+					for $assign in //AssignmentExpression[
                         @Op = '='
                         and VariableExpression
                         and MethodCallExpression
@@ -33,8 +45,8 @@
                         and $assign/ancestor::Method//VariableDeclarationStatements/VariableDeclaration/VariableExpression[@Image = $assign/VariableExpression/@Image]
                         and not($assign/ancestor::Method[@Constructor = true()])
                     ) then $assign else ()
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

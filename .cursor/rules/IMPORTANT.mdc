@@ -83,3 +83,8 @@ When creating or modifying PMD rules:
       - `pmd ast-dump --file=tests/fixtures/positive/documentation/AnnotationBeforeComment.cls -l apex -f xml | grep -E "Method|FormalComment|Annotation"`
     - **Note**: Files with syntax errors cannot be parsed. Fix syntax errors first or use valid test files for AST inspection.
     - **Tip**: Use AST dump to understand node relationships, attributes, and structure before writing XPath expressions.
+19. **PMD command execution**: **Always use the `-r <file>` flag when running PMD commands** to avoid progressbar rendering conflicts with STDOUT. PMD will show a warning: `[WARN] Progressbar rendering conflicts with reporting to STDOUT. No progressbar will be shown. Try running with argument -r <file> to output the report to a file instead.` To prevent this warning, always redirect PMD output to a file using the `-r` flag:
+    - **Correct**: `pmd check --no-cache -d "${file}" -R "${ruleset}" -f xml -r "${outputFile}"`
+    - **Incorrect**: `pmd check --no-cache -d "${file}" -R "${ruleset}" -f xml` (outputs to STDOUT, causes warning)
+    - The `tests/helpers/pmd-helper.js` file already implements this correctly - any new PMD invocations should follow the same pattern
+    - When running PMD manually or in scripts, always use `-r <file>` to write output to a file, then read the file contents

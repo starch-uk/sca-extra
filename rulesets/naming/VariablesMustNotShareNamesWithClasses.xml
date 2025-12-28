@@ -6,33 +6,70 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex naming conventions</description>
-
 	<rule
 		name="VariablesMustNotShareNamesWithClasses"
 		language="apex"
 		message="Variable names must not share names with classes to avoid confusion and improve code clarity"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Variable names should not match class names to avoid confusion. When a variable shares a
 			name
 			with a class, it can be unclear whether the identifier refers to the class or an instance,
 			making the code harder to read and understand.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Variable name matches class name (case-insensitive)
+			public class Account {
+			    // ...
+			}
+			
+			public void method() {
+			    Account Account = new Account();  // ❌ Variable name matches class
+			    Account ACCOUNT = new Account();  // ❌ Variable name matches class
+			}
+			
+			// Valid: Use different variable name
+			public void method() {
+			    Account account = new Account();  // ✅ Different case
+			    Account acc = new Account();  // ✅ Different name
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Variable name matches inner class name
+			public class Outer {
+			    public class Inner {
+			        // ...
+			    }
+			    
+			    public void method() {
+			        Inner Inner = new Inner();  // ❌ Variable name matches inner class
+			    }
+			}
+			
+			// Valid: Use different variable name
+			public void method() {
+			    Inner inner = new Inner();  // ✅
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //VariableDeclaration[
+					<![CDATA[
+					//VariableDeclaration[
                         VariableExpression
                         and (
                             ancestor::ApexFile//UserClass[lower-case(@Name) = lower-case(VariableExpression/@Image)]
                             or ancestor::ApexFile//UserClass[lower-case(@SimpleName) = lower-case(VariableExpression/@Image)]
                         )
                     ]
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

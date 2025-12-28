@@ -6,29 +6,63 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code structure and organization</description>
-
 	<rule
 		name="InnerClassesCannotHaveStaticMembers"
 		language="apex"
 		message="Inner classes cannot have static attributes or methods in Apex. Remove static modifiers from inner class members"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>1</priority>
 		<description>
 			Inner classes in Apex cannot have static attributes or methods. This is a language
 			limitation -
 			Apex does not support static members in inner classes. Remove static modifiers from inner class
 			members. This is a compilation error that will prevent the code from compiling.
 		</description>
-		<priority>1</priority>
+		<example>
+			<![CDATA[
+			// Violation: Static field in inner class (not allowed in Apex)
+			public class Outer {
+			    public class Inner {
+			        public static Integer value;  // ❌
+			    }
+			}
+			
+			// Valid: Non-static field in inner class
+			public class Outer {
+			    public class Inner {
+			        public Integer value;  // ✅
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Static method in inner class (not allowed in Apex)
+			public class Outer {
+			    public class Inner {
+			        public static void method() { }  // ❌
+			    }
+			}
+			
+			// Valid: Non-static method in inner class
+			public class Outer {
+			    public class Inner {
+			        public void method() { }  // ✅
+			    }
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
-				<value
-				><![CDATA[
+				<value>
+					<![CDATA[
 					//(Field | Method)[
 						ModifierNode[@Static = true()]
 						and ancestor::UserClass[ancestor::UserClass]
 					]
-				]]></value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

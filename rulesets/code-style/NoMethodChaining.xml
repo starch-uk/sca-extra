@@ -6,25 +6,35 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="NoMethodChaining"
 		language="apex"
 		message="Method chaining should be avoided. Use intermediary variables instead for better readability and debugging"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Method chaining should be avoided in favor of using intermediary variables. This
 			improves
 			readability, makes debugging easier by allowing inspection of intermediate values, and
 			reduces complexity. Exceptions are made for final variables that use method chaining.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Method chaining
+			String result = getValue().toString().trim();
+			
+			// Valid: Use intermediary variables
+			Object value = getValue();
+			String str = value.toString();
+			String result = str.trim();
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //MethodCallExpression[
+					<![CDATA[
+					//MethodCallExpression[
                         ReferenceExpression//MethodCallExpression
                         and not(
                             ancestor::VariableDeclarationStatements[
@@ -32,8 +42,8 @@
                             ]
                         )
                     ]
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

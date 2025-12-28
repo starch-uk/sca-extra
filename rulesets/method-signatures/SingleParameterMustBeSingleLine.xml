@@ -6,23 +6,35 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex method signatures and parameters</description>
-
 	<rule
 		name="SingleParameterMustBeSingleLine"
 		language="apex"
 		message="Methods with 0-1 parameters should be formatted on a single line. Unnecessary multi-line formatting is not allowed"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Methods with 0-1 parameters should be formatted on a single line. Unnecessary multi-line
 			formatting for single parameters is not allowed as it reduces readability and wastes vertical
 			space. This prevents excessive line wrapping due to long identifiers.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Method with single parameter on multiple lines
+			public void processValue(
+				String value
+			) {
+			}
+			
+			// Valid: Method with single parameter on one line
+			public void processValue(String value) {
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
-				<value
-				><![CDATA[
+				<value>
+					<![CDATA[
 					//Method[
 						count(Parameter) <= 1
 						and (
@@ -36,7 +48,8 @@
 							)
 						)
 					]
-				]]></value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

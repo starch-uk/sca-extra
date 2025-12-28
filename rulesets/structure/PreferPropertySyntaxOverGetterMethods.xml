@@ -6,24 +6,84 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code structure and organization</description>
-
 	<rule
 		name="PreferPropertySyntaxOverGetterMethods"
 		language="apex"
 		message="Private fields with public getter methods should be replaced with property syntax for better code clarity and idiomatic Apex"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Private fields with public getter methods should be replaced with property syntax. Apex
 			provides property syntax that is more concise and idiomatic than Java-style getter methods.
 			Use property syntax instead of private fields with public getter methods.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Private field with public getter
+			public class MyClass {
+			    private String name;
+			    
+			    public String getName() {  // ❌
+			        return name;
+			    }
+			}
+			
+			// Valid: Use property syntax
+			public class MyClass {
+			    public String name { get; private set; }  // ✅
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Multiple trivial getters
+			public class Account {
+			    private String accountId;
+			    private String accountName;
+			    
+			    public String getAccountId() {  // ❌
+			        return accountId;
+			    }
+			    
+			    public String getAccountName() {  // ❌
+			        return accountName;
+			    }
+			}
+			
+			// Valid: Use property syntax for all
+			public class Account {
+			    public String accountId { get; private set; }  // ✅
+			    public String accountName { get; private set; }  // ✅
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Getter with logic is allowed (not trivial)
+			public class MyClass {
+			    private String name;
+			    
+			    public String getName() {  // ✅ Has logic
+			        return name != null ? name.toUpperCase() : '';
+			    }
+			}
+			
+			// Valid: Non-public getter is allowed
+			public class MyClass {
+			    private String name;
+			    
+			    private String getName() {  // ✅ Not public
+			        return name;
+			    }
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //Method[
+					<![CDATA[
+					//Method[
                         ModifierNode[@Public = true()]
                         and @ReturnType != 'void'
                         and starts-with(@Image, 'get')
@@ -36,8 +96,8 @@
                         and not(BlockStatement//ForLoopStatement)
                         and not(BlockStatement//WhileLoopStatement)
                     ]
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

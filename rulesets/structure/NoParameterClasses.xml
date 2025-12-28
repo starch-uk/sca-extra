@@ -6,13 +6,13 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code structure and organization</description>
-
 	<rule
 		name="NoParameterClasses"
 		language="apex"
 		message="Classes or inner classes that only have attributes and constructors with no instance methods are not allowed. Add instance methods or refactor to use a different approach"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Parameter classes (classes or inner classes that only have attributes and constructors
 			with
@@ -20,19 +20,37 @@
 			Add instance methods to provide behavior, or refactor to use a different approach such as
 			using Map or keeping methods within the 3-parameter limit.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Parameter class with only fields and constructor
+			public class Parameter {
+				public String name;
+				public Integer value;
+				
+				public Parameter(String name, Integer value) {
+					this.name = name;
+					this.value = value;
+				}
+			}
+			
+			// Valid: Refactor to use method parameters instead
+			public void processData(String name, Integer value) {
+				// ...
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //UserClass[
+					<![CDATA[
+					//UserClass[
                         count(Field) > 0
                         and count(Method[@Constructor = true()]) > 0
                         and count(Method[@Constructor = false() and not(ModifierNode[@Static = true()])]) = 0
                         and not(Method[@Constructor = false() and ModifierNode[@Static = true()]])
                     ]
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

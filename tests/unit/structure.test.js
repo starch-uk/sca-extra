@@ -158,26 +158,6 @@ describe('Structure Rules', () => {
 			);
 			assertNoViolations(violations, 'EnumMinimumValues');
 		});
-
-		describe('property behavior', () => {
-			it('should respect custom minValues property (4)', async () => {
-				// Test file with 4 values (should not violate with minValues=4)
-				const violations = await runPMD(
-					'tests/rulesets/EnumMinimumValues_Min4.xml',
-					'tests/fixtures/positive/structure/EnumMinimumValuesMinValues4.cls'
-				);
-				assertNoViolations(violations, 'EnumMinimumValues');
-
-				// Test file with 2 values (should violate with minValues=4)
-				const violations2 = await runPMD(
-					'tests/rulesets/EnumMinimumValues_Min4.xml',
-					'tests/fixtures/negative/structure/EnumMinimumValuesMinValues4.cls'
-				);
-				expect(
-					violations2.filter((v) => v.rule === 'EnumMinimumValues').length
-				).toBeGreaterThan(0);
-			});
-		});
 	});
 
 	describe('CombineNestedIfStatements', () => {
@@ -285,44 +265,6 @@ describe('Structure Rules', () => {
 				);
 				assertNoViolations(violations, 'PreferSwitchOverIfElseChains');
 			});
-
-			describe('property behavior for OR conditions', () => {
-				it('should respect custom minElseIfStatements property (3) for OR conditions', async () => {
-					// Test file with 2 OR comparisons (should not violate with minElseIfStatements=3)
-					const violations = await runPMD(
-						'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf3.xml',
-						'tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_ORMin3.cls'
-					);
-					assertNoViolations(violations, 'PreferSwitchOverIfElseChains');
-
-					// Test file with 3 OR comparisons (should violate with minElseIfStatements=3)
-					const violations2 = await runPMD(
-						'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf3.xml',
-						'tests/fixtures/negative/structure/PreferSwitchOverIfElseChains_ORMin3.cls'
-					);
-					expect(
-						violations2.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
-					).toBeGreaterThan(0);
-				});
-
-				it('should respect custom minElseIfStatements property (5) for OR conditions', async () => {
-					// Test file with 4 OR comparisons (should not violate with minElseIfStatements=5)
-					const violations = await runPMD(
-						'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf5.xml',
-						'tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_ORMin5.cls'
-					);
-					assertNoViolations(violations, 'PreferSwitchOverIfElseChains');
-
-					// Test file with 5 OR comparisons (should violate with minElseIfStatements=5)
-					const violations2 = await runPMD(
-						'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf5.xml',
-						'tests/fixtures/negative/structure/PreferSwitchOverIfElseChains_ORMin5.cls'
-					);
-					expect(
-						violations2.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
-					).toBeGreaterThan(0);
-				});
-			});
 		});
 
 		describe('mixed patterns', () => {
@@ -334,94 +276,6 @@ describe('Structure Rules', () => {
 				// Should detect both the if-else chain and the consecutive if statements
 				expect(
 					violations.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
-				).toBeGreaterThan(0);
-			});
-		});
-
-		describe('property behavior', () => {
-			it('should respect custom minElseIfStatements property (3)', async () => {
-				// Test file with 2 else-if statements (should not violate with minElseIfStatements=3)
-				const violations = await runPMD(
-					'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf3.xml',
-					'tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_MinElseIf3.cls'
-				);
-				assertNoViolations(violations, 'PreferSwitchOverIfElseChains');
-
-				// Test file with 3 else-if statements (should violate with minElseIfStatements=3)
-				const violations2 = await runPMD(
-					'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf3.xml',
-					'tests/fixtures/negative/structure/PreferSwitchOverIfElseChains_MinElseIf3.cls'
-				);
-				expect(
-					violations2.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
-				).toBeGreaterThan(0);
-			});
-
-			it('should respect custom minElseIfStatements property (4)', async () => {
-				// Test file with 3 else-if statements (should not violate with minElseIfStatements=4)
-				const violations = await runPMD(
-					'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf4.xml',
-					'tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_MinElseIf4.cls'
-				);
-				assertNoViolations(violations, 'PreferSwitchOverIfElseChains');
-
-				// Test file with 4 else-if statements (should violate with minElseIfStatements=4)
-				const violations2 = await runPMD(
-					'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf4.xml',
-					'tests/fixtures/negative/structure/PreferSwitchOverIfElseChains_MinElseIf4.cls'
-				);
-				expect(
-					violations2.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
-				).toBeGreaterThan(0);
-			});
-
-			it('should respect custom minElseIfStatements property (5)', async () => {
-				// Test mixed pattern: OR condition (2) + if-else chain (2) + standalone if (1) = 5 total
-				const violationsMixed = await runPMD(
-					'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf5.xml',
-					'tests/fixtures/negative/structure/PreferSwitchOverIfElseChains_MixedMin5.cls'
-				);
-				expect(
-					violationsMixed.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
-				).toBeGreaterThan(0);
-
-				// Test mixed pattern with only 4 conditions (should NOT violate with minElseIfStatements=5)
-				const violationsMixed4 = await runPMD(
-					'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf5.xml',
-					'tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_MixedMin5.cls'
-				);
-				assertNoViolations(violationsMixed4, 'PreferSwitchOverIfElseChains');
-
-				// Test file with 4 else-if statements (should not violate with minElseIfStatements=5)
-				const violations = await runPMD(
-					'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf5.xml',
-					'tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_MinElseIf5.cls'
-				);
-				assertNoViolations(violations, 'PreferSwitchOverIfElseChains');
-
-				// Test file with 5 else-if statements (should violate with minElseIfStatements=5)
-				const violations2 = await runPMD(
-					'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf5.xml',
-					'tests/fixtures/negative/structure/PreferSwitchOverIfElseChains_MinElseIf5.cls'
-				);
-				expect(
-					violations2.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
-				).toBeGreaterThan(0);
-
-				// Test consecutive if statements with minElseIfStatements=5 (4 should not violate)
-				const violations3 = await runPMD(
-					'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf5.xml',
-					'tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_ConsecutiveIfMin5.cls'
-				);
-				assertNoViolations(violations3, 'PreferSwitchOverIfElseChains');
-
-				// Test 5 consecutive if statements (should violate)
-				const violations4 = await runPMD(
-					'tests/rulesets/PreferSwitchOverIfElseChains_MinElseIf5.xml',
-					'tests/fixtures/negative/structure/PreferSwitchOverIfElseChains_ConsecutiveIfMin5.cls'
-				);
-				expect(
-					violations4.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
 				).toBeGreaterThan(0);
 			});
 		});

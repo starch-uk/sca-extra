@@ -6,29 +6,41 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex modifier standards</description>
-
 	<rule
 		name="TestClassIsParallel"
 		language="apex"
 		message="Test classes must have @IsTest(IsParallel=true) annotation to enable parallel test execution"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Test classes must include IsParallel=true in their @IsTest annotation to enable parallel
 			test execution. This improves test performance by allowing tests to run in parallel, reducing
 			overall test execution time and improving developer productivity.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Test class without IsParallel=true
+			@IsTest
+			private class MyTestClass {
+			}
+			
+			// Valid: Test class with IsParallel=true
+			@IsTest(IsParallel=true)
+			private class MyTestClass {
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //UserClass[
+					<![CDATA[
+					//UserClass[
                         .//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
                         and not(.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]/AnnotationParameter[@Name = 'IsParallel' and (@Value = 'true' or @Image = 'true')])
                     ]
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

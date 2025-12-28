@@ -6,13 +6,13 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex modifiers and variable declarations</description>
-
 	<rule
 		name="StaticMethodsMustBeStatic"
 		language="apex"
 		message="Methods that do not use instance state must be declared as static. Any method that can be static without adding logic must be static"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Methods that do not use instance state should be declared as static. Any method that can
 			be
@@ -20,12 +20,73 @@
 			state explicit, improves performance by avoiding unnecessary instance creation, and follows
 			best practices for method design.
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Method doesn't use instance state but not static
+			public class Utils {
+			    public Integer add(Integer a, Integer b) {  // ❌ Should be static
+			        return a + b;
+			    }
+			}
+			
+			// Valid: Method declared as static
+			public class Utils {
+			    public static Integer add(Integer a, Integer b) {  // ✅
+			        return a + b;
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Method uses instance state (cannot be static)
+			public class Calculator {
+			    private Integer value;
+			    
+			    public Integer add(Integer a) {  // ✅ Uses instance state
+			        return this.value + a;
+			    }
+			}
+			
+			// Valid: Method uses instance field (cannot be static)
+			public class AccountService {
+			    private String accountId;
+			    
+			    public String getAccountId() {  // ✅ Uses instance field
+			        return accountId;
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Abstract methods are excluded
+			public abstract class Base {
+			    public abstract void process();  // ✅ Abstract methods excluded
+			}
+			
+			// Valid: Constructors are excluded
+			public class MyClass {
+			    public MyClass() {  // ✅ Constructors excluded
+			        // ...
+			    }
+			}
+			
+			// Valid: Inner class methods are excluded
+			public class Outer {
+			    public class Inner {
+			        public void method() {  // ✅ Inner class methods excluded
+			            // ...
+			        }
+			    }
+			}
+			]]>
+		</example>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //Method[
+					<![CDATA[
+					//Method[
                         not(ModifierNode[@Static = true()])
                         and not(ModifierNode[@Abstract = true()])
                         and not(@Constructor = true())
@@ -43,8 +104,8 @@
                             ]
                         )
                     ]
-                    ]]>
-                </value>
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>

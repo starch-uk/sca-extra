@@ -6,41 +6,90 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex method signatures and parameters</description>
-
 	<rule
 		name="NoCustomParameterObjects"
 		language="apex"
 		message="Custom classes, inner classes, or wrapper objects should not be created solely for passing parameters. Refactor methods to stay within 3 parameters instead"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
+		<priority>3</priority>
 		<description>
 			Custom parameter objects (classes or inner classes that only have attributes and
 			constructors with no instance methods) should not be created solely for passing parameters.
 			Instead, refactor methods to stay within 3 parameters, which improves readability and follows best
 			practices for method design.
-			The rule flags inner classes with a number of fields greater than or equal to minFields (inclusive),
-			configurable via properties.
+			The rule flags inner classes with a minimum number of fields.
+			
+			To customize this rule, edit the minFields threshold in the XPath expression (default: 1).
 		</description>
-		<priority>3</priority>
+		<example>
+			<![CDATA[
+			// Violation: Custom parameter class with only fields
+			public class MyClass {
+			    public class Param {
+			        public String name;
+			        public Integer age;
+			    }
+			}
+			
+			// Valid: Use method parameters instead
+			public void processUser(String name, Integer age) {
+			    // ...
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Inner class with fields but no methods
+			public class Service {
+			    public class Request {
+			        public String endpoint;
+			        public String method;
+			        public Map<String, String> headers;
+			    }
+			}
+			
+			// Valid: Use method parameters or a class with methods
+			public void makeRequest(String endpoint, String method, Map<String, String> headers) {
+			    // ...
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Class with methods is allowed (not just a parameter object)
+			public class MyClass {
+			    public class DataProcessor {
+			        public String data;
+			        
+			        public void process() {  // ✅ Has methods
+			            // ...
+			        }
+			    }
+			}
+			
+			// Valid: Class with @InvocableVariable is allowed
+			public class MyClass {
+			    public class InvocableParam {
+			        @InvocableVariable
+			        public String name;  // ✅ Has annotation
+			    }
+			}
+			]]>
+		</example>
 		<properties>
-			<property
-				name="minFields"
-				type="String"
-				description="Minimum number of fields (inclusive) to trigger the rule"
-			>
-				<value>1</value>
-			</property>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //UserClass[
-                        count(Method) = 0
-                        and count(Field) >= number(if ('${minFields}' = '${minFields}') then '1' else '${minFields}')
-                        and @Nested = true()
-                        and not(Field/ModifierNode/Annotation[@Name = 'InvocableVariable'])
-                    ]
-                    ]]>
-                </value>
+					<![CDATA[
+					let $minFields := 1
+					return //UserClass[
+						count(Method) = 0
+						and count(Field) >= $minFields
+						and @Nested = true()
+						and not(Field/ModifierNode/Annotation[@Name = 'InvocableVariable'])
+					]
+					]]>
+				</value>
 			</property>
 		</properties>
 	</rule>
