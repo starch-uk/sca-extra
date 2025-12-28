@@ -3,16 +3,28 @@
 const fs = require('fs');
 const path = require('path');
 const yaml = require('yaml');
+const { extractXPath } = require('./check-xpath-coverage');
 
 /**
- * Check test coverage for XML rule files and regex rules from code-analyzer.yml
- * Reports which rules have tests and which don't
- * Also checks XPath coverage for XML rules
+ * Generate lcov coverage file from rule coverage data
  */
-function checkRuleCoverage() {
+function generateLcov() {
 	const rulesetsDir = path.join(__dirname, '..', 'rulesets');
 	const testsDir = path.join(__dirname, '..', 'tests', 'unit');
 	const codeAnalyzerPath = path.join(__dirname, '..', 'code-analyzer.yml');
+	const coverageDir = path.join(__dirname, '..', 'coverage');
+
+	// Ensure coverage directory exists
+	if (!fs.existsSync(coverageDir)) {
+		fs.mkdirSync(coverageDir, { recursive: true });
+	}
+
+	const lcovPath = path.join(coverageDir, 'lcov.info');
+	const lines = [];
+
+	// Header
+	lines.push('TN:');
+	lines.push('');
 
 	// Get all XML rule files
 	const ruleFiles = [];
@@ -90,66 +102,74 @@ function checkRuleCoverage() {
 		}
 	});
 
-	// Check coverage
-	const covered = [];
-	const uncovered = [];
-
+	// Generate lcov entries for each rule file
 	ruleFiles.forEach((rule) => {
-		if (testedRules.has(rule.ruleName)) {
-			covered.push(rule);
-		} else {
-			uncovered.push(rule);
+		const isCovered = testedRules.has(rule.ruleName);
+		const absolutePath = path.resolve(rule.path);
+		const relativePath = path.relative(
+			path.join(__dirname, '..'),
+			absolutePath
+		);
+
+		// For XML rules, count XPath lines
+		let totalLines = 1;
+		let coveredLines = isCovered ? 1 : 0;
+
+		if (rule.type === 'xml') {
+			const xpath = extractXPath(rule.path);
+			if (xpath) {
+				// Count non-empty lines in XPath
+				const xpathLines = xpath
+					.split('\n')
+					.filter((line) => line.trim());
+				totalLines = Math.max(1, xpathLines.length);
+				coveredLines = isCovered ? totalLines : 0;
+			}
 		}
+
+		// SF: Source file
+		lines.push(`SF:${relativePath}`);
+
+		// FN: Function name (we'll use the rule name)
+		lines.push(`FN:1,${rule.ruleName}`);
+		lines.push(`FNF:1`);
+		lines.push(`FNH:${isCovered ? 1 : 0}`);
+		if (isCovered) {
+			lines.push(`FNDA:1,${rule.ruleName}`);
+		}
+
+		// DA: Line data (coverage for each line)
+		// We'll report coverage for the first line (the rule itself)
+		for (let i = 1; i <= totalLines; i++) {
+			if (isCovered) {
+				lines.push(`DA:${i},1`);
+			} else {
+				lines.push(`DA:${i},0`);
+			}
+		}
+
+		// LF: Lines found, LH: Lines hit
+		lines.push(`LF:${totalLines}`);
+		lines.push(`LH:${coveredLines}`);
+		lines.push('end_of_record');
+		lines.push('');
 	});
 
-	// Report results
-	console.log('\n📊 Rule Test Coverage Report\n');
-	console.log(`Total Rules: ${ruleFiles.length}`);
+	// Write lcov file
+	fs.writeFileSync(lcovPath, lines.join('\n'), 'utf-8');
+	console.log(`\n✅ Generated lcov file: ${lcovPath}`);
+	console.log(`   Total rules: ${ruleFiles.length}`);
+	console.log(`   Covered: ${Array.from(testedRules).length}`);
 	console.log(
-		`Covered: ${covered.length} (${((covered.length / ruleFiles.length) * 100).toFixed(1)}%)`
-	);
-	console.log(
-		`Uncovered: ${uncovered.length} (${((uncovered.length / ruleFiles.length) * 100).toFixed(1)}%)\n`
+		`   Coverage: ${((Array.from(testedRules).length / ruleFiles.length) * 100).toFixed(1)}%\n`
 	);
 
-	if (uncovered.length > 0) {
-		console.log('❌ Rules without tests:');
-		uncovered.forEach((rule) => {
-			console.log(`  - ${rule.category}/${rule.file}`);
-		});
-		console.log('');
-	}
-
-	if (covered.length > 0) {
-		console.log('✅ Rules with tests:');
-		covered.forEach((rule) => {
-			console.log(`  - ${rule.category}/${rule.file}`);
-		});
-		console.log('');
-	}
-
-	// Check XPath coverage for XML rules
-	console.log('\n🔍 Checking XPath coverage for XML rules...\n');
-	const { checkXPathCoverage } = require('./check-xpath-coverage');
-	const xpathExitCode = checkXPathCoverage();
-
-	// Generate lcov file
-	const { generateLcov } = require('./generate-lcov');
-	generateLcov();
-
-	// Exit with error if there are uncovered rules or XPath coverage issues
-	if (uncovered.length > 0) {
-		process.exit(1);
-	} else if (xpathExitCode !== 0) {
-		process.exit(xpathExitCode);
-	} else {
-		console.log('\n✅ All rules have test coverage!');
-	}
+	return lcovPath;
 }
 
-// Run coverage check
+// Run if called directly
 if (require.main === module) {
-	checkRuleCoverage();
+	generateLcov();
 }
 
-module.exports = { checkRuleCoverage };
+module.exports = { generateLcov };

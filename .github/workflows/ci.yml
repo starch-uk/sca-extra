@@ -142,7 +142,10 @@ jobs:
           
           echo "PMD CLI setup complete (version ${PMD_VERSION})"
 
-      - name: Run tests with coverage
+      - name: Run tests
+        run: pnpm test
+
+      - name: Check rule coverage
         run: pnpm test:coverage
 
       - name: Upload coverage
