@@ -17,14 +17,18 @@
 			Unnecessary multi-line formatting for single arguments is not allowed as
 			it reduces readability and wastes vertical space.
 			
-			This rule does not apply when the argument is a List or Map declaration,
-			as these often require multi-line formatting for readability.
+			This rule does not apply when:
+			- The argument is a List or Map declaration, as these often require
+			multi-line formatting for readability.
+			- Using the builder pattern, where method calls are chained after object
+			construction (e.g., new ClassName().method()). Builder patterns are
+			idiomatically formatted with each method call on its own line.
 			
 			To customize this rule, edit the $maxArgs variable at the beginning of
 			the XPath expression (default: 1). This sets the maximum number of
 			arguments allowed before multi-line formatting is required.
 
-			Version: 1.1.0
+			Version: 1.2.0
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -37,6 +41,8 @@
 						and @BeginLine != @EndLine
 						and not(.//NewListLiteralExpression)
 						and not(.//NewMapLiteralExpression)
+						and not(ReferenceExpression[1]/MethodCallExpression)
+						and not(ReferenceExpression[1]/NewObjectExpression)
 					]
 					]]>
 				</value>
@@ -66,6 +72,23 @@
 				'key1' => 'value1',
 				'key2' => 'value2'
 			});
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Builder pattern (excluded from rule)
+			ClassName instance = new ClassName()
+				.withBuilderArg(2);
+			
+			// Valid: Builder pattern with multiple chained calls
+			Builder builder = new Builder()
+				.setName('John')
+				.setAge(30)
+				.setEmail('john@example.com');
+			
+			// Valid: Method chaining (excluded from rule)
+			String result = getObject()
+				.processValue(value);
 			]]>
 		</example>
 	</rule>
