@@ -455,7 +455,7 @@ public class StressCodeStyleNaming {
     Object y2 = new Object();
   }
 
-  // 50 violations: NoAbbreviations
+  // 50 violations: NoAbbreviations (variables)
   public void method2() {
     Integer ctx = 0;
     Integer idx = 5;
@@ -505,11 +505,72 @@ public class StressCodeStyleNaming {
     String var = 'variable';
     String const = 'constant';
     String temp = 'temporary';
-    String tmp = 'temporary';
-    String curr = 'current';
-    String prev = 'previous';
-    String next = 'next';
   }
+
+  // 20 violations: NoAbbreviations (method parameters)
+  public void processAccount(Account acc) {}
+  public void configure(String cfg) {}
+  public void setContext(String ctx) {}
+  public void setIndex(Integer idx) {}
+  public void sendMessage(String msg) {}
+  public void setValue(Integer val) {}
+  public void processContact(Contact con) {}
+  public void processOpportunity(Opportunity opp) {}
+  public void setParameter(String param) {}
+  public void setLength(Integer len) {}
+  public void setSource(String src) {}
+  public void setDestination(String dest) {}
+  public void setDestination(String dst) {}
+  public void setPosition(Integer pos) {}
+  public void setManager(String mgr) {}
+  public void setService(String svc) {}
+  public void setUtility(String util) {}
+  public void calculate(String calc) {}
+  public void initialize(String init) {}
+  public void setReference(String ref) {}
+  public void setDescription(String desc) {}
+  public void setImplementation(String impl) {}
+  public void setRepository(String repo) {}
+  public void setRequest(String req) {}
+  public void setResponse(String res) {}
+  public void setResponse(String resp) {}
+  public void setSpecification(String spec) {}
+  public void setFormat(String fmt) {}
+  public void setLabel(String lbl) {}
+  public void setOption(String opt) {}
+  public void setOrganization(String org) {}
+  public void setPrevious(String prev) {}
+  public void setAddress(String addr) {}
+  public void setAttribute(String attr) {}
+  public void setColumn(String col) {}
+  public void setCurrent(String curr) {}
+  public void setDocument(String doc) {}
+  public void setElement(String elem) {}
+  public void setHeader(String hdr) {}
+  public void setInitialization(String init) {}
+}
+
+  // 20 violations: NoAbbreviations (class fields)
+  private Account acc;
+  private String cfg;
+  private String ctx;
+  private Integer idx;
+  private String msg;
+  private Integer val;
+  private Contact con;
+  private Opportunity opp;
+  private String param;
+  private Integer len;
+  private String src;
+  private String dest;
+  private String dst;
+  private Integer pos;
+  private String mgr;
+  private String svc;
+  private String util;
+  private String calc;
+  private String init;
+  private String ref;
 
   // 10 violations: VariablesMustNotShareNamesWithClasses
   public void method3() {

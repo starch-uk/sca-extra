@@ -558,20 +558,50 @@ catch (Exception e) { }  // ✅ Exception variable allowed
 
 #### NoAbbreviations
 **Priority:** P2 (High)  
-**Description:** Variable names must not use abbreviations. Use complete, descriptive words so that code is clear and self-explanatory.
+**Description:** Variable, parameter, and field names must not use abbreviations. Use complete, descriptive words so that code is clear and self-explanatory.
 
 **Violations:**
 ```apex
+// Variable violations
 Integer acc = 5;      // ❌ Uses abbreviation instead of full word
 String cfg = 'test';  // ❌ Uses abbreviation instead of full word
 Boolean isMgr = true; // ❌ Uses abbreviation instead of full word
+
+// Parameter violations
+public void processAccount(Account acc) { }  // ❌ Abbreviation 'acc' in parameter
+public void configure(String cfg) { }        // ❌ Abbreviation 'cfg' in parameter
+public void setContext(String ctx) { }      // ❌ Abbreviation 'ctx' in parameter
+
+// Field violations
+public class Example {
+    private Account acc;     // ❌ Abbreviation 'acc' in field
+    private String cfg;      // ❌ Abbreviation 'cfg' in field
+    private Boolean isMgr;   // ❌ Abbreviation 'mgr' in field
+}
 ```
 
 **Valid Code:**
 ```apex
+// Valid variables
 Integer accountCount = 5;    // ✅ Descriptive and explicit
 String configuration = 'x';  // ✅ Uses full word
 Boolean isManager = true;    // ✅ Descriptive and readable
+
+// Valid parameters
+public void processAccount(Account account) { }        // ✅ Full word
+public void configure(String configuration) { }       // ✅ Full word
+public void setContext(String context) { }              // ✅ Full word
+public void processRecord(String accountId) { }         // ✅ 'Id' suffix allowed
+public void testMethod(String testCtx) { }                // ✅ 'test' prefix allows abbreviations
+
+// Valid fields
+public class Example {
+    private Account account;           // ✅ Full word
+    private String configuration;      // ✅ Full word
+    private Boolean isManager;         // ✅ Full word
+    private String accountId;         // ✅ 'Id' suffix allowed
+    private String testCtx;            // ✅ 'test' prefix allows abbreviations
+}
 ```
 
 **Note:** To customize this rule (e.g., change which abbreviations are flagged or which suffixes are allowed), edit the configurable variables at the top of the XPath expression in `rulesets/code-style/NoAbbreviations.xml`. See the [Customizing Rules](#customizing-rules) section above for details.

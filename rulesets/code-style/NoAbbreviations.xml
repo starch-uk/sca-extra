@@ -12,26 +12,29 @@
 	<rule
 		name="NoAbbreviations"
 		language="apex"
-		message="Variable names must not use abbreviations. Use complete, descriptive words instead to make code clear and self-explanatory"
+		message="Variable, parameter, and field names must not use abbreviations. Use complete, descriptive words instead to make code clear and self-explanatory"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Variable names must not use abbreviations. Use complete, descriptive
+			Variable, parameter, and field names must not use abbreviations. Use
+			complete, descriptive
 			words so that code is clear and self-explanatory. Abbreviations reduce code
 			readability and can lead to confusion, especially for developers unfamiliar
 			with the codebase. Common exceptions like 'Api', 'Html', 'Id', and 'Url' are
-			allowed as suffixes. Variables with the 'test' prefix are also allowed.
+			allowed as suffixes. Variables, parameters, and fields with the 'test' prefix
+			are also
+			allowed.
 			
 			To customize this rule, edit the variables at the beginning of the XPath
 			expression:
 			- $disallowedAbbreviations: Comma-separated list of abbreviations to
 			flag (default: 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val')
-			- $allowedSuffixes: Comma-separated list of allowed suffixes (default:
-			'Api,Html,Id,Url')
 			- $allowedPrefixes: Comma-separated list of allowed prefixes (default:
 			'test')
+			- $allowedSuffixes: Comma-separated list of allowed suffixes (default:
+			'Api,Html,Id,Url')
 
-			Version: 1.0.0
+			Version: 1.1.0
 		</description>
 		<priority>2</priority>
 		<properties>
@@ -39,33 +42,47 @@
 				<value>
 					<![CDATA[
 					let $disallowedAbbreviations := 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val',
+						$allowedPrefixes := 'test',
 						$allowedSuffixes := 'Api,Html,Id,Url',
-						$allowedPrefixes := 'test'
-					return //VariableDeclaration[
-						let $varName := VariableExpression/@Image,
-							$varNameLower := lower-case($varName)
-						return
-							(
-								contains(concat(',', $disallowedAbbreviations, ','), concat(',', $varNameLower, ','))
+						$abbrevListWrapped := concat(',', $disallowedAbbreviations, ','),
+						$abbrevTokens := tokenize($disallowedAbbreviations, ','),
+						$suffixTokens := tokenize($allowedSuffixes, ','),
+						$prefixTokens := tokenize($allowedPrefixes, ','),
+						$hasAbbreviation := function($name as xs:string) as xs:boolean {
+							let $nameLower := lower-case($name),
+								$nameWrapped := concat(',', $nameLower, ',')
+							return
+								contains($abbrevListWrapped, $nameWrapped)
 								or (
-									some $abbrev in tokenize($disallowedAbbreviations, ',')
+									some $abbrev in $abbrevTokens
 									satisfies (
-										matches($varNameLower, concat('^', $abbrev, '[A-Z]'))
-										or matches($varNameLower, concat('[a-z]', $abbrev, '$'))
-										or matches($varNameLower, concat('[a-z]', $abbrev, '[A-Z]'))
-										or matches($varNameLower, concat('^', $abbrev, '$'))
+										matches($nameLower, concat('^', $abbrev, '[A-Z]'))
+										or matches($nameLower, concat('[a-z]', $abbrev, '$'))
+										or matches($nameLower, concat('[a-z]', $abbrev, '[A-Z]'))
+										or matches($nameLower, concat('^', $abbrev, '$'))
 									)
 								)
-							)
-							and not(
-								some $suffix in tokenize($allowedSuffixes, ',')
-								satisfies matches($varName, concat($suffix, '$'), 'i')
-							)
-							and not(
-								some $prefix in tokenize($allowedPrefixes, ',')
-								satisfies starts-with(lower-case($varName), lower-case($prefix))
-							)
-					]
+						},
+						$hasAllowedSuffix := function($name as xs:string) as xs:boolean {
+							some $suffix in $suffixTokens
+							satisfies matches($name, concat($suffix, '$'), 'i')
+						},
+						$hasAllowedPrefix := function($name as xs:string) as xs:boolean {
+							some $prefix in $prefixTokens
+							satisfies starts-with(lower-case($name), lower-case($prefix))
+						},
+						$isViolation := function($name as xs:string) as xs:boolean {
+							$hasAbbreviation($name)
+							and not($hasAllowedSuffix($name))
+							and not($hasAllowedPrefix($name))
+						}
+					return (
+						//VariableDeclaration[$isViolation(VariableExpression/@Image)]
+						|
+						//Method/Parameter[$isViolation(@Image)]
+						|
+						//Field[$isViolation(@Name)]
+					)
 					]]>
 				</value>
 			</property>
@@ -77,31 +94,87 @@
 			String cfg = 'test';
 			Boolean isMgr = true;
 			
+			// Violation: Abbreviations in method parameters
+			public void processAccount(Account acc) { }
+			public void configure(String cfg) { }
+			public void setManager(Boolean isMgr) { }
+			
+			// Violation: Abbreviations in class fields
+			public class Example {
+				private Account acc;
+				private String cfg;
+				private Boolean isMgr;
+			}
+			
 			// Valid: Use complete words
 			Integer accountCount = 5;
 			String configuration = 'test';
 			Boolean isManager = true;
+			public void processAccount(Account account) { }
+			public void configure(String configuration) { }
+			public void setManager(Boolean isManager) { }
+			public class Example {
+				private Account account;
+				private String configuration;
+				private Boolean isManager;
+			}
 			]]>
 		</example>
 		<example>
 			<![CDATA[
-			// Valid: Allowed suffixes (Api, Html, Id, Url)
+			// Valid: Allowed suffixes (Api, Html, Id, Url) in variables
 			String accountId = '123';
 			String apiUrl = 'https://example.com';
 			String htmlContent = '<div></div>';
 			String userId = 'user123';
+			
+			// Valid: Allowed suffixes in method parameters
+			public void processAccount(String accountId) { }
+			public void setUrl(String apiUrl) { }
+			public void renderHtml(String htmlContent) { }
+			public void updateUser(String userId) { }
+			
+			// Valid: Allowed suffixes in class fields
+			public class Example {
+				private String accountId;
+				private String apiUrl;
+				private String htmlContent;
+				private String userId;
+			}
 			]]>
 		</example>
 		<example>
 			<![CDATA[
-			// Valid: Allowed prefixes (test)
+			// Valid: Allowed prefixes (test) in variables
 			String testCtx = 'value';
 			String testCfg = 'config';
 			Integer testAcc = 5;
 			
-			// Violation: Abbreviations without test prefix
+			// Valid: Allowed prefixes in method parameters
+			public void testMethod(String testCtx) { }
+			public void testSetup(String testCfg) { }
+			public void testProcess(Integer testAcc) { }
+			
+			// Valid: Allowed prefixes in class fields
+			public class Example {
+				private String testCtx;
+				private String testCfg;
+				private Integer testAcc;
+			}
+			
+			// Violation: Abbreviations without test prefix in variables
 			String myCtx = 'value';  // ❌ 'ctx' not allowed without 'test' prefix
 			Integer ctx = 0;  // ❌ 'ctx' not allowed
+			
+			// Violation: Abbreviations without test prefix in parameters
+			public void method(String myCtx) { }  // ❌ 'ctx' not allowed without 'test' prefix
+			public void process(Integer ctx) { }  // ❌ 'ctx' not allowed
+			
+			// Violation: Abbreviations without test prefix in fields
+			public class Example {
+				private String myCtx;  // ❌ 'ctx' not allowed without 'test' prefix
+				private Integer ctx;   // ❌ 'ctx' not allowed
+			}
 			]]>
 		</example>
 	</rule>
