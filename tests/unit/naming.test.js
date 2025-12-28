@@ -127,7 +127,7 @@ describe('Naming Rules', () => {
 			const noPrefixViolations = violations.filter(
 				(v) =>
 					v.rule === 'NoAbbreviations' &&
-					(v.line === 39 || v.line === 42 || v.line === 45)
+					(v.line === 40 || v.line === 43 || v.line === 46)
 			);
 			expect(noPrefixViolations.length).toBeGreaterThan(0);
 		});
@@ -141,7 +141,7 @@ describe('Naming Rules', () => {
 			const myPrefixViolations = violations.filter(
 				(v) =>
 					v.rule === 'NoAbbreviations' &&
-					(v.line === 39 || v.line === 42 || v.line === 45)
+					(v.line === 40 || v.line === 43 || v.line === 46)
 			);
 			expect(myPrefixViolations.length).toBeGreaterThan(0);
 		});
