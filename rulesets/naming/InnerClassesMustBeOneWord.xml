@@ -14,10 +14,8 @@
 	>
 		<description>
 			Inner class names must be a single word. They cannot contain
-			underscores or multiple
-			words in PascalCase. This naming convention helps distinguish inner classes from
-			regular
-			classes and improves code readability.
+			underscores or multiple words in PascalCase. This naming convention helps
+			distinguish inner classes from regular classes and improves code readability.
 		</description>
 		<priority>2</priority>
 		<properties>

@@ -25,8 +25,8 @@
 				<value>
 					<![CDATA[
 					//IfBlockStatement[
-						StandardCondition/BooleanExpression[@Op = '==' or @Op = '!=']
-						and (StandardCondition/BooleanExpression/VariableExpression[@Image = 'null'] or StandardCondition/BooleanExpression/LiteralExpression[@Null = true()])
+						StandardCondition/BooleanExpression[@Op = ('==', '!=')]
+						and (StandardCondition/BooleanExpression/VariableExpression[@Image = 'null'] | StandardCondition/BooleanExpression/LiteralExpression[@Null = true()])
 						and BlockStatement//MethodCallExpression
 						and BlockStatement//MethodCallExpression/ReferenceExpression/@Image = StandardCondition/BooleanExpression/VariableExpression[@Image != 'null']/@Image
 						and count(BlockStatement/*) = 1

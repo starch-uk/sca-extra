@@ -16,10 +16,9 @@
 	>
 		<description>
 			Private fields with public getter methods should be replaced with
-			property syntax. Apex
-			provides property syntax that is more concise and idiomatic than Java-style
-			getter methods.
-			Use property syntax instead of private fields with public getter methods.
+			property syntax. Apex provides property syntax that is more concise and
+			idiomatic than Java-style getter methods. Use property syntax instead of
+			private fields with public getter methods.
 		</description>
 		<priority>3</priority>
 		<properties>

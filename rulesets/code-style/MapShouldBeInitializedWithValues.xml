@@ -13,8 +13,10 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Maps should be initialized with values directly using the map literal syntax instead of
-			creating an empty map and immediately calling put(). This improves readability and reduces
+			Maps should be initialized with values directly using the map
+			literal syntax instead of
+			creating an empty map and immediately calling put(). This improves readability
+			and reduces
 			unnecessary method calls.
 			
 			Use: new Map &lt; String, String > {'key' = > 'value'}
@@ -26,20 +28,20 @@
 				<value>
 					<![CDATA[
 					for $stmt in //VariableDeclarationStatements[
-                        VariableDeclaration[
-                            contains(@Type, 'Map')
-                            and NewMapInitExpression
-                            and not(NewMapInitExpression/MapEntryNode)
-                            and VariableExpression
-                        ]
-                    ]
-                    return if (
-                        $stmt/following-sibling::*[1][self::ExpressionStatement]
-                        and $stmt/following-sibling::ExpressionStatement[1]/MethodCallExpression[
-                            @MethodName = 'put'
-                            and ReferenceExpression[1]/@Image = $stmt/VariableDeclaration/VariableExpression/@Image
-                        ]
-                    ) then $stmt else ()
+						VariableDeclaration[
+							contains(@Type, 'Map')
+							and NewMapInitExpression
+							and not(NewMapInitExpression/MapEntryNode)
+							and VariableExpression
+						]
+					]
+					return if (
+						$stmt/following-sibling::*[1][self::ExpressionStatement]
+						and $stmt/following-sibling::ExpressionStatement[1]/MethodCallExpression[
+							@MethodName = 'put'
+							and ReferenceExpression[1]/@Image = $stmt/VariableDeclaration/VariableExpression/@Image
+						]
+					) then $stmt else ()
 					]]>
 				</value>
 			</property>

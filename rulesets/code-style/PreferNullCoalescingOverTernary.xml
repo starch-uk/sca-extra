@@ -25,8 +25,8 @@
 				<value>
 					<![CDATA[
 					//TernaryExpression[
-						StandardCondition/BooleanExpression[@Op = '==' or @Op = '!=']
-						and (StandardCondition/BooleanExpression/LiteralExpression[@Null = true()] or StandardCondition/BooleanExpression/VariableExpression[@Image = 'null'])
+						StandardCondition/BooleanExpression[@Op = ('==', '!=')]
+						and (StandardCondition/BooleanExpression/LiteralExpression[@Null = true()] | StandardCondition/BooleanExpression/VariableExpression[@Image = 'null'])
 					]
 					]]>
 				</value>

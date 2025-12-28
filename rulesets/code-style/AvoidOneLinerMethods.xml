@@ -14,22 +14,17 @@
 	>
 		<description>
 			Methods that contain only a single statement add unnecessary
-			indirection and should be
-			inlined at their call sites. This rule detects methods with exactly one
-			statement in
-			their body.
+			indirection
+			and should be inlined at their call sites. This rule detects methods with
+			exactly one statement in their body.
 			
 			Exceptions: Methods that are part of interfaces, abstract methods, override
-			methods,
-			overloaded methods, switch statements with more than one outcome, or methods
-			that
-			update a class attribute are excluded from this rule.
+			methods, overloaded methods, switch statements with more than one outcome,
+			or methods that update a class attribute are excluded from this rule.
 			
-			To customize this rule, edit the $minParams variable in the XPath
-			expression (default:
-			1). This sets the minimum number of parameters a method must have to be flagged
-			as a
-			one-liner.
+			To customize this rule, edit the $minParams variable at the beginning of
+			the XPath expression (default: 1). This sets the minimum number of
+			parameters a method must have to be flagged as a one-liner.
 		</description>
 		<priority>4</priority>
 		<properties>

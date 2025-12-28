@@ -16,17 +16,16 @@
 	>
 		<description>
 			Variables that extract a single attribute from an object and are
-			only used once should
-			be inlined. This rule does not apply to collection types (List, Set, Map) or
-			object/class instances, only primitive types. Inlining these variables reduces
-			unnecessary indirection and improves code clarity.
+			only
+			used once should be inlined. This rule does not apply to collection types
+			(List, Set, Map) or object/class instances, only primitive types.
+			Inlining these variables reduces unnecessary indirection and improves code
+			clarity.
 			
-			To customize this rule, edit the $primitiveTypes variable in the XPath
-			expression
-			(default: 'String', 'Integer', 'Long', 'Double', 'Decimal', 'Boolean', 'Date',
-			'DateTime', 'Time', 'Id', 'Blob'). This sets which types are considered
-			primitive and
-			subject to this rule.
+			To customize this rule, edit the $primitiveTypes variable at the
+			beginning of the XPath expression (default: 'String', 'Integer', 'Long',
+			'Double', 'Decimal', 'Boolean', 'Date', 'DateTime', 'Time', 'Id', 'Blob').
+			This sets which types are considered primitive and subject to this rule.
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -36,7 +35,7 @@
 					let $primitiveTypes := ('String', 'Integer', 'Long', 'Double', 'Decimal', 'Boolean', 'Date', 'DateTime', 'Time', 'Id', 'Blob')
 					return for $var in //VariableDeclaration[
 						VariableExpression[1]/ReferenceExpression
-						and some $type in $primitiveTypes satisfies @Type = $type
+						and (some $type in $primitiveTypes satisfies @Type = $type)
 						and VariableExpression[2]
 					]
 					return if (

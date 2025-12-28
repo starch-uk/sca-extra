@@ -14,8 +14,7 @@
 	>
 		<description>
 			When using String.join() with an empty string separator, use string
-			concatenation
-			instead for better readability and simplicity.
+			concatenation instead for better readability and simplicity.
 			
 			Instead of: String.join('', new List &lt; String > {'a', 'b', 'c'});
 			Use: 'a' + 'b' + 'c';

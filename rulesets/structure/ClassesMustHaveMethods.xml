@@ -16,14 +16,14 @@
 	>
 		<description>
 			Classes and inner classes that only contain attributes and
-			constructors without any
-			instance methods are not allowed. Classes should provide behavior, not just
-			data. Add
-			instance methods to provide behavior, or refactor to use a different approach
-			such as
-			using Map or a different data structure.
+			constructors
+			without any instance methods are not allowed. Classes should provide
+			behavior, not just data. Add instance methods to provide behavior, or
+			refactor to use a different approach such as using Map or a different data
+			structure.
 			
-			To customize this rule, edit the variables in the XPath expression:
+			To customize this rule, edit the variables at the beginning of the XPath
+			expression:
 			- $minFields: Minimum number of fields required (default: 1)
 			- $minConstructors: Minimum number of constructors required (default: 1)
 		</description>

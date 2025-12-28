@@ -16,12 +16,10 @@
 	>
 		<description>
 			Inner classes in Apex cannot have static attributes or methods. This
-			is a language
-			limitation - Apex does not support static members in inner classes. Remove
-			static
-			modifiers from inner class members. This is a compilation error that will
-			prevent the
-			code from compiling.
+			is
+			a language limitation - Apex does not support static members in inner
+			classes. Remove static modifiers from inner class members. This is a
+			compilation error that will prevent the code from compiling.
 		</description>
 		<priority>1</priority>
 		<properties>

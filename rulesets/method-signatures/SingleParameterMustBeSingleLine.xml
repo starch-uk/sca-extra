@@ -15,17 +15,14 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Methods with 0-1 parameters should be formatted on a single
-			line. Unnecessary multi-line
-			formatting for single parameters is not allowed as it reduces readability and
-			wastes
-			vertical space. This prevents excessive line wrapping due to long identifiers.
+			Methods with 0-1 parameters should be formatted on a single line.
+			Unnecessary multi-line formatting for single parameters is not allowed as it
+			reduces readability and wastes vertical space. This prevents excessive line
+			wrapping due to long identifiers.
 			
-			To customize this rule, edit the $maxParams variable in the XPath
-			expression (default:
-			1). This sets the maximum number of parameters allowed before multi-line
-			formatting is
-			required.
+			To customize this rule, edit the $maxParams variable at the beginning
+			of the XPath expression (default: 1). This sets the maximum number of
+			parameters allowed before multi-line formatting is required.
 		</description>
 		<priority>3</priority>
 		<properties>

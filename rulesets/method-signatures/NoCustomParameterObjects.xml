@@ -16,19 +16,14 @@
 	>
 		<description>
 			Custom parameter objects (classes or inner classes that only have
-			attributes and
-			constructors with no instance methods) should not be created solely for passing
-			parameters. Instead, refactor methods to stay within 3 parameters, which
-			improves
-			readability and follows best practices for method design. The rule flags inner
-			classes
-			with a minimum number of fields.
+			attributes and constructors with no instance methods) should not be created
+			solely for passing parameters. Instead, refactor methods to stay within 3
+			parameters, which improves readability and follows best practices for method
+			design. The rule flags inner classes with a minimum number of fields.
 			
-			To customize this rule, edit the $minFields variable in the XPath
-			expression (default:
-			1). This sets the minimum number of fields required for a class to be flagged as
-			a
-			parameter object.
+			To customize this rule, edit the $minFields variable at the beginning of
+			the XPath expression (default: 1). This sets the minimum number of fields
+			required for a class to be flagged as a parameter object.
 		</description>
 		<priority>3</priority>
 		<properties>

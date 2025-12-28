@@ -16,10 +16,10 @@
 	>
 		<description>
 			Properties with custom getters that only return a field value should
-			use auto-properties
-			or final fields instead. Trivial getters add no value and should be replaced
-			with Apex
-			property syntax, which is more concise and idiomatic.
+			use
+			auto-properties or final fields instead. Trivial getters add no value and
+			should be replaced with Apex property syntax, which is more concise and
+			idiomatic.
 		</description>
 		<priority>3</priority>
 		<properties>

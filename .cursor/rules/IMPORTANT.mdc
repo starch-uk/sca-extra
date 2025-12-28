@@ -50,7 +50,14 @@ When creating or modifying PMD rules:
 13. **All code should be linted and formatted following any changes** - Run `pnpm format` and `pnpm lint` (or `pnpm lint:fix`). **CRITICAL**: **Always run lint commands with full permissions** - Use `required_permissions: ['all']` when running lint commands. ESLint will fail with `EPERM: operation not permitted` errors when run without full permissions due to pnpm's module resolution requiring full filesystem access to read files from `node_modules/.pnpm/`.
 14. **All tests should be run and regressions checked following any changes** - Run `pnpm test` and verify no test regressions. **CRITICAL**: **Always run `pnpm test` with full permissions the first time** - Use `required_permissions: ['all']` when running test commands. Jest will fail with module resolution errors (e.g., "Cannot find module '@jest/test-sequencer'") when run without full permissions due to pnpm's module resolution requiring full filesystem access. After the first successful run, subsequent runs may work without full permissions, but always use full permissions for initial test runs. Reference **@docs/JEST30.md** for Jest API usage when writing or modifying tests.
 15. **README.md should be updated with any pertinent changes** - Document new rules, rule changes, or significant updates in the README
-16. **PLAN.md should be updated after every change** - Update PLAN.md to reflect the project as-is without any references to past states, what's changed, historical context, or future plans. PLAN.md should document the current state of the project only, as if it were written today describing how things currently work.
+16. **PLAN.md is a planning document** - PLAN.md should be written as if the project has not yet been created. It details what needs to happen to create the project, not the current state of the project. PLAN.md should:
+    - Use future tense ("will be", "should be", "needs to", "must be")
+    - Describe implementation steps and phases
+    - Include requirements and prerequisites
+    - Focus on what needs to be done to create the project
+    - NOT describe current project state, what already exists, or how things currently work
+    - NOT include historical context or references to past states
+    - The current state of the project is documented in README.md and other documentation files, not in PLAN.md
 17. Test XPath expressions against both positive and negative test cases
 18. **Benchmark stress tests must be kept up to date** - When adding or modifying rules, update the benchmark fixtures:
     - **New rules**: Add violations to `benchmarks/fixtures/stress-test-all-rules.cls` and the appropriate category-specific fixture (e.g., `stress-code-style.cls`, `stress-structure.cls`)

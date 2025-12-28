@@ -14,14 +14,13 @@
 	>
 		<description>
 			List initializations with a minimum number of items must be
-			formatted with each item on
-			its own line to improve readability and maintainability.
+			formatted
+			with each item on its own line to improve readability and maintainability.
 			Lists with fewer items may remain on a single line.
 			
-			To customize this rule, edit the $minItems variable in the XPath
-			expression (default: 2).
-			This sets the minimum number of list items required before multi-line formatting
-			is required.
+			To customize this rule, edit the $minItems variable at the beginning of
+			the XPath expression (default: 2). This sets the minimum number of list
+			items required before multi-line formatting is required.
 		</description>
 		<priority>3</priority>
 		<properties>

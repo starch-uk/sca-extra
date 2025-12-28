@@ -16,10 +16,10 @@
 	>
 		<description>
 			Inner classes in Apex cannot be static. This is a language
-			limitation - Apex does not
-			support static inner classes. Remove the static modifier from inner class
-			declarations.
-			This is a compilation error that will prevent the code from compiling.
+			limitation
+			- Apex does not support static inner classes. Remove the static modifier
+			from inner class declarations. This is a compilation error that will prevent
+			the code from compiling.
 		</description>
 		<priority>1</priority>
 		<properties>

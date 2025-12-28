@@ -4,11 +4,11 @@ Additional PMD and Regex rules for testing Salesforce Apex code using Salesforce
 
 **Repository:** [https://github.com/starch-uk/sca-extra](https://github.com/starch-uk/sca-extra)
 
-> **Note:** This entire project has been vibe coded. The original plan for the project can be found in [PLAN.md](PLAN.md).
+> **Note:** This entire project has been vibe coded. The plan for the project can be found in [PLAN.md](PLAN.md).
 
 ## Overview
 
-This project provides a comprehensive set of PMD and Regex rules for Salesforce Apex code analysis. Most rules are implemented using XPath 3.1 expressions only (no custom Java classes), making them easy to understand, modify, and maintain. Some rules use the Regex engine for pattern-based matching (e.g., `NoConsecutiveBlankLines`).
+This project provides a comprehensive set of PMD and Regex rules for Salesforce Apex code analysis. Most rules are implemented using XPath 3.1 expressions only (no custom Java classes), making them easy to understand, modify, and maintain. Some rules use the Regex engine for pattern-based matching (e.g., `NoConsecutiveBlankLines`, `ProhibitSuppressWarnings`).
 
 ## Configuring code-analyzer.yml
 
@@ -16,7 +16,7 @@ The `code-analyzer.yml` file is where you configure which rules to enable, custo
 
 **Where the rulesets live:**
 - Most rules are defined as XML rulesets under the `rulesets/` directory, grouped by category (see **Rule Categories** below for an overview).
-- Some rules (like `NoConsecutiveBlankLines`) are defined as Regex rules in the repository's `code-analyzer.yml` under `engines.regex.custom_rules`.
+- Some rules (like `NoConsecutiveBlankLines` and `ProhibitSuppressWarnings`) are defined as Regex rules in the repository's `code-analyzer.yml` under `engines.regex.custom_rules`.
 - You can copy the entire `rulesets/` folder into your Salesforce project, or just the specific category folders you want to enable.
 
 **Add the rulesets to `code-analyzer.yml`:**
@@ -271,6 +271,13 @@ engines:
         description: "Prevents two or more consecutive blank lines in Apex code. Code should have at most one blank line between statements, methods, or other code elements."
         violation_message: "Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
         severity: "Moderate"
+        tags: ["CodeStyle", "Recommended"]
+      ProhibitSuppressWarnings:
+        regex: /@SuppressWarnings\([^)]*\)|\/\/\s*NOPMD/gi
+        file_extensions: [".apex", ".cls", ".trigger"]
+        description: "Prohibits the use of @SuppressWarnings annotations and NOPMD comments in Apex code. Suppressions hide code quality issues; prefer fixing the underlying problems or improving rules instead."
+        violation_message: "Suppression of warnings is not allowed. Fix the underlying issue or improve the rule instead of suppressing violations."
+        severity: "High"
         tags: ["CodeStyle", "Recommended"]
 ```
 
@@ -873,6 +880,7 @@ For security vulnerabilities, please see [SECURITY.md](SECURITY.md) for reportin
 - [Suppressing Warnings](docs/SUPPRESS_WARNINGS.md) - How to suppress PMD rule violations using annotations, comments, and rule properties
 - [Migration Guides](docs/MIGRATION_GUIDES.md) - Rule migration and versioning information
 - [Jest 30.0 Reference](docs/JEST30.md) - Jest 30.0 API reference for writing and running tests
+- [pnpm Reference](docs/PNPM.md) - pnpm package manager reference for dependency management and workspace configuration
 
 ## AI Agent Configuration
 
@@ -890,6 +898,7 @@ When setting up AI agent rules, you should reference these documentation files:
 - **[Regex Engine Reference](docs/REGEX.md)** - Regex engine configuration and custom rule creation
 - **[ApexDoc Reference](docs/APEXDOC.md)** - ApexDoc syntax, tags, and documentation format for Apex code
 - **[Suppressing Warnings](docs/SUPPRESS_WARNINGS.md)** - How to suppress PMD rule violations using annotations, comments, and rule properties
+- **[pnpm Reference](docs/PNPM.md)** - pnpm package manager reference for dependency management and workspace configuration
 
 ### Setting Up in Cursor
 

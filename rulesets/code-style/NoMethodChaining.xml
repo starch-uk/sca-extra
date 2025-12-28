@@ -14,12 +14,9 @@
 	>
 		<description>
 			Method chaining should be avoided in favor of using intermediary
-			variables. This
-			improves readability, makes debugging easier by allowing inspection of
-			intermediate
-			values, and reduces complexity. Exceptions are made for final variables that use
-			method
-			chaining.
+			variables. This improves readability, makes debugging easier by allowing
+			inspection of intermediate values, and reduces complexity. Exceptions are
+			made for final variables that use method chaining.
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -14,22 +14,19 @@
 	>
 		<description>
 			Variable names must not use abbreviations. Use complete, descriptive
-			words so that code
-			is clear and self-explanatory. Abbreviations reduce code readability and can
-			lead to
-			confusion, especially for developers unfamiliar with the codebase. Common
-			exceptions
-			like 'Api', 'Html', 'Id', and 'Url' are allowed as suffixes. Variables with
-			the 'test'
-			prefix are also allowed.
+			words so that code is clear and self-explanatory. Abbreviations reduce code
+			readability and can lead to confusion, especially for developers unfamiliar
+			with the codebase. Common exceptions like 'Api', 'Html', 'Id', and 'Url' are
+			allowed as suffixes. Variables with the 'test' prefix are also allowed.
 			
-			To customize this rule, edit the variables in the XPath expression:
+			To customize this rule, edit the variables at the beginning of the XPath
+			expression:
 			- $disallowedAbbreviations: Comma-separated list of abbreviations to
-			flag (default:
-			'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val')
+			flag (default: 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val')
 			- $allowedSuffixes: Comma-separated list of allowed suffixes (default:
 			'Api,Html,Id,Url')
-			- $allowedPrefixes: Comma-separated list of allowed prefixes (default: 'test')
+			- $allowedPrefixes: Comma-separated list of allowed prefixes (default:
+			'test')
 		</description>
 		<priority>2</priority>
 		<properties>

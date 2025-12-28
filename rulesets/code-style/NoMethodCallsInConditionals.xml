@@ -27,8 +27,7 @@
 				<value>
 					<![CDATA[
 					//(IfBlockStatement | WhileLoopStatement | SwitchStatement | ForLoopStatement | TernaryExpression)[StandardCondition//MethodCallExpression]
-					|
-					//IfElseBlockStatement[IfBlockStatement/StandardCondition//MethodCallExpression]
+					| //IfElseBlockStatement[IfBlockStatement/StandardCondition//MethodCallExpression]
 					]]>
 				</value>
 			</property>

@@ -14,10 +14,10 @@
 	>
 		<description>
 			Test classes must include IsParallel=true in their @IsTest
-			annotation to enable parallel
-			test execution. This improves test performance by allowing tests to run in
-			parallel, reducing
-			overall test execution time and improving developer productivity.
+			annotation
+			to enable parallel test execution. This improves test performance by
+			allowing tests to run in parallel, reducing overall test execution time and
+			improving developer productivity.
 		</description>
 		<priority>3</priority>
 		<properties>

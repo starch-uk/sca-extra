@@ -16,16 +16,14 @@
 	>
 		<description>
 			Enums must contain at least a minimum number of values. Enums with
-			fewer than the
-			minimum number of values should be reconsidered as they may not provide
-			sufficient
-			flexibility or may indicate a design issue. For boolean-like scenarios, consider
-			using
-			a boolean instead of an enum with only two values.
+			fewer than the minimum number of values should be reconsidered as they may
+			not provide sufficient flexibility or may indicate a design issue. For
+			boolean-like scenarios, consider using a boolean instead of an enum with
+			only two values.
 			
-			To customize this rule, edit the $minValues variable in the XPath
-			expression (default:
-			3). This sets the minimum number of enum values required.
+			To customize this rule, edit the $minValues variable at the beginning of
+			the XPath expression (default: 3). This sets the minimum number of enum
+			values required.
 		</description>
 		<priority>3</priority>
 		<properties>

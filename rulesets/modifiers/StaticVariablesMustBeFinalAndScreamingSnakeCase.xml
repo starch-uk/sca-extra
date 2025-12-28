@@ -16,12 +16,10 @@
 	>
 		<description>
 			All static variables must be declared as final and follow
-			SCREAMING_SNAKE_CASE naming
-			convention (uppercase letters, numbers, and underscores only). This enforces
-			immutability
-			for static variables and follows the standard naming convention for
-			constants, making them
-			easily identifiable in code.
+			SCREAMING_SNAKE_CASE naming convention (uppercase letters, numbers, and
+			underscores only). This enforces immutability for static variables and
+			follows the standard naming convention for constants, making them easily
+			identifiable in code.
 		</description>
 		<priority>2</priority>
 		<properties>
