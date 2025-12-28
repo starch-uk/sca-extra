@@ -544,6 +544,30 @@ public class Outer {
 }
 ```
 
+#### NoInterfacesEndingWithCallback
+**Priority:** P3 (Medium)  
+**Description:** Interfaces should not be named with the suffix 'Callback'. Callbacks are an anti-pattern that should be avoided in favor of better design patterns such as event-driven architectures or observer patterns. Callbacks are often used to hide circular dependencies without fixing them, create tight coupling, make code harder to test, and reduce maintainability.
+
+**Violations:**
+```apex
+public interface PaymentCallback {  // ❌ Interface ending with 'Callback'
+    void onSuccess();
+    void onError(String error);
+}
+```
+
+**Valid Code:**
+```apex
+public interface PaymentHandler {  // ✅ Descriptive name without 'Callback'
+    void onSuccess();
+    void onError(String error);
+}
+
+public interface EventListener {  // ✅ Alternative pattern
+    void handleEvent(String event);
+}
+```
+
 ### Code Style Rules (Naming)
 
 #### NoSingleLetterVariableNames

@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Design Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>
+		Custom rules for Apex design issues (structure, method signatures, class
+		organization)
+	</description>
+	<rule
+		name="NoInterfacesEndingWithCallback"
+		language="apex"
+		message="Interfaces should not end with 'Callback'. Callbacks are an anti-pattern that should be avoided in favor of better design patterns"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Interfaces should not be named with the suffix 'Callback'. Callbacks
+			are
+			an anti-pattern that should be avoided in favor of better design patterns
+			such as event-driven architectures or observer patterns. Callbacks are
+			often used to hide circular dependencies without fixing them, create tight
+			coupling, make code harder to test, and reduce maintainability. Instead,
+			consider using interfaces with more descriptive names that reflect their
+			actual purpose, or refactor to use better architectural patterns.
+
+			Version: 1.0.0
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//UserInterface[
+						ends-with(@Image, 'Callback')
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Interface ending with 'Callback'
+			public interface PaymentCallback {
+			    void onSuccess();
+			    void onError(String error);
+			}
+			
+			// Valid: Interface with descriptive name
+			public interface PaymentHandler {
+			    void onSuccess();
+			    void onError(String error);
+			}
+			
+			// Valid: Interface not ending with 'Callback'
+			public interface EventListener {
+			    void handleEvent(String event);
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>
