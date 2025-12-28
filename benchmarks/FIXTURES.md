@@ -6,41 +6,49 @@ The benchmark fixtures are comprehensive stress-test files designed to explicitl
 
 ## Fixture Statistics
 
-| Fixture | Size | Estimated Violations | Primary Focus |
-|---------|------|---------------------|---------------|
-| `stress-test-all-rules.cls` | 5.5 KB | 100+ | All rules (comprehensive) |
-| `stress-code-style.cls` | 15 KB | 200+ | Code style rules |
-| `stress-structure.cls` | 8.0 KB | 100+ | Structure rules |
-| `stress-modifiers.cls` | 5.7 KB | 100+ | Modifier rules |
-| `stress-naming.cls` | 3.2 KB | 100+ | Naming rules |
-| `stress-documentation.cls` | 3.9 KB | 30+ | Documentation rules |
-| `stress-method-signatures.cls` | 2.3 KB | 30+ | Method signature rules |
+| Fixture | Size | Estimated Violations | Primary Focus | Rules Covered |
+|---------|------|---------------------|---------------|---------------|
+| `stress-test-all-rules.cls` | 5.5 KB | 100+ | All rules (comprehensive) | All 43 PMD rules |
+| `stress-code-style.cls` | 15 KB | 200+ | Code style rules | 17 rules |
+| `stress-design.cls` | 10.3 KB | 130+ | Design rules (structure + method signatures) | 15 rules |
+| `stress-best-practices.cls` | 5.7 KB | 100+ | Best practices rules (modifiers) | 5 rules |
+| `stress-code-style.cls` | 18.2 KB | 300+ | Code style rules (including naming) | 21 rules |
+| `stress-documentation.cls` | 3.9 KB | 30+ | Documentation rules | 2 rules |
 
-**Total: ~43 KB of stress-test code with 580+ potential violations**
+**Total: ~43 KB of stress-test code with 580+ potential violations across 43 PMD rules**
+
+**Note:** Regex rules (NoConsecutiveBlankLines, ProhibitSuppressWarnings) are not included in PMD benchmark fixtures as they use a different engine.
 
 ## Rule Coverage
 
 ### Code Style Rules (200+ violations)
-- ✅ NoMethodCallsInConditionals (20 violations)
-- ✅ NoMethodChaining (20 violations)
-- ✅ PreferSafeNavigationOperator (15 violations)
-- ✅ PreferNullCoalescingOverTernary (15 violations)
+- ✅ AvoidOneLinerMethods (10 violations)
 - ✅ ListInitializationMustBeMultiLine (10 violations)
 - ✅ MapInitializationMustBeMultiLine (10 violations)
 - ✅ MapShouldBeInitializedWithValues (10 violations)
-- ✅ PreferStringJoinOverMultipleNewlines (10 violations)
-- ✅ PreferConcatenationOverStringJoinWithEmpty (10 violations)
-- ✅ PreferStringJoinOverConcatenation (10 violations)
 - ✅ MultipleStringContainsCalls (10 violations)
-- ✅ PreferMethodCallsInLoopConditions (10 violations)
+- ✅ NoMethodCallsAsArguments (10 violations)
+- ✅ NoMethodCallsInConditionals (20 violations)
+- ✅ NoMethodChaining (20 violations)
 - ✅ PreferBuilderPatternChaining (10 violations)
+- ✅ PreferConcatenationOverStringJoinWithEmpty (10 violations)
+- ✅ PreferMethodCallsInLoopConditions (10 violations)
+- ✅ PreferNullCoalescingOverTernary (15 violations)
+- ✅ PreferSafeNavigationOperator (15 violations)
+- ✅ PreferStringJoinOverConcatenation (10 violations)
+- ✅ PreferStringJoinOverMultipleNewlines (10 violations)
 - ✅ PreferStringJoinWithSeparatorOverEmpty (10 violations)
 - ✅ SingleArgumentMustBeSingleLine (10 violations)
-- ✅ NoMethodCallsAsArguments (10 violations)
-- ✅ NoConsecutiveBlankLines (multiple)
-- ✅ AvoidOneLinerMethods (10 violations)
 
-### Structure Rules (100+ violations)
+**Note:** NoConsecutiveBlankLines is a Regex rule (not PMD), so it's not included in PMD benchmark fixtures.
+
+### Code Style Rules - Naming (100+ violations)
+- ✅ NoSingleLetterVariableNames (30 violations)
+- ✅ NoAbbreviations (50 violations)
+- ✅ VariablesMustNotShareNamesWithClasses (10 violations)
+- ✅ InnerClassesMustBeOneWord (5 violations)
+
+### Design Rules (130+ violations)
 - ✅ InnerClassesCannotBeStatic (1 violation)
 - ✅ InnerClassesCannotHaveStaticMembers (2 violations)
 - ✅ InnerClassesMustBeOneWord (2 violations)
@@ -55,27 +63,19 @@ The benchmark fixtures are comprehensive stress-test files designed to explicitl
 - ✅ PreferPropertySyntaxOverGetterMethods (5 violations)
 - ✅ AvoidLowValueWrapperMethods (3 violations)
 - ✅ EnumMinimumValues (2 violations)
+- ✅ NoCustomParameterObjects (15 violations)
+- ✅ SingleParameterMustBeSingleLine (15 violations)
 
-### Modifier Rules (100+ violations)
+### Best Practices Rules (100+ violations)
 - ✅ StaticVariablesMustBeFinalAndScreamingSnakeCase (20 violations)
 - ✅ RegexPatternsMustBeStaticFinal (20 violations)
 - ✅ FinalVariablesMustBeFinal (20 violations)
 - ✅ StaticMethodsMustBeStatic (20 violations)
 - ✅ TestClassIsParallel (1 violation)
 
-### Naming Rules (100+ violations)
-- ✅ NoSingleLetterVariableNames (30 violations)
-- ✅ NoAbbreviations (50 violations)
-- ✅ VariablesMustNotShareNamesWithClasses (10 violations)
-- ✅ InnerClassesMustBeOneWord (5 violations)
-
 ### Documentation Rules (30+ violations)
 - ✅ ExceptionDocumentationRequired (20 violations)
 - ✅ SingleLineDocumentationFormat (10 violations)
-
-### Method Signature Rules (30+ violations)
-- ✅ NoCustomParameterObjects (15 violations)
-- ✅ SingleParameterMustBeSingleLine (15 violations)
 
 ## Design Principles
 
@@ -106,16 +106,16 @@ Fixtures combine multiple rule violations in realistic combinations to test:
 
 ```bash
 # Run all benchmarks
-pnpm run benchmark
+pnpm benchmark
 
 # Generate baseline
-pnpm run benchmark -- --baseline
+pnpm benchmark -- --baseline
 
 # JSON output for CI
-pnpm run benchmark -- --json
+pnpm benchmark -- --json
 
 # Compare mode (doesn't fail on regressions)
-pnpm run benchmark -- --compare
+pnpm benchmark -- --compare
 ```
 
 ### Benchmark Output
@@ -162,7 +162,7 @@ When adding new rules:
 1. Add violations to `stress-test-all-rules.cls`
 2. Add focused violations to category-specific fixture
 3. Update this documentation
-4. Regenerate baseline: `pnpm run benchmark -- --baseline`
+4. Regenerate baseline: `pnpm benchmark -- --baseline`
 
 ## Notes
 

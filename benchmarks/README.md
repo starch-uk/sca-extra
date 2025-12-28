@@ -8,28 +8,33 @@ This directory contains comprehensive stress-test fixtures designed to benchmark
 A comprehensive fixture containing violations across all rule categories. This file is designed to stress test the entire rule set simultaneously.
 
 ### `stress-code-style.cls`
-Focused stress test for code-style rules with 200+ violations:
-- NoMethodCallsInConditionals (20 violations)
-- NoMethodChaining (20 violations)
-- PreferSafeNavigationOperator (15 violations)
-- PreferNullCoalescingOverTernary (15 violations)
+Focused stress test for code-style rules (including naming) with 300+ violations:
+- AvoidOneLinerMethods (10 violations)
 - ListInitializationMustBeMultiLine (10 violations)
 - MapInitializationMustBeMultiLine (10 violations)
 - MapShouldBeInitializedWithValues (10 violations)
-- PreferStringJoinOverMultipleNewlines (10 violations)
-- PreferConcatenationOverStringJoinWithEmpty (10 violations)
-- PreferStringJoinOverConcatenation (10 violations)
 - MultipleStringContainsCalls (10 violations)
-- PreferMethodCallsInLoopConditions (10 violations)
+- NoMethodCallsAsArguments (10 violations)
+- NoMethodCallsInConditionals (20 violations)
+- NoMethodChaining (20 violations)
 - PreferBuilderPatternChaining (10 violations)
+- PreferConcatenationOverStringJoinWithEmpty (10 violations)
+- PreferMethodCallsInLoopConditions (10 violations)
+- PreferNullCoalescingOverTernary (15 violations)
+- PreferSafeNavigationOperator (15 violations)
+- PreferStringJoinOverConcatenation (10 violations)
+- PreferStringJoinOverMultipleNewlines (10 violations)
 - PreferStringJoinWithSeparatorOverEmpty (10 violations)
 - SingleArgumentMustBeSingleLine (10 violations)
-- NoMethodCallsAsArguments (10 violations)
-- NoConsecutiveBlankLines (multiple violations)
-- AvoidOneLinerMethods (10 violations)
+- NoSingleLetterVariableNames (30 violations)
+- NoAbbreviations (50 violations)
+- VariablesMustNotShareNamesWithClasses (10 violations)
+- InnerClassesMustBeOneWord (5 violations)
 
-### `stress-structure.cls`
-Focused stress test for structure rules with 100+ violations:
+**Note:** NoConsecutiveBlankLines is a Regex rule (not PMD), so it's not included in PMD benchmark fixtures.
+
+### `stress-design.cls`
+Focused stress test for design rules (structure + method signatures) with 130+ violations:
 - InnerClassesCannotBeStatic (1 violation)
 - InnerClassesCannotHaveStaticMembers (2 violations)
 - InnerClassesMustBeOneWord (2 violations)
@@ -44,40 +49,35 @@ Focused stress test for structure rules with 100+ violations:
 - PreferPropertySyntaxOverGetterMethods (5 violations)
 - AvoidLowValueWrapperMethods (3 violations)
 - EnumMinimumValues (2 violations)
+- NoCustomParameterObjects (15 violations)
+- SingleParameterMustBeSingleLine (15 violations)
 
-### `stress-modifiers.cls`
-Focused stress test for modifier rules with 100+ violations:
+### `stress-best-practices.cls`
+Focused stress test for best practices rules (modifiers) with 100+ violations:
 - StaticVariablesMustBeFinalAndScreamingSnakeCase (20 violations)
 - RegexPatternsMustBeStaticFinal (20 violations)
 - FinalVariablesMustBeFinal (20 violations)
 - StaticMethodsMustBeStatic (20 violations)
 - TestClassIsParallel (1 violation)
 
-### `stress-naming.cls`
-Focused stress test for naming rules with 100+ violations:
-- NoSingleLetterVariableNames (30 violations)
-- NoAbbreviations (50 violations)
-- VariablesMustNotShareNamesWithClasses (10 violations)
-- InnerClassesMustBeOneWord (5 violations)
-
 ## Usage
 
 Run benchmarks with:
 
 ```bash
-pnpm run benchmark
+pnpm benchmark
 ```
 
 Generate baseline:
 
 ```bash
-pnpm run benchmark -- --baseline
+pnpm benchmark -- --baseline
 ```
 
 JSON output for CI:
 
 ```bash
-pnpm run benchmark -- --json
+pnpm benchmark -- --json
 ```
 
 ## Performance Characteristics

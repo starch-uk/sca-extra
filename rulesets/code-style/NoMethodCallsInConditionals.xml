@@ -6,7 +6,6 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="NoMethodCallsInConditionals"
 		language="apex"
@@ -14,28 +13,78 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Method calls should not be used directly in conditional expressions. Extract method call
-			results to variables first to improve readability, avoid potential side effects from multiple
-			evaluations, and make debugging easier. This rule applies to if, else-if, while, for,
+			Method calls should not be used directly in conditional
+			expressions. Extract method call
+			results to variables first to improve readability, avoid potential side effects
+			from multiple
+			evaluations, and make debugging easier. This rule applies to
+			if, else-if, while, for,
 			switch, and ternary expressions.
+
+			Version: 1.0.0
 		</description>
 		<priority>2</priority>
 		<properties>
 			<property name="xpath">
-				<value
-				><![CDATA[
-					//(IfBlockStatement
-						| WhileLoopStatement
-						| SwitchStatement
-						| ForLoopStatement
-						| TernaryExpression
-					)[StandardCondition//MethodCallExpression]
-					|
-					//IfElseBlockStatement[
-						IfBlockStatement/StandardCondition//MethodCallExpression
-					]
-				]]></value>
+				<value>
+					<![CDATA[
+					//(IfBlockStatement | WhileLoopStatement | SwitchStatement | ForLoopStatement | TernaryExpression)[StandardCondition//MethodCallExpression]
+					| //IfElseBlockStatement[IfBlockStatement/StandardCondition//MethodCallExpression]
+					]]>
+				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Method call in if statement
+			if (getValue() > 0) {
+			    // ...
+			}
+			
+			// Valid: Extract method call to variable
+			Integer value = getValue();
+			if (value > 0) {
+			    // ...
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Method call in while loop
+			while (hasMoreItems()) {
+			    // ...
+			}
+			
+			// Valid: Extract method call to variable
+			Boolean hasMore = hasMoreItems();
+			while (hasMore) {
+			    // ...
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Method call in ternary expression
+			String result = isValid() ? 'yes' : 'no';
+			
+			// Valid: Extract method call to variable
+			Boolean valid = isValid();
+			String result = valid ? 'yes' : 'no';
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Method call in switch statement
+			switch on getStatus() {
+			    when 'active' { }
+			}
+			
+			// Valid: Extract method call to variable
+			String status = getStatus();
+			switch on status {
+			    when 'active' { }
+			}
+			]]>
+		</example>
 	</rule>
 </ruleset>

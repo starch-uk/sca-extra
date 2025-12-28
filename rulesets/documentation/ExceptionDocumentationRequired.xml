@@ -6,7 +6,6 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex documentation standards</description>
-
 	<rule
 		name="ExceptionDocumentationRequired"
 		language="apex"
@@ -14,26 +13,50 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Methods that contain throw statements must document the exceptions they throw
-			using @throws
-			tags in their ApexDoc comments. This rule checks methods that have ApexDoc comments but
-			are missing the required @throws documentation for exceptions they throw. Proper exception
-			documentation helps developers understand what exceptions a method can throw and when.
+			Methods that contain throw statements must document the exceptions
+			they throw using @throws tags in their ApexDoc comments. This rule checks
+			methods that have ApexDoc comments but are missing the required @throws
+			documentation for exceptions they throw. Proper exception documentation
+			helps developers understand what exceptions a method can throw and when.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
-				<value
-				><![CDATA[
+				<value>
+					<![CDATA[
 					//Method[
-						FormalComment[
-							starts-with(@Image, '/**')
-							and not(contains(@Image, '@throws'))
-						]
+						FormalComment[starts-with(@Image, '/**') and not(contains(@Image, '@throws'))]
 						and .//ThrowStatement
 					]
-				]]></value>
+					]]>
+				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Method throws exception but no @throws documentation
+			/**
+			 * Processes the account.
+			 */
+			public void processAccount(Account acc) {
+				if (acc == null) {
+					throw new IllegalArgumentException('Account cannot be null');
+				}
+			}
+			
+			// Valid: Method with @throws documentation
+			/**
+			 * Processes the account.
+			 * @throws IllegalArgumentException if account is null
+			 */
+			public void processAccount(Account acc) {
+				if (acc == null) {
+					throw new IllegalArgumentException('Account cannot be null');
+				}
+			}
+			]]>
+		</example>
 	</rule>
 </ruleset>

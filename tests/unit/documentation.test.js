@@ -8,7 +8,9 @@ describe('Documentation Rules', () => {
 				'tests/fixtures/negative/documentation/ExceptionDocumentationRequired.cls'
 			);
 			expect(
-				violations.filter((v) => v.rule === 'ExceptionDocumentationRequired').length
+				violations.filter(
+					(v) => v.rule === 'ExceptionDocumentationRequired'
+				).length
 			).toBeGreaterThan(0);
 		});
 
@@ -28,7 +30,9 @@ describe('Documentation Rules', () => {
 				'tests/fixtures/negative/documentation/SingleLineDocumentationFormat.cls'
 			);
 			expect(
-				violations.filter((v) => v.rule === 'SingleLineDocumentationFormat').length
+				violations.filter(
+					(v) => v.rule === 'SingleLineDocumentationFormat'
+				).length
 			).toBeGreaterThan(0);
 		});
 

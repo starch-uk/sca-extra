@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Design Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>
+		Custom rules for Apex design issues (structure, method signatures, class
+		organization)
+	</description>
+	<rule
+		name="NoParameterClasses"
+		language="apex"
+		message="Classes or inner classes that only have attributes and constructors with no instance methods are not allowed. Add instance methods or refactor to use a different approach"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Parameter classes (classes or inner classes that only have
+			attributes
+			and constructors with no instance methods) should not be created. Classes
+			should provide behavior, not just data. Add instance methods to provide
+			behavior, or refactor to use a different approach such as using Map or
+			keeping methods within the 3-parameter limit.
+			
+			To customize this rule, edit the variables at the beginning of the XPath
+			expression:
+			- $minFields: Minimum number of fields required (default: 1)
+			- $minConstructors: Minimum number of constructors required (default: 1)
+
+			Version: 1.0.0
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $minFields := 1,
+						$minConstructors := 1
+					return //UserClass[
+						count(Field) >= $minFields
+						and count(Method[@Constructor = true()]) >= $minConstructors
+						and count(Method[@Constructor = false() and not(ModifierNode[@Static = true()])]) = 0
+						and not(Method[@Constructor = false() and ModifierNode[@Static = true()]])
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Parameter class with only fields and constructor
+			public class Parameter {
+				public String name;
+				public Integer value;
+				
+				public Parameter(String name, Integer value) {
+					this.name = name;
+					this.value = value;
+				}
+			}
+			
+			// Valid: Refactor to use method parameters instead
+			public void processData(String name, Integer value) {
+				// ...
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>

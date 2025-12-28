@@ -19,7 +19,9 @@ function validateRules() {
 
 	categories.forEach((category) => {
 		const categoryPath = path.join(rulesetsDir, category);
-		const files = fs.readdirSync(categoryPath).filter((file) => file.endsWith('.xml'));
+		const files = fs
+			.readdirSync(categoryPath)
+			.filter((file) => file.endsWith('.xml'));
 
 		files.forEach((file) => {
 			const filePath = path.join(categoryPath, file);
@@ -93,7 +95,10 @@ function validateRuleFile(filePath) {
 			if (!rule.getAttribute('message')) {
 				warnings.push(`${rulePath}: Missing 'message' attribute`);
 			}
-			if (rule.getAttribute('class') !== 'net.sourceforge.pmd.lang.rule.xpath.XPathRule') {
+			if (
+				rule.getAttribute('class') !==
+				'net.sourceforge.pmd.lang.rule.xpath.XPathRule'
+			) {
 				errors.push(`${rulePath}: Must use XPathRule class`);
 			}
 
@@ -104,14 +109,15 @@ function validateRuleFile(filePath) {
 				continue;
 			}
 
-			const xpathProperty = Array.from(properties.getElementsByTagName('property')).find(
-				(prop) => prop.getAttribute('name') === 'xpath'
-			);
+			const xpathProperty = Array.from(
+				properties.getElementsByTagName('property')
+			).find((prop) => prop.getAttribute('name') === 'xpath');
 
 			if (!xpathProperty) {
 				errors.push(`${rulePath}: Missing 'xpath' property`);
 			} else {
-				const xpathValue = xpathProperty.getElementsByTagName('value')[0];
+				const xpathValue =
+					xpathProperty.getElementsByTagName('value')[0];
 				if (!xpathValue || !xpathValue.textContent.trim()) {
 					errors.push(`${rulePath}: XPath property has no value`);
 				}
@@ -125,7 +131,9 @@ function validateRuleFile(filePath) {
 
 			// Check for version in description
 			if (description && !description.textContent.includes('Version:')) {
-				warnings.push(`${rulePath}: Description should include version information`);
+				warnings.push(
+					`${rulePath}: Description should include version information`
+				);
 			}
 		}
 	} catch (error) {

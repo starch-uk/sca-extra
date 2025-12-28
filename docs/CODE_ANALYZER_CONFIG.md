@@ -36,19 +36,21 @@ rules:
 
 For PMD rulesets, CLI usage, and configuration details, see [PMD Quick Reference](PMD.md).
 
+**Ruleset XML Format:** PMD rulesets follow the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd). Rules can include `<example>` elements (optional, multiple allowed) to show violations and valid code patterns.
+
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `disable_engine` | boolean | false | Disable PMD engine |
-| `rulesets` | array | [] | PMD ruleset XML file paths (relative to project root) |
+| `custom_rulesets` | array | [] | PMD ruleset XML file paths (relative to project root) |
 | `java_command` | string | null | Java command/path for PMD. Auto-discovered if null. |
 
 **Example:**
 ```yaml
 engines:
   pmd:
-    rulesets:
-      - rulesets/structure/InnerClassesCannotBeStatic.xml
-      - rulesets/naming/NoSingleLetterVariableNames.xml
+    custom_rulesets:
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
 ```
 
 ### Regex Engine
@@ -149,9 +151,9 @@ rules:
 
 engines:
   pmd:
-    rulesets:
-      - rulesets/structure/InnerClassesCannotBeStatic.xml
-      - rulesets/naming/NoSingleLetterVariableNames.xml
+    custom_rulesets:
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
   
   regex:
     custom_rules:
@@ -174,17 +176,71 @@ engines:
 ```yaml
 engines:
   pmd:
-    rulesets:
+    custom_rulesets:
       - rulesets/category/RuleName.xml
 ```
 
 ### Override Rule Properties
+
+**Important:** Salesforce Code Analyzer does not support property overrides for PMD rules via `code-analyzer.yml`. Only `severity` and `tags` can be overridden.
+
+**For XPathRule (custom rules in this repository):**
+- PMD 7+ does not support dynamic properties for `XPathRule`
+- To customize rules, edit the XPath expression directly in the rule XML file
+- Rules use easy-to-edit variables at the top of XPath expressions (e.g., `let $minValues := 3`)
+- See [Customizing Rules](#customizing-rules) section in README.md for examples
+
+**For Java-based PMD rules (standard PMD rules):**
+- Property overrides are supported using `ref=` syntax in custom ruleset XML files
+- Create a custom ruleset that references the original rule and overrides properties
+
+**Example - Override Java-based Rule Properties:**
+
+1. Create `rulesets/custom-overrides.xml` (per [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd)):
+
+```xml
+<?xml version="1.0"?>
+<ruleset
+    name="Custom Rule Overrides"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom property overrides for Java-based PMD rules</description>
+    
+    <!-- Override a Java-based rule property -->
+    <rule ref="category/apex/design.xml/NPathComplexity">
+        <properties>
+            <property name="reportLevel">
+                <value>150</value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>
+```
+
+2. Reference in `code-analyzer.yml`:
+
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      - rulesets/custom-overrides.xml
+```
+
+**Key Points:**
+- The `ref` attribute format is `{ruleset-path}/{rule-name}` (e.g., `category/apex/design.xml/NPathComplexity`)
+- Property values in XML use `<value>` tags (per [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd))
+- Property elements support attributes: `name` (required), `value` (optional), `description`, `type`, `delimiter`, `min`, `max`
+
+**Override Severity and Tags (supported in code-analyzer.yml):**
+
 ```yaml
 rules:
   pmd:
     RuleName:
-      properties:
-        propertyName: "value"
+      severity: "High"
+      tags: ["Recommended"]
 ```
 
 ### Custom Regex Rule
@@ -205,9 +261,11 @@ engines:
 - **File location:** `code-analyzer.yml` or `code-analyzer.yaml` in project root
 - **Path resolution:** Relative paths use `config_root` (auto if null)
 - **Regex flags:** Must include global (`g`) modifier
-- **Rule overrides:** Use `rules.{engine}.{rule}.{property}` format
+- **Rule overrides:** Use `rules.{engine}.{rule}.{property}` format (severity and tags only for PMD rules)
+- **Property overrides:** PMD rule properties cannot be overridden via `code-analyzer.yml` - use custom ruleset XML files with `ref=` syntax instead
 - **Engine config:** Use `engines.{engine}.{property}` format
-- **PMD rulesets:** List XML file paths under `engines.pmd.rulesets`
+- **PMD rulesets:** Use `engines.pmd.custom_rulesets` (not `rulesets:`) to reference PMD rulesets
+- **PMD rulesets:** List XML file paths under `engines.pmd.custom_rulesets` (not `rulesets:`)
 - **Auto-discovery:** Many properties auto-discover if set to `null`
 
 ## Related Documentation

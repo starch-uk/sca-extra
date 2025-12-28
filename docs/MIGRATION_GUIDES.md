@@ -130,47 +130,64 @@ catch (Exception exception) { }  // ✅ Use descriptive name
 ```
 
 **Configuration Update:**
-```yaml
-# Before (v1.0.0)
-rules:
-  NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c"
 
-# After (v2.0.0) - Add 'e' to allowed names if needed
-rules:
-  NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c,e"  # Explicitly allow exception variable
+**Important:** Salesforce Code Analyzer does not support property overrides via `code-analyzer.yml`. Property overrides must be done via custom ruleset XML files.
+
+**Before (v1.0.0) - Custom ruleset XML:**
+```xml
+<rule ref="rulesets/code-style/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames">
+    <properties>
+        <property name="allowedNames">
+            <value>i,c</value>
+        </property>
+    </properties>
+</rule>
+```
+
+**After (v2.0.0) - Update custom ruleset XML:**
+```xml
+<rule ref="rulesets/code-style/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames">
+    <properties>
+        <property name="allowedNames">
+            <value>i,c,e</value>  <!-- Explicitly allow exception variable -->
+        </property>
+    </properties>
+</rule>
 ```
 
 ## Property Changes
 
 ### Renamed Properties
 
-If a property is renamed:
+If a property is renamed, update your custom ruleset XML file:
 
 **Before:**
-```yaml
-rules:
-  RuleName:
-    properties:
-      oldPropertyName: "value"
+```xml
+<rule ref="rulesets/category/RuleName.xml/RuleName">
+    <properties>
+        <property name="oldPropertyName">
+            <value>value</value>
+        </property>
+    </properties>
+</rule>
 ```
 
 **After:**
-```yaml
-rules:
-  RuleName:
-    properties:
-      newPropertyName: "value"  # Updated property name
+```xml
+<rule ref="rulesets/category/RuleName.xml/RuleName">
+    <properties>
+        <property name="newPropertyName">
+            <value>value</value>  <!-- Updated property name -->
+        </property>
+    </properties>
+</rule>
 ```
 
 ### Removed Properties
 
 If a property is removed:
 
-1. Remove the property from `code-analyzer.yml`
+1. Remove the property from your custom ruleset XML file (if you had overridden it)
 2. Review changelog for why it was removed
 3. Update code if the removed property affected behavior
 
@@ -202,12 +219,12 @@ If a new property is added:
 
 2. **Validate rules:**
    ```bash
-   pnpm run validate
+   pnpm validate
    ```
 
 3. **Check for regressions:**
    ```bash
-   pnpm run check-regressions
+   pnpm check-regressions
    ```
 
 4. **Test with your codebase:**
@@ -221,7 +238,7 @@ If you encounter issues during migration:
 
 1. **Check documentation:**
    - Review this migration guide
-   - Check rule-specific documentation in README.md
+   - Check rule-specific documentation in the rule XML file and repository documentation
    - Review AI Agent Rule Guide
 
 2. **Review examples:**
@@ -248,10 +265,150 @@ For detailed version history, see:
 - GitHub Releases - Release notes and migration guides
 - Rule XML files - Version information in descriptions
 
+## PMD 7 Migration
+
+This section covers migration from PMD 6.x to PMD 7.0.0. For complete details, see the [PMD 7 Migration Guide](https://pmd.github.io/pmd/pmd_userdocs_migrating_to_pmd7.html).
+
+### Before Updating to PMD 7
+
+Before updating to PMD 7, you should:
+
+1. **Update to PMD 6.55.0** (latest PMD 6 version)
+2. **Fix all deprecation warnings** in PMD 6
+3. **Migrate through release candidates** (7.0.0-rc1 → 7.0.0-rc2 → 7.0.0-rc3 → 7.0.0-rc4 → 7.0.0)
+
+### Key Changes in PMD 7
+
+#### Property Definitions
+
+**PMD 6 (deprecated):**
+```java
+StringProperty.named("propertyName").desc("Description").defaultValue("default")
+```
+
+**PMD 7:**
+```java
+PropertyFactory.stringProperty("propertyName")
+    .desc("Description")
+    .defaultValue("default")
+    .build()
+```
+
+**Note:** `uiOrder` property is removed. Just remove it from property definitions.
+
+#### Reporting Violations
+
+**PMD 6 (deprecated):**
+```java
+addViolation(data, node, message);
+```
+
+**PMD 7:**
+```java
+asCtx(data).addViolation(node, message);
+```
+
+#### CLI Parameter Changes
+
+Deprecated parameters have been removed. Use the new forms:
+
+| PMD 6 (deprecated) | PMD 7 |
+|-------------------|-------|
+| `-no-cache` | `--no-cache` |
+| `-failOnViolation` | `--fail-on-violation` |
+| `-reportfile` | `--report-file` |
+| `-language` | `--use-version` |
+
+#### XPath Attribute Deprecations
+
+PMD 7 may show warnings about deprecated XPath attributes. Common changes:
+
+- `VariableId/@Image` → `@Name`
+- Check deprecation warnings for specific alternatives
+
+#### Ruleset References
+
+**PMD 6 (deprecated):**
+```xml
+<rule ref="java-basic" />  <!-- Resolves to rulesets/java/basic.xml -->
+<rule ref="600" />  <!-- Resolves to rulesets/releases/600.xml -->
+```
+
+**PMD 7:**
+```xml
+<rule ref="rulesets/java/basic.xml" />  <!-- Explicit path required -->
+```
+
+**Note:** Old rulesets like `basic.xml` have been removed. Create custom rulesets instead.
+
+#### Apex AST Changes
+
+PMD 7.0.0 switched from Jorje to Summit AST parser. Key changes:
+
+**Removed Attributes:**
+- `Method/@Synthetic` - No longer exists (Summit AST doesn't generate synthetic methods)
+- `Method/@Namespace` - Removed (was never fully implemented, always returned empty string)
+- `ReferenceExpression/@Context` - Removed (was not used, always returned null)
+
+**Removed Nodes:**
+- `BridgeMethodCreator` - No longer generated (synthetic methods removed)
+- Methods named `<clinit>` and `<init>` - No longer generated
+
+**Impact on XPath Rules:**
+- Remove any XPath expressions that reference `@Synthetic`, `@Namespace`, or `@Context`
+- Remove references to `BridgeMethodCreator` nodes
+- Update rules that check for `<clinit>` or `<init>` method names
+
+#### Language Versions
+
+PMD 7 introduces language versioning:
+
+- All languages have defined versions
+- Default version is usually the latest
+- Use `--use-version` CLI option to specify version
+- Rules can specify `minimumLanguageVersion` and `maximumLanguageVersion`
+- Check available versions: `pmd check --help`
+
+#### XML Report Format Changes
+
+The `suppressiontype` attribute values changed:
+
+| PMD 6 | PMD 7 |
+|-------|-------|
+| `nopmd` | `//nopmd` |
+| `annotation` | `@suppresswarnings` |
+| (new) | `xpath` (suppressed via `violationSuppressXPath`) |
+| (new) | `regex` (suppressed via `violationSuppressRegex`) |
+
+#### Visualforce and Velocity Language Names
+
+Language names changed:
+- `vf` → `visualforce` (e.g., `category/vf/security.xml` → `category/visualforce/security.xml`)
+- `vm` → `velocity` (e.g., `category/vm/...` → `category/velocity/...`)
+
+### Migration Checklist
+
+- [ ] Update to PMD 6.55.0 and fix deprecation warnings
+- [ ] Update property definitions to use `PropertyFactory`
+- [ ] Update violation reporting to use `asCtx(data).addViolation()`
+- [ ] Update CLI commands to use new parameter names
+- [ ] Fix XPath expressions using deprecated attributes
+- [ ] Update ruleset references to explicit paths
+- [ ] Remove references to removed Apex AST attributes/nodes
+- [ ] Update Visualforce/Velocity language references (if applicable)
+- [ ] Test all custom rules with PMD 7
+- [ ] Review and update XML report parsing (if applicable)
+
+### Additional Resources
+
+- [PMD 7 Migration Guide](https://pmd.github.io/pmd/pmd_userdocs_migrating_to_pmd7.html) - Complete migration documentation
+- [PMD 7 Release Notes](https://pmd.github.io/pmd/pmd_release_notes_pmd7.html) - Detailed changes and removed rules
+- [Defining Rule Properties](https://pmd.github.io/pmd/pmd_userdocs_extending_defining_properties.html) - PropertyFactory usage
+
 ## Support
 
 For migration support:
 - **Issues:** [GitHub Issues](https://github.com/starch-uk/sca-extra/issues)
-- **Documentation:** See [README.md](../README.md) and other docs
+- **Documentation:** See repository documentation files in `docs/` directory
 - **Examples:** See `tests/fixtures/` for code examples
 

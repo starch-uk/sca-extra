@@ -1,58 +1,116 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { DOMParser } = require('xmldom');
 
 /**
- * Run PMD against an Apex file with a ruleset
- * @param {string} rulesetPath - Path to the PMD ruleset XML file
+ * Run PMD CLI against an Apex file with a ruleset
+ *
+ * @param {string} rulesetPath - Path to the PMD ruleset XML file (relative to project root)
  * @param {string} apexFilePath - Path to the Apex file to test
  * @returns {Promise<Array>} Array of violations
  */
-async function runPMD(rulesetPath, apexFilePath) {
+async function runPMDCLI(rulesetPath, apexFilePath) {
 	const { execSync } = require('child_process');
 
+	// Get absolute paths for better compatibility
+	const absoluteApexPath = path.isAbsolute(apexFilePath)
+		? apexFilePath
+		: path.resolve(process.cwd(), apexFilePath);
+	const absoluteRulesetPath = path.isAbsolute(rulesetPath)
+		? rulesetPath
+		: path.resolve(process.cwd(), rulesetPath);
+
+	// Use a temporary file to avoid progressbar rendering conflicts with STDOUT
+	const tempFile = path.join(
+		os.tmpdir(),
+		`pmd-output-${Date.now()}-${Math.random().toString(36).substring(7)}.xml`
+	);
+
 	try {
-		const output = execSync(
-			`pmd check --no-cache -d "${apexFilePath}" -R "${rulesetPath}" -f xml`,
-			{ encoding: 'utf-8', timeout: 30000, stdio: ['pipe', 'pipe', 'ignore'] }
+		// Use --no-cache to avoid cache issues
+		// Output to file (-r) to avoid progressbar rendering conflicts with STDOUT
+		// Ignore stderr to suppress warnings about progressbar and incremental analysis
+		execSync(
+			`pmd check --no-cache -d "${absoluteApexPath}" -R "${absoluteRulesetPath}" -f xml -r "${tempFile}"`,
+			{
+				encoding: 'utf-8',
+				timeout: 30000,
+				stdio: ['pipe', 'pipe', 'ignore'],
+				cwd: process.cwd(),
+			}
 		);
-		// Extract XML from output (may contain warnings before XML)
-		const xmlMatch = output.match(/<\?xml[\s\S]*$/);
-		if (xmlMatch) {
-			return parseViolations(xmlMatch[0]);
-		}
+
+		// Read the output file
+		const output = fs.readFileSync(tempFile, 'utf-8');
 		return parseViolations(output);
 	} catch (error) {
 		// PMD may exit with non-zero if violations found, but still output XML
-		if (error.stdout) {
-			// Extract XML from stdout (may contain warnings before XML)
-			const xmlMatch = error.stdout.match(/<\?xml[\s\S]*$/);
-			if (xmlMatch) {
-				return parseViolations(xmlMatch[0]);
+		// Check if output file exists and contains XML
+		if (fs.existsSync(tempFile)) {
+			try {
+				const output = fs.readFileSync(tempFile, 'utf-8');
+				// Extract XML from output (may contain warnings before XML)
+				const xmlMatch = output.match(/<\?xml[\s\S]*$/);
+				if (xmlMatch) {
+					return parseViolations(xmlMatch[0]);
+				}
+				return parseViolations(output);
+			} catch {
+				// If we can't read the file, fall through to throw the original error
 			}
-			return parseViolations(error.stdout);
 		}
 		// PMD CLI is required - throw error if not available
 		if (error.code === 'ENOENT') {
-			throw new Error('PMD CLI not available. Please install PMD 7+ to run tests.');
+			throw new Error(
+				'PMD CLI not available. Please install PMD to run tests. Visit: https://pmd.github.io/pmd/pmd_userdocs_installation.html'
+			);
 		}
-		// Surface stderr if available to help diagnose XPath / ruleset issues
-		const stderr = error.stderr ? `\nPMD stderr:\n${error.stderr}` : '';
-		throw new Error(`Error running PMD: ${error.message}${stderr}`);
+		// If there's stderr, include it in the error message for debugging
+		const stderr = error.stderr
+			? `\nPMD stderr:\n${error.stderr.toString()}`
+			: '';
+		const stdout = error.stdout
+			? `\nPMD stdout:\n${error.stdout.toString()}`
+			: '';
+		throw new Error(
+			`Error running PMD CLI: ${error.message}${stderr}${stdout}`
+		);
+	} finally {
+		// Clean up temporary file
+		try {
+			if (fs.existsSync(tempFile)) {
+				fs.unlinkSync(tempFile);
+			}
+		} catch {
+			// Ignore cleanup errors
+		}
 	}
 }
 
 /**
+ * Run PMD against an Apex file with a ruleset
+ *
+ * @param {string} rulesetPath - Path to the PMD ruleset XML file (relative to project root)
+ * @param {string} apexFilePath - Path to the Apex file to test
+ * @returns {Promise<Array>} Array of violations
+ */
+async function runPMD(rulesetPath, apexFilePath) {
+	return runPMDCLI(rulesetPath, apexFilePath);
+}
+
+/**
  * Parse PMD XML output into violation objects
- * @param {string} pmdOutput - XML output from PMD
+ * @param {string} xmlOutput - XML output from PMD
  * @returns {Array} Array of violation objects
  */
-function parseViolations(pmdOutput) {
+function parseViolations(xmlOutput) {
 	try {
 		const parser = new DOMParser();
-		const doc = parser.parseFromString(pmdOutput, 'text/xml');
+		const doc = parser.parseFromString(xmlOutput, 'text/xml');
 		const violations = [];
 
+		// PMD format (<pmd><file><violation>)
 		const fileNodes = doc.getElementsByTagName('file');
 		for (let i = 0; i < fileNodes.length; i++) {
 			const fileNode = fileNodes[i];
@@ -64,16 +122,20 @@ function parseViolations(pmdOutput) {
 					file: fileNode.getAttribute('name'),
 					rule: violationNode.getAttribute('rule'),
 					message:
-						violationNode.getAttribute('message') || violationNode.textContent.trim(),
+						violationNode.getAttribute('message') ||
+						violationNode.textContent.trim(),
 					line: parseInt(violationNode.getAttribute('beginline'), 10),
-					column: parseInt(violationNode.getAttribute('begincol'), 10),
+					column: parseInt(
+						violationNode.getAttribute('begincol'),
+						10
+					),
 				});
 			}
 		}
 
 		return violations;
 	} catch (error) {
-		throw new Error(`Error parsing PMD output: ${error.message}`);
+		throw new Error(`Error parsing XML output: ${error.message}`);
 	}
 }
 
@@ -84,7 +146,9 @@ function parseViolations(pmdOutput) {
  * @param {number} lineNumber - Expected line number
  */
 function assertViolation(violations, ruleName, lineNumber) {
-	const violation = violations.find((v) => v.rule === ruleName && v.line === lineNumber);
+	const violation = violations.find(
+		(v) => v.rule === ruleName && v.line === lineNumber
+	);
 
 	if (!violation) {
 		throw new Error(
@@ -115,7 +179,14 @@ function assertNoViolations(violations, ruleName) {
  * @returns {string} File contents
  */
 function readFixture(category, ruleName, type) {
-	const fixturePath = path.join(__dirname, '..', 'fixtures', type, category, `${ruleName}.cls`);
+	const fixturePath = path.join(
+		__dirname,
+		'..',
+		'fixtures',
+		type,
+		category,
+		`${ruleName}.cls`
+	);
 
 	if (!fs.existsSync(fixturePath)) {
 		throw new Error(`Fixture file not found: ${fixturePath}`);
@@ -132,7 +203,12 @@ function readFixture(category, ruleName, type) {
  * @param {string} violationMessage - Message to show for violations
  * @returns {Promise<Array>} Array of violations
  */
-async function runRegexRule(regexPattern, apexFilePath, ruleName, violationMessage) {
+async function runRegexRule(
+	regexPattern,
+	apexFilePath,
+	ruleName,
+	violationMessage
+) {
 	const fileContent = fs.readFileSync(apexFilePath, 'utf-8');
 	const violations = [];
 
@@ -164,7 +240,10 @@ async function runRegexRule(regexPattern, apexFilePath, ruleName, violationMessa
 		const textBeforeMatch = fileContent.substring(0, matchIndex);
 		const lineNumber = textBeforeMatch.split('\n').length;
 		const lastNewlineIndex = textBeforeMatch.lastIndexOf('\n');
-		const column = lastNewlineIndex === -1 ? matchIndex + 1 : matchIndex - lastNewlineIndex;
+		const column =
+			lastNewlineIndex === -1
+				? matchIndex + 1
+				: matchIndex - lastNewlineIndex;
 
 		// Avoid infinite loop with zero-length matches
 		if (match[0].length === 0) {

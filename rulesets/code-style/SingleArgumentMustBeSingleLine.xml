@@ -6,7 +6,6 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="SingleArgumentMustBeSingleLine"
 		language="apex"
@@ -14,22 +13,40 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Method calls with 0-1 arguments must be formatted on a single line. Unnecessary
-			multi-line
-			formatting for single arguments is not allowed as it reduces readability and wastes vertical space.
+			Method calls with 0-1 arguments must be formatted on a single line.
+			Unnecessary multi-line formatting for single arguments is not allowed as
+			it reduces readability and wastes vertical space.
+			
+			To customize this rule, edit the $maxArgs variable at the beginning of
+			the XPath expression (default: 1). This sets the maximum number of
+			arguments allowed before multi-line formatting is required.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //MethodCallExpression[
-                        @InputParametersSize <= 1
-                        and @BeginLine != @EndLine
-                    ]
-                    ]]>
-                </value>
+					<![CDATA[
+					let $maxArgs := 1
+					return //MethodCallExpression[
+						@InputParametersSize <= $maxArgs
+						and @BeginLine != @EndLine
+					]
+					]]>
+				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Single argument on multiple lines
+			String result = processValue(
+				value
+			);
+			
+			// Valid: Single argument on one line
+			String result = processValue(value);
+			]]>
+		</example>
 	</rule>
 </ruleset>

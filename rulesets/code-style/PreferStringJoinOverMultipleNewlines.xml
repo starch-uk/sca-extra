@@ -6,7 +6,6 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="PreferStringJoinOverMultipleNewlines"
 		language="apex"
@@ -14,26 +13,38 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			String literals containing more than one newline character ('\n') should be split into
-			separate strings and joined using String.join() for better readability and maintainability.
+			String literals containing more than one newline character ('\n')
+			should be split into separate strings and joined using String.join() for
+			better readability and maintainability.
 			
 			Instead of: 'line1\nline2\nline3'
-			Use: String.join(new List &lt; String &gt; {'line1', 'line2', 'line3'}, '\n');
+			Use: String.join(new List &lt; String > {'line1', 'line2', 'line3'}, '\n');
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //LiteralExpression[
-                        @String = true()
-                        and contains(@Image, '\n')
-                        and contains(substring-after(@Image, '\n'), '\n')
-                        and not(ancestor::MethodCallExpression[@MethodName = 'join'])
-                    ]
-                    ]]>
-                </value>
+					<![CDATA[
+					//LiteralExpression[
+						@String = true()
+						and contains(@Image, '\n')
+						and contains(substring-after(@Image, '\n'), '\n')
+						and not(ancestor::MethodCallExpression[@MethodName = 'join'])
+					]
+					]]>
+				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Multiple newlines in string literal
+			String text = 'line1\nline2\nline3';
+			
+			// Valid: Use String.join()
+			String text = String.join(new List<String> {'line1', 'line2', 'line3'}, '\n');
+			]]>
+		</example>
 	</rule>
 </ruleset>

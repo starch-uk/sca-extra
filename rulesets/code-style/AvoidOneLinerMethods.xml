@@ -6,7 +6,6 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="AvoidOneLinerMethods"
 		language="apex"
@@ -14,62 +13,76 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Methods that contain only a single statement add unnecessary indirection and should be
-			inlined
-			at their call sites. This rule detects methods with exactly one statement in their body.
+			Methods that contain only a single statement add unnecessary
+			indirection
+			and should be inlined at their call sites. This rule detects methods with
+			exactly one statement in their body.
 			
-			Exceptions: Methods that are part of interfaces, abstract methods, override methods,
-			overloaded methods, switch statements with more than one outcome, or methods that update
-			a class attribute are excluded from this rule.
+			Exceptions: Methods that are part of interfaces, abstract methods, override
+			methods, overloaded methods, switch statements with more than one outcome,
+			or methods that update a class attribute are excluded from this rule.
+			
+			To customize this rule, edit the $minParams variable at the beginning of
+			the XPath expression (default: 1). This sets the minimum number of
+			parameters a method must have to be flagged as a one-liner.
+
+			Version: 1.0.0
 		</description>
 		<priority>4</priority>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //Method[
-                        not(ModifierNode[@Abstract = true()])
-                        and not(ModifierNode[@Override = true()])
-                        and not(ancestor::UserClass[@Interface = 'true'])
-                        and count(.//Parameter) >= 1
-                        and BlockStatement
-                        and count(BlockStatement/*) = 1
-                        and not(BlockStatement/EmptyStatement)
-                        and not(
-                            some $otherMethod in ancestor::UserClass//Method 
-                            satisfies $otherMethod/@Image = @Image 
-                            and $otherMethod/@BeginLine != @BeginLine
-                        )
-                        and not(
-                            BlockStatement/SwitchStatement
-                            and (
-                                count(BlockStatement/SwitchStatement/ValueWhenBlock) > 1
-                                or (
-                                    count(BlockStatement/SwitchStatement/ValueWhenBlock) >= 1
-                                    and BlockStatement/SwitchStatement/ElseWhenBlock
-                                )
-                            )
-                        )
-                        and not(
-                            BlockStatement//AssignmentExpression
-                            and BlockStatement//AssignmentExpression/VariableExpression
-                            and not(
-                                some $var in ancestor::Method//VariableDeclaration
-                                satisfies $var/VariableDeclaratorId/@Image = BlockStatement//AssignmentExpression/VariableExpression/@Image
-                            )
-                        )
-                        and not(
-                            some $param in .//Parameter/VariableDeclaratorId/@Image
-                            satisfies count(
-                                BlockStatement//MethodCallExpression[
-                                    .//VariableExpression/@Image = $param
-                                ]
-                            ) > 1
-                        )
-                    ]
-                    ]]>
-                </value>
+					<![CDATA[
+					let $minParams := 1
+					return //Method[
+						not(ModifierNode[@Abstract = true()])
+						and not(ModifierNode[@Override = true()])
+						and not(ancestor::UserClass[@Interface = 'true'])
+						and count(.//Parameter) >= $minParams
+						and BlockStatement
+						and count(BlockStatement/*) = 1
+						and not(BlockStatement/EmptyStatement)
+						and not(
+							some $otherMethod in ancestor::UserClass//Method 
+							satisfies $otherMethod/@Image = @Image 
+							and $otherMethod/@BeginLine != @BeginLine
+						)
+						and not(
+							BlockStatement/SwitchStatement
+							and (
+								count(BlockStatement/SwitchStatement/ValueWhenBlock) > 1
+								or (count(BlockStatement/SwitchStatement/ValueWhenBlock) >= 1 and BlockStatement/SwitchStatement/ElseWhenBlock)
+							)
+						)
+						and not(
+							BlockStatement//AssignmentExpression/VariableExpression
+							and not(
+								some $var in ancestor::Method//VariableDeclaration
+								satisfies $var/VariableDeclaratorId/@Image = BlockStatement//AssignmentExpression/VariableExpression/@Image
+							)
+						)
+						and not(
+							some $param in .//Parameter/VariableDeclaratorId/@Image
+							satisfies count(BlockStatement//MethodCallExpression[.//VariableExpression/@Image = $param]) > 1
+						)
+					]
+					]]>
+				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: One-liner method that should be inlined
+			public Integer getValue() {
+				return 5;
+			}
+			
+			// Valid: Method with multiple statements or exceptions
+			public Integer getValue() {
+				Integer value = calculateValue();
+				return value * 2;
+			}
+			]]>
+		</example>
 	</rule>
 </ruleset>

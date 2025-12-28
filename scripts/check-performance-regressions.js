@@ -13,10 +13,18 @@ function checkPerformanceRegressions(resultsPath) {
 	}
 
 	const results = JSON.parse(fs.readFileSync(resultsPath, 'utf-8'));
-	const baselinePath = path.join(__dirname, '..', 'benchmarks', 'results', 'baseline.json');
+	const baselinePath = path.join(
+		__dirname,
+		'..',
+		'benchmarks',
+		'results',
+		'baseline.json'
+	);
 
 	if (!fs.existsSync(baselinePath)) {
-		console.log('⚠️  No baseline found. Run benchmark with --baseline first.');
+		console.log(
+			'⚠️  No baseline found. Run benchmark with --baseline first.'
+		);
 		return;
 	}
 
@@ -28,7 +36,8 @@ function checkPerformanceRegressions(resultsPath) {
 		const baselineRule = baseline.rules.find((r) => r.name === rule.name);
 		if (baselineRule) {
 			const percentChange =
-				((rule.executionTime - baselineRule.executionTime) / baselineRule.executionTime) *
+				((rule.executionTime - baselineRule.executionTime) /
+					baselineRule.executionTime) *
 				100;
 			if (percentChange > threshold) {
 				regressions.push({
@@ -44,7 +53,9 @@ function checkPerformanceRegressions(resultsPath) {
 	if (regressions.length > 0) {
 		console.log('❌ Performance Regressions Detected:\n');
 		regressions.forEach((regression) => {
-			console.log(`  - ${regression.rule}: ${regression.percentChange}% slower`);
+			console.log(
+				`  - ${regression.rule}: ${regression.percentChange}% slower`
+			);
 			console.log(
 				`    Baseline: ${regression.baselineTime}ms, Current: ${regression.currentTime}ms\n`
 			);

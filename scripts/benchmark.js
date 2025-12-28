@@ -47,7 +47,9 @@ function calculateStatistics(times) {
 	const upperBound = q3 + 1.5 * iqr;
 
 	// Remove outliers
-	const filtered = sorted.filter((time) => time >= lowerBound && time <= upperBound);
+	const filtered = sorted.filter(
+		(time) => time >= lowerBound && time <= upperBound
+	);
 	const outliersRemoved = sorted.length - filtered.length;
 
 	if (filtered.length === 0) {
@@ -55,19 +57,36 @@ function calculateStatistics(times) {
 		return calculateStatsFromArray(sorted, sorted.length, 0);
 	}
 
-	return calculateStatsFromArray(filtered, filtered.length, outliersRemoved, median, q1, q3, p95);
+	return calculateStatsFromArray(
+		filtered,
+		filtered.length,
+		outliersRemoved,
+		median,
+		q1,
+		q3,
+		p95
+	);
 }
 
 /**
  * Calculate statistics from an array of values
  */
-function calculateStatsFromArray(values, count, outliersRemoved, median, q1, q3, p95) {
+function calculateStatsFromArray(
+	values,
+	count,
+	outliersRemoved,
+	median,
+	q1,
+	q3,
+	p95
+) {
 	// Calculate mean
 	const sum = values.reduce((acc, val) => acc + val, 0);
 	const mean = sum / count;
 
 	// Calculate standard deviation
-	const variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / count;
+	const variance =
+		values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / count;
 	const stdDev = Math.sqrt(variance);
 
 	// Calculate percentiles if not provided
@@ -99,7 +118,12 @@ async function benchmark() {
 	const compareMode = args.includes('--compare');
 
 	const rulesetsDir = path.join(__dirname, '..', 'rulesets');
-	const benchmarkFixturesDir = path.join(__dirname, '..', 'benchmarks', 'fixtures');
+	const benchmarkFixturesDir = path.join(
+		__dirname,
+		'..',
+		'benchmarks',
+		'fixtures'
+	);
 	const resultsDir = path.join(__dirname, '..', 'benchmarks', 'results');
 
 	// Ensure results directory exists
@@ -112,7 +136,9 @@ async function benchmark() {
 	const fixtures = getBenchmarkFixtures(benchmarkFixturesDir);
 
 	if (fixtures.length === 0) {
-		console.log('⚠️  No benchmark fixtures found. Create Apex files in benchmarks/fixtures/');
+		console.log(
+			'⚠️  No benchmark fixtures found. Create Apex files in benchmarks/fixtures/'
+		);
 		return;
 	}
 
@@ -159,7 +185,9 @@ async function benchmark() {
 
 			// Base time + time per violation + time per KB of file
 			const simulatedTime =
-				5 + iterationViolations.length * 0.1 + (totalFileSize / 1024) * 0.05;
+				5 +
+				iterationViolations.length * 0.1 +
+				(totalFileSize / 1024) * 0.05;
 			const finalTime = Math.max(executionTime, simulatedTime);
 
 			executionTimes.push(finalTime);
@@ -192,7 +220,9 @@ async function benchmark() {
 		});
 
 		// Progress indicator
-		const progress = ((results.rules.length / rules.length) * 100).toFixed(0);
+		const progress = ((results.rules.length / rules.length) * 100).toFixed(
+			0
+		);
 		process.stdout.write(
 			`\r  Progress: ${progress}% (${results.rules.length}/${rules.length}) - ${rule.name} (${stats.iterations} valid iterations)`
 		);
@@ -211,29 +241,38 @@ async function benchmark() {
 
 		// Check for regressions (compare mean execution times after outlier removal)
 		results.rules.forEach((rule) => {
-			const baselineRule = baseline.rules.find((r) => r.name === rule.name);
+			const baselineRule = baseline.rules.find(
+				(r) => r.name === rule.name
+			);
 			if (baselineRule) {
 				// Both current and baseline executionTime are means after outlier removal
 				// For backward compatibility, also check executionTimeMean if executionTime is not available
 				const baselineTime =
-					baselineRule.executionTime || baselineRule.executionTimeMean || 0;
+					baselineRule.executionTime ||
+					baselineRule.executionTimeMean ||
+					0;
 				const currentTime = rule.executionTime; // This is stats.mean (mean after outlier removal)
 
 				// Only compare if we have valid baseline data
 				if (baselineTime > 0) {
-					const percentChange = ((currentTime - baselineTime) / baselineTime) * 100;
+					const percentChange =
+						((currentTime - baselineTime) / baselineTime) * 100;
 					if (percentChange > 10) {
 						// 10% threshold
 						rule.regression = true;
 						results.regressions.push({
 							rule: rule.name,
 							baselineTime: baselineTime,
-							baselineTimeMedian: baselineRule.executionTimeMedian || baselineTime,
-							baselineTimeStdDev: baselineRule.executionTimeStdDev || 0,
+							baselineTimeMedian:
+								baselineRule.executionTimeMedian ||
+								baselineTime,
+							baselineTimeStdDev:
+								baselineRule.executionTimeStdDev || 0,
 							currentTime: currentTime,
 							currentTimeMedian: rule.executionTimeMedian,
 							currentTimeStdDev: rule.executionTimeStdDev,
-							percentChange: Math.round(percentChange * 100) / 100,
+							percentChange:
+								Math.round(percentChange * 100) / 100,
 						});
 					}
 				}
@@ -249,7 +288,11 @@ async function benchmark() {
 
 	// Save as baseline if requested
 	if (args.includes('--baseline')) {
-		fs.writeFileSync(baselinePath, JSON.stringify(results, null, 2), 'utf-8');
+		fs.writeFileSync(
+			baselinePath,
+			JSON.stringify(results, null, 2),
+			'utf-8'
+		);
 		console.log('✅ Baseline saved');
 	}
 
@@ -278,7 +321,9 @@ function getAllRules(rulesetsDir) {
 
 	categories.forEach((category) => {
 		const categoryPath = path.join(rulesetsDir, category);
-		const files = fs.readdirSync(categoryPath).filter((file) => file.endsWith('.xml'));
+		const files = fs
+			.readdirSync(categoryPath)
+			.filter((file) => file.endsWith('.xml'));
 
 		files.forEach((file) => {
 			const ruleName = file.replace('.xml', '');
@@ -447,7 +492,9 @@ function simulateViolations(rule, fixturePath) {
 	} else if (ruleName === 'NoSingleLetterVariableNames') {
 		// Count single-letter variables (excluding i, c, e in loops/catch)
 		estimatedViolations = (
-			content.match(/\b(Integer|String|Boolean|Decimal)\s+[a-z](?![,;=])/g) || []
+			content.match(
+				/\b(Integer|String|Boolean|Decimal)\s+[a-z](?![,;=])/g
+			) || []
 		).length;
 	} else if (ruleName === 'NoAbbreviations') {
 		// Count common abbreviations
@@ -464,12 +511,15 @@ function simulateViolations(rule, fixturePath) {
 			'len',
 		];
 		abbreviations.forEach((abbr) => {
-			estimatedViolations += (content.match(new RegExp(`\\b${abbr}\\b`, 'g')) || []).length;
+			estimatedViolations += (
+				content.match(new RegExp(`\\b${abbr}\\b`, 'g')) || []
+			).length;
 		});
 	} else if (ruleName === 'FinalVariablesMustBeFinal') {
 		// Estimate variables that could be final
 		estimatedViolations = Math.floor(
-			(content.match(/\b(Integer|String|Boolean)\s+\w+\s*=/g) || []).length * 0.3
+			(content.match(/\b(Integer|String|Boolean)\s+\w+\s*=/g) || [])
+				.length * 0.3
 		);
 	} else if (ruleName === 'StaticMethodsMustBeStatic') {
 		// Estimate methods that could be static
@@ -477,9 +527,13 @@ function simulateViolations(rule, fixturePath) {
 			(content.match(/public\s+\w+\s+\w+\s*\(/g) || []).length * 0.2
 		);
 	} else if (ruleName.includes('InitializationMustBeMultiLine')) {
-		estimatedViolations = (content.match(/new\s+\w+<\w+>\s*\{[^}]{20,}/g) || []).length;
+		estimatedViolations = (
+			content.match(/new\s+\w+<\w+>\s*\{[^}]{20,}/g) || []
+		).length;
 	} else if (ruleName === 'MapShouldBeInitializedWithValues') {
-		estimatedViolations = (content.match(/new\s+Map[^;]*;\s*\w+\.put\(/g) || []).length;
+		estimatedViolations = (
+			content.match(/new\s+Map[^;]*;\s*\w+\.put\(/g) || []
+		).length;
 	} else {
 		// Generic estimation based on file size and complexity
 		// Larger files with more patterns = more potential violations
@@ -490,7 +544,8 @@ function simulateViolations(rule, fixturePath) {
 
 	// Generate violation objects at estimated line numbers
 	for (let i = 0; i < estimatedViolations && i < lines.length; i++) {
-		const lineNumber = Math.floor((i / estimatedViolations) * lines.length) + 1;
+		const lineNumber =
+			Math.floor((i / estimatedViolations) * lines.length) + 1;
 		violations.push({
 			file: fixturePath,
 			rule: ruleName,
@@ -518,7 +573,9 @@ function printBenchmarkResults(results) {
 		const status = rule.regression ? '⚠️  Regression' : '✅ OK';
 		const minMax = `${rule.executionTimeMin.toFixed(2)}-${rule.executionTimeMax.toFixed(2)}`;
 		const mean = rule.executionTime.toFixed(2);
-		const median = (rule.executionTimeMedian || rule.executionTime).toFixed(2);
+		const median = (rule.executionTimeMedian || rule.executionTime).toFixed(
+			2
+		);
 		const stdDev = (rule.executionTimeStdDev || 0).toFixed(2);
 
 		console.log(
@@ -532,9 +589,14 @@ function printBenchmarkResults(results) {
 	console.log(`Iterations per rule: ${results.iterations}`);
 
 	// Show distribution summary
-	const totalOutliers = results.rules.reduce((sum, r) => sum + (r.outliersRemoved || 0), 0);
+	const totalOutliers = results.rules.reduce(
+		(sum, r) => sum + (r.outliersRemoved || 0),
+		0
+	);
 	if (totalOutliers > 0) {
-		console.log(`\nOutliers removed: ${totalOutliers} total across all rules`);
+		console.log(
+			`\nOutliers removed: ${totalOutliers} total across all rules`
+		);
 	}
 
 	if (results.regressions.length > 0) {
@@ -542,7 +604,9 @@ function printBenchmarkResults(results) {
 			'\n⚠️  Performance Regressions Detected (comparing means after outlier removal):'
 		);
 		results.regressions.forEach((regression) => {
-			console.log(`  - ${regression.rule}: ${regression.percentChange}% slower`);
+			console.log(
+				`  - ${regression.rule}: ${regression.percentChange}% slower`
+			);
 			console.log(
 				`    Baseline: ${regression.baselineTime.toFixed(2)}ms (median: ${(regression.baselineTimeMedian || regression.baselineTime).toFixed(2)}ms, stddev: ${(regression.baselineTimeStdDev || 0).toFixed(2)}ms)`
 			);
@@ -562,8 +626,12 @@ function printBenchmarkResults(results) {
 	slowest.forEach((rule) => {
 		console.log(`\n${rule.name}:`);
 		console.log(`  Mean: ${rule.executionTime.toFixed(2)}ms`);
-		console.log(`  Median: ${(rule.executionTimeMedian || rule.executionTime).toFixed(2)}ms`);
-		console.log(`  StdDev: ${(rule.executionTimeStdDev || 0).toFixed(2)}ms`);
+		console.log(
+			`  Median: ${(rule.executionTimeMedian || rule.executionTime).toFixed(2)}ms`
+		);
+		console.log(
+			`  StdDev: ${(rule.executionTimeStdDev || 0).toFixed(2)}ms`
+		);
 		console.log(
 			`  Range: ${rule.executionTimeMin.toFixed(2)}ms - ${rule.executionTimeMax.toFixed(2)}ms`
 		);

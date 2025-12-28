@@ -9,7 +9,13 @@ const { DOMParser, XMLSerializer } = require('xmldom');
  */
 function generateTestRuleset() {
 	const rulesetsDir = path.join(__dirname, '..', 'rulesets');
-	const outputPath = path.join(__dirname, '..', 'tests', 'rulesets', 'test-ruleset.xml');
+	const outputPath = path.join(
+		__dirname,
+		'..',
+		'tests',
+		'rulesets',
+		'test-ruleset.xml'
+	);
 	const categories = fs
 		.readdirSync(rulesetsDir, { withFileTypes: true })
 		.filter((dirent) => dirent.isDirectory())
@@ -25,7 +31,9 @@ function generateTestRuleset() {
 	// Collect all rules from all categories
 	categories.forEach((category) => {
 		const categoryPath = path.join(rulesetsDir, category);
-		const files = fs.readdirSync(categoryPath).filter((file) => file.endsWith('.xml'));
+		const files = fs
+			.readdirSync(categoryPath)
+			.filter((file) => file.endsWith('.xml'));
 
 		files.forEach((file) => {
 			const filePath = path.join(categoryPath, file);

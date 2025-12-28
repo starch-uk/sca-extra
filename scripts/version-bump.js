@@ -34,7 +34,11 @@ function bumpVersion(type = 'patch') {
 	const newVersion = `${major}.${minor}.${patch}`;
 	packageJson.version = newVersion;
 
-	fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2) + '\n', 'utf-8');
+	fs.writeFileSync(
+		packagePath,
+		JSON.stringify(packageJson, null, 2) + '\n',
+		'utf-8'
+	);
 	console.log(`✅ Version bumped to ${newVersion}`);
 }
 

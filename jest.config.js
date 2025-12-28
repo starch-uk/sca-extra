@@ -3,15 +3,9 @@ module.exports = {
 	// Explicitly match test files in tests/unit directory
 	testMatch: ['**/tests/unit/**/*.test.js', '**/tests/**/*.test.js'],
 	testPathIgnorePatterns: ['/node_modules/', '/coverage/'],
-	collectCoverageFrom: [
-		'scripts/**/*.js',
-		'tests/helpers/**/*.js',
-		'!**/*.test.js',
-		'!tests/fixtures/**',
-		'!tests/rulesets/**',
-	],
-	coverageDirectory: 'coverage',
-	coverageReporters: ['text', 'lcov', 'html'],
+	// Coverage is tracked via scripts/check-rule-coverage.js for XML rule files
+	// Jest coverage is disabled since it can't instrument XML files
+	collectCoverage: false,
 	verbose: true,
 	testTimeout: 10000,
 	// Ensure all test files are discovered

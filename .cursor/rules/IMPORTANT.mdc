@@ -5,6 +5,7 @@ alwaysApply: true
 When working with PMD rules, XPath expressions, Apex AST structure, testing, or code analysis, always reference these documentation files:
 
 **Core PMD & Rule Development:**
+- **@docs/PMD.md** - PMD (source code analyzer) quick reference and essentials for Salesforce Code Analyzer integration
 - **@docs/APEX_PMD_AST.md** - PMD Apex AST node types, patterns, and structure reference
 - **@docs/XPATH31.md** - XPath 3.1 syntax, functions, and expressions reference
 - **@docs/AI_AGENT_RULE_GUIDE.md** - Machine-readable rule configuration guide with examples and property documentation
@@ -17,9 +18,11 @@ When working with PMD rules, XPath expressions, Apex AST structure, testing, or 
 
 **Testing & Development:**
 - **@docs/JEST30.md** - Jest 30.0 API reference for writing and running tests
+- **@docs/PNPM.md** - pnpm package manager reference for dependency management and workspace configuration
 - **@docs/MIGRATION_GUIDES.md** - Rule migration and versioning information
 
 Use these documents to:
+- Understand PMD fundamentals and how it integrates with Salesforce Code Analyzer
 - Understand how Apex code is represented in the PMD AST
 - Write correct XPath expressions that match AST nodes
 - Reference XPath 3.1 syntax and functions when writing rule queries
@@ -27,41 +30,51 @@ Use these documents to:
 - Access rule examples, violations, valid code patterns, and configuration properties
 - Configure `code-analyzer.yml` with proper engines and properties
 - Write and maintain Jest tests using the Jest 30.0 API
+- Manage dependencies and workspaces using pnpm
 - Understand ApexDoc syntax and documentation requirements
 - Suppress rule violations when necessary
 
 When creating or modifying PMD rules:
-1. Check **@docs/APEX_PMD_AST.md** for the correct AST node types and patterns
-2. Use **@docs/XPATH31.md** for XPath 3.1 syntax and function reference
-3. Reference **@docs/AI_AGENT_RULE_GUIDE.md** for rule examples and configuration patterns
-4. Use **@docs/CODE_ANALYZER_CONFIG.md** for configuring `code-analyzer.yml` with engines and properties
-5. Use **@docs/REGEX.md** for creating pattern-based Regex rules
-6. Reference **@docs/SUPPRESS_WARNINGS.md** when implementing suppression mechanisms
-7. **When fixing rules to comply with unit tests, always start by dumping the AST** - Use `scripts/ast-dump.sh` to inspect the actual AST structure of test fixtures before modifying XPath expressions. This ensures you understand the exact node structure and relationships before making changes.
-8. **Every rule should use properties for things that should be configurable** - Add configurable properties (thresholds, lists, etc.) instead of hardcoding values
-9. **New subfolders can be created under rulesets/** - Make sure they follow the existing category structure (code-style, documentation, method-signatures, modifiers, naming, structure)
-10. **Every rule must have both positive and negative test cases** - Create test fixtures in `tests/fixtures/positive/` and `tests/fixtures/negative/` covering all parts of the XPath expression
-11. **All code should be linted and formatted following any changes** - Run `pnpm run format` and `pnpm run lint` (or `pnpm run lint:fix`)
-12. **All tests should be run and regressions checked following any changes** - Run `pnpm test` and verify no test regressions. **IMPORTANT**: Always run tests with full permissions. Do NOT run `pnpm test` without full permissions - Jest will fail with module resolution errors (e.g., "Cannot find module '@jest/test-sequencer'") when run without full permissions due to pnpm's module resolution requiring full filesystem access. Reference **@docs/JEST30.md** for Jest API usage when writing or modifying tests.
-13. **README.md should be updated with any pertinent changes** - Document new rules, rule changes, or significant updates in the README
-14. Test XPath expressions against both positive and negative test cases
-15. **Benchmark stress tests must be kept up to date** - When adding or modifying rules, update the benchmark fixtures:
-    - **New rules**: Add violations to `benchmarks/fixtures/stress-test-all-rules.cls` and the appropriate category-specific fixture (e.g., `stress-code-style.cls`, `stress-structure.cls`)
+1. Reference **@docs/PMD.md** for PMD fundamentals and integration details
+2. Check **@docs/APEX_PMD_AST.md** for the correct AST node types and patterns
+3. Use **@docs/XPATH31.md** for XPath 3.1 syntax and function reference
+4. Reference **@docs/AI_AGENT_RULE_GUIDE.md** for rule examples and configuration patterns
+5. Use **@docs/CODE_ANALYZER_CONFIG.md** for configuring `code-analyzer.yml` with engines and properties
+6. Use **@docs/REGEX.md** for creating pattern-based Regex rules
+7. Reference **@docs/SUPPRESS_WARNINGS.md** when implementing suppression mechanisms
+8. **When fixing rules to comply with unit tests, always start by dumping the AST** - Use `pnpm ast-dump <apex-file>` to inspect the actual AST structure of test fixtures before modifying XPath expressions. This ensures you understand the exact node structure and relationships before making changes.
+9. **Every rule should use properties for things that should be configurable** - Add configurable properties (thresholds, lists, etc.) instead of hardcoding values
+10. **New subfolders can be created under rulesets/** - Make sure they follow PMD's 8 standard categories (best-practices, code-style, design, documentation, error-prone, multithreading, performance, security)
+11. **Every rule must have both positive and negative test cases** - Create test fixtures in `tests/fixtures/positive/` and `tests/fixtures/negative/` covering all parts of the XPath expression
+12. **XML element order must be correct** - PMD ruleset XML files must follow the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd). Elements within `<rule>` must appear in this order: `description` → `priority` → `properties` → `exclude` → `example`. Use `pnpm check-xml-order` to verify order, or `pnpm fix-xml-order` to automatically fix it. These scripts use XML libraries (`xmldom`) to properly parse and manipulate XML, ensuring all elements (including multiple examples) are preserved.
+13. **All code should be linted and formatted following any changes** - Run `pnpm format` and `pnpm lint` (or `pnpm lint:fix`). **CRITICAL**: **Always run lint commands with full permissions** - Use `required_permissions: ['all']` when running lint commands. ESLint will fail with `EPERM: operation not permitted` errors when run without full permissions due to pnpm's module resolution requiring full filesystem access to read files from `node_modules/.pnpm/`.
+14. **All tests should be run and regressions checked following any changes** - Run `pnpm test` and verify no test regressions. **CRITICAL**: **Always run `pnpm test` with full permissions the first time** - Use `required_permissions: ['all']` when running test commands. Jest will fail with module resolution errors (e.g., "Cannot find module '@jest/test-sequencer'") when run without full permissions due to pnpm's module resolution requiring full filesystem access. After the first successful run, subsequent runs may work without full permissions, but always use full permissions for initial test runs. Reference **@docs/JEST30.md** for Jest API usage when writing or modifying tests.
+15. **README.md should be updated with any pertinent changes** - Document new rules, rule changes, or significant updates in the README
+16. **PLAN.md is a planning document** - PLAN.md should be written as if the project has not yet been created. It details what needs to happen to create the project, not the current state of the project. PLAN.md should:
+    - Use future tense ("will be", "should be", "needs to", "must be")
+    - Describe implementation steps and phases
+    - Include requirements and prerequisites
+    - Focus on what needs to be done to create the project
+    - NOT describe current project state, what already exists, or how things currently work
+    - NOT include historical context or references to past states
+    - The current state of the project is documented in README.md and other documentation files, not in PLAN.md
+17. Test XPath expressions against both positive and negative test cases
+18. **Benchmark stress tests must be kept up to date** - When adding or modifying rules, update the benchmark fixtures:
+    - **New rules**: Add violations to `benchmarks/fixtures/stress-test-all-rules.cls` and the appropriate category-specific fixture (e.g., `stress-code-style.cls`, `stress-design.cls`, `stress-best-practices.cls`)
     - **Rule modifications**: Update existing violations in stress test fixtures to reflect rule changes
     - **Target 10-20 violations per rule** in stress tests to properly benchmark performance
     - **Use realistic code patterns** that developers might actually write
     - **Update `benchmarks/FIXTURES.md`** with new violation counts and rule coverage
-    - **Run benchmarks after updates**: `pnpm run benchmark` to verify performance
-    - **Regenerate baseline if needed**: `pnpm run benchmark -- --baseline` after significant changes
-16. **Stress test fixtures location**: `benchmarks/fixtures/` contains comprehensive stress-test files:
-    - `stress-test-all-rules.cls` - Comprehensive fixture with violations across all rules
-    - `stress-code-style.cls` - Code style rules (200+ violations)
-    - `stress-structure.cls` - Structure rules (100+ violations)
-    - `stress-modifiers.cls` - Modifier rules (100+ violations)
-    - `stress-naming.cls` - Naming rules (100+ violations)
-    - `stress-documentation.cls` - Documentation rules (50+ violations)
-    - `stress-method-signatures.cls` - Method signature rules (30+ violations)
-17. **Running specific tests**: When debugging or working on a specific rule, use Jest's `--testNamePattern` flag to run only matching tests instead of the full test suite. This saves time and focuses output. Reference **@docs/JEST30.md** for Jest CLI options and API. The pattern matches test names using regex:
+    - **Run benchmarks after updates**: `pnpm benchmark` to verify performance
+    - **Regenerate baseline if needed**: `pnpm benchmark -- --baseline` after significant changes
+19. **Stress test fixtures location**: `benchmarks/fixtures/` contains comprehensive stress-test files:
+    - `stress-test-all-rules.cls` - Comprehensive fixture with violations across all 43 PMD rules
+    - `stress-code-style.cls` - Code style rules (21 rules, 300+ violations, includes naming)
+    - `stress-design.cls` - Design rules (15 rules, 130+ violations, includes structure and method signatures)
+    - `stress-best-practices.cls` - Best practices rules (5 rules, 100+ violations, includes modifiers)
+    - `stress-documentation.cls` - Documentation rules (2 rules, 30+ violations)
+    - **Note**: Regex rules (NoConsecutiveBlankLines, ProhibitSuppressWarnings) are not included in PMD benchmark fixtures as they use a different engine.
+20. **Running specific tests**: When debugging or working on a specific rule, use Jest's `--testNamePattern` flag to run only matching tests instead of the full test suite. This saves time and focuses output. Reference **@docs/JEST30.md** for Jest CLI options and API. The pattern matches test names using regex:
     - **Run all tests for a specific rule**: `pnpm test -- --testNamePattern="RuleName"` (matches any test containing "RuleName")
     - **Run only detection tests**: `pnpm test -- --testNamePattern="should detect"` (matches tests with "should detect" in the name)
     - **Run a specific test for a rule**: `pnpm test -- --testNamePattern="RuleName.*should detect"` (matches tests starting with "RuleName" and containing "should detect")
@@ -69,12 +82,17 @@ When creating or modifying PMD rules:
       - `pnpm test -- --testNamePattern="AnnotationBeforeComment"` - Runs all AnnotationBeforeComment tests (both positive and negative cases)
       - `pnpm test -- --testNamePattern="ProhibitSuppressWarnings.*should detect"` - Runs only the "should detect" test for ProhibitSuppressWarnings rule
       - `pnpm test -- --testNamePattern="should not flag"` - Runs all tests that verify rules don't produce false positives
-18. **Using PMD AST dump tool**: Use the AST dump script to inspect the actual AST structure of Apex files:
-    - `pnpm run ast-dump <apex-file>` - Dump AST for a file (text format)
+21. **Using PMD AST dump tool**: Use the AST dump script to inspect the actual AST structure of Apex files:
+    - `pnpm ast-dump <apex-file>` - Dump AST for a file (text format)
     - `pmd ast-dump --file=<apex-file> -l apex -f xml` - Dump AST in XML format
     - `pmd ast-dump --file=<apex-file> -l apex -f xml > output.ast.xml` - Save AST to file
     - Examples:
-      - `npm run ast-dump tests/fixtures/negative/structure/ProhibitSuppressWarnings.cls`
+      - `pnpm ast-dump tests/fixtures/negative/code-style/ProhibitSuppressWarnings.cls`
       - `pmd ast-dump --file=tests/fixtures/positive/documentation/AnnotationBeforeComment.cls -l apex -f xml | grep -E "Method|FormalComment|Annotation"`
     - **Note**: Files with syntax errors cannot be parsed. Fix syntax errors first or use valid test files for AST inspection.
     - **Tip**: Use AST dump to understand node relationships, attributes, and structure before writing XPath expressions.
+22. **PMD command execution**: **Always use the `-r <file>` flag when running PMD commands** to avoid progressbar rendering conflicts with STDOUT. PMD will show a warning: `[WARN] Progressbar rendering conflicts with reporting to STDOUT. No progressbar will be shown. Try running with argument -r <file> to output the report to a file instead.` To prevent this warning, always redirect PMD output to a file using the `-r` flag:
+    - **Correct**: `pmd check --no-cache -d "${file}" -R "${ruleset}" -f xml -r "${outputFile}"`
+    - **Incorrect**: `pmd check --no-cache -d "${file}" -R "${ruleset}" -f xml` (outputs to STDOUT, causes warning)
+    - The `tests/helpers/pmd-helper.js` file already implements this correctly - any new PMD invocations should follow the same pattern
+    - When running PMD manually or in scripts, always use `-r <file>` to write output to a file, then read the file contents

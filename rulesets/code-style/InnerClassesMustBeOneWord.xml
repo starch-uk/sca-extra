@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Code Style Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>
+		Custom rules for Apex code style (formatting, naming conventions, code
+		style patterns)
+	</description>
+	<rule
+		name="InnerClassesMustBeOneWord"
+		language="apex"
+		message="Inner class names must be a single word. They cannot contain underscores or multiple words in PascalCase"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Inner class names must be a single word. They cannot contain
+			underscores or multiple words in PascalCase. This naming convention helps
+			distinguish inner classes from regular classes and improves code readability.
+
+			Version: 1.0.0
+		</description>
+		<priority>2</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//UserClass[
+						@Nested = true()
+						and (contains(@Image, '_') or matches(@Image, '[a-z].*[A-Z]'))
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Inner class with underscore
+			public class Outer {
+			    public class Inner_Class {  // ❌
+			    }
+			}
+			
+			// Violation: Inner class with multiple words (PascalCase)
+			public class Outer {
+			    public class InnerClass {  // ❌
+			    }
+			}
+			
+			// Valid: Single word inner class
+			public class Outer {
+			    public class Inner {  // ✅
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Inner class with multiple words
+			public class Outer {
+			    public class DataProcessor {  // ❌ Multiple words
+			    }
+			    public class User_Manager {  // ❌ Underscore
+			    }
+			}
+			
+			// Valid: Single word inner classes
+			public class Outer {
+			    public class Processor {  // ✅
+			    }
+			    public class Manager {  // ✅
+			    }
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>

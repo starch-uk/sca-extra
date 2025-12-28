@@ -6,7 +6,6 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="NoMethodCallsAsArguments"
 		language="apex"
@@ -14,32 +13,37 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Method calls should not be used directly as arguments to constructors, method calls, or
-			expressions. Extract method calls to variables first for better readability, debugging,
+			Method calls should not be used directly as arguments to
+			constructors, method calls, or
+			expressions. Extract method calls to variables first for better
+			readability, debugging,
 			and to avoid potential side effects from multiple evaluations.
+
+			Version: 1.0.0
 		</description>
 		<priority>2</priority>
 		<properties>
 			<property name="xpath">
-				<value
-				><![CDATA[
+				<value>
+					<![CDATA[
 					//MethodCallExpression[
-						(
-							parent::MethodCallExpression
-							or parent::NewObjectExpression
-							or ancestor::MethodCallExpression[position() > 1]
-							or ancestor::NewObjectExpression
-						)
-						and not(
-							ancestor::VariableDeclaration[VariableExpression]
-							or ancestor::AssignmentExpression[VariableExpression]
-							or parent::VariableDeclaration
-						)
+						(parent::MethodCallExpression or parent::NewObjectExpression or ancestor::MethodCallExpression[position() > 1] or ancestor::NewObjectExpression)
+						and not(ancestor::VariableDeclaration[VariableExpression] or ancestor::AssignmentExpression[VariableExpression] or parent::VariableDeclaration)
 					]
-					|
-					//NewObjectExpression[.//MethodCallExpression]/MethodCallExpression
-				]]></value>
+					| //NewObjectExpression[.//MethodCallExpression]/MethodCallExpression
+					]]>
+				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Method call as argument
+			String result = processValue(getValue());
+			
+			// Valid: Extract method call to variable
+			Integer value = getValue();
+			String result = processValue(value);
+			]]>
+		</example>
 	</rule>
 </ruleset>

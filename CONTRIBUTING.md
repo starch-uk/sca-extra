@@ -12,7 +12,7 @@ We appreciate your interest in improving sca-extra. Your contributions help make
 
 - **Node.js:** Version 18 or higher
 - **pnpm:** Latest version
-- **PMD:** For testing rules (Salesforce Code Analyzer)
+- **PMD CLI:** For testing rules (version 7.19.0 or higher)
 - **Git:** For version control
 
 ### Installation
@@ -30,15 +30,15 @@ We appreciate your interest in improving sca-extra. Your contributions help make
 
 3. **Set up pre-commit hooks**
    ```bash
-   pnpm run prepare
+   pnpm prepare
    ```
 
 ### Running Tests Locally
 
 ```bash
-pnpm test              # Run all tests
-pnpm run test:watch    # Run tests in watch mode
-pnpm run test:coverage # Run tests with coverage report
+pnpm test          # Run all tests
+pnpm test:watch    # Run tests in watch mode
+pnpm test:coverage # Run tests with coverage report
 ```
 
 For Jest API reference when writing tests, see [Jest 30.0 Reference](docs/JEST30.md).
@@ -46,8 +46,8 @@ For Jest API reference when writing tests, see [Jest 30.0 Reference](docs/JEST30
 ### Running Benchmarks
 
 ```bash
-pnpm run benchmark     # Run performance benchmarks
-pnpm run check-regressions  # Check for performance regressions
+pnpm benchmark        # Run performance benchmarks
+pnpm check-regressions # Check for performance regressions
 ```
 
 ## Adding New Rules
@@ -57,16 +57,34 @@ pnpm run check-regressions  # Check for performance regressions
 1. **Choose the appropriate category**
    - `code-style/` - Code style and formatting rules
    - `documentation/` - Documentation quality rules
-   - `method-signatures/` - Method signature rules
-   - `modifiers/` - Modifier and access control rules
-   - `naming/` - Naming convention rules
-   - `structure/` - Code structure and organization rules
+   - `best-practices/` - Generally accepted best practices
+   - `code-style/` - Coding style enforcement (including naming)
+   - `design/` - Design issue detection (structure, method signatures)
+   - `documentation/` - Code documentation rules
+   - `error-prone/` - Broken/confusing/runtime-error-prone constructs
+   - `multithreading/` - Multi-threaded execution issues
+   - `performance/` - Suboptimal code detection
+   - `security/` - Potential security flaws
 
 2. **Create the rule XML file**
    - File name should match the rule name (PascalCase)
-   - Example: `rulesets/structure/MyNewRule.xml`
+   - Example: `rulesets/design/MyNewRule.xml`
 
 3. **Follow the rule template**
+
+   **Note:** This template follows the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd). The `<example>` element is optional but recommended, and multiple examples are supported.
+
+   **Important:** Element order matters! The XSD schema requires elements in this specific order within `<rule>`:
+   1. `<description>` (optional)
+   2. `<priority>` (optional)
+   3. `<properties>` (optional)
+   4. `<exclude>` (optional, can appear multiple times)
+   5. `<example>` (optional, can appear multiple times)
+
+   Use the provided scripts to ensure correct element order:
+   - `pnpm check-xml-order` - Check if element order is correct
+   - `pnpm fix-xml-order` - Automatically fix element order
+
    ```xml
    <?xml version="1.0" ?>
    <ruleset
@@ -87,6 +105,8 @@ pnpm run check-regressions  # Check for performance regressions
                Detailed description explaining what the rule checks and why it exists.
                Include examples of violations if helpful.
                
+               To customize this rule, edit the configurable values in the XPath expression (if applicable).
+               
                Version: 1.0.0
            </description>
            <priority>1-5</priority>
@@ -94,13 +114,26 @@ pnpm run check-regressions  # Check for performance regressions
                <property name="xpath">
                    <value><![CDATA[
                    //XPath expression
+                   // For rules with configurable thresholds, use let expressions:
+                   // let $threshold := 3
+                   // return count(*) >= $threshold
                    ]]></value>
                </property>
-               <!-- Configurable properties where applicable -->
-               <property name="maxLength" description="Maximum allowed length">
-                   <value>100</value>
-               </property>
            </properties>
+           <!-- Multiple examples are supported (per PMD Ruleset XML Schema) -->
+           <example>
+               <![CDATA[
+               // Violation: Code that triggers the rule
+               public void badExample() {
+                   // ...
+               }
+               
+               // Valid: Code that doesn't trigger the rule
+               public void goodExample() {
+                   // ...
+               }
+               ]]>
+           </example>
        </rule>
    </ruleset>
    ```
@@ -109,8 +142,9 @@ pnpm run check-regressions  # Check for performance regressions
    - **XPath Only**: All rules MUST use XPath 3.1 expressions only. No custom Java classes.
    - **Clear Naming**: Use PascalCase and descriptive names (e.g., `NoSingleLetterVariableNames`)
    - **Comprehensive Description**: Include what the rule checks, why it exists, and examples
+   - **Examples**: Include `<example>` elements showing violations and valid code (per [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd))
    - **Versioning**: Include version in description (semantic versioning: major.minor.patch)
-   - **Configurable Properties**: Expose properties for thresholds, exceptions, and behavior toggles
+   - **Easy to Edit**: Use variables at the top of XPath expressions for configurable thresholds (e.g., `let $minValues := 3`)
 
 5. **Write tests**
    - Create positive test case: `tests/fixtures/positive/{category}/{RuleName}.cls`
@@ -119,9 +153,12 @@ pnpm run check-regressions  # Check for performance regressions
 
 6. **Validate the rule**
    ```bash
-   pnpm run validate    # Validate XML syntax and rule quality
+   pnpm validate        # Validate XML syntax and rule quality
+   pnpm check-xml-order # Check XML element order
    pnpm test            # Run tests
    ```
+   
+   **Note:** The `check-xml-order` script verifies that elements within `<rule>` follow the XSD schema order: `description` → `priority` → `properties` → `exclude` → `example`. If the order is incorrect, use `pnpm fix-xml-order` to automatically fix it.
 
 7. **Document the rule**
    - Add rule documentation to `README.md` with examples
@@ -134,14 +171,6 @@ pnpm run check-regressions  # Check for performance regressions
 - Use action verbs: `PreferSafeNavigationOperator`, `AvoidOneLinerMethods`
 - Avoid abbreviations unless widely understood
 
-### Property Configuration Guidelines
-
-- Use properties for configurable thresholds or lists
-- Provide sensible defaults
-- Document each property with a description
-- Use appropriate types (string, integer, boolean)
-- Consider backward compatibility when adding properties
-
 ## Testing Requirements
 
 ### All Rules Must Have:
@@ -149,18 +178,15 @@ pnpm run check-regressions  # Check for performance regressions
 1. **Positive Test Cases** - Code that should NOT trigger the rule
    - Verify rule doesn't produce false positives
    - Test edge cases and exceptions
-   - Test with different property configurations
 
 2. **Negative Test Cases** - Code that SHOULD trigger the rule
    - Verify rule detects violations correctly
    - Test at correct line numbers
    - Test multiple violations in same file
-   - Test with different property configurations
 
 3. **Unit Tests** - Automated test cases
-   - Use test helper functions: `runPMD`, `parseViolations`, `assertViolation`
+   - Use test helper functions: `runPMD`, `parseViolations`, `assertViolation`, `assertNoViolations`
    - Test both positive and negative cases
-   - Test property configurations
    - See [Jest 30.0 Reference](docs/JEST30.md) for Jest API usage
 
 ### Test Coverage Expectations
@@ -168,14 +194,13 @@ pnpm run check-regressions  # Check for performance regressions
 - All rules must have positive and negative test cases
 - Test coverage should be > 80% for test utilities
 - Edge cases should be tested
-- Property configurations should be tested
 
 ### Running Tests
 
 ```bash
 pnpm test              # Run all tests
-pnpm run test:watch    # Run tests in watch mode
-pnpm run test:coverage # Check test coverage
+pnpm test:watch    # Run tests in watch mode
+pnpm test:coverage # Check test coverage
 ```
 
 For Jest API reference, see [Jest 30.0 Reference](docs/JEST30.md).
@@ -214,13 +239,12 @@ Before submitting a pull request, ensure:
 - [ ] Code follows project style guidelines
 - [ ] All tests pass (`pnpm test`)
 - [ ] Test coverage is maintained or improved
-- [ ] XML files are formatted with Prettier (`pnpm run format:check`)
-- [ ] JavaScript files pass ESLint (`pnpm run lint`)
-- [ ] Rule validation passes (`pnpm run validate`)
+- [ ] XML files are formatted with Prettier (`pnpm format:check`)
+- [ ] JavaScript files pass ESLint (`pnpm lint`)
+- [ ] Rule validation passes (`pnpm validate`)
 - [ ] Documentation is updated (README.md, AI_AGENT_RULE_GUIDE.md)
 - [ ] Rule has clear name and comprehensive description
 - [ ] Rule uses XPath only (no custom Java classes)
-- [ ] Configurable properties are exposed where applicable
 - [ ] Rule is versioned (semantic versioning)
 - [ ] Positive and negative test cases are included
 - [ ] No merge conflicts
@@ -250,7 +274,7 @@ Before submitting a pull request, ensure:
 
 - All XML files are automatically formatted with Prettier
 - Pre-commit hook ensures formatting before commit
-- Run `pnpm run format` to format manually
+- Run `pnpm format` to format manually
 
 ### JavaScript/TypeScript Style
 
@@ -263,7 +287,6 @@ Before submitting a pull request, ensure:
 
 - All rules must be documented in README.md
 - Include code examples (violations and valid code)
-- Document all configurable properties
 - Update AI_AGENT_RULE_GUIDE.md for new rules
 
 ## Community-Contributed Rules
@@ -275,7 +298,6 @@ We welcome community-contributed rules! All community rules must meet the same r
 - Must be versioned (semantic versioning)
 - Must have comprehensive tests (positive and negative)
 - Must be documented in README.md
-- Must expose configurable properties where applicable
 
 ### Proposing New Rules
 

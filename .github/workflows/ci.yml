@@ -2,9 +2,7 @@ name: CI
 
 on:
   pull_request:
-    branches: [main, develop]
-  push:
-    branches: [main, develop]
+    branches: [main]
 
 # Cancel in-progress runs for the same workflow and branch
 concurrency:
@@ -37,7 +35,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: "10.26.1"
+          version: "10.26.2"
 
       - name: Cache pnpm store
         uses: actions/cache@v5
@@ -51,10 +49,16 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Check XML formatting
-        run: pnpm run format:check
+        run: pnpm format:check
+
+      - name: Check XML element order
+        run: pnpm check-xml-order
+
+      - name: Validate rulesets
+        run: pnpm validate
 
       - name: Lint JavaScript
-        run: pnpm run lint
+        run: pnpm lint
 
       - name: Cache PMD
         id: cache-pmd
@@ -138,7 +142,10 @@ jobs:
           
           echo "PMD CLI setup complete (version ${PMD_VERSION})"
 
-      - name: Run tests with coverage
+      - name: Run tests
+        run: pnpm test
+
+      - name: Check rule coverage
         run: pnpm test:coverage
 
       - name: Upload coverage

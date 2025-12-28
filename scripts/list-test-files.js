@@ -35,7 +35,9 @@ function listTestFiles() {
 	console.log(`\nJest testMatch pattern: ${jestConfig.testMatch.join(', ')}`);
 
 	// Verify all files would be found by Jest
-	console.log(`\n✅ All ${files.length} test files should be discovered by Jest`);
+	console.log(
+		`\n✅ All ${files.length} test files should be discovered by Jest`
+	);
 	console.log(`   Pattern: ${jestConfig.testMatch.join(' or ')}`);
 }
 

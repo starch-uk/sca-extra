@@ -70,44 +70,102 @@ sf code-analyzer run --suppress-marker "TURN_OFF_WARNINGS"
 
 ## Rule Properties (Global Suppression)
 
-Configure in `code-analyzer.yml` to suppress violations matching patterns.
+**Important:** Salesforce Code Analyzer does not support property overrides via `code-analyzer.yml`. Configure suppression properties via custom ruleset XML files using `ref=` syntax.
+
+Create a custom ruleset XML file to suppress violations matching patterns.
 
 ### violationSuppressRegex
 
 Suppress violations where the message matches a regex:
 
-```yaml
-rules:
-  UnusedFormalParameter:
-    properties:
-      violationSuppressRegex: ".*'mySpecialParameter'.*"
+**Important:** Salesforce Code Analyzer does not support property overrides via `code-analyzer.yml`. Configure suppression properties via custom ruleset XML files.
+
+**Custom ruleset XML:**
+```xml
+<rule ref="category/apex/bestpractices.xml/UnusedFormalParameter">
+    <properties>
+        <property name="violationSuppressRegex">
+            <value>.*'mySpecialParameter'.*</value>
+        </property>
+    </properties>
+</rule>
+```
+
+**For custom rules:**
+```xml
+<rule ref="rulesets/design/SomeRule.xml/SomeRule">
+    <properties>
+        <property name="violationSuppressRegex">
+            <value>.*'mySpecialParameter'.*</value>
+        </property>
+    </properties>
+</rule>
 ```
 
 ### violationSuppressXPath
 
 Suppress violations where XPath query matches (XPath 3.1, context node is the violation node):
 
+**Important:** Salesforce Code Analyzer does not support property overrides via `code-analyzer.yml`. Configure suppression properties via custom ruleset XML files.
+
+**Custom ruleset XML:**
+```xml
+<?xml version="1.0"?>
+<ruleset
+    name="Suppression Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Suppression rules for specific patterns</description>
+    
+    <!-- Suppress String parameters -->
+    <rule ref="category/apex/bestpractices.xml/UnusedFormalParameter">
+        <properties>
+            <property name="violationSuppressXPath">
+                <value>.[pmd-apex:typeIs('String')]</value>
+            </property>
+        </properties>
+    </rule>
+    
+    <!-- Suppress in classes containing "Bean" -->
+    <rule ref="rulesets/design/SomeRule.xml/SomeRule">
+        <properties>
+            <property name="violationSuppressXPath">
+                <value>./ancestor-or-self::ClassDeclaration[contains(@SimpleName, 'Bean')]</value>
+            </property>
+        </properties>
+    </rule>
+    
+    <!-- Suppress in equals/hashCode methods -->
+    <rule ref="rulesets/design/AnotherRule.xml/AnotherRule">
+        <properties>
+            <property name="violationSuppressXPath">
+                <value>./ancestor-or-self::MethodDeclaration[@Name = ('equals', 'hashCode')]</value>
+            </property>
+        </properties>
+    </rule>
+    
+    <!-- Suppress in classes ending with "Bean" (regex match) -->
+    <rule ref="rulesets/design/YetAnotherRule.xml/YetAnotherRule">
+        <properties>
+            <property name="violationSuppressXPath">
+                <value>./ancestor-or-self::ClassDeclaration[matches(@SimpleName, '^.*Bean$')]</value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>
+```
+
+Then reference in `code-analyzer.yml`:
 ```yaml
-rules:
-  UnusedFormalParameter:
-    properties:
-      # Suppress String parameters
-      violationSuppressXPath: ".[pmd-apex:typeIs('String')]"
-      
-  # Suppress in classes containing "Bean"
-  SomeRule:
-    properties:
-      violationSuppressXPath: "./ancestor-or-self::ClassDeclaration[contains(@SimpleName, 'Bean')]"
-      
-  # Suppress in equals/hashCode methods
-  AnotherRule:
-    properties:
-      violationSuppressXPath: "./ancestor-or-self::MethodDeclaration[@Name = ('equals', 'hashCode')]"
-      
-  # Suppress in classes ending with "Bean" (regex match)
-  YetAnotherRule:
-    properties:
-      violationSuppressXPath: "./ancestor-or-self::ClassDeclaration[matches(@SimpleName, '^.*Bean$')]"
+engines:
+  pmd:
+    custom_rulesets:
+      - rulesets/design/SomeRule.xml
+      - rulesets/design/AnotherRule.xml
+      - rulesets/design/YetAnotherRule.xml
+      - rulesets/suppression-rules.xml  # Custom suppression ruleset
 ```
 
 **XPath Notes:**

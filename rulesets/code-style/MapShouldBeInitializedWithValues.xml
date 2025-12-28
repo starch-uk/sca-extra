@@ -6,7 +6,6 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="MapShouldBeInitializedWithValues"
 		language="apex"
@@ -14,36 +13,50 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Maps should be initialized with values directly using the map literal syntax instead of
-			creating an empty map and immediately calling put(). This improves readability and reduces
+			Maps should be initialized with values directly using the map
+			literal syntax instead of
+			creating an empty map and immediately calling put(). This improves readability
+			and reduces
 			unnecessary method calls.
 			
-			Use: new Map &lt; String, String &gt; {'key' => 'value'}
-			Instead of: new Map &lt; String, String &gt; (); map.put('key', 'value');
+			Use: new Map &lt; String, String > {'key' = > 'value'}
+			Instead of: new Map &lt; String, String > (); map.put('key', 'value');
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    for $stmt in //VariableDeclarationStatements[
-                        VariableDeclaration[
-                            contains(@Type, 'Map')
-                            and NewMapInitExpression
-                            and not(NewMapInitExpression/MapEntryNode)
-                            and VariableExpression
-                        ]
-                    ]
-                    return if (
-                        $stmt/following-sibling::*[1][self::ExpressionStatement]
-                        and $stmt/following-sibling::ExpressionStatement[1]/MethodCallExpression[
-                            @MethodName = 'put'
-                            and ReferenceExpression[1]/@Image = $stmt/VariableDeclaration/VariableExpression/@Image
-                        ]
-                    ) then $stmt else ()
-                    ]]>
-                </value>
+					<![CDATA[
+					for $stmt in //VariableDeclarationStatements[
+						VariableDeclaration[
+							contains(@Type, 'Map')
+							and NewMapInitExpression
+							and not(NewMapInitExpression/MapEntryNode)
+							and VariableExpression
+						]
+					]
+					return if (
+						$stmt/following-sibling::*[1][self::ExpressionStatement]
+						and $stmt/following-sibling::ExpressionStatement[1]/MethodCallExpression[
+							@MethodName = 'put'
+							and ReferenceExpression[1]/@Image = $stmt/VariableDeclaration/VariableExpression/@Image
+						]
+					) then $stmt else ()
+					]]>
+				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Empty map followed by put()
+			Map<String, String> map = new Map<String, String>();
+			map.put('key', 'value');
+			
+			// Valid: Initialize with values directly
+			Map<String, String> map = new Map<String, String> {'key' => 'value'};
+			]]>
+		</example>
 	</rule>
 </ruleset>

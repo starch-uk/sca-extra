@@ -6,7 +6,6 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="PreferMethodCallsInLoopConditions"
 		language="apex"
@@ -14,26 +13,44 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Method calls should be used directly in loop conditionals rather than testing inside the
-			loop with a break statement. This makes the loop condition explicit and improves readability.
+			Method calls should be used directly in loop conditionals rather
+			than
+			testing inside the loop with a break statement. This makes the loop
+			condition explicit and improves readability.
 			
 			Use: while (hasMore()) { ... }
 			Instead of: while (true) { if (!hasMore()) { break; } ... }
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
-				<value
-				><![CDATA[
+				<value>
+					<![CDATA[
 					//WhileLoopStatement[
 						StandardCondition/LiteralExpression[@Boolean = true()]
-						and BlockStatement//IfBlockStatement[
-							BlockStatement//BreakStatement
-							and StandardCondition//MethodCallExpression
-						]
+						and BlockStatement//IfBlockStatement[BlockStatement//BreakStatement and StandardCondition//MethodCallExpression]
 					]
-				]]></value>
+					]]>
+				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: while(true) with break inside
+			while (true) {
+				if (!hasMore()) {
+					break;
+				}
+				processItem();
+			}
+			
+			// Valid: Use method call in loop condition
+			while (hasMore()) {
+				processItem();
+			}
+			]]>
+		</example>
 	</rule>
 </ruleset>

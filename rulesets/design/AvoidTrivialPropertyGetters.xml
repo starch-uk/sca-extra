@@ -1,0 +1,114 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Design Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>
+		Custom rules for Apex design issues (structure, method signatures, class
+		organization)
+	</description>
+	<rule
+		name="AvoidTrivialPropertyGetters"
+		language="apex"
+		message="Properties with custom getters that only return a backing field value should use auto-properties or final fields instead"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Properties with custom getters that only return a field value should
+			use
+			auto-properties or final fields instead. Trivial getters add no value and
+			should be replaced with Apex property syntax, which is more concise and
+			idiomatic.
+
+			Version: 1.0.0
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//Method[
+						starts-with(@Image, 'get')
+						and @ReturnType != 'void'
+						and count(BlockStatement//ReturnStatement) = 1
+						and BlockStatement//ReturnStatement/VariableExpression
+						and lower-case(BlockStatement//ReturnStatement/VariableExpression/@Image) = lower-case(substring-after(@Image, 'get'))
+						and not(BlockStatement//MethodCallExpression)
+						and not(BlockStatement//IfBlockStatement)
+						and not(BlockStatement//ForLoopStatement)
+						and not(BlockStatement//WhileLoopStatement)
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Trivial getter that only returns field
+			public class MyClass {
+			    private String name;
+			    
+			    public String getName() {  // ❌
+			        return name;
+			    }
+			}
+			
+			// Valid: Use property syntax instead
+			public class MyClass {
+			    public String name { get; set; }  // ✅
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Getter with logic (not trivial)
+			public class MyClass {
+			    private String name;
+			    
+			    public String getName() {  // ✅ Has logic
+			        return name != null ? name.toUpperCase() : '';
+			    }
+			}
+			
+			// Valid: Getter with conditional logic (not trivial)
+			public class MyClass {
+			    private Integer count;
+			    
+			    public Integer getCount() {  // ✅ Has logic
+			        if (count == null) {
+			            return 0;
+			        }
+			        return count;
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Getter with method call (not trivial)
+			public class MyClass {
+			    private String value;
+			    
+			    public String getValue() {  // ✅ Has method call
+			        return value.trim();
+			    }
+			}
+			
+			// Valid: Getter with loop (not trivial)
+			public class MyClass {
+			    private List<String> items;
+			    
+			    public List<String> getItems() {  // ✅ Has loop
+			        List<String> result = new List<String>();
+			        for (String item : items) {
+			            result.add(item.toUpperCase());
+			        }
+			        return result;
+			    }
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>

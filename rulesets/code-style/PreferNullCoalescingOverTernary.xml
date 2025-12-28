@@ -6,7 +6,6 @@
 	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
 	<description>Custom rules for Apex code style and formatting</description>
-
 	<rule
 		name="PreferNullCoalescingOverTernary"
 		language="apex"
@@ -14,24 +13,35 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Prefer the null coalescing operator (??) over ternary operators when checking for null
-			and
-			providing a default value. The null coalescing operator is more concise and clearly expresses
-			the intent of providing a default value when a variable is null.
+			Prefer the null coalescing operator (??) over ternary operators when
+			checking for null
+			and providing a default value. The null coalescing operator is more concise and
+			clearly
+			expresses the intent of providing a default value when a variable is null.
+
+			Version: 1.0.0
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
-                    <![CDATA[
-                    //TernaryExpression[
-                        StandardCondition/BooleanExpression[@Op = '==' or @Op = '!=']
-                        and (StandardCondition/BooleanExpression/LiteralExpression[@Null = true()]
-                             or StandardCondition/BooleanExpression/VariableExpression[@Image = 'null'])
-                    ]
-                    ]]>
-                </value>
+					<![CDATA[
+					//TernaryExpression[
+						StandardCondition/BooleanExpression[@Op = ('==', '!=')]
+						and (StandardCondition/BooleanExpression/LiteralExpression[@Null = true()] | StandardCondition/BooleanExpression/VariableExpression[@Image = 'null'])
+					]
+					]]>
+				</value>
 			</property>
 		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Ternary operator for null check
+			String value = obj != null ? obj.getName() : 'default';
+			
+			// Valid: Use null coalescing operator
+			String value = obj?.getName() ?? 'default';
+			]]>
+		</example>
 	</rule>
 </ruleset>

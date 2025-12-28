@@ -4,39 +4,425 @@ Additional PMD and Regex rules for testing Salesforce Apex code using Salesforce
 
 **Repository:** [https://github.com/starch-uk/sca-extra](https://github.com/starch-uk/sca-extra)
 
-> **Note:** This entire project has been vibe coded. The original plan for the project can be found in [PLAN.md](PLAN.md).
+> **Note:** This entire project has been vibe coded. The plan for the project can be found in [PLAN.md](PLAN.md).
 
 ## Overview
 
-This project provides a comprehensive set of PMD and Regex rules for Salesforce Apex code analysis. Most rules are implemented using XPath 3.1 expressions only (no custom Java classes), making them easy to understand, modify, and maintain. Some rules use the Regex engine for pattern-based matching (e.g., `NoConsecutiveBlankLines`).
+This project provides a comprehensive set of PMD and Regex rules for Salesforce Apex code analysis. Most rules are implemented using XPath 3.1 expressions only (no custom Java classes), making them easy to understand, modify, and maintain. Some rules use the Regex engine for pattern-based matching (e.g., `NoConsecutiveBlankLines`, `ProhibitSuppressWarnings`).
 
-## Using These Rules in Your Project
+## Configuring code-analyzer.yml
 
-- **Where the rulesets live**
-  - Most rules are defined as XML rulesets under the `rulesets/` directory, grouped by category (see **Rule Categories** below for an overview).
-  - Some rules (like `NoConsecutiveBlankLines`) are defined as Regex rules in the repository's `code-analyzer.yml` under `engines.regex.custom_rules`.
-  - You can copy the entire `rulesets/` folder into your Salesforce project, or just the specific category folders you want to enable.
+The `code-analyzer.yml` file is where you configure which rules to enable, customize rule properties, and disable default rules. This section explains how to customize your configuration.
 
-- **Add the rulesets to `code-analyzer.yml`**
-  - Create or update a `code-analyzer.yml` file in the root of your Salesforce project.
-  - Reference the ruleset XML files you want to enable under the top-level `rulesets:` key, using paths relative to your project root (for full examples, see **Installation** and **Usage → Enabling Rules in code-analyzer.yml** below).
-  - **Important:** Do NOT copy the repository's `code-analyzer.yml` file in its entirety, as it has `rulesets: []` (disabled). Instead, copy only the Regex rules configuration from the `engines.regex.custom_rules` section into your own `code-analyzer.yml` (see **Regex Rules** section below).
+**Where the rulesets live:**
+- Most rules are defined as XML rulesets under the `rulesets/` directory, grouped by category (see **Rule Categories** below for an overview).
+- Some rules (like `NoConsecutiveBlankLines` and `ProhibitSuppressWarnings`) are defined as Regex rules in the repository's `code-analyzer.yml` under `engines.regex.custom_rules`.
+- You can copy the entire `rulesets/` folder into your Salesforce project, or just the specific category folders you want to enable.
 
-- **Run Salesforce Code Analyzer from the command line**
-  - Install the Salesforce Code Analyzer plugin (once per environment):
-    ```bash
-    sf plugins install code-analyzer
-    ```
-  - From your project root (where `code-analyzer.yml` lives), run:
-    ```bash
-    sf code-analyzer run
-    ```
-  - The CLI will use your `code-analyzer.yml` configuration and the custom rulesets from this repository.
+**Add the rulesets to `code-analyzer.yml`:**
+- Create or update a `code-analyzer.yml` file in the root of your Salesforce project.
+- Reference the ruleset XML files you want to enable under `engines.pmd.custom_rulesets`, using paths relative to your project root (for full examples, see **Installation** and **Usage** below).
+- **Important:** Do NOT copy the repository's `code-analyzer.yml` file in its entirety, as it has `rulesets: []` (disabled). Instead, copy only the Regex rules configuration from the `engines.regex.custom_rules` section into your own `code-analyzer.yml` (see **Regex Rules** section below).
 
-- **Use the VS Code Code Analyzer extension**
-  - Install the **Salesforce Code Analyzer** extension in VS Code (see the official [VS Code extension documentation](https://developer.salesforce.com/docs/platform/salesforce-code-analyzer/guide/analyze-vscode.html) for details).
-  - Open your Salesforce project in VS Code with `code-analyzer.yml` and the `rulesets/` folder present.
-  - The extension will read your `code-analyzer.yml` configuration and surface issues directly in the editor and Problems panel.
+### Basic Structure
+
+The `code-analyzer.yml` file uses YAML syntax and typically includes:
+
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      # List of ruleset files to include
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+
+rules:
+  # Rule-specific configuration (severity and tags only)
+  # Note: Property overrides are NOT supported via code-analyzer.yml
+  # Use custom ruleset XML files with ref= syntax instead (see "Overriding Rule Properties" below)
+  RuleName:
+    severity: "High"
+    tags: ["Recommended"]
+```
+
+### Adding Custom Rules
+
+To add rules from this repository, reference the ruleset XML files under `engines.pmd.custom_rulesets` using paths relative to your project root:
+
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      # Design rules
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      - rulesets/design/InnerClassesCannotHaveStaticMembers.xml
+      
+      # Best practices rules
+      - rulesets/best-practices/FinalVariablesMustBeFinal.xml
+      - rulesets/best-practices/StaticMethodsMustBeStatic.xml
+      
+      # Code style rules (including naming)
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
+      - rulesets/code-style/NoAbbreviations.xml
+      
+      # More code style rules
+      - rulesets/code-style/NoMethodCallsInConditionals.xml
+      - rulesets/code-style/PreferSafeNavigationOperator.xml
+```
+
+**Important:** 
+- Copy the `rulesets/` directory (or specific category folders) to your Salesforce project root first
+- Paths in `code-analyzer.yml` are relative to your project root
+- You can include as many or as few rules as needed
+- Use `engines.pmd.custom_rulesets` (not `rulesets:`) to reference PMD rulesets
+
+### Customizing Rules
+
+**Important:** PMD 7+ does not support dynamic properties for XPath rules. To customize rules (e.g., change thresholds, modify behavior), you need to edit the XPath expression directly in the rule XML file.
+
+**How to Customize a Rule:**
+
+1. **Locate the rule file** in the `rulesets/` directory (e.g., `rulesets/design/EnumMinimumValues.xml`)
+
+2. **Edit the XPath expression** in the `<property name="xpath">` section to change the rule's behavior
+
+3. **Update the rule description** to reflect your changes
+
+**Example 1 - Change EnumMinimumValues threshold from 3 to 4:**
+
+Open `rulesets/design/EnumMinimumValues.xml` and change:
+
+```xml
+<!-- Before -->
+<property name="xpath">
+    <value>
+        <![CDATA[
+        //UserEnum[count(Field) < 3]
+        ]]>
+    </value>
+</property>
+```
+
+To:
+
+```xml
+<!-- After -->
+<property name="xpath">
+    <value>
+        <![CDATA[
+        //UserEnum[count(Field) < 4]
+        ]]>
+    </value>
+</property>
+```
+
+Also update the description:
+
+```xml
+<description>
+    Enums must contain at least 4 values. Enums with fewer than 4 values should be reconsidered...
+</description>
+```
+
+**Example 2 - Change PreferSwitchOverIfElseChains threshold from 2 to 4:**
+
+Open `rulesets/design/PreferSwitchOverIfElseChains.xml` and find all occurrences of `>= 2` in the XPath expression, then change them to `>= 4`:
+
+```xml
+<!-- Before -->
+count(IfBlockStatement) >= 2
+```
+
+To:
+
+```xml
+<!-- After -->
+count(IfBlockStatement) >= 4
+```
+
+**Example 3 - Customize NoAbbreviations to flag different abbreviations:**
+
+Open `rulesets/code-style/NoAbbreviations.xml` and modify the XPath expression. For example, to only flag `ctx` and `idx`:
+
+```xml
+<property name="xpath">
+    <value><![CDATA[
+        //VariableDeclaration[
+            VariableExpression[
+                (@Image = 'ctx' or @Image = 'idx')
+                and not(matches(@Image, 'Api$') or matches(@Image, 'Html$') or matches(@Image, 'Id$') or matches(@Image, 'Url$'))
+            ]
+        ]
+    ]]></value>
+</property>
+```
+
+**Best Practices:**
+- **Keep a backup** of the original rule file before making changes
+- **Document your changes** in comments or commit messages
+- **Test your changes** by running `sf code-analyzer run` on your codebase
+- **Consider version control** - if you customize rules, you may want to maintain your own fork or keep custom rules in a separate directory
+- **Update rule descriptions** to reflect your customizations
+
+**Note:** If you need different behavior for different parts of your codebase, you can:
+1. Create multiple copies of the rule with different names (e.g., `EnumMinimumValues4.xml`, `EnumMinimumValues5.xml`)
+2. Reference both in your `code-analyzer.yml`
+3. Use PMD's exclusion patterns if needed
+
+**Rule Examples:** All rules include `<example>` sections in their XML files showing violations and valid code patterns. These examples help clarify the rule's intent. Rules with configurable thresholds (like `EnumMinimumValues`, `PreferSwitchOverIfElseChains`, `NoAbbreviations`) use easy-to-edit variables at the top of the XPath expression, making customization straightforward.
+
+### Disabling Default Rules
+
+To disable default PMD rules provided by Salesforce Code Analyzer, you can exclude them from standard PMD category rulesets. Create a custom ruleset XML file that references the category but excludes specific rules:
+
+```xml
+<?xml version="1.0"?>
+<ruleset name="CustomPMDRules" xmlns="http://pmd.sourceforge.net/ruleset/2.0.0">
+    <description>Custom PMD rules with some defaults disabled</description>
+    
+    <!-- Include standard security rules, but exclude ApexCRUDViolation -->
+    <rule ref="category/apex/security.xml">
+        <exclude name="ApexCRUDViolation" />
+    </rule>
+    
+    <!-- Include best practices, but exclude specific rules -->
+    <rule ref="category/apex/bestpractices.xml">
+        <exclude name="DebugsShouldUseLoggingLevel" />
+        <exclude name="ApexUnitTestClassShouldHaveRunAs" />
+    </rule>
+</ruleset>
+```
+
+Save this as `rulesets/custom-disabled-defaults.xml` and reference it in `code-analyzer.yml`:
+
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      - rulesets/custom-disabled-defaults.xml  # Custom ruleset with disabled defaults
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
+```
+
+Alternatively, if you're creating a comprehensive custom ruleset, you can combine standard PMD rules with exclusions in a single XML file. Note that custom rulesets from this repository are typically referenced separately in `code-analyzer.yml` (as shown in the example below):
+
+```xml
+<?xml version="1.0"?>
+<ruleset name="ComprehensiveRules" xmlns="http://pmd.sourceforge.net/ruleset/2.0.0">
+    <description>Standard PMD rules with custom exclusions</description>
+    
+    <!-- Standard PMD rules with some disabled -->
+    <rule ref="category/apex/security.xml">
+        <priority>1</priority>
+        <exclude name="ApexCRUDViolation" />
+    </rule>
+    
+    <rule ref="category/apex/bestpractices.xml">
+        <priority>2</priority>
+        <exclude name="DebugsShouldUseLoggingLevel" />
+    </rule>
+    
+    <!-- Standard PMD category rulesets -->
+    <rule ref="category/apex/design.xml">
+        <priority>2</priority>
+    </rule>
+</ruleset>
+```
+
+Then reference both this comprehensive ruleset and your custom rulesets in `code-analyzer.yml`:
+
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      - rulesets/custom-comprehensive-rules.xml  # Standard rules with exclusions
+      - rulesets/design/InnerClassesCannotBeStatic.xml  # Custom rules
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
+```
+
+**Standard PMD category rulesets available:**
+- `category/apex/security.xml` - Security-related rules
+- `category/apex/bestpractices.xml` - Best practice rules
+- `category/apex/design.xml` - Design pattern rules
+- `category/apex/performance.xml` - Performance rules
+- `category/apex/codestyle.xml` - Code style rules
+- `category/apex/errorprone.xml` - Error-prone patterns
+
+### Regex Rules
+
+Some rules are implemented using the Regex engine for pattern-based matching. These rules are defined in the repository's `code-analyzer.yml` under `engines.regex.custom_rules`.
+
+**To use Regex rules in your project:**
+
+Copy the `engines.regex.custom_rules` section from the repository's `code-analyzer.yml` into your own `code-analyzer.yml` file. Do NOT copy the entire `code-analyzer.yml` file, as the repository version has `rulesets: []` (disabled) and is only meant as a reference for Regex rules.
+
+**Example - Add to your `code-analyzer.yml`:**
+
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      # ... other rulesets ...
+  regex:
+    custom_rules:
+      NoConsecutiveBlankLines:
+        regex: /\n\s*\n\s*\n/g
+        file_extensions: [".apex", ".cls", ".trigger"]
+        description: "Prevents two or more consecutive blank lines in Apex code. Code should have at most one blank line between statements, methods, or other code elements."
+        violation_message: "Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
+        severity: "Moderate"
+        tags: ["CodeStyle", "Recommended"]
+      ProhibitSuppressWarnings:
+        regex: /@SuppressWarnings\([^)]*\)|\/\/\s*NOPMD/gi
+        file_extensions: [".apex", ".cls", ".trigger"]
+        description: "Prohibits the use of @SuppressWarnings annotations and NOPMD comments in Apex code. Suppressions hide code quality issues; prefer fixing the underlying problems or improving rules instead."
+        violation_message: "Suppression of warnings is not allowed. Fix the underlying issue or improve the rule instead of suppressing violations."
+        severity: "High"
+        tags: ["CodeStyle", "Recommended"]
+```
+
+Regex rules are useful for:
+- Pattern-based text matching (e.g., consecutive blank lines)
+- Finding patterns in comments (PMD ignores comments)
+- Simple string/pattern detection
+
+For more information on creating Regex rules, see the [Regex Engine Reference](docs/REGEX.md).
+
+### Customizing Rules
+
+**Important:** PMD 7+ does not support dynamic properties for XPath rules. To customize rules (e.g., change thresholds, modify behavior), you need to edit the XPath expression directly in the rule XML file.
+
+**How to Customize a Rule:**
+
+1. **Locate the rule file** in the `rulesets/` directory (e.g., `rulesets/design/EnumMinimumValues.xml`)
+
+2. **Edit the XPath expression** in the `<property name="xpath">` section to change the rule's behavior
+
+3. **Update the rule description** to reflect your changes
+
+**Example 1 - Change EnumMinimumValues threshold from 3 to 4:**
+
+Open `rulesets/design/EnumMinimumValues.xml` and change:
+
+```xml
+<!-- Before -->
+<property name="xpath">
+    <value>
+        <![CDATA[
+        //UserEnum[count(Field) < 3]
+        ]]>
+    </value>
+</property>
+```
+
+To:
+
+```xml
+<!-- After -->
+<property name="xpath">
+    <value>
+        <![CDATA[
+        //UserEnum[count(Field) < 4]
+        ]]>
+    </value>
+</property>
+```
+
+Also update the description:
+
+```xml
+<description>
+    Enums must contain at least 4 values. Enums with fewer than 4 values should be reconsidered...
+</description>
+```
+
+**Example 2 - Change PreferSwitchOverIfElseChains threshold from 2 to 4:**
+
+Open `rulesets/design/PreferSwitchOverIfElseChains.xml` and find all occurrences of `>= 2` in the XPath expression, then change them to `>= 4`:
+
+```xml
+<!-- Before -->
+count(IfBlockStatement) >= 2
+```
+
+To:
+
+```xml
+<!-- After -->
+count(IfBlockStatement) >= 4
+```
+
+**Example 3 - Customize NoAbbreviations to flag different abbreviations:**
+
+Open `rulesets/code-style/NoAbbreviations.xml` and modify the XPath expression. For example, to only flag `ctx` and `idx`:
+
+```xml
+<property name="xpath">
+    <value><![CDATA[
+        //VariableDeclaration[
+            VariableExpression[
+                (@Image = 'ctx' or @Image = 'idx')
+                and not(matches(@Image, 'Api$') or matches(@Image, 'Html$') or matches(@Image, 'Id$') or matches(@Image, 'Url$'))
+            ]
+        ]
+    ]]></value>
+</property>
+```
+
+**Best Practices:**
+- **Keep a backup** of the original rule file before making changes
+- **Document your changes** in comments or commit messages
+- **Test your changes** by running `sf code-analyzer run` on your codebase
+- **Consider version control** - if you customize rules, you may want to maintain your own fork or keep custom rules in a separate directory
+- **Update rule descriptions** to reflect your customizations
+
+**Note:** If you need different behavior for different parts of your codebase, you can:
+1. Create multiple copies of the rule with different names (e.g., `EnumMinimumValues4.xml`, `EnumMinimumValues5.xml`)
+2. Reference both in your `code-analyzer.yml`
+3. Use PMD's exclusion patterns if needed
+
+### Complete Example
+
+Here's a complete `code-analyzer.yml` example combining custom rules and standard PMD rules:
+
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      # Custom rules from sca-extra repository
+      - rulesets/design/InnerClassesCannotBeStatic.xml
+      - rulesets/design/InnerClassesCannotHaveStaticMembers.xml
+      - rulesets/best-practices/FinalVariablesMustBeFinal.xml
+      - rulesets/code-style/NoSingleLetterVariableNames.xml
+      - rulesets/code-style/NoAbbreviations.xml
+      - rulesets/code-style/NoMethodCallsInConditionals.xml
+
+rules:
+  # Override severity and tags
+  NoSingleLetterVariableNames:
+    severity: "High"
+    tags: ["Recommended", "Naming"]
+```
+
+**For more examples:** See the [unhappy-soup ruleset](https://github.com/rsoesemann/unhappy-soup/blob/master/ruleset.xml) for a comprehensive example of combining standard PMD rules with custom rules and configuration.
+
+**To customize rule behavior:** See the [Customizing Rules](#customizing-rules) section above for instructions on editing XPath expressions directly.
+
+## Quick Start
+
+1. **Copy rulesets to your project**
+   - Copy the `rulesets/` directory (or specific category folders) to your Salesforce project root
+   - Rules are organized by category (see [Rule Categories](#rule-categories) below)
+
+2. **Configure `code-analyzer.yml`**
+   - Create or update `code-analyzer.yml` in your project root
+   - Add rulesets and disable default rules as needed
+   - See [Configuring code-analyzer.yml](#configuring-code-analyzeryml) for detailed instructions
+
+3. **Run the analyzer**
+   - Use the command line: `sf code-analyzer run`
+   - Or use the VS Code extension for real-time analysis
+   - See [Usage](#usage) for details
 
 ## What Makes a Good Rule vs. What Prettier Handles
 
@@ -170,163 +556,38 @@ Integer x = 5;  // Proper spacing
 
 2. **Copy rulesets to your Salesforce project**
    - Copy the `rulesets/` directory to your Salesforce project root
-   - Or copy specific category folders (e.g., `rulesets/structure/`) as needed
+   - Or copy specific category folders (e.g., `rulesets/design/`) as needed
    - Maintain the directory structure for organization
 
 3. **Reference rulesets in your project**
    - Rulesets can be referenced by relative path from your project root
-   - Example: `rulesets/structure/InnerClassesCannotBeStatic.xml`
+   - Example: `rulesets/design/InnerClassesCannotBeStatic.xml`
 
 ## Usage
 
-### Enabling Rules in code-analyzer.yml
+### Running Code Analyzer
 
-The `code-analyzer.yml` file (Salesforce Code Analyzer configuration) should reference the rulesets:
+Once you've configured your `code-analyzer.yml` file (see [Configuring code-analyzer.yml](#configuring-code-analyzeryml) above), you can run Salesforce Code Analyzer in two ways:
 
-```yaml
-rulesets:
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
-  - rulesets/modifiers/FinalVariablesMustBeFinal.xml
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-  # Add more rulesets as needed
+**1. Command Line:**
+```bash
+# Install the plugin (once per environment)
+sf plugins install code-analyzer
+
+# Run the analyzer from your project root
+sf code-analyzer run
 ```
 
-**Full example `code-analyzer.yml`:**
-```yaml
-name: Salesforce Code Analyzer Configuration
-version: 1.0.0
+**2. VS Code Extension:**
+- Install the **Salesforce Code Analyzer** extension in VS Code
+- Open your Salesforce project with `code-analyzer.yml` and the `rulesets/` folder present
+- The extension will automatically analyze your code and surface issues in the editor
 
-rulesets:
-  # Structure rules
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
-  
-  # Modifier rules
-  - rulesets/modifiers/FinalVariablesMustBeFinal.xml
-  - rulesets/modifiers/StaticMethodsMustBeStatic.xml
-  
-  # Naming rules
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-  - rulesets/naming/NoAbbreviations.xml
-  
-  # Code style rules
-  - rulesets/code-style/NoMethodCallsInConditionals.xml
-  - rulesets/code-style/PreferSafeNavigationOperator.xml
-```
-
-### Configuring Rule Properties
-
-Many rules expose configurable properties that can be customized in `code-analyzer.yml`:
-
-```yaml
-rulesets:
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-
-rules:
-  NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c,e,x"  # Customize allowed single-letter names
-      strictMode: true          # Enable strict mode
-```
-
-**Example with multiple rules:**
-```yaml
-rulesets:
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-  - rulesets/code-style/SingleArgumentMustBeSingleLine.xml
-
-rules:
-  NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c,e"
-  
-  SingleArgumentMustBeSingleLine:
-    properties:
-      maxLineLength: 120
-      allowExceptions: false
-```
-
-**Property configuration format:**
-- Properties are defined in the rule XML with default values
-- Override defaults in `code-analyzer.yml` under the `rules` section
-- Use the rule name as the key
-- Properties can be strings, integers, or booleans
-- Check each rule's XML for available properties and their descriptions
-
-**Finding available properties:**
-1. Open the rule XML file (e.g., `rulesets/naming/NoSingleLetterVariableNames.xml`)
-2. Look for `<property>` elements in the `<properties>` section
-3. Each property has a `name` and `description` attribute
-4. The default value is in the `<value>` element
-
-### Regex Rules
-
-Some rules are implemented using the Regex engine for pattern-based matching. These rules are defined in the repository's `code-analyzer.yml` under `engines.regex.custom_rules`.
-
-**To use Regex rules in your project:**
-
-Copy the `engines.regex.custom_rules` section from the repository's `code-analyzer.yml` into your own `code-analyzer.yml` file. Do NOT copy the entire `code-analyzer.yml` file, as the repository version has `rulesets: []` (disabled) and is only meant as a reference for Regex rules.
-
-**Example - Add to your `code-analyzer.yml`:**
-
-```yaml
-name: My Salesforce Project Code Analyzer Config
-version: 1.0.0
-
-rulesets:
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  # ... other rulesets ...
-
-engines:
-  regex:
-    custom_rules:
-      NoConsecutiveBlankLines:
-        regex: /\n\s*\n\s*\n/
-        file_extensions: [".apex", ".cls", ".trigger"]
-        description: "Prevents two or more consecutive blank lines in Apex code. Code should have at most one blank line between statements, methods, or other code elements."
-        violation_message: "Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
-        severity: "Moderate"
-        tags: ["CodeStyle", "Recommended"]
-```
-
-Regex rules are useful for:
-- Pattern-based text matching (e.g., consecutive blank lines)
-- Finding patterns in comments (PMD ignores comments)
-- Simple string/pattern detection
-
-For more information on creating Regex rules, see the [Regex Engine Reference](docs/REGEX.md).
-
-### Complete Example
-
-```yaml
-name: My Salesforce Project Code Analyzer Config
-version: 1.0.0
-
-rulesets:
-  # P1 - Critical rules
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
-  
-  # P2 - High priority rules
-  - rulesets/modifiers/FinalVariablesMustBeFinal.xml
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-  - rulesets/code-style/NoMethodCallsInConditionals.xml
-
-rules:
-  NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c,e,x,y,z"  # Allow loop counters and common exceptions
-  
-  FinalVariablesMustBeFinal:
-    properties:
-      strictMode: true
-      checkLocalVariables: true
-```
+For detailed configuration instructions, including how to add rules, customize rules, disable default rules, and use Regex rules, see the [Configuring code-analyzer.yml](#configuring-code-analyzeryml) section above.
 
 ## Rules Documentation
 
-### Structure Rules
+### Design Rules
 
 #### InnerClassesCannotBeStatic
 **Priority:** P1 (Critical)  
@@ -372,7 +633,7 @@ public class Outer {
 }
 ```
 
-### Naming Rules
+### Code Style Rules (Naming)
 
 #### NoSingleLetterVariableNames
 **Priority:** P2 (High)  
@@ -409,11 +670,7 @@ String configuration = 'x';  // ✅ Uses full word
 Boolean isManager = true;    // ✅ Descriptive and readable
 ```
 
-**Configurable Properties:**
-- `disallowedAbbreviations` (string): Comma-separated list of **exact variable names** to flag as abbreviations (e.g., `"ctx,idx,msg,cfg"`).  
-- `allowedSuffixes` (string): **Regex-style list of suffixes** (joined with `|`) that are treated as complete words when they appear at the end of a variable name (e.g., `"Id|Api|Url|Html|Dto"`).
-
-These properties are defined in `rulesets/naming/NoAbbreviations.xml` and can be customized in `code-analyzer.yml` under the `NoAbbreviations` rule.
+**Note:** To customize this rule (e.g., change which abbreviations are flagged or which suffixes are allowed), edit the XPath expression directly in `rulesets/code-style/NoAbbreviations.xml`. See the [Customizing Rules](#customizing-rules) section below for details.
 
 ### Code Style Rules
 
@@ -477,14 +734,16 @@ public class Utils {
 
 ## Rule Categories
 
-Rules are organized into the following categories:
+Rules are organized into PMD's 8 standard categories (consistent across languages):
 
-- **code-style/** - Code style and formatting rules
-- **documentation/** - Documentation quality rules
-- **method-signatures/** - Method signature rules
-- **modifiers/** - Modifier and access control rules
-- **naming/** - Naming convention rules
-- **structure/** - Code structure and organization rules
+- **best-practices/** - Generally accepted best practices (modifier rules, test class rules)
+- **code-style/** - Coding style enforcement (formatting, naming conventions, code style patterns)
+- **design/** - Design issue detection (code structure, method signatures, class organization)
+- **documentation/** - Code documentation rules
+- **error-prone/** - Broken/confusing/runtime-error-prone constructs (currently empty)
+- **multithreading/** - Multi-threaded execution issues (currently empty)
+- **performance/** - Suboptimal code detection (currently empty)
+- **security/** - Potential security flaws (currently empty)
 
 For a complete list of all rules, see the `rulesets/` directory. Each rule XML file contains detailed descriptions and XPath expressions.
 
@@ -504,9 +763,9 @@ pnpm install
 ### Running Tests
 
 ```bash
-pnpm test              # Run all tests
-pnpm run test:watch    # Run tests in watch mode
-pnpm run test:coverage # Run tests with coverage
+pnpm test          # Run all tests
+pnpm test:watch    # Run tests in watch mode
+pnpm test:coverage # Run tests with coverage
 ```
 
 For Jest API reference, see [Jest 30.0 Reference](docs/JEST30.md).
@@ -514,29 +773,90 @@ For Jest API reference, see [Jest 30.0 Reference](docs/JEST30.md).
 ### Formatting
 
 ```bash
-pnpm run format        # Format all files
-pnpm run format:check  # Check formatting without modifying
+pnpm format        # Format all files
+pnpm format:check  # Check formatting without modifying
 ```
 
 ### Linting
 
 ```bash
-pnpm run lint          # Lint JavaScript files
-pnpm run lint:fix      # Fix linting issues automatically
+pnpm lint      # Lint JavaScript files
+pnpm lint:fix  # Fix linting issues automatically
 ```
 
 ### Validation
 
 ```bash
-pnpm run validate      # Validate all rulesets
+pnpm validate        # Validate all rulesets
+pnpm check-xml-order # Check XML element order
 ```
+
+### XML Element Order
+
+PMD ruleset XML files must follow the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd), which requires elements within `<rule>` to be in a specific order:
+
+1. `<description>` (optional)
+2. `<priority>` (optional)
+3. `<properties>` (optional)
+4. `<exclude>` (optional, can appear multiple times)
+5. `<example>` (optional, can appear multiple times)
+
+**Scripts available:**
+- `pnpm check-xml-order` - Check if all XML files have correct element order
+- `pnpm fix-xml-order` - Automatically fix element order in all XML files
+- `pnpm add-version-info` - Add version information to all rule descriptions
+
+These scripts use XML libraries (`xmldom`) to properly parse and manipulate XML, ensuring all elements (including multiple examples) are preserved.
 
 ### Benchmarking
 
 ```bash
-pnpm run benchmark     # Run performance benchmarks
-pnpm run check-regressions  # Check for performance regressions
+pnpm benchmark                    # Run performance benchmarks
+pnpm benchmark -- --baseline     # Generate baseline for regression detection
+pnpm benchmark -- --json         # JSON output for CI/CD integration
+pnpm benchmark -- --compare      # Compare mode (doesn't fail on regressions)
+pnpm check-regressions           # Check for performance regressions
 ```
+
+Results are saved to `benchmarks/results/`:
+- `results-{timestamp}.json` - Latest benchmark results
+- `baseline.json` - Baseline for regression comparison
+
+### Available Scripts
+
+All scripts in the `scripts/` directory have convenience commands in `package.json`:
+
+**Development:**
+- `pnpm test` - Run all tests
+- `pnpm test:watch` - Run tests in watch mode
+- `pnpm test:coverage` - Run tests with coverage
+- `pnpm validate` - Validate all rulesets
+- `pnpm format` - Format all files with Prettier
+- `pnpm format:check` - Check formatting without modifying
+- `pnpm lint` - Lint JavaScript files
+- `pnpm lint:fix` - Fix linting issues automatically
+
+**XML Management:**
+- `pnpm check-xml-order` - Check XML element order in all ruleset files
+- `pnpm fix-xml-order` - Automatically fix XML element order
+- `pnpm add-version-info` - Add version information to all rule descriptions
+
+**Testing & Utilities:**
+- `pnpm list-test-files` - List all test files to verify Jest discovery
+- `pnpm generate-test-ruleset` - Generate test ruleset for validation
+- `pnpm ast-dump` - Dump PMD AST for Apex files (usage: `pnpm ast-dump <file>`)
+
+**Performance:**
+- `pnpm benchmark` - Run performance benchmarks
+- `pnpm check-regressions` - Check for performance regressions
+
+**Project Management:**
+- `pnpm version:bump` - Bump version number
+- `pnpm changelog` - Generate changelog
+- `pnpm clean` - Clean build artifacts and temporary files
+
+**CI/CD:**
+- `pnpm ci` - Run all CI checks (format, lint, test)
 
 ## Contributing
 
@@ -564,6 +884,7 @@ For security vulnerabilities, please see [SECURITY.md](SECURITY.md) for reportin
 - [Suppressing Warnings](docs/SUPPRESS_WARNINGS.md) - How to suppress PMD rule violations using annotations, comments, and rule properties
 - [Migration Guides](docs/MIGRATION_GUIDES.md) - Rule migration and versioning information
 - [Jest 30.0 Reference](docs/JEST30.md) - Jest 30.0 API reference for writing and running tests
+- [pnpm Reference](docs/PNPM.md) - pnpm package manager reference for dependency management and workspace configuration
 
 ## AI Agent Configuration
 
@@ -581,6 +902,7 @@ When setting up AI agent rules, you should reference these documentation files:
 - **[Regex Engine Reference](docs/REGEX.md)** - Regex engine configuration and custom rule creation
 - **[ApexDoc Reference](docs/APEXDOC.md)** - ApexDoc syntax, tags, and documentation format for Apex code
 - **[Suppressing Warnings](docs/SUPPRESS_WARNINGS.md)** - How to suppress PMD rule violations using annotations, comments, and rule properties
+- **[pnpm Reference](docs/PNPM.md)** - pnpm package manager reference for dependency management and workspace configuration
 
 ### Setting Up in Cursor
 

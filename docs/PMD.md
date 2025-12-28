@@ -1,34 +1,32 @@
+```markdown
 # PMD Quick Reference
 
-Condensed guide to PMD (source code analyzer) essentials for Salesforce Code Analyzer integration.
+Condensed PMD guide for Salesforce Code Analyzer integration.
 
-## Related Documentation
+**Schema:** [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd)
 
-- **[Code Analyzer Configuration](CODE_ANALYZER_CONFIG.md)** - `code-analyzer.yml` configuration reference
-- **[XPath 3.1 Reference](XPATH31.md)** - XPath syntax for writing rules
-- **[PMD Apex AST Reference](APEX_PMD_AST.md)** - AST node types and patterns
-- **[AI Agent Rule Guide](AI_AGENT_RULE_GUIDE.md)** - Rule configuration examples
+## Related Docs
+- [Code Analyzer Config](CODE_ANALYZER_CONFIG.md) - `code-analyzer.yml` reference
+- [XPath 3.1](XPATH31.md) - XPath syntax for rules
+- [Apex AST](APEX_PMD_AST.md) - AST node types/patterns
+- [AI Agent Rule Guide](AI_AGENT_RULE_GUIDE.md) - Rule config examples
 
 ## Installation
-
-Download PMD from [GitHub releases](https://github.com/pmd/pmd/releases), extract, add `bin/` to PATH.
-
-**Note:** Salesforce Code Analyzer bundles PMD - direct installation only needed for standalone PMD CLI usage.
+Download from [GitHub releases](https://github.com/pmd/pmd/releases), extract, add `bin/` to PATH.
+Salesforce Code Analyzer bundles PMD—direct install only for standalone CLI.
 
 ## Rulesets
 
-Rulesets are XML files that define which rules to execute. Reference rulesets in `code-analyzer.yml`:
+XML files defining rules to execute. Reference in `code-analyzer.yml`:
 
 ```yaml
 engines:
   pmd:
     rulesets:
-      - rulesets/structure/InnerClassesCannotBeStatic.xml
+      - rulesets/design/InnerClassesCannotBeStatic.xml
 ```
 
-### Ruleset Structure
-
-Basic ruleset template:
+### Design
 
 ```xml
 <?xml version="1.0"?>
@@ -37,41 +35,30 @@ Basic ruleset template:
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
     <description>My custom rules</description>
+    <exclude-pattern>.*/test/.*</exclude-pattern>
+    <include-pattern>.*/src/.*</include-pattern>
     <!-- Rules here -->
 </ruleset>
 ```
 
+**Elements:** `<description>` (required), `<exclude-pattern>` (optional, multiple), `<include-pattern>` (optional, multiple), `<rule>` (required, multiple)
+
 ### Referencing Rules
 
-**Single rule:**
 ```xml
+<!-- Single rule -->
 <rule ref="category/apex/codestyle.xml/NoMethodCallsInConditionals" />
-```
 
-**Category (with exclusions):**
-```xml
+<!-- Category with exclusions -->
 <rule ref="category/apex/codestyle.xml">
     <exclude name="WhileLoopsMustUseBraces"/>
 </rule>
 ```
 
-### File Filtering
-
-Exclude/include patterns in ruleset:
-
-```xml
-<exclude-pattern>.*/test/.*</exclude-pattern>
-<include-pattern>.*/test/ButNotThisClass.*</include-pattern>
-```
-
 ## Rule Configuration
 
-Configure rules in ruleset XML or `code-analyzer.yml`:
-
 ### Priority
-
-Priority (1=High, 5=Low) filters rules via `--minimum-priority` CLI option:
-
+1=High, 5=Low. Filter via `--minimum-priority`:
 ```xml
 <rule ref="category/apex/errorprone.xml/EmptyCatchBlock">
     <priority>5</priority>
@@ -80,174 +67,162 @@ Priority (1=High, 5=Low) filters rules via `--minimum-priority` CLI option:
 
 ### Properties
 
-Override rule properties:
+**Property attributes:** `name` (required), `value` (optional—attr or child), `description`, `type`, `delimiter`, `min`, `max`
 
-**In ruleset XML:**
+**Important:** Code Analyzer only supports `severity`/`tags` overrides in `code-analyzer.yml`. Property overrides require ruleset XML.
+
 ```xml
-<rule ref="category/apex/design.xml/NPathComplexity">
+<!-- Value as child element (recommended) -->
+<property name="reportLevel"><value>150</value></property>
+
+<!-- Value as attribute -->
+<property name="reportLevel" value="150" />
+
+<!-- Multivalued (comma-separated) -->
+<property name="legalCollectionTypes" value="java.util.ArrayList,java.util.Vector"/>
+```
+
+**Override custom rules:**
+```xml
+<rule ref="rulesets/design/EnumMinimumValues.xml/EnumMinimumValues">
     <properties>
-        <property name="reportLevel" value="150"/>
+        <property name="minValues"><value>4</value></property>
     </properties>
 </rule>
 ```
 
-**In code-analyzer.yml:**
+**code-analyzer.yml (severity/tags only):**
 ```yaml
 rules:
-  NPathComplexity:
-    properties:
-      reportLevel: 150
+  pmd:
+    NPathComplexity:
+      severity: "High"
+      tags: ["Recommended"]
 ```
 
-**Multivalued properties** (comma-separated):
+**Complete Override Example:**
+
+1. Create `rulesets/custom-overrides.xml`:
 ```xml
-<property name="legalCollectionTypes" 
-          value="java.util.ArrayList,java.util.Vector"/>
+<?xml version="1.0"?>
+<ruleset name="Custom Property Overrides"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+    <description>Custom property overrides</description>
+    <rule ref="rulesets/design/EnumMinimumValues.xml/EnumMinimumValues">
+        <properties><property name="minValues"><value>4</value></property></properties>
+    </rule>
+    <rule ref="rulesets/design/PreferSwitchOverIfElseChains.xml/PreferSwitchOverIfElseChains">
+        <properties><property name="minElseIfStatements"><value>4</value></property></properties>
+    </rule>
+</ruleset>
+```
+
+2. Reference in `code-analyzer.yml`:
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      - rulesets/design/EnumMinimumValues.xml        # Original first
+      - rulesets/design/PreferSwitchOverIfElseChains.xml
+      - rulesets/custom-overrides.xml                   # Override after
+```
+
+**Ref format:** `{ruleset-path}/{rule-name}`
+
+**XPathRule Custom Properties:** PMD 7.x doesn't validate custom XPathRule properties. Use substitution pattern:
+```xpath
+if ('${propertyName}' = '${propertyName}') then 'defaultValue' else '${propertyName}'
+```
+When undefined, `${propertyName}` stays literal → check true → default used. See [AI Agent Rule Guide](AI_AGENT_RULE_GUIDE.md#property-configuration-for-xpathrule).
+
+### Examples
+```xml
+<rule name="MyRule" language="apex" ...>
+    <description>Rule description</description>
+    <priority>3</priority>
+    <properties><!-- XPath --></properties>
+    <example><![CDATA[
+// Violation
+public void badExample() { }
+// Valid
+public void goodExample() { }
+    ]]></example>
+</rule>
 ```
 
 ### Custom Messages
-
-Override rule violation messages:
-
 ```xml
 <rule ref="category/apex/errorprone.xml/EmptyCatchBlock"
       message="Empty catch blocks should be avoided" />
 ```
 
+### Rule Element Structure
+
+**Child elements (order required):** `description` → `priority` → `properties` → `exclude` → `example`
+
+Verify: `pnpm check-xml-order` | Fix: `pnpm fix-xml-order`
+
+**Attributes:** `name`, `language`, `minimumLanguageVersion`, `maximumLanguageVersion`, `ref`, `message`, `class`, `since`, `externalInfoUrl`, `deprecated` (default: false), `dfa`, `typeResolution` (default: false)
+
 ## CLI Usage
 
-Basic PMD CLI syntax:
-
 ```bash
-pmd -d <source_directory> -R <ruleset_file> -f <report_format>
+pmd check -d <source> -R <ruleset> -f <format>
 ```
 
-Common options:
-- `-d`: Source directory
-- `-R`: Ruleset file path
-- `-f`: Report format (text, xml, html, csv, json, etc.)
-- `--minimum-priority`: Filter by priority (1-5 or High/Medium/Low)
-- `-l`: Language (apex, java, etc.)
-- `--fail-on-violation`: Exit with error code if violations found
+**Options:**
+| Option | Description |
+|--------|-------------|
+| `-d`, `--dir` | Source directory |
+| `-R`, `--rulesets` | Ruleset file |
+| `-f`, `--format` | Report format |
+| `--minimum-priority` | Filter priority (1-5 or High/Medium/Low) |
+| `-l`, `--language` | Language (apex, java, etc.) |
+| `--use-version` | Language version (PMD 7+) |
+| `--fail-on-violation` | Exit with error on violations |
+| `--no-cache` | Disable cache |
+| `--cache` | Enable cache with file |
 
-**Example:**
+**PMD 6→7 changes:** `-no-cache`→`--no-cache`, `-failOnViolation`→`--fail-on-violation`, `-reportfile`→`--report-file`, `-language`→`--use-version`
+
 ```bash
-pmd -d src/main/apex -R rulesets/all.xml -f html -l apex
+pmd check -d src/main/apex -R rulesets/all.xml -f html -l apex --use-version 60
 ```
 
 ## Report Formats
+`text`, `xml`, `html`, `csv`, `json`, `sarif`, `codeclimate`, `junit`
 
-Supported formats: `text`, `xml`, `html`, `csv`, `json`, `sarif`, `codeclimate`, `junit`.
+## CPD (Copy-Paste Detector)
 
-Format specified via `-f` option. Most formats include violation details (file, line, message, rule).
-
-## Copy-Paste Detector (CPD)
-
-CPD finds duplicated code blocks across files. Helps identify code that should be refactored to reduce duplication and maintenance burden.
-
-### Why Duplicates Matter
-
-Duplicated code requires refactoring in multiple places, increasing risk of inconsistencies. CPD helps **identify duplicates for refactoring**, not for keeping them in sync.
-
-### CLI Usage
-
-CPD uses the same PMD CLI interface:
+Finds duplicated code for refactoring.
 
 ```bash
 pmd cpd --minimum-tokens 100 --language apex --files src/
 ```
 
-**Key options:**
-- `--minimum-tokens` (required): Minimum token count for duplicate detection
-- `--language` / `-l`: Source language (apex, java, javascript, etc.)
-- `--format` / `-f`: Report format (text, xml, csv, csv_with_linecount_per_file, vs, json)
-- `--ignore-identifiers`: Ignore identifier differences (Java)
-- `--ignore-literals`: Ignore literal value differences (Java)
-- `--ignore-annotations`: Ignore annotations (Java)
-- `--skip-duplicate-files`: Ignore files with same name/length
+**Options:** `--minimum-tokens` (required), `--language`, `--format` (text/xml/csv/csv_with_linecount_per_file/vs/json), `--ignore-identifiers`, `--ignore-literals`, `--ignore-annotations`, `--skip-duplicate-files`
 
-**Example:**
-```bash
-pmd cpd --minimum-tokens 50 --language apex --format xml --files src/ --files test/
-```
-
-### CPD Report Formats
-
-Available formats:
-- `text` (default): Human-readable text output
-- `xml`: Structured XML format (suitable for XSLT transformation)
-- `csv`: Comma-separated values
-- `csv_with_linecount_per_file`: CSV with line counts per file
-- `vs`: Visual Studio format
-- `json`: JSON format
-
-**XML example:**
-```bash
-pmd cpd --minimum-tokens 100 --language apex --format xml --files src/ > cpd-report.xml
-```
-
-### Suppression
-
-Suppress duplicate detection using comments:
-
+**Suppression:**
 ```java
 // CPD-OFF
-public void duplicateCode() {
-    // This code is ignored by CPD
-}
+public void duplicateCode() { }
 // CPD-ON
 ```
 
-**Java also supports annotations:**
-```java
-@SuppressWarnings("CPD-START")
-public void method() { }
-@SuppressWarnings("CPD-END")
-```
-
-Supported languages: Java, C/C++, C#, Dart, Go, Groovy, JavaScript, Kotlin, Lua, Matlab, Objective-C, PL/SQL, Python, Scala, Swift.
-
-### GUI
-
-CPD includes a GUI for interactive duplicate detection:
-
-```bash
-pmd cpd-gui
-```
-
-See [CPD documentation](https://pmd.github.io/pmd/pmd_userdocs_cpd.html) for details.
+**GUI:** `pmd cpd-gui`
 
 ## Incremental Analysis
-
-PMD supports incremental analysis (analyze only changed files). Uses cache files to track modifications. Enable via `--cache` option:
-
 ```bash
-pmd --cache <cache_file> -d <source_directory> -R <ruleset_file>
+pmd --cache <cache_file> -d <source> -R <ruleset>
 ```
-
-Salesforce Code Analyzer handles incremental analysis automatically.
-
-## Signed Releases
-
-PMD releases are signed for integrity verification. Check signatures using standard GPG verification against PMD's public key. See [PMD documentation](https://pmd.github.io/pmd/pmd_userdocs_signed_releases.html) for verification steps.
+Code Analyzer handles automatically.
 
 ## Rule Categories
+1. Best Practices 2. Code Style 3. Design 4. Documentation 5. Error Prone 6. Multithreading 7. Performance 8. Security
 
-PMD organizes rules into 8 categories (consistent across languages):
-1. **Best Practices** - Generally accepted best practices
-2. **Code Style** - Coding style enforcement
-3. **Design** - Design issue detection
-4. **Documentation** - Code documentation rules
-5. **Error Prone** - Broken/confusing/runtime-error-prone constructs
-6. **Multithreading** - Multi-threaded execution issues
-7. **Performance** - Suboptimal code detection
-8. **Security** - Potential security flaws
-
-## GitHub Actions Integration
-
-Use the [PMD GitHub Action](https://github.com/pmd/pmd-github-action) to run PMD in CI/CD workflows.
-
-### Basic Usage
+## GitHub Actions
 
 ```yaml
 steps:
@@ -258,50 +233,55 @@ steps:
       java-version: '11'
   - uses: pmd/pmd-github-action@v2
     with:
-      rulesets: 'rulesets/structure/InnerClassesCannotBeStatic.xml'
+      rulesets: 'rulesets/design/InnerClassesCannotBeStatic.xml'
 ```
 
-### Key Inputs
+**Inputs:** `rulesets` (required), `version` (default: "latest"), `sourcePath` (default: "."), `analyzeModifiedFilesOnly` (default: "true"), `createGitHubAnnotations` (default: "true"), `uploadSarifReport` (default: "true")
 
-- `rulesets` (required): Comma-separated list of ruleset files
-- `version`: PMD version (default: "latest", requires PMD 6.31.0+)
-- `sourcePath`: Root directory for sources (default: ".")
-- `analyzeModifiedFilesOnly`: Analyze only PR/push modified files (default: "true")
-- `createGitHubAnnotations`: Add violations as PR annotations (default: "true")
-- `uploadSarifReport`: Upload SARIF report as artifact (default: "true")
-
-### Outputs
-
-- `violations`: Number of detected violations (use to fail build)
-
-### Example: Fail Build on Violations
+**Output:** `violations` (count)
 
 ```yaml
 - uses: pmd/pmd-github-action@v2
   id: pmd
   with:
     rulesets: 'rulesets/all.xml'
-- name: Fail build if violations found
+- name: Fail on violations
   if: steps.pmd.outputs.violations != 0
   run: exit 1
 ```
 
-### Limitations
+**Limits:** No `auxclasspath`, XPath rules only, no custom env vars, max 300 files with `analyzeModifiedFilesOnly`
 
-- Java: Cannot configure `auxclasspath` (Maven/Gradle recommended)
-- Custom rules: Limited to XPath rules (no custom Java classes)
-- Environment variables: Cannot set additional env vars
-- File limit: Maximum 300 modified files when using `analyzeModifiedFilesOnly`
+## Language Versions
 
-See [PMD GitHub Action repository](https://github.com/pmd/pmd-github-action) for full documentation.
+Use `--use-version` to specify. Rules can set `minimumLanguageVersion`/`maximumLanguageVersion`. Check `pmd check --help` for available versions.
 
-## Integration with Salesforce Code Analyzer
+## Code Metrics
 
-Salesforce Code Analyzer uses PMD engine under the hood. Configure via `code-analyzer.yml`:
+**ApexMetrics:** `CYCLO`, `COGNITIVE_COMPLEXITY`, `NCSS`, `WEIGHED_METHOD_COUNT`
 
-- **Rulesets**: Listed under `engines.pmd.rulesets` (array of XML file paths)
-- **Rule Properties**: Override via `rules.pmd.{RuleName}.properties`
-- **Severity/Tags**: Override via `rules.pmd.{RuleName}.severity` and `rules.pmd.{RuleName}.tags`
+```java
+import net.sourceforge.pmd.lang.apex.metrics.ApexMetrics;
+import net.sourceforge.pmd.lang.metrics.MetricsUtil;
 
-See [CODE_ANALYZER_CONFIG.md](CODE_ANALYZER_CONFIG.md) for complete configuration reference.
+int cyclo = MetricsUtil.computeMetric(ApexMetrics.CYCLO, node);
+int cognitive = MetricsUtil.computeMetric(ApexMetrics.COGNITIVE_COMPLEXITY, node);
+```
 
+**Refs:** [ApexMetrics API](https://docs.pmd-code.org/apidocs/pmd-apex/7.20.0-SNAPSHOT/net/sourceforge/pmd/lang/apex/metrics/ApexMetrics.html), [MetricsUtil API](https://docs.pmd-code.org/apidocs/pmd-core/7.20.0-SNAPSHOT/net/sourceforge/pmd/lang/metrics/MetricsUtil.html)
+
+## Apex Support
+
+Built-in rules, Summit AST parser (PMD 7+), metrics, language-specific config.
+
+**Refs:** [Apex Language Docs](https://pmd.github.io/pmd/pmd_languages_apex.html), [APEX_PMD_AST.md](APEX_PMD_AST.md)
+
+## Code Analyzer Integration
+
+Configure via `code-analyzer.yml`:
+- **Rulesets:** `engines.pmd.rulesets` (array)
+- **Properties:** `rules.pmd.{RuleName}.properties`
+- **Severity/Tags:** `rules.pmd.{RuleName}.severity`, `rules.pmd.{RuleName}.tags`
+
+See [CODE_ANALYZER_CONFIG.md](CODE_ANALYZER_CONFIG.md).
+```

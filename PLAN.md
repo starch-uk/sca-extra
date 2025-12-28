@@ -10,14 +10,16 @@ This project will provide additional PMD and Regex rules for testing Salesforce 
 
 This plan describes the project scope and components that will be implemented:
 
-- **42 PMD rules and 2 Regex rules** across 6 categories (code-style, documentation, method-signatures, modifiers, naming, structure)
+- **43 PMD rules and 2 Regex rules** across PMD's 8 standard categories (best-practices, code-style, design, documentation, error-prone, multithreading, performance, security)
 - **Comprehensive test infrastructure** with positive and negative test fixtures for all rules, including Regex rule testing helpers
 - **Benchmarking system** with stress-test fixtures targeting 580+ violations across 7 fixture files
-- **CI/CD pipeline** with PMD 7.19.0, Java 21, Node.js 24, pnpm 10.26.1, and Codecov integration
+- **CI/CD pipeline** with PMD 7.19.0, Java 21, Node.js 24, pnpm 10.26.2, and Codecov integration
 - **Documentation** including AI Agent-friendly rule guide, XPath 3.1 reference, PMD AST reference, and Regex engine reference
 - **Development tooling** including AST dump helper, validation scripts, version bumping, and changelog generation
 
 ## Project Structure
+
+The project will have the following structure:
 
 ```
 sca-extra/
@@ -25,6 +27,7 @@ sca-extra/
 ├── LICENSE.md                         # MIT License
 ├── CONTRIBUTING.md                    # Contribution guidelines
 ├── SECURITY.md                        # Security policy
+├── PLAN.md                            # This file - project plan
 ├── package.json                       # pnpm configuration and scripts
 ├── .gitignore                         # Git ignore patterns
 ├── .prettierrc                        # Prettier configuration
@@ -44,14 +47,21 @@ sca-extra/
 │   ├── REGEX.md                       # Regex engine reference and custom rule creation guide
 │   ├── CODE_ANALYZER_CONFIG.md        # Code Analyzer configuration reference
 │   ├── AI_AGENT_RULE_GUIDE.md         # AI Agent-friendly rule configuration guide
-│   └── MIGRATION_GUIDES.md             # Rule migration guides between versions
-├── rulesets/                          # PMD ruleset XML files (organized by category)
-│   ├── code-style/                    # Code style rules
+│   ├── MIGRATION_GUIDES.md             # Rule migration guides between versions
+│   ├── APEXDOC.md                     # ApexDoc syntax and documentation format
+│   ├── SUPPRESS_WARNINGS.md           # How to suppress PMD rule violations
+│   ├── PMD.md                         # PMD quick reference
+│   ├── JEST30.md                      # Jest 30.0 API reference
+│   └── PNPM.md                        # pnpm package manager reference
+├── rulesets/                          # PMD ruleset XML files (organized by PMD's 8 categories)
+│   ├── best-practices/                # Best practices rules (modifiers, test classes)
+│   ├── code-style/                    # Code style rules (formatting, naming conventions)
+│   ├── design/                        # Design rules (structure, method signatures, class organization)
 │   ├── documentation/                 # Documentation rules
-│   ├── method-signatures/             # Method signature rules
-│   ├── modifiers/                     # Modifier rules
-│   ├── naming/                        # Naming convention rules
-│   └── structure/                     # Code structure rules
+│   ├── error-prone/                   # Error-prone patterns (currently empty)
+│   ├── multithreading/                # Multithreading issues (currently empty)
+│   ├── performance/                   # Performance rules (currently empty)
+│   └── security/                      # Security rules (currently empty)
 ├── code-analyzer.yml                  # Contains Regex rules configuration (rulesets disabled for repository template)
 ├── jest.config.js                     # Jest test configuration
 ├── tests/                             # Test files
@@ -59,17 +69,21 @@ sca-extra/
 │   │   ├── positive/                  # Code that should NOT trigger rules
 │   │   │   ├── code-style/            # Positive test fixtures for code-style rules
 │   │   │   ├── documentation/         # Positive test fixtures for documentation rules
-│   │   │   ├── method-signatures/     # Positive test fixtures for method-signature rules
-│   │   │   ├── modifiers/             # Positive test fixtures for modifier rules
-│   │   │   ├── naming/                # Positive test fixtures for naming rules
-│   │   │   └── structure/             # Positive test fixtures for structure rules
+│   │   │   ├── best-practices/        # Positive test fixtures for best-practices rules
+│   │   │   ├── design/                # Positive test fixtures for design rules
+│   │   │   ├── error-prone/           # Positive test fixtures for error-prone rules
+│   │   │   ├── multithreading/        # Positive test fixtures for multithreading rules
+│   │   │   ├── performance/           # Positive test fixtures for performance rules
+│   │   │   └── security/               # Positive test fixtures for security rules
 │   │   └── negative/                  # Code that SHOULD trigger rules
+│   │       ├── best-practices/        # Negative test fixtures for best-practices rules
 │   │       ├── code-style/            # Negative test fixtures for code-style rules
+│   │       ├── design/                # Negative test fixtures for design rules
 │   │       ├── documentation/         # Negative test fixtures for documentation rules
-│   │       ├── method-signatures/     # Negative test fixtures for method-signature rules
-│   │       ├── modifiers/            # Negative test fixtures for modifier rules
-│   │       ├── naming/                # Negative test fixtures for naming rules
-│   │       └── structure/             # Negative test fixtures for structure rules
+│   │       ├── error-prone/           # Negative test fixtures for error-prone rules
+│   │       ├── multithreading/        # Negative test fixtures for multithreading rules
+│   │       ├── performance/           # Negative test fixtures for performance rules
+│   │       └── security/               # Negative test fixtures for security rules
 │   ├── helpers/                       # Test helper utilities
 │   │   └── pmd-helper.js              # PMD and Regex test helper functions (runPMD, runRegexRule)
 │   ├── rulesets/                      # Test-specific rulesets
@@ -77,10 +91,12 @@ sca-extra/
 │   └── unit/                          # Unit test files
 │       ├── code-style.test.js
 │       ├── documentation.test.js
-│       ├── method-signatures.test.js
-│       ├── modifiers.test.js
-│       ├── naming.test.js
-│       └── structure.test.js
+│       ├── best-practices.test.js
+│       ├── design.test.js
+│       ├── error-prone.test.js
+│       ├── multithreading.test.js
+│       ├── performance.test.js
+│       └── security.test.js
 ├── scripts/                           # Utility scripts
 │   ├── generate-test-ruleset.js      # Generate combined test ruleset from all rules
 │   ├── validate-rules.js             # Validate XML ruleset syntax and rule quality
@@ -89,16 +105,18 @@ sca-extra/
 │   ├── version-bump.js               # Automated version bumping (major/minor/patch)
 │   ├── generate-changelog.js         # Generate changelog from git commits
 │   ├── list-test-files.js            # List test fixture files for inventory
-│   └── ast-dump.sh                    # Helper for AST debugging (PMD AST dump wrapper)
+│   ├── ast-dump.sh                    # Helper for AST debugging (PMD AST dump wrapper)
+│   ├── check-xml-order.js             # Check XML element order in ruleset files
+│   ├── fix-xml-element-order.js       # Automatically fix XML element order
+│   └── clean.js                       # Clean build artifacts and temporary files
 ├── benchmarks/                        # Benchmark test files
 │   ├── fixtures/                      # Large Apex files for benchmarking
 │   │   ├── stress-test-all-rules.cls  # Comprehensive stress test (100+ violations across all rules)
-│   │   ├── stress-code-style.cls      # Code style stress test (200+ violations, 18 rules)
-│   │   ├── stress-structure.cls       # Structure stress test (100+ violations, 13 rules)
-│   │   ├── stress-modifiers.cls       # Modifier stress test (100+ violations, 5 rules)
-│   │   ├── stress-naming.cls          # Naming stress test (100+ violations, 4 rules)
-│   │   ├── stress-documentation.cls   # Documentation stress test (30+ violations, 2 rules)
-│   │   └── stress-method-signatures.cls # Method signature stress test (30+ violations, 2 rules)
+│   │   ├── stress-code-style.cls      # Code style stress test (200+ violations, 17 rules)
+│   │   ├── stress-design.cls          # Design stress test (130+ violations, 15 rules - structure + method signatures)
+│   │   ├── stress-best-practices.cls  # Best practices stress test (100+ violations, 5 rules - modifiers)
+│   │   ├── stress-code-style.cls      # Code style stress test (300+ violations, 21 rules - includes naming)
+│   │   └── stress-documentation.cls   # Documentation stress test (30+ violations, 2 rules)
 │   ├── results/                      # Benchmark results (gitignored)
 │   ├── README.md                      # Benchmark documentation
 │   └── FIXTURES.md                    # Benchmark fixture documentation
@@ -111,7 +129,7 @@ sca-extra/
 
 ### PMD CLI Installation
 
-**IMPORTANT:** This project uses PMD CLI directly as an external tool. PMD is NOT an npm package and must be installed separately.
+**IMPORTANT:** This project will use PMD CLI directly as an external tool. PMD is NOT an npm package and must be installed separately.
 
 1. **Install PMD CLI:**
    - **macOS:** `brew install pmd`
@@ -126,7 +144,7 @@ sca-extra/
 
 3. **Test PMD with Apex:**
    ```bash
-   pmd check -d <apex-file> -R <ruleset> -l apex -f xml
+   pmd check -d <apex-file> -R <ruleset> -l apex -f xml -r <output-file>
    ```
 
 4. **Note for Tests:**
@@ -153,12 +171,22 @@ sca-extra/
      - `lint-staged` (^16.0.0) - Staged file linting
      - `xml2js` (^0.6.0) - XML parsing
      - `xmldom` (^0.6.0) - DOM implementation for XML parsing
+     - `yaml` (^2.6.1) - YAML parsing
    - Configure pnpm scripts for testing, validation, linting, and development
    - Add Prettier for XML formatting of rulesets
 
 2. **Documentation layout**
    - Create `docs/XPATH31.md` with the XPath 3.1 reference
    - Create `docs/APEX_PMD_AST.md` with the PMD Apex AST reference
+   - Create `docs/REGEX.md` with Regex engine reference
+   - Create `docs/CODE_ANALYZER_CONFIG.md` with Code Analyzer configuration reference
+   - Create `docs/AI_AGENT_RULE_GUIDE.md` with AI Agent-friendly rule guide
+   - Create `docs/MIGRATION_GUIDES.md` with rule migration guides
+   - Create `docs/APEXDOC.md` with ApexDoc syntax reference
+   - Create `docs/SUPPRESS_WARNINGS.md` with suppression guide
+   - Create `docs/PMD.md` with PMD quick reference
+   - Create `docs/JEST30.md` with Jest 30.0 API reference
+   - Create `docs/PNPM.md` with pnpm reference
    - Organize `rulesets/` structure by category
 
 3. **Create LICENSE.md file**
@@ -177,7 +205,7 @@ sca-extra/
      - IDE-specific files
 
 5. **Set up Prettier for XML formatting**
-   - Configure Prettier with XML plugin (`@prettier/plugin-xml` or similar)
+   - Configure Prettier with XML plugin (`@prettier/plugin-xml`)
    - Create `.prettierrc` configuration for XML formatting rules
    - Add pnpm script to format all XML rulesets
    - Ensure consistent XML formatting across all ruleset files
@@ -186,7 +214,7 @@ sca-extra/
    - Install husky for Git hooks
    - Create `.husky/pre-commit` hook to automatically format XML files
    - Use `lint-staged` to format only staged files
-   - Configure `.lintstagedrc` to format XML files with Prettier
+   - Configure `.lintstagedrc` or `package.json` lint-staged section to format XML files with Prettier
    - Ensure all committed XML files are formatted with Prettier before commit
    - Hook should run automatically on `git commit`
 
@@ -195,7 +223,7 @@ sca-extra/
    - Run on pull requests and pushes to main/develop branches
    - Setup Java 21 (required for PMD 7.19.0)
    - Setup Node.js 24
-   - Setup pnpm 10.26.1
+   - Setup pnpm 10.26.2
    - Cache pnpm store and node_modules
    - Install PMD CLI 7.19.0 (download and cache)
    - Run on pull requests: lint (Prettier check), ESLint, and unit tests with coverage
@@ -243,7 +271,7 @@ sca-extra/
     - How to report security vulnerabilities
     - Supported versions
     - Disclosure policy
-    - Contact information for security issues
+    - Contact information for security issues (email: security@starch.uk)
 
 11. **Create GitHub issue templates**
     - `.github/ISSUE_TEMPLATE/bug_report.md` - Template for bug reports
@@ -282,7 +310,7 @@ sca-extra/
 
 2. **Create test helper functions** (`tests/helpers/pmd-helper.js`)
    - `runPMD(rulesetPath, apexFile)` - Execute PMD CLI and return results
-     - Uses `pmd check --no-cache -d <file> -R <ruleset> -f xml`
+     - Uses `pmd check --no-cache -d <file> -R <ruleset> -f xml -r <output-file>`
      - Handles PMD exit codes (non-zero when violations found is expected)
      - Extracts XML from output (handles warnings before XML)
      - Timeout: 30 seconds
@@ -320,11 +348,10 @@ sca-extra/
    - Add benchmark fixtures in `benchmarks/fixtures/`:
      - `stress-test-all-rules.cls` - Comprehensive (100+ violations across all rules)
      - `stress-code-style.cls` - Code style focused (200+ violations)
-     - `stress-structure.cls` - Structure focused (100+ violations)
-     - `stress-modifiers.cls` - Modifiers focused (100+ violations)
-     - `stress-naming.cls` - Naming focused (100+ violations)
+     - `stress-design.cls` - Design focused (130+ violations - structure + method signatures)
+     - `stress-best-practices.cls` - Best practices focused (100+ violations - modifiers)
+     - `stress-code-style.cls` - Code style focused (300+ violations - includes naming)
      - `stress-documentation.cls` - Documentation focused (30+ violations)
-     - `stress-method-signatures.cls` - Method signatures focused (30+ violations)
    - Create `benchmarks/README.md` - Benchmark documentation
    - Create `benchmarks/FIXTURES.md` - Fixture statistics and coverage
    - Create `scripts/check-performance-regressions.js` - Regression detection
@@ -333,9 +360,9 @@ sca-extra/
    - Create `pnpm run benchmark` script
    - Create `pnpm run check-regressions` script
 
-### Phase 3: Test Implementation (Priority Order)
+### Phase 3: Rule Implementation
 
-**Note:** All 44 rules will be implemented with comprehensive test coverage. The following represents the planned implementation order.
+**Note:** All 45 rules will be implemented with comprehensive test coverage. The following represents the planned implementation order.
 
 #### P1 Rules (Start Here)
 1. **InnerClassesCannotBeStatic**
@@ -353,7 +380,7 @@ sca-extra/
 6. **Modifier rules** (FinalVariablesMustBeFinal, StaticMethodsMustBeStatic, StaticVariablesMustBeFinalAndScreamingSnakeCase, RegexPatternsMustBeStaticFinal, TestClassIsParallel)
 
 #### P3 Rules
-7. **Code Style Rules** (18 total):
+7. **Code Style Rules** (17 total):
    - AvoidOneLinerMethods
    - ListInitializationMustBeMultiLine
    - MapInitializationMustBeMultiLine
@@ -378,17 +405,17 @@ sca-extra/
    - ExceptionDocumentationRequired
    - SingleLineDocumentationFormat
 
-9. **Method Signature Rules** (2 total):
+9. **Design Rules - Method Signatures** (2 total):
    - NoCustomParameterObjects
    - SingleParameterMustBeSingleLine
 
-10. **Naming Rules** (4 total):
+10. **Code Style Rules - Naming** (4 total):
     - InnerClassesMustBeOneWord
     - NoAbbreviations
     - NoSingleLetterVariableNames
     - VariablesMustNotShareNamesWithClasses
 
-11. **Structure Rules** (13 total):
+11. **Design Rules - Structure** (13 total):
     - AvoidLowValueWrapperMethods
     - AvoidTrivialPropertyGetters
     - ClassesMustHaveMethods
@@ -403,7 +430,7 @@ sca-extra/
     - PreferPropertySyntaxOverGetterMethods
     - PreferSwitchOverIfElseChains
 
-**Total: 44 rules across 6 categories**
+**Total: 45 rules across PMD's 8 standard categories (43 PMD rules + 2 Regex rules)**
 
 ### Phase 4: Validation & Quality
 
@@ -413,6 +440,8 @@ sca-extra/
      - XPath syntax validation
      - Rule name consistency checks
      - Rule quality checks (descriptions, properties, etc.)
+   - `scripts/check-xml-order.js` - Check XML element order in ruleset files
+   - `scripts/fix-xml-element-order.js` - Automatically fix XML element order
    - `scripts/version-bump.js` - Automated version bumping
      - Support major/minor/patch versions
      - Update version in package.json
@@ -423,6 +452,7 @@ sca-extra/
    - `scripts/list-test-files.js` - List test fixture files
      - Help identify missing test fixtures
      - Generate test file inventory
+   - `scripts/clean.js` - Clean build artifacts and temporary files
 
 2. **Add linting and formatting**
    - ESLint 9.x with flat config (`eslint.config.mjs`) for JavaScript test files
@@ -436,6 +466,7 @@ sca-extra/
    - Check that configurable properties are exposed where applicable
    - Verify all rules use XPath only (no custom Java classes)
    - Validate rule naming consistency
+   - Ensure XML element order follows PMD schema
 
 4. **Documentation**
    - **All rules will be documented in README.md with examples**
@@ -469,7 +500,7 @@ sca-extra/
 
 ## Pre-commit Hook Configuration
 
-### `.lintstagedrc` Configuration
+### `.lintstagedrc` Configuration (or in package.json)
 
 ```json
 {
@@ -521,7 +552,10 @@ This ensures:
     "changelog": "node scripts/generate-changelog.js",
     "ci": "pnpm run format:check && pnpm run lint && pnpm test",
     "generate-test-ruleset": "node scripts/generate-test-ruleset.js",
-    "ast-dump": "bash scripts/ast-dump.sh"
+    "ast-dump": "bash scripts/ast-dump.sh",
+    "check-xml-order": "node scripts/check-xml-order.js",
+    "fix-xml-order": "node scripts/fix-xml-element-order.js",
+    "clean": "node scripts/clean.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
@@ -535,37 +569,34 @@ This ensures:
     "lint-staged": "^16.2.7",
     "prettier": "^3.2.5",
     "xml2js": "^0.6.2",
-    "xmldom": "^0.6.0"
+    "xmldom": "^0.6.0",
+    "yaml": "^2.6.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
       "unrs-resolver"
     ]
+  },
+  "lint-staged": {
+    "*.xml": ["prettier --write"],
+    "*.{js,jsx,ts,tsx}": ["prettier --write", "eslint --fix"]
   }
 }
 ```
-
-## Test File Structure Example
-
-### Unit Test (`tests/unit/structure.test.js`)
-```javascript
-const { runPMD, parseViolations, assertViolation } = require('../helpers/pmd-helper');
-
-```
-
 
 ## PMD Integration
 
 ### Running PMD
 
-**Critical:** PMD is used as a CLI tool, NOT an npm package.
+**Critical:** PMD will be used as a CLI tool, NOT an npm package.
 
-- **Command format:** `pmd check --no-cache -d <apex-file> -R <ruleset> -f xml`
+- **Command format:** `pmd check --no-cache -d <apex-file> -R <ruleset> -f xml -r <output-file>`
   - `--no-cache` - Disable PMD cache for consistent test results
   - `-d` - Directory or file to analyze
   - `-R` - Ruleset file path
   - `-f xml` - Output format (XML for parsing)
   - `-l apex` - Language (Apex)
+  - `-r <file>` - Output report to file (required to avoid progressbar conflicts)
 - **Output parsing:** Parse XML output to extract violations
   - Violation attributes: file, rule, message, beginline, begincol
   - PMD may exit with non-zero code when violations found (expected)
@@ -608,63 +639,21 @@ const { runPMD, parseViolations, assertViolation } = require('../helpers/pmd-hel
    - Examples of violations (in description or documentation)
    - Any exceptions or edge cases documented
 
-4. **Configurable Properties**: Rules should expose configurable properties where applicable:
-   - Thresholds (e.g., max line count, min method length)
-   - Allowed exceptions (e.g., allowed variable names, excluded patterns)
-   - Behavior toggles (e.g., strict vs. lenient mode)
-   - Use PMD property syntax with default values
+4. **XML Element Order**: Rules must follow PMD Ruleset XML Schema element order:
+   - `<description>` → `<priority>` → `<properties>` → `<exclude>` → `<example>`
+   - Scripts will be created to check and fix element order
 
-5. **Versioning**: All rules must be versioned:
-   - Rules follow semantic versioning (major.minor.patch)
-   - Version is tracked in the rule XML or a separate version file
-   - Breaking changes increment major version
-   - New features increment minor version
-   - Bug fixes increment patch version
-   - Version information should be accessible for bug reports and documentation
+5. **Test Coverage**: All rules must have:
+   - Positive test cases (code that should NOT trigger the rule)
+   - Negative test cases (code that SHOULD trigger the rule)
+   - Tests in `tests/unit/{category}.test.js`
+   - Test fixtures in `tests/fixtures/positive/` and `tests/fixtures/negative/`
 
-## Rule Template Reference
-
-Each rule follows this structure with configurable properties and versioning:
-```xml
-<ruleset name="Category">
-    <rule
-        name="RuleName"
-        language="apex"
-        message="User-friendly message"
-        class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-    >
-        <description>
-            Detailed description explaining what the rule checks and why it exists.
-            Include examples of violations if helpful.
-            
-            Version: 1.0.0
-        </description>
-        <priority>1-5</priority>
-        <properties>
-            <property name="xpath">
-                <value><![CDATA[//XPath expression]]></value>
-            </property>
-            <!-- Configurable properties where applicable -->
-            <property name="maxLength" description="Maximum allowed length">
-                <value>100</value>
-            </property>
-            <property name="allowedNames" description="Comma-separated list of allowed names">
-                <value>i,c,e</value>
-            </property>
-        </properties>
-    </rule>
-</ruleset>
-```
-
-**Note:** Version can be included in the description or tracked in a separate version file. The version should be easily accessible for bug reports.
-
-### Property Configuration Guidelines
-
-- Use properties for any configurable thresholds or lists
-- Provide sensible defaults
-- Document each property with a description
-- Use appropriate types (string, integer, boolean)
-- Consider backward compatibility when adding properties
+6. **Benchmark Coverage**: All rules should be included in benchmark stress tests:
+   - Add violations to `benchmarks/fixtures/stress-test-all-rules.cls`
+   - Add focused violations to category-specific fixture
+   - Target 10-20 violations per rule
+   - Update `benchmarks/FIXTURES.md` with violation counts
 
 ## Testing Strategy
 
@@ -770,16 +759,14 @@ Each rule follows this structure with configurable properties and versioning:
 
 1. **P1** (Critical): InnerClassesCannotBeStatic, InnerClassesCannotHaveStaticMembers
 2. **P2** (High): Method calls in conditionals, multi-line formatting, naming restrictions, modifier rules
-3. **P3** (Medium): Remaining code-style, documentation, method-signatures, naming, and structure rules
+3. **P3** (Medium): Remaining code-style, documentation, design, and best practices rules
 4. **P4** (Low): Complex rules requiring thorough testing (e.g., AvoidOneLinerMethods)
 
-**Total Planned:** 44 rules across 6 categories (42 PMD rules + 2 Regex rules):
-- **Code Style:** 18 rules (16 PMD + 2 Regex: NoConsecutiveBlankLines, ProhibitSuppressWarnings)
-- **Structure:** 13 rules
-- **Modifiers:** 5 rules
-- **Naming:** 4 rules
+**Total Planned:** 45 rules across PMD's 8 standard categories (43 PMD rules + 2 Regex rules):
+- **Code Style:** 21 rules (19 PMD + 2 Regex: NoConsecutiveBlankLines, ProhibitSuppressWarnings) - includes naming
+- **Design:** 15 rules (13 structure + 2 method signatures)
+- **Best Practices:** 5 rules (modifiers)
 - **Documentation:** 2 rules
-- **Method Signatures:** 2 rules
 
 ## GitHub Actions CI/CD
 
@@ -795,15 +782,24 @@ name: CI
 
 on:
   pull_request:
-    branches: [ main, develop ]
-  push:
-    branches: [ main, develop ]
+    branches: [main]
+
+# Cancel in-progress runs for the same workflow and branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+    env:
+      PMD_VERSION: "7.19.0"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       
       - name: Setup Java
         uses: actions/setup-java@v5
@@ -819,7 +815,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.26.1
+          version: "10.26.2"
       
       - name: Cache pnpm store
         uses: actions/cache@v5
@@ -829,22 +825,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       
-      - name: Cache dependencies
-        uses: actions/cache@v5
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-      
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
       
       - name: Check XML formatting
-        run: pnpm run format:check
-      
+        run: pnpm format:check
+
+      - name: Check XML element order
+        run: pnpm check-xml-order
+
+      - name: Validate rulesets
+        run: pnpm validate
+
       - name: Lint JavaScript
-        run: pnpm run lint
+        run: pnpm lint
       
       - name: Cache PMD
         id: cache-pmd
@@ -858,20 +852,75 @@ jobs:
       - name: Install PMD CLI
         if: steps.cache-pmd.outputs.cache-hit != 'true'
         run: |
+          set -euo pipefail
+          PMD_VERSION="${{ env.PMD_VERSION }}"
+          PMD_DIR="$HOME/pmd/pmd-bin-${PMD_VERSION}"
+          DOWNLOAD_URL="https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-dist-${PMD_VERSION}-bin.zip"
+          
+          echo "Downloading PMD ${PMD_VERSION} from ${DOWNLOAD_URL}"
           mkdir -p ~/pmd
-          curl -L -o pmd-bin.zip "https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-dist-${PMD_VERSION}-bin.zip"
+          
+          if ! curl -fsSL -o pmd-bin.zip "${DOWNLOAD_URL}"; then
+            echo "Error: Failed to download PMD ${PMD_VERSION}"
+            exit 1
+          fi
+          
+          if [ ! -f pmd-bin.zip ]; then
+            echo "Error: Download file not found"
+            exit 1
+          fi
+          
+          echo "Extracting PMD..."
           unzip -q pmd-bin.zip
-          mv pmd-bin-${PMD_VERSION} ~/pmd
-          rm pmd-bin.zip
+          
+          if [ ! -d "pmd-bin-${PMD_VERSION}" ]; then
+            echo "Error: PMD extraction failed - directory not found"
+            exit 1
+          fi
+          
+          mv "pmd-bin-${PMD_VERSION}" ~/pmd
+          rm -f pmd-bin.zip
+          echo "PMD ${PMD_VERSION} installed successfully"
       
       - name: Setup PMD CLI
         run: |
+          set -euo pipefail
+          PMD_VERSION="${{ env.PMD_VERSION }}"
           PMD_DIR="$HOME/pmd/pmd-bin-${PMD_VERSION}"
-          PMD_BIN="$PMD_DIR/bin/pmd"
-          sudo ln -sf "$PMD_BIN" /usr/local/bin/pmd
-          pmd --version
-        env:
-          PMD_VERSION: "7.19.0"
+          PMD_BIN="${PMD_DIR}/bin/pmd"
+          
+          if [ ! -d "${PMD_DIR}" ]; then
+            echo "Error: PMD directory not found at ${PMD_DIR}"
+            echo "Contents of ~/pmd:"
+            ls -la "$HOME/pmd/" || echo "PMD cache directory does not exist"
+            exit 1
+          fi
+          
+          if [ ! -f "${PMD_BIN}" ]; then
+            echo "Error: PMD binary not found at ${PMD_BIN}"
+            echo "Contents of ${PMD_DIR}/bin:"
+            ls -la "${PMD_DIR}/bin/" || echo "PMD bin directory does not exist"
+            exit 1
+          fi
+          
+          echo "${PMD_DIR}/bin" >> $GITHUB_PATH
+          chmod +x "${PMD_BIN}"
+          
+          echo "Verifying PMD installation..."
+          "${PMD_BIN}" --version
+          
+          echo "Verifying PMD check command..."
+          if ! "${PMD_BIN}" check --help > /dev/null 2>&1; then
+            echo "Error: PMD check command failed"
+            exit 1
+          fi
+          
+          echo "Verifying PMD with Apex language support..."
+          if ! "${PMD_BIN}" check --help | grep -q "apex"; then
+            echo "Warning: Apex language may not be available"
+          fi
+          
+          echo "PMD CLI setup complete (version ${PMD_VERSION})"
       
       - name: Run tests with coverage
         run: pnpm test:coverage
@@ -882,6 +931,7 @@ jobs:
         with:
           files: ./coverage/lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
 ```
 
 ### Required Checks for PRs
@@ -910,21 +960,21 @@ The project will be considered complete when the following criteria are met:
 - [ ] README provides clear usage instructions
 - [ ] CONTRIBUTING.md is complete with contribution guidelines
 - [ ] SECURITY.md is complete with security policy
-- [ ] GitHub issue templates will be created (bug, feature, rule request)
-- [ ] GitHub pull request template will be created
+- [ ] GitHub issue templates are created (bug, feature, rule request)
+- [ ] GitHub pull request template is created
 - [ ] MIT License file is included
 - [ ] All rules use XPath only (no custom Java classes)
 - [ ] All rules have clear names and comprehensive descriptions
 - [ ] All rules are versioned (semantic versioning)
 - [ ] All rules are documented in README.md with code examples (violations and valid code)
 - [ ] Configurable properties are exposed for applicable rules
-- [ ] AI Agent-friendly rule guide (`docs/AI_AGENT_RULE_GUIDE.md`) will be created
+- [ ] AI Agent-friendly rule guide (`docs/AI_AGENT_RULE_GUIDE.md`) is created
 - [ ] Benchmarking infrastructure is set up and functional
 - [ ] Baseline benchmark results are established
 - [ ] Benchmark PR comments and performance regression alerts in CI will not be implemented (benchmarking can be run manually)
-- [ ] Versioning tooling will be implemented (automated version bumping, changelog generation)
-- [ ] Rule migration guides will be created and documented
-- [ ] All 44 rules will be implemented with comprehensive test coverage
+- [ ] Versioning tooling is implemented (automated version bumping, changelog generation)
+- [ ] Rule migration guides are created and documented
+- [ ] All 45 rules are implemented with comprehensive test coverage
 - [ ] Codecov integration is configured for coverage reporting
 
 ## License
@@ -943,601 +993,3 @@ The MIT License allows:
 With requirements:
 - Include copyright notice
 - Include license text
-
-## README Content Requirements
-
-The README.md will include comprehensive instructions for using these rules in Salesforce projects:
-
-### What Makes a Good Rule vs. What Prettier Handles
-
-**Important:** PMD rules should focus on **code quality, logic, and best practices**, not formatting. Formatting concerns should be handled by Prettier or similar formatters.
-
-#### Good PMD Rules Focus On:
-
-1. **Code Quality & Logic**
-   - Detecting anti-patterns and code smells
-   - Enforcing best practices and design patterns
-   - Identifying potential bugs or logic errors
-   - Examples:
-     - `NoMethodCallsInConditionals` - Prevents side effects in conditionals
-     - `InnerClassesCannotBeStatic` - Enforces Apex language constraints
-
-2. **Structural Issues**
-   - Code organization and architecture
-   - Class and method structure
-   - Inheritance and composition patterns
-   - Examples:
-     - `ClassesMustHaveMethods` - Ensures classes have purpose
-     - `AvoidTrivialPropertyGetters` - Prevents unnecessary wrappers
-     - `NoParameterClasses` - Enforces proper class design
-
-3. **Naming & Conventions**
-   - Meaningful names that affect code readability and maintainability
-   - Naming patterns that indicate intent
-   - Examples:
-     - `NoSingleLetterVariableNames` - Ensures descriptive variable names
-     - `NoAbbreviations` - Prevents cryptic abbreviations
-     - `VariablesMustNotShareNamesWithClasses` - Prevents confusion
-
-4. **Modifiers & Access Control**
-   - Appropriate use of modifiers (final, static, etc.)
-   - Access control best practices
-   - Examples:
-     - `FinalVariablesMustBeFinal` - Ensures immutability where intended
-     - `StaticMethodsMustBeStatic` - Prevents unnecessary instance methods
-     - `TestClassIsParallel` - Enforces test best practices
-
-5. **Documentation Quality**
-   - Meaningful documentation, not formatting
-   - Documentation completeness
-   - Examples:
-     - `ExceptionDocumentationRequired` - Ensures exceptions are documented
-
-#### What Prettier Handles (Not PMD Rules):
-
-1. **Formatting & Style**
-   - Indentation and spacing
-   - Line breaks and line length
-   - Brace placement
-   - Quote style (single vs. double)
-   - Trailing commas
-   - Examples of what NOT to create rules for:
-     - ❌ "Methods must be on separate lines" (formatting)
-     - ❌ "Indentation must be 4 spaces" (formatting)
-     - ❌ "No trailing whitespace" (formatting)
-     - ❌ "Line length must be < 120 characters" (formatting)
-
-2. **Whitespace & Spacing**
-   - Spaces around operators
-   - Spaces in function calls
-   - Blank lines between methods
-   - Examples:
-     - ❌ "No consecutive blank lines" (formatting - though this could be a code quality rule if it's about readability)
-     - ❌ "Spaces around operators" (formatting)
-
-3. **Syntax Formatting**
-   - Semicolon placement
-   - Comma placement
-   - Parentheses spacing
-   - Examples:
-     - ❌ "Always use semicolons" (formatting)
-     - ❌ "No space before opening parenthesis" (formatting)
-
-#### When to Create a Rule vs. Use Prettier:
-
-**Create a PMD Rule When:**
-- The issue affects code quality, maintainability, or correctness
-- The check requires understanding code semantics (not just syntax)
-- The rule helps prevent bugs or enforces architectural decisions
-- The rule is about "what" the code does, not "how" it looks
-
-**Use Prettier When:**
-- The issue is purely about code appearance
-- The check is about spacing, indentation, or line breaks
-- The rule would just reformat code without changing meaning
-- The rule is about "how" the code looks, not "what" it does
-
-#### Examples:
-
-**Good Rule (PMD):**
-```apex
-// Rule: NoMethodCallsInConditionals
-// Why: Prevents side effects and makes code more predictable
-if (getValue() > 0) {  // ❌ Method call in conditional
-    // ...
-}
-```
-
-**Formatting (Prettier):**
-```apex
-// Prettier handles: Indentation, spacing, line breaks
-if(getValue()>0){  // Prettier formats to:
-if (getValue() > 0) {  // Proper spacing
-```
-
-**Good Rule (PMD):**
-```apex
-// Rule: NoSingleLetterVariableNames
-// Why: Ensures code is readable and maintainable
-Integer x = 5;  // ❌ Unclear what 'x' represents
-```
-
-**Formatting (Prettier):**
-```apex
-// Prettier handles: Spacing around operators
-Integer x=5;  // Prettier formats to:
-Integer x = 5;  // Proper spacing
-```
-
-**Note:** Some rules may appear to overlap with formatting (e.g., `NoConsecutiveBlankLines`), but if they're about code readability and structure rather than pure formatting, they can be appropriate rules. `NoConsecutiveBlankLines` will be implemented as a Regex rule for efficient pattern matching. The key distinction is: **Does this affect code quality and understanding, or just appearance?**
-
-### Adding Rules to a Salesforce Project
-
-1. **Clone or download the repository**
-   ```bash
-   git clone https://github.com/starch-uk/sca-extra.git
-   ```
-
-2. **Copy rulesets to your Salesforce project**
-   - Copy the `rulesets/` directory to your Salesforce project root
-   - Or copy specific category folders (e.g., `rulesets/structure/`) as needed
-   - Maintain the directory structure for organization
-
-3. **Reference rulesets in your project**
-   - Rulesets can be referenced by relative path from your project root
-   - Example: `rulesets/structure/InnerClassesCannotBeStatic.xml`
-
-### Enabling Rules in code-analyzer.yml
-
-The `code-analyzer.yml` file (Salesforce Code Analyzer configuration) should reference the PMD rulesets and include Regex rules:
-
-**PMD Rulesets:**
-```yaml
-rulesets:
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
-  - rulesets/modifiers/FinalVariablesMustBeFinal.xml
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-  # Add more rulesets as needed
-```
-
-**Regex Rules:**
-Copy the `engines.regex.custom_rules` section from the repository's `code-analyzer.yml` into your own `code-analyzer.yml`. Do NOT copy the entire repository `code-analyzer.yml` file, as it has `rulesets: []` (disabled) and is only a template for Regex rules.
-
-**Full example `code-analyzer.yml`:**
-```yaml
-name: Salesforce Code Analyzer Configuration
-version: 1.0.0
-
-rulesets:
-  # Structure rules
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
-  
-  # Modifier rules
-  - rulesets/modifiers/FinalVariablesMustBeFinal.xml
-  - rulesets/modifiers/StaticMethodsMustBeStatic.xml
-  
-  # Naming rules
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-  - rulesets/naming/NoAbbreviations.xml
-  
-  # Code style rules
-  - rulesets/code-style/NoMethodCallsInConditionals.xml
-  - rulesets/code-style/PreferSafeNavigationOperator.xml
-
-engines:
-  regex:
-    custom_rules:
-      NoConsecutiveBlankLines:
-        regex: /\n\s*\n\s*\n/g
-        file_extensions: [".apex", ".cls", ".trigger"]
-        description: "Prevents two or more consecutive blank lines in Apex code. Code should have at most one blank line between statements, methods, or other code elements."
-        violation_message: "Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
-        severity: "Moderate"
-        tags: ["CodeStyle", "Recommended"]
-      ProhibitSuppressWarnings:
-        regex: /@SuppressWarnings\([^)]*\)|\/\/\s*NOPMD/gi
-        file_extensions: [".apex", ".cls", ".trigger"]
-        description: "Prohibits the use of @SuppressWarnings annotations and NOPMD comments in Apex code. Suppressions hide code quality issues; prefer fixing the underlying problems or improving rules instead."
-        violation_message: "Suppression of warnings is not allowed. Fix the underlying issue or improve the rule instead of suppressing violations."
-        severity: "High"
-        tags: ["CodeStyle", "Recommended"]
-```
-
-### Configuring Rule Properties
-
-Many rules expose configurable properties that can be customized in `code-analyzer.yml`:
-
-```yaml
-rulesets:
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-
-rules:
-  NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c,e,x"  # Customize allowed single-letter names
-      strictMode: true          # Enable strict mode
-```
-
-**Example with multiple rules:**
-```yaml
-rulesets:
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-  - rulesets/code-style/SingleArgumentMustBeSingleLine.xml
-
-rules:
-  NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c,e"
-  
-  SingleArgumentMustBeSingleLine:
-    properties:
-      maxLineLength: 120
-      allowExceptions: false
-```
-
-**Property configuration format:**
-- Properties are defined in the rule XML with default values
-- Override defaults in `code-analyzer.yml` under the `rules` section
-- Use the rule name as the key
-- Properties can be strings, integers, or booleans
-- Check each rule's XML for available properties and their descriptions
-
-**Finding available properties:**
-1. Open the rule XML file (e.g., `rulesets/naming/NoSingleLetterVariableNames.xml`)
-2. Look for `<property>` elements in the `<properties>` section
-3. Each property has a `name` and `description` attribute
-4. The default value is in the `<value>` element
-
-### Complete Example
-
-```yaml
-name: My Salesforce Project Code Analyzer Config
-version: 1.0.0
-
-rulesets:
-  # P1 - Critical rules
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
-  
-  # P2 - High priority rules
-  - rulesets/modifiers/FinalVariablesMustBeFinal.xml
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-  - rulesets/code-style/NoMethodCallsInConditionals.xml
-
-rules:
-  NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c,e,x,y,z"  # Allow loop counters and common exceptions
-  
-  FinalVariablesMustBeFinal:
-    properties:
-      strictMode: true
-      checkLocalVariables: true
-```
-
-## AI Agent-Friendly Rule Configuration Guide
-
-### Purpose
-
-The project will include `docs/AI_AGENT_RULE_GUIDE.md` - A concise, structured markdown file designed for AI coding assistants (like Cursor, GitHub Copilot, etc.) to help developers configure and use PMD rules effectively.
-
-### Content Structure
-
-The guide should be:
-- **Concise**: Easy for AI agents to parse and understand
-- **Structured**: Consistent format for all rules
-- **Example-rich**: Clear code examples for each rule
-- **Property-focused**: All configurable properties clearly documented
-
-### Format for Each Rule
-
-```markdown
-## RuleName
-
-**Category:** [code-style/documentation/method-signatures/modifiers/naming/structure]
-**Priority:** [P1/P2/P3/P4]
-**Description:** Brief description of what the rule checks
-
-### Violations (Code that triggers the rule)
-\`\`\`apex
-// Example code that violates the rule
-\`\`\`
-
-### Valid Code (Code that doesn't trigger the rule)
-\`\`\`apex
-// Example code that is valid
-\`\`\`
-
-### Configurable Properties
-- `propertyName` (type): Description. Default: `defaultValue`
-  - Example: `propertyName: "customValue"`
-
-### Usage in code-analyzer.yml
-\`\`\`yaml
-rulesets:
-  - rulesets/category/RuleName.xml
-
-rules:
-  RuleName:
-    properties:
-      propertyName: "customValue"
-\`\`\`
-```
-
-### Instructions for Using in Cursor
-
-Include a section at the beginning of the guide:
-
-```markdown
-# AI Agent Rule Configuration Guide
-
-This guide is designed for AI coding assistants to help developers configure PMD rules for Salesforce Apex code analysis.
-
-## How to Use This Guide in Cursor
-
-1. **Add to Cursor Rules:**
-   - Open Cursor Settings
-   - Navigate to Rules or create `.cursorrules` file in your project
-   - Add: "When helping with Salesforce Code Analyzer configuration, refer to docs/AI_AGENT_RULE_GUIDE.md"
-
-2. **Reference in Conversations:**
-   - When asked about PMD rules, reference this guide
-   - Use the structured format to provide accurate rule information
-   - Include code examples from the guide
-
-3. **Configuration Help:**
-   - When configuring `code-analyzer.yml`, use property examples from this guide
-   - Suggest appropriate property values based on the rule's purpose
-   - Provide complete YAML examples when needed
-```
-
-### Benefits
-
-- Enables AI agents to provide accurate, consistent rule information
-- Reduces errors in rule configuration
-- Provides quick reference for developers
-- Ensures all rules are documented in a machine-readable format
-- Supports automated rule suggestion and configuration
-
-## CONTRIBUTING.md Content Requirements
-
-The CONTRIBUTING.md file will include:
-
-### Welcome
-- Thank contributors for their interest
-- Explain the project's goals
-- Link to code of conduct (if applicable)
-
-### Development Setup
-- Prerequisites:
-  - Node.js version 18 or higher
-  - pnpm (latest version)
-  - **PMD CLI version 7.0+** (NOT an npm package - must be installed separately)
-    - macOS: `brew install pmd`
-    - Linux/Windows: Download from PMD website
-    - Verify: `pmd --version` and `pmd check --help`
-    - Must be in system PATH
-- Installation steps:
-  - Clone repository
-  - Run `pnpm install`
-  - Run `pnpm run prepare` to set up husky hooks
-- How to run tests locally:
-  - `pnpm test` - Run all tests
-  - `pnpm run test:watch` - Watch mode
-  - `pnpm run test:coverage` - With coverage report
-- How to run benchmarks:
-  - `pnpm run benchmark` - Run all benchmarks
-  - `pnpm run benchmark -- --baseline` - Generate baseline
-  - `pnpm run benchmark -- --json` - JSON output for CI
-  - `pnpm run check-regressions` - Check for performance regressions
-
-### Adding New Rules
-- Step-by-step guide for creating a new rule
-- Rule naming conventions
-- XPath-only requirement reminder
-- Property configuration guidelines
-- Testing requirements (positive and negative cases)
-
-### Pull Request Process
-- Branch naming conventions
-- Commit message format
-- PR checklist
-- Review process
-- Required tests and documentation
-
-### Code Style
-- XML formatting (Prettier)
-- JavaScript/TypeScript style (ESLint)
-- Documentation requirements
-
-### Testing Requirements
-- All rules must have positive and negative test cases
-- Test coverage expectations
-- How to run tests locally
-
-### Community-Contributed Rules
-- Guidelines for submitting community-contributed rules
-- Review process for new rules
-- Requirements for community rules (same as core rules):
-  - Must use XPath only
-  - Must have clear names and descriptions
-  - Must be versioned
-  - Must have comprehensive tests
-  - Must be documented in README.md
-  - Must expose configurable properties where applicable
-- How to propose new rules via issue templates
-- Attribution and credit for contributors
-
-## SECURITY.md Content Requirements
-
-The SECURITY.md file will include:
-
-### Supported Versions
-- Which versions receive security updates
-- End-of-life policy
-
-### Reporting a Vulnerability
-- How to report security issues privately
-- Contact information (email or security advisory)
-- What information to include
-- Expected response time
-
-### Disclosure Policy
-- How vulnerabilities are disclosed
-- Timeline for fixes
-- Credit policy for reporters
-
-### Security Best Practices
-- Guidelines for contributors
-- Dependency management
-- Regular security audits
-
-## GitHub Issue Templates
-
-### Bug Report Template (`.github/ISSUE_TEMPLATE/bug_report.md`)
-
-Will include:
-- **Motivation/Problem**: What problem does this bug cause?
-- **Examples**: Code examples showing the bug
-- **Versions**: Code Analyzer version and rule version with instructions on how to find them
-
-Example structure:
-```markdown
-## Motivation / Problem
-<!-- Why is this bug a problem? What does it prevent? -->
-
-## Examples
-<!-- Provide code examples that demonstrate the bug -->
-
-## Versions
-
-### How to Find Versions
-
-**Salesforce Code Analyzer Version:**
-- Run: `sf scanner:version` or check your `package.json` if using pnpm
-- Or check the output of: `sf scanner:run --help`
-
-**Rule Version:**
-- Check the rule XML file in `rulesets/{category}/{RuleName}.xml`
-- Look for version information in the rule metadata or description
-- Or check the git commit/tag where the rule version is tracked
-
-**Please provide:**
-- Salesforce Code Analyzer version: [version here]
-- Rule version: [version here]
-- Rule name: [rule name here]
-```
-
-### Feature Request Template (`.github/ISSUE_TEMPLATE/feature_request.md`)
-
-Will include:
-- **Motivation**: Why is this feature needed? What problem does it solve?
-- **Examples**: Code examples showing how the feature would be used
-
-Example structure:
-```markdown
-## Motivation
-<!-- Why is this feature needed? What problem does it solve? -->
-
-## Examples
-<!-- Provide code examples showing how this feature would be used -->
-```
-
-### Rule Request Template (`.github/ISSUE_TEMPLATE/rule_request.md`)
-
-Will include:
-- **Motivation**: Why is this rule needed? What code quality issue does it address?
-- **Examples**: 
-  - Code examples that SHOULD trigger the rule (violations)
-  - Code examples that should NOT trigger the rule (valid code)
-- Rule description
-- Priority/severity
-- Category (code-style, documentation, naming, etc.)
-- Configurable properties (if applicable)
-
-Example structure:
-```markdown
-## Motivation
-<!-- Why is this rule needed? What code quality issue does it address? -->
-
-## Examples of Violations
-<!-- Code examples that SHOULD trigger this rule -->
-
-```apex
-// Example 1: ...
-```
-
-## Examples of Valid Code
-<!-- Code examples that should NOT trigger this rule -->
-
-```apex
-// Example 1: ...
-```
-
-## Rule Details
-- **Category**: [code-style/documentation/method-signatures/modifiers/naming/structure]
-- **Priority**: [P1/P2/P3/P4]
-- **Configurable Properties**: [List any properties that should be configurable]
-
-## Additional Context
-<!-- Any other information that would be helpful -->
-```
-
-## Pull Request Template (`.github/pull_request_template.md`)
-
-Will include:
-- **Motivation**: Why is this change needed? What problem does it solve?
-- **Examples**: Code examples demonstrating the change
-- Description of changes
-- Type of change (bug fix, new rule, enhancement, etc.)
-- Testing information
-- Checklist
-
-Example structure:
-```markdown
-## Motivation
-<!-- Why is this change needed? What problem does it solve? -->
-
-## Examples
-<!-- Provide code examples that demonstrate this change -->
-
-### Before
-```apex
-// Example code before the change
-```
-
-### After
-```apex
-// Example code after the change
-```
-
-## Description
-<!-- Describe your changes in detail -->
-
-## Type of Change
-- [ ] Bug fix
-- [ ] New rule
-- [ ] Rule enhancement
-- [ ] Documentation
-- [ ] Other (please describe)
-
-## Testing
-<!-- Describe the tests you added or updated and how to verify the changes -->
-
-- [ ] Added positive test cases
-- [ ] Added negative test cases
-- [ ] All tests pass
-- [ ] Test coverage maintained or improved
-
-## Checklist
-- [ ] Code follows project style guidelines
-- [ ] Self-review completed
-- [ ] Comments added for complex logic
-- [ ] Documentation updated as needed
-- [ ] No new warnings generated
-- [ ] Tests added or updated
-- [ ] All tests pass locally
-- [ ] Pre-commit hooks pass
-```
