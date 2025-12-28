@@ -10,10 +10,13 @@ const path = require('path');
 function generateChangelog() {
 	try {
 		// Get git log
-		const log = execSync('git log --pretty=format:"%h|%s|%an|%ad" --date=short', {
-			encoding: 'utf-8',
-			cwd: path.join(__dirname, '..'),
-		});
+		const log = execSync(
+			'git log --pretty=format:"%h|%s|%an|%ad" --date=short',
+			{
+				encoding: 'utf-8',
+				cwd: path.join(__dirname, '..'),
+			}
+		);
 
 		const lines = log.split('\n');
 		const changelog = {
@@ -70,11 +73,20 @@ function categorizeChange(message) {
 
 	if (lowerMessage.startsWith('feat:') || lowerMessage.includes('add')) {
 		return { type: 'added', message };
-	} else if (lowerMessage.startsWith('fix:') || lowerMessage.includes('fix')) {
+	} else if (
+		lowerMessage.startsWith('fix:') ||
+		lowerMessage.includes('fix')
+	) {
 		return { type: 'fixed', message };
-	} else if (lowerMessage.startsWith('refactor:') || lowerMessage.includes('change')) {
+	} else if (
+		lowerMessage.startsWith('refactor:') ||
+		lowerMessage.includes('change')
+	) {
 		return { type: 'changed', message };
-	} else if (lowerMessage.startsWith('remove:') || lowerMessage.includes('remove')) {
+	} else if (
+		lowerMessage.startsWith('remove:') ||
+		lowerMessage.includes('remove')
+	) {
 		return { type: 'removed', message };
 	}
 

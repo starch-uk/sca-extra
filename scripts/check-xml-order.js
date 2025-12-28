@@ -18,7 +18,9 @@ function checkElementOrder() {
 
 	categories.forEach((category) => {
 		const categoryPath = path.join(rulesetsDir, category);
-		const files = fs.readdirSync(categoryPath).filter((file) => file.endsWith('.xml'));
+		const files = fs
+			.readdirSync(categoryPath)
+			.filter((file) => file.endsWith('.xml'));
 
 		files.forEach((file) => {
 			const filePath = path.join(categoryPath, file);
@@ -73,30 +75,44 @@ function checkRuleFile(filePath) {
 			const childNodes = Array.from(rule.childNodes);
 
 			// Get element nodes in order
-			const elementNodes = childNodes.filter((node) => node.nodeType === 1);
+			const elementNodes = childNodes.filter(
+				(node) => node.nodeType === 1
+			);
 			const currentOrder = elementNodes
 				.filter((node) =>
-					['description', 'priority', 'properties', 'exclude', 'example'].includes(
-						node.localName || node.nodeName
-					)
+					[
+						'description',
+						'priority',
+						'properties',
+						'exclude',
+						'example',
+					].includes(node.localName || node.nodeName)
 				)
 				.map((node) => node.localName || node.nodeName);
 
 			// Extract elements to build expected order
 			const description = elementNodes.find(
-				(node) => node.localName === 'description' || node.nodeName === 'description'
+				(node) =>
+					node.localName === 'description' ||
+					node.nodeName === 'description'
 			);
 			const priority = elementNodes.find(
-				(node) => node.localName === 'priority' || node.nodeName === 'priority'
+				(node) =>
+					node.localName === 'priority' ||
+					node.nodeName === 'priority'
 			);
 			const properties = elementNodes.find(
-				(node) => node.localName === 'properties' || node.nodeName === 'properties'
+				(node) =>
+					node.localName === 'properties' ||
+					node.nodeName === 'properties'
 			);
 			const excludes = elementNodes.filter(
-				(node) => node.localName === 'exclude' || node.nodeName === 'exclude'
+				(node) =>
+					node.localName === 'exclude' || node.nodeName === 'exclude'
 			);
 			const examples = elementNodes.filter(
-				(node) => node.localName === 'example' || node.nodeName === 'example'
+				(node) =>
+					node.localName === 'example' || node.nodeName === 'example'
 			);
 
 			// Build expected order
@@ -107,7 +123,8 @@ function checkRuleFile(filePath) {
 			excludes.forEach(() => expectedOrder.push('exclude'));
 			examples.forEach(() => expectedOrder.push('example'));
 
-			const wrongOrder = JSON.stringify(currentOrder) !== JSON.stringify(expectedOrder);
+			const wrongOrder =
+				JSON.stringify(currentOrder) !== JSON.stringify(expectedOrder);
 
 			if (wrongOrder) {
 				results.push({

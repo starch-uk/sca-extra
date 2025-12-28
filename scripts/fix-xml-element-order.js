@@ -19,7 +19,9 @@ function fixElementOrder() {
 
 	categories.forEach((category) => {
 		const categoryPath = path.join(rulesetsDir, category);
-		const files = fs.readdirSync(categoryPath).filter((file) => file.endsWith('.xml'));
+		const files = fs
+			.readdirSync(categoryPath)
+			.filter((file) => file.endsWith('.xml'));
 
 		files.forEach((file) => {
 			const filePath = path.join(categoryPath, file);
@@ -62,36 +64,47 @@ function fixRuleFile(filePath) {
 			const description = childNodes.find(
 				(node) =>
 					node.nodeType === 1 &&
-					(node.localName === 'description' || node.nodeName === 'description')
+					(node.localName === 'description' ||
+						node.nodeName === 'description')
 			);
 			const priority = childNodes.find(
 				(node) =>
 					node.nodeType === 1 &&
-					(node.localName === 'priority' || node.nodeName === 'priority')
+					(node.localName === 'priority' ||
+						node.nodeName === 'priority')
 			);
 			const properties = childNodes.find(
 				(node) =>
 					node.nodeType === 1 &&
-					(node.localName === 'properties' || node.nodeName === 'properties')
+					(node.localName === 'properties' ||
+						node.nodeName === 'properties')
 			);
 			const excludes = childNodes.filter(
 				(node) =>
 					node.nodeType === 1 &&
-					(node.localName === 'exclude' || node.nodeName === 'exclude')
+					(node.localName === 'exclude' ||
+						node.nodeName === 'exclude')
 			);
 			const examples = childNodes.filter(
 				(node) =>
 					node.nodeType === 1 &&
-					(node.localName === 'example' || node.nodeName === 'example')
+					(node.localName === 'example' ||
+						node.nodeName === 'example')
 			);
 
 			// Get current order of element nodes (excluding text nodes)
-			const elementNodes = childNodes.filter((node) => node.nodeType === 1);
+			const elementNodes = childNodes.filter(
+				(node) => node.nodeType === 1
+			);
 			const currentOrder = elementNodes
 				.filter((node) =>
-					['description', 'priority', 'properties', 'exclude', 'example'].includes(
-						node.localName || node.nodeName
-					)
+					[
+						'description',
+						'priority',
+						'properties',
+						'exclude',
+						'example',
+					].includes(node.localName || node.nodeName)
 				)
 				.map((node) => node.localName || node.nodeName);
 
@@ -120,17 +133,28 @@ function fixRuleFile(filePath) {
 				// Collect other elements that should stay
 				const otherElements = elementNodes.filter(
 					(node) =>
-						!['description', 'priority', 'properties', 'exclude', 'example'].includes(
-							node.localName || node.nodeName
-						)
+						![
+							'description',
+							'priority',
+							'properties',
+							'exclude',
+							'example',
+						].includes(node.localName || node.nodeName)
 				);
 
 				// Clone all elements before removing them (to preserve all content)
-				const clonedElements = elementsToReorder.map((element) => element.cloneNode(true));
-				const clonedOtherElements = otherElements.map((element) => element.cloneNode(true));
+				const clonedElements = elementsToReorder.map((element) =>
+					element.cloneNode(true)
+				);
+				const clonedOtherElements = otherElements.map((element) =>
+					element.cloneNode(true)
+				);
 
 				// Remove all element nodes from the rule
-				const allElementsToRemove = [...elementsToReorder, ...otherElements];
+				const allElementsToRemove = [
+					...elementsToReorder,
+					...otherElements,
+				];
 				allElementsToRemove.forEach((element) => {
 					if (element.parentNode === rule) {
 						rule.removeChild(element);
@@ -158,7 +182,9 @@ function fixRuleFile(filePath) {
 			// Preserve XML declaration
 			const xmlDecl = content.match(/^<\?xml[^>]*\?>/);
 			const finalContent = xmlDecl
-				? xmlDecl[0] + '\n' + newContent.replace(/^<\?xml[^>]*\?>\s*/, '')
+				? xmlDecl[0] +
+					'\n' +
+					newContent.replace(/^<\?xml[^>]*\?>\s*/, '')
 				: newContent;
 			fs.writeFileSync(filePath, finalContent, 'utf-8');
 			return true;

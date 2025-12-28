@@ -67,9 +67,15 @@ async function runPMDCLI(rulesetPath, apexFilePath) {
 			);
 		}
 		// If there's stderr, include it in the error message for debugging
-		const stderr = error.stderr ? `\nPMD stderr:\n${error.stderr.toString()}` : '';
-		const stdout = error.stdout ? `\nPMD stdout:\n${error.stdout.toString()}` : '';
-		throw new Error(`Error running PMD CLI: ${error.message}${stderr}${stdout}`);
+		const stderr = error.stderr
+			? `\nPMD stderr:\n${error.stderr.toString()}`
+			: '';
+		const stdout = error.stdout
+			? `\nPMD stdout:\n${error.stdout.toString()}`
+			: '';
+		throw new Error(
+			`Error running PMD CLI: ${error.message}${stderr}${stdout}`
+		);
 	} finally {
 		// Clean up temporary file
 		try {
@@ -116,9 +122,13 @@ function parseViolations(xmlOutput) {
 					file: fileNode.getAttribute('name'),
 					rule: violationNode.getAttribute('rule'),
 					message:
-						violationNode.getAttribute('message') || violationNode.textContent.trim(),
+						violationNode.getAttribute('message') ||
+						violationNode.textContent.trim(),
 					line: parseInt(violationNode.getAttribute('beginline'), 10),
-					column: parseInt(violationNode.getAttribute('begincol'), 10),
+					column: parseInt(
+						violationNode.getAttribute('begincol'),
+						10
+					),
 				});
 			}
 		}
@@ -136,7 +146,9 @@ function parseViolations(xmlOutput) {
  * @param {number} lineNumber - Expected line number
  */
 function assertViolation(violations, ruleName, lineNumber) {
-	const violation = violations.find((v) => v.rule === ruleName && v.line === lineNumber);
+	const violation = violations.find(
+		(v) => v.rule === ruleName && v.line === lineNumber
+	);
 
 	if (!violation) {
 		throw new Error(
@@ -167,7 +179,14 @@ function assertNoViolations(violations, ruleName) {
  * @returns {string} File contents
  */
 function readFixture(category, ruleName, type) {
-	const fixturePath = path.join(__dirname, '..', 'fixtures', type, category, `${ruleName}.cls`);
+	const fixturePath = path.join(
+		__dirname,
+		'..',
+		'fixtures',
+		type,
+		category,
+		`${ruleName}.cls`
+	);
 
 	if (!fs.existsSync(fixturePath)) {
 		throw new Error(`Fixture file not found: ${fixturePath}`);
@@ -184,7 +203,12 @@ function readFixture(category, ruleName, type) {
  * @param {string} violationMessage - Message to show for violations
  * @returns {Promise<Array>} Array of violations
  */
-async function runRegexRule(regexPattern, apexFilePath, ruleName, violationMessage) {
+async function runRegexRule(
+	regexPattern,
+	apexFilePath,
+	ruleName,
+	violationMessage
+) {
 	const fileContent = fs.readFileSync(apexFilePath, 'utf-8');
 	const violations = [];
 
@@ -216,7 +240,10 @@ async function runRegexRule(regexPattern, apexFilePath, ruleName, violationMessa
 		const textBeforeMatch = fileContent.substring(0, matchIndex);
 		const lineNumber = textBeforeMatch.split('\n').length;
 		const lastNewlineIndex = textBeforeMatch.lastIndexOf('\n');
-		const column = lastNewlineIndex === -1 ? matchIndex + 1 : matchIndex - lastNewlineIndex;
+		const column =
+			lastNewlineIndex === -1
+				? matchIndex + 1
+				: matchIndex - lastNewlineIndex;
 
 		// Avoid infinite loop with zero-length matches
 		if (match[0].length === 0) {
