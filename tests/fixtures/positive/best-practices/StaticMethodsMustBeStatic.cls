@@ -73,9 +73,9 @@ public class Example {
 		// Property with setter only
 		private String description { private get; set; }
 
-		public void setDescription(String desc) {
+		public void setDescription(String descValue) {
 			// Valid: uses property field
-			description = desc;
+			description = descValue;
 		}
 
 		// Multiple properties
@@ -181,11 +181,11 @@ public class Example {
 		}
 
 		// Property in ternary expression
-		public Integer limit { get; set; }
+		public Integer maxLimit { get; set; }
 
 		public Integer getLimitOrDefault(Integer defaultLimit) {
 			// Valid: uses property field in ternary
-			return limit != null ? limit : defaultLimit;
+			return maxLimit != null ? maxLimit : defaultLimit;
 		}
 
 		// Property in switch statement
@@ -356,11 +356,11 @@ public class Example {
 		}
 
 		// Instance field in ternary
-		private Integer limit;
+		private Integer maxLimit;
 
 		public Integer getLimitOrDefault(Integer defaultLimit) {
 			// Valid: uses instance field in ternary
-			return limit != null ? limit : defaultLimit;
+			return maxLimit != null ? maxLimit : defaultLimit;
 		}
 
 		// Instance field in switch
@@ -1188,6 +1188,220 @@ public class Example {
 					'value' => currentMap
 				};
 			}
+		}
+	}
+
+	// FieldDeclaration node type coverage as inner class
+	public class FieldDeclarationNodeCoverage {
+		// Test FieldDeclaration nodes - these may be represented as FieldDeclaration in AST
+		// Multiple fields in one declaration statement (may create FieldDeclaration nodes)
+		private String fieldA, fieldB, fieldC;
+
+		public void useFieldA() {
+			// Valid: uses FieldDeclaration field
+			String value = fieldA;
+		}
+
+		public void useFieldB() {
+			// Valid: uses FieldDeclaration field
+			Integer num = fieldB != null ? 1 : 0;
+		}
+
+		public void useFieldC() {
+			// Valid: uses FieldDeclaration field
+			Boolean flag = fieldC == 'test';
+		}
+
+		public void useMultipleFieldDeclarations() {
+			// Valid: uses multiple FieldDeclaration fields
+			String result = fieldA + fieldB + fieldC;
+		}
+
+		// FieldDeclaration with modifiers
+		protected Integer count1, count2;
+		public String name1, name2;
+
+		public void useProtectedFieldDeclarations() {
+			// Valid: uses protected FieldDeclaration fields
+			Integer total = count1 + count2;
+		}
+
+		public void usePublicFieldDeclarations() {
+			// Valid: uses public FieldDeclaration fields
+			String combined = name1 + name2;
+		}
+
+		// FieldDeclaration in constructor argument
+		private Config config1, config2;
+
+		public void useFieldDeclarationInConstructor() {
+			// Valid: uses FieldDeclaration field in constructor
+			Processor p = new Processor(config1, config2);
+		}
+
+		// FieldDeclaration in method call
+		private String prefix1, prefix2;
+
+		public void useFieldDeclarationInMethodCall() {
+			// Valid: uses FieldDeclaration fields in method call
+			processData(prefix1, prefix2);
+		}
+
+		// FieldDeclaration in conditional
+		private Boolean enabled1, enabled2;
+
+		public Boolean areBothEnabled() {
+			// Valid: uses FieldDeclaration fields in condition
+			return enabled1 && enabled2;
+		}
+
+		// FieldDeclaration in loop
+		private List<String> items1, items2;
+
+		public void processFieldDeclarationItems() {
+			// Valid: uses FieldDeclaration field in loop
+			for (String item : items1) {
+				System.debug(item);
+			}
+		}
+
+		// FieldDeclaration in return
+		private String message1, message2;
+
+		public String getMessage1() {
+			// Valid: uses FieldDeclaration field in return
+			return message1;
+		}
+
+		// FieldDeclaration in assignment
+		private Integer value1, value2;
+
+		public void setFieldDeclarationValues() {
+			// Valid: uses FieldDeclaration fields in assignment
+			value1 = 10;
+			value2 = 20;
+		}
+
+		// FieldDeclaration in complex expression
+		private Integer multiplier1, multiplier2;
+
+		public Integer calculateWithFieldDeclarations(Integer base) {
+			// Valid: uses FieldDeclaration fields in calculation
+			return base * multiplier1 * multiplier2;
+		}
+
+		// FieldDeclaration with null check
+		private String data1, data2;
+
+		public Boolean hasFieldDeclarationData() {
+			// Valid: uses FieldDeclaration fields in null check
+			return data1 != null && data2 != null;
+		}
+
+		// FieldDeclaration in ternary
+		private Integer limit1, limit2;
+
+		public Integer getFieldDeclarationLimitOrDefault(Integer defaultLimit) {
+			// Valid: uses FieldDeclaration field in ternary
+			return limit1 != null ? limit1 : defaultLimit;
+		}
+
+		// FieldDeclaration in nested expressions
+		private Config.Parser parser1, parser2;
+
+		public void useFieldDeclarationInNestedExpression() {
+			// Valid: uses FieldDeclaration field in nested constructor
+			Processor p = new Processor(
+				parser1,
+				new Helper(parser2)
+			);
+		}
+
+		// FieldDeclaration with method chaining
+		private String text1, text2;
+
+		public String processFieldDeclarationText() {
+			// Valid: uses FieldDeclaration field in method chain
+			return text1?.toUpperCase() + text2?.toLowerCase();
+		}
+
+		// FieldDeclaration in assignment expression
+		private Integer counter1, counter2;
+
+		public void incrementFieldDeclarations() {
+			// Valid: uses FieldDeclaration fields in assignment
+			counter1 = counter1 + 1;
+			counter2 = counter2 + 2;
+		}
+
+		// FieldDeclaration with null coalescing
+		private String default1, default2;
+
+		public String getFieldDeclarationTextOrDefault(String fallback) {
+			// Valid: uses FieldDeclaration field with null coalescing
+			return default1 ?? fallback;
+		}
+
+		// FieldDeclaration in switch statement
+		private String status1, status2;
+
+		public Integer getFieldDeclarationStatusCode() {
+			// Valid: uses FieldDeclaration field in switch
+			switch on status1 {
+				when 'active' {
+					return 200;
+				}
+				when else {
+					return 500;
+				}
+			}
+		}
+
+		// FieldDeclaration in try-catch
+		private String error1, error2;
+
+		public void handleFieldDeclarationError() {
+			// Valid: uses FieldDeclaration field in try-catch
+			try {
+				if (error1 != null) {
+					System.debug(error1);
+				}
+			} catch (Exception e) {
+				error2 = e.getMessage();
+			}
+		}
+
+		// FieldDeclaration with this keyword
+		private String title1, title2;
+
+		public String getFieldDeclarationTitle() {
+			// Valid: uses FieldDeclaration field with this
+			return this.title1;
+		}
+
+		// FieldDeclaration in method call on instance field
+		private Evaluator evaluator1, evaluator2;
+
+		public void callMethodOnFieldDeclaration() {
+			// Valid: calls method on FieldDeclaration field
+			evaluator1.process();
+		}
+
+		// FieldDeclaration property access
+		private Config configField1, configField2;
+
+		public String getFieldDeclarationPath() {
+			// Valid: accesses property on FieldDeclaration field
+			return configField1.path;
+		}
+
+		// Mixed FieldDeclaration and regular Field
+		private String regularField;
+		private String fieldDec1, fieldDec2;
+
+		public Boolean hasMixedFields() {
+			// Valid: uses both regular Field and FieldDeclaration fields
+			return regularField != null && fieldDec1 != null && fieldDec2 != null;
 		}
 	}
 }
