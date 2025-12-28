@@ -10,7 +10,7 @@
   "scripts": {
     "test": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest",
     "test:watch": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest --watch",
-    "test:coverage": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest --coverage",
+    "test:coverage": "node scripts/check-rule-coverage.js",
     "test:rules": "node scripts/validate-rules.js && pnpm test",
     "validate": "node scripts/validate-rules.js",
     "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\"",
