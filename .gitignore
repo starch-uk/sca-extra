@@ -46,7 +46,8 @@ tmp/
 temp/
 *.tmp
 .jest-localstorage
-.jest-localstorage-*
+.jest-localstorage-shm
+.jest-localstorage-wal
 
 # Husky
 .husky/_/
