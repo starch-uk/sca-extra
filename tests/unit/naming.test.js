@@ -1,21 +1,4 @@
-const fs = require('fs');
-const path = require('path');
 const { runPMD, assertNoViolations } = require('../helpers/pmd-helper');
-
-async function withOverriddenNoAbbreviationsRuleset(transformFn, testFn) {
-	const originalPath = path.join(process.cwd(), 'rulesets', 'naming', 'NoAbbreviations.xml');
-	const tempPath = path.join(process.cwd(), 'rulesets', 'naming', 'NoAbbreviations.override.xml');
-
-	const original = fs.readFileSync(originalPath, 'utf-8');
-	const transformed = transformFn(original);
-	fs.writeFileSync(tempPath, transformed, 'utf-8');
-
-	try {
-		await testFn('rulesets/naming/NoAbbreviations.override.xml');
-	} finally {
-		fs.unlinkSync(tempPath);
-	}
-}
 
 describe('Naming Rules', () => {
 	describe('NoSingleLetterVariableNames', () => {
@@ -108,233 +91,90 @@ describe('Naming Rules', () => {
 
 		describe('property behavior (simulated overrides)', () => {
 			it('should respect a custom disallowedAbbreviations list', async () => {
-				await withOverriddenNoAbbreviationsRuleset(
-					(xml) =>
-						xml.replace(
-							"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
-							"then 'ctx'"
-						),
-					async (rulesetPath) => {
-						const violations = await runPMD(
-							rulesetPath,
-							'tests/fixtures/negative/naming/NoAbbreviations.cls'
-						);
-
-						// Only the first variable (ctx on line 3) should be flagged
-						const noAbbrevViolations = violations.filter(
-							(v) => v.rule === 'NoAbbreviations'
-						);
-						expect(noAbbrevViolations.map((v) => v.line)).toEqual([3]);
-					}
+				const violations = await runPMD(
+					'tests/rulesets/NoAbbreviations_DisallowedCtx.xml',
+					'tests/fixtures/negative/naming/NoAbbreviations.cls'
 				);
+
+				// Only the first variable (ctx on line 3) should be flagged
+				const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
+				expect(noAbbrevViolations.map((v) => v.line)).toEqual([3]);
 			});
 
 			it('should work with completely different disallowedAbbreviations (foo,bar) - violations', async () => {
-				// Temporary Apex file with variables that match and don't match the custom list
-				const tempApexPath = path.join(
-					process.cwd(),
-					'tests',
-					'fixtures',
-					'negative',
-					'naming',
-					'NoAbbreviationsOverrideFooBar.cls'
+				const violations = await runPMD(
+					'tests/rulesets/NoAbbreviations_DisallowedFooBar.xml',
+					'tests/fixtures/negative/naming/NoAbbreviations_OverrideFooBar.cls'
 				);
 
-				const apexSource = `
-public class ExampleFooBarAbbr {
-	public void method() {
-		Integer foo = 0;
-		Integer bar = 1;
-		Integer baz = 2;
-	}
-}
-`;
-
-				fs.writeFileSync(tempApexPath, apexSource, 'utf-8');
-
-				try {
-					await withOverriddenNoAbbreviationsRuleset(
-						(xml) =>
-							xml.replace(
-								"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
-								"then 'foo,bar'"
-							),
-						async (rulesetPath) => {
-							const violations = await runPMD(
-								rulesetPath,
-								'tests/fixtures/negative/naming/NoAbbreviationsOverrideFooBar.cls'
-							);
-
-							const noAbbrevViolations = violations.filter(
-								(v) => v.rule === 'NoAbbreviations'
-							);
-							// foo and bar (lines 4 and 5) should be flagged, baz (line 6) should not
-							expect(noAbbrevViolations.map((v) => v.line).sort()).toEqual([4, 5]);
-						}
-					);
-				} finally {
-					fs.unlinkSync(tempApexPath);
-				}
+				const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
+				// foo and bar (lines 3 and 4) should be flagged, baz (line 5) should not
+				expect(noAbbrevViolations.map((v) => v.line).sort()).toEqual([3, 4]);
 			});
 
 			it('should work with completely different disallowedAbbreviations (foo,bar) - no violations', async () => {
-				const tempApexPath = path.join(
-					process.cwd(),
-					'tests',
-					'fixtures',
-					'positive',
-					'naming',
-					'NoAbbreviationsOverrideFooBarPositive.cls'
+				const violations = await runPMD(
+					'tests/rulesets/NoAbbreviations_DisallowedFooBar.xml',
+					'tests/fixtures/positive/naming/NoAbbreviations_OverrideFooBarPositive.cls'
 				);
-
-				const apexSource = `
-public class ExampleFooBarAbbrPositive {
-	public void method() {
-		Integer baz = 2; // Not in foo,bar
-	}
-}
-`;
-
-				fs.writeFileSync(tempApexPath, apexSource, 'utf-8');
-
-				try {
-					await withOverriddenNoAbbreviationsRuleset(
-						(xml) =>
-							xml.replace(
-								"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
-								"then 'foo,bar'"
-							),
-						async (rulesetPath) => {
-							const violations = await runPMD(
-								rulesetPath,
-								'tests/fixtures/positive/naming/NoAbbreviationsOverrideFooBarPositive.cls'
-							);
-							assertNoViolations(violations, 'NoAbbreviations');
-						}
-					);
-				} finally {
-					fs.unlinkSync(tempApexPath);
-				}
+				assertNoViolations(violations, 'NoAbbreviations');
 			});
 
 			it('should respect a custom allowedSuffixes pattern (Id)', async () => {
-				// Temporary Apex file with a variable that uses a disallowed abbreviation plus an Id suffix
-				// so we can verify that changing allowedSuffixes toggles the violation.
-				const tempApexPath = path.join(
-					process.cwd(),
-					'tests',
-					'fixtures',
-					'positive',
-					'naming',
-					'NoAbbreviationsOverrideSuffix.cls'
+				// First, override the abbreviation list so that only fooId is considered an abbreviation,
+				// and keep Id in the allowedSuffixes pattern so fooId is allowed.
+				const violations1 = await runPMD(
+					'tests/rulesets/NoAbbreviations_DisallowedFooIdSuffixId.xml',
+					'tests/fixtures/positive/naming/NoAbbreviations_OverrideSuffix.cls'
+				);
+				// With Id in the allowed suffix pattern, fooId should NOT be flagged
+				assertNoViolations(violations1, 'NoAbbreviations');
+
+				// Now override the allowedSuffixes pattern to remove "Id" so fooId becomes a violation
+				const violations2 = await runPMD(
+					'tests/rulesets/NoAbbreviations_DisallowedFooIdSuffixNoId.xml',
+					'tests/fixtures/positive/naming/NoAbbreviations_OverrideSuffix.cls'
 				);
 
-				const apexSource = `
-public class ExampleOverrideSuffix {
-	public void method() {
-		Integer fooId = 0; // 'foo' is abbreviated, Id suffix controls whether this is allowed
-	}
-}
-`;
-
-				fs.writeFileSync(tempApexPath, apexSource, 'utf-8');
-
-				try {
-					// First, override the abbreviation list so that only fooId is considered an abbreviation,
-					// and keep Id in the allowedSuffixes pattern so fooId is allowed.
-					await withOverriddenNoAbbreviationsRuleset(
-						(xml) =>
-							xml
-								.replace(
-									"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
-									"then 'fooId'"
-								)
-								.replace("then 'Api|Html|Id|Url'", "then 'Api|Html|Id|Url'"),
-						async (rulesetPath) => {
-							const violations = await runPMD(
-								rulesetPath,
-								'tests/fixtures/positive/naming/NoAbbreviationsOverrideSuffix.cls'
-							);
-							// With Id in the allowed suffix pattern, fooId should NOT be flagged
-							assertNoViolations(violations, 'NoAbbreviations');
-						}
-					);
-
-					// Now override the allowedSuffixes pattern to remove "Id" so fooId becomes a violation
-					await withOverriddenNoAbbreviationsRuleset(
-						(xml) =>
-							xml
-								.replace(
-									"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
-									"then 'fooId'"
-								)
-								.replace("then 'Api|Html|Id|Url'", "then 'Api|Url|Html'"),
-						async (rulesetPath) => {
-							const violations = await runPMD(
-								rulesetPath,
-								'tests/fixtures/positive/naming/NoAbbreviationsOverrideSuffix.cls'
-							);
-
-							const noAbbrevViolations = violations.filter(
-								(v) => v.rule === 'NoAbbreviations'
-							);
-							expect(noAbbrevViolations.length).toBe(1);
-							expect(noAbbrevViolations[0].line).toBe(4);
-						}
-					);
-				} finally {
-					fs.unlinkSync(tempApexPath);
-				}
+				const noAbbrevViolations = violations2.filter((v) => v.rule === 'NoAbbreviations');
+				expect(noAbbrevViolations.length).toBe(1);
+				expect(noAbbrevViolations[0].line).toBe(3);
 			});
 
-			it('should work with completely different allowedSuffixes (Foo|Bar)', async () => {
-				const tempApexPath = path.join(
-					process.cwd(),
-					'tests',
-					'fixtures',
-					'negative',
-					'naming',
-					'NoAbbreviationsOverrideFooBarSuffix.cls'
+			it('should work with completely different allowedSuffixes (Foo,Bar)', async () => {
+				// Configure abbreviations and suffixes so Foo and Bar suffixed names are allowed
+				const violations = await runPMD(
+					'tests/rulesets/NoAbbreviations_DisallowedFooBarBazSuffixOoAr.xml',
+					'tests/fixtures/negative/naming/NoAbbreviations_OverrideFooBarSuffix.cls'
 				);
 
-				const apexSource = `
-public class ExampleFooBarSuffixList {
-	public void method() {
-		Integer foo = 0;
-		Integer bar = 1;
-		Integer baz = 2;
-	}
-}
-`;
+				const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
+				// foo and bar should be allowed by suffix, baz (line 5) should be flagged
+				expect(noAbbrevViolations.map((v) => v.line)).toEqual([5]);
+			});
 
-				fs.writeFileSync(tempApexPath, apexSource, 'utf-8');
+			it('should respect custom allowedPrefixes property', async () => {
+				// Configure abbreviations and prefix so 'pre' prefix allows abbreviations
+				const violations = await runPMD(
+					'tests/rulesets/NoAbbreviations_DisallowedCtxPrefixPre.xml',
+					'tests/fixtures/negative/naming/NoAbbreviations_OverridePrefix.cls'
+				);
 
-				try {
-					// Configure abbreviations and suffixes so Foo and Bar suffixed names are allowed
-					await withOverriddenNoAbbreviationsRuleset(
-						(xml) =>
-							xml
-								.replace(
-									"then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'",
-									"then 'foo,bar,baz'"
-								)
-								.replace("then 'Api|Html|Id|Url'", "then 'oo|ar'"),
-						async (rulesetPath) => {
-							const violations = await runPMD(
-								rulesetPath,
-								'tests/fixtures/negative/naming/NoAbbreviationsOverrideFooBarSuffix.cls'
-							);
+				const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
+				// preCtx should be allowed (prefix), ctx should be flagged (no prefix)
+				expect(noAbbrevViolations.map((v) => v.line).sort()).toEqual([4]);
+			});
 
-							const noAbbrevViolations = violations.filter(
-								(v) => v.rule === 'NoAbbreviations'
-							);
-							// foo and bar should be allowed by suffix, baz (line 6) should be flagged
-							expect(noAbbrevViolations.map((v) => v.line)).toEqual([6]);
-						}
-					);
-				} finally {
-					fs.unlinkSync(tempApexPath);
-				}
+			it('should work with multiple allowedPrefixes (pre,post)', async () => {
+				// Configure abbreviations and multiple prefixes
+				const violations = await runPMD(
+					'tests/rulesets/NoAbbreviations_DisallowedCtxPrefixPrePost.xml',
+					'tests/fixtures/positive/naming/NoAbbreviations_OverrideMultiplePrefixes.cls'
+				);
+
+				const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
+				// preCtx and postCtx should be allowed (prefixes), ctx should be flagged
+				expect(noAbbrevViolations.map((v) => v.line).sort()).toEqual([5]);
 			});
 		});
 	});

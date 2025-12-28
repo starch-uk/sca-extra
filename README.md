@@ -21,7 +21,7 @@ The `code-analyzer.yml` file is where you configure which rules to enable, custo
 
 **Add the rulesets to `code-analyzer.yml`:**
 - Create or update a `code-analyzer.yml` file in the root of your Salesforce project.
-- Reference the ruleset XML files you want to enable under the top-level `rulesets:` key, using paths relative to your project root (for full examples, see **Installation** and **Usage** below).
+- Reference the ruleset XML files you want to enable under `engines.pmd.custom_rulesets`, using paths relative to your project root (for full examples, see **Installation** and **Usage** below).
 - **Important:** Do NOT copy the repository's `code-analyzer.yml` file in its entirety, as it has `rulesets: []` (disabled). Instead, copy only the Regex rules configuration from the `engines.regex.custom_rules` section into your own `code-analyzer.yml` (see **Regex Rules** section below).
 
 ### Basic Structure
@@ -29,79 +29,137 @@ The `code-analyzer.yml` file is where you configure which rules to enable, custo
 The `code-analyzer.yml` file uses YAML syntax and typically includes:
 
 ```yaml
-name: Salesforce Code Analyzer Configuration
-version: 1.0.0
-
-rulesets:
-  # List of ruleset files to include
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
+engines:
+  pmd:
+    custom_rulesets:
+      # List of ruleset files to include
+      - rulesets/structure/InnerClassesCannotBeStatic.xml
 
 rules:
-  # Rule-specific configuration
+  # Rule-specific configuration (severity and tags only)
+  # Note: Property overrides are NOT supported via code-analyzer.yml
+  # Use custom ruleset XML files with ref= syntax instead (see "Overriding Rule Properties" below)
   RuleName:
-    properties:
-      propertyName: "value"
+    severity: "High"
+    tags: ["Recommended"]
 ```
 
 ### Adding Custom Rules
 
-To add rules from this repository, reference the ruleset XML files under the `rulesets:` key using paths relative to your project root:
+To add rules from this repository, reference the ruleset XML files under `engines.pmd.custom_rulesets` using paths relative to your project root:
 
 ```yaml
-rulesets:
-  # Structure rules
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
-  
-  # Modifier rules
-  - rulesets/modifiers/FinalVariablesMustBeFinal.xml
-  - rulesets/modifiers/StaticMethodsMustBeStatic.xml
-  
-  # Naming rules
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-  - rulesets/naming/NoAbbreviations.xml
-  
-  # Code style rules
-  - rulesets/code-style/NoMethodCallsInConditionals.xml
-  - rulesets/code-style/PreferSafeNavigationOperator.xml
+engines:
+  pmd:
+    custom_rulesets:
+      # Structure rules
+      - rulesets/structure/InnerClassesCannotBeStatic.xml
+      - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
+      
+      # Modifier rules
+      - rulesets/modifiers/FinalVariablesMustBeFinal.xml
+      - rulesets/modifiers/StaticMethodsMustBeStatic.xml
+      
+      # Naming rules
+      - rulesets/naming/NoSingleLetterVariableNames.xml
+      - rulesets/naming/NoAbbreviations.xml
+      
+      # Code style rules
+      - rulesets/code-style/NoMethodCallsInConditionals.xml
+      - rulesets/code-style/PreferSafeNavigationOperator.xml
 ```
 
 **Important:** 
 - Copy the `rulesets/` directory (or specific category folders) to your Salesforce project root first
 - Paths in `code-analyzer.yml` are relative to your project root
 - You can include as many or as few rules as needed
+- Use `engines.pmd.custom_rulesets` (not `rulesets:`) to reference PMD rulesets
 
 ### Configuring Rule Properties
 
-Many rules expose configurable properties that let you customize their behavior. Override default property values in the `rules:` section:
+**Important:** Salesforce Code Analyzer does not support property overrides for PMD rules via `code-analyzer.yml`. Only `severity` and `tags` can be overridden in `code-analyzer.yml`.
 
-```yaml
-rulesets:
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-  - rulesets/code-style/SingleArgumentMustBeSingleLine.xml
+To override rule properties, you must create a custom ruleset XML file that references the original rule using PMD's `ref=` syntax.
 
-rules:
-  NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c,e,x"  # Allow loop counters and common exceptions
-      strictMode: true          # Enable strict mode
-  
-  SingleArgumentMustBeSingleLine:
-    properties:
-      maxLineLength: 120        # Maximum line length threshold
-      allowExceptions: false    # Disallow exceptions
+**Example - Override Multiple Rule Properties:**
+
+1. Create a custom ruleset file (e.g., `rulesets/custom-property-overrides.xml`):
+
+```xml
+<?xml version="1.0"?>
+<ruleset
+    name="Custom Property Overrides"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom property overrides for rules</description>
+    
+    <!-- Override EnumMinimumValues to require 4 values instead of default 3 -->
+    <rule ref="rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues">
+        <properties>
+            <property name="minValues">
+                <value>4</value>
+            </property>
+        </properties>
+    </rule>
+    
+    <!-- Override PreferSwitchOverIfElseChains to require 4 conditions instead of default 2 -->
+    <rule ref="rulesets/structure/PreferSwitchOverIfElseChains.xml/PreferSwitchOverIfElseChains">
+        <properties>
+            <property name="minElseIfStatements">
+                <value>4</value>
+            </property>
+        </properties>
+    </rule>
+    
+    <!-- Override ListInitializationMustBeMultiLine to require 3 items instead of default 2 -->
+    <rule ref="rulesets/code-style/ListInitializationMustBeMultiLine.xml/ListInitializationMustBeMultiLine">
+        <properties>
+            <property name="minItems">
+                <value>3</value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>
 ```
 
-**Finding available properties:**
-1. Open the rule XML file (e.g., `rulesets/naming/NoSingleLetterVariableNames.xml`)
-2. Look for `<property>` elements in the `<properties>` section
-3. Each property has a `name` and `description` attribute
-4. The default value is in the `<value>` element
+2. Reference the override ruleset in your `code-analyzer.yml`:
 
-**Property types:**
-- **Strings**: Use quotes: `allowedNames: "i,c,e"`
-- **Integers**: No quotes: `maxLineLength: 120`
-- **Booleans**: Use `true` or `false`: `strictMode: true`
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      # Original rules
+      - rulesets/structure/EnumMinimumValues.xml
+      - rulesets/structure/PreferSwitchOverIfElseChains.xml
+      - rulesets/code-style/ListInitializationMustBeMultiLine.xml
+      # Custom override ruleset (must come after the original rules)
+      - rulesets/custom-property-overrides.xml
+
+rules:
+  # Override severity and tags (properties are NOT supported here)
+  EnumMinimumValues:
+    severity: "High"
+    tags: ["Recommended", "Structure"]
+```
+
+**Key Points:**
+- The `ref` attribute format is `{ruleset-path}/{rule-name}` (e.g., `rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues`)
+- The ruleset path should be relative to your project root
+- The override ruleset must be listed **after** the original ruleset in `custom_rulesets`
+- Property values in XML use `<value>` tags (strings don't need quotes, but can have them)
+
+**Finding available properties:**
+1. Open the rule XML file (e.g., `rulesets/structure/EnumMinimumValues.xml`)
+2. Look for property substitution patterns in the XPath expression (e.g., `'${propertyName}'`)
+3. Check the rule description for property documentation
+4. Default values are embedded in the XPath expression using the pattern: `if ('${propertyName}' = '${propertyName}') then 'default' else '${propertyName}'`
+
+**Property types in XML:**
+- **Strings**: `<value>i,c,e,x</value>` or `<value>"i,c,e,x"</value>`
+- **Integers**: `<value>4</value>`
+- **Booleans**: `<value>true</value>` or `<value>false</value>`
 
 ### Disabling Default Rules
 
@@ -128,10 +186,12 @@ To disable default PMD rules provided by Salesforce Code Analyzer, you can exclu
 Save this as `rulesets/custom-disabled-defaults.xml` and reference it in `code-analyzer.yml`:
 
 ```yaml
-rulesets:
-  - rulesets/custom-disabled-defaults.xml  # Custom ruleset with disabled defaults
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  - rulesets/naming/NoSingleLetterVariableNames.xml
+engines:
+  pmd:
+    custom_rulesets:
+      - rulesets/custom-disabled-defaults.xml  # Custom ruleset with disabled defaults
+      - rulesets/structure/InnerClassesCannotBeStatic.xml
+      - rulesets/naming/NoSingleLetterVariableNames.xml
 ```
 
 Alternatively, if you're creating a comprehensive custom ruleset, you can combine standard PMD rules with exclusions in a single XML file. Note that custom rulesets from this repository are typically referenced separately in `code-analyzer.yml` (as shown in the example below):
@@ -162,10 +222,12 @@ Alternatively, if you're creating a comprehensive custom ruleset, you can combin
 Then reference both this comprehensive ruleset and your custom rulesets in `code-analyzer.yml`:
 
 ```yaml
-rulesets:
-  - rulesets/custom-comprehensive-rules.xml  # Standard rules with exclusions
-  - rulesets/structure/InnerClassesCannotBeStatic.xml  # Custom rules
-  - rulesets/naming/NoSingleLetterVariableNames.xml
+engines:
+  pmd:
+    custom_rulesets:
+      - rulesets/custom-comprehensive-rules.xml  # Standard rules with exclusions
+      - rulesets/structure/InnerClassesCannotBeStatic.xml  # Custom rules
+      - rulesets/naming/NoSingleLetterVariableNames.xml
 ```
 
 **Standard PMD category rulesets available:**
@@ -187,18 +249,15 @@ Copy the `engines.regex.custom_rules` section from the repository's `code-analyz
 **Example - Add to your `code-analyzer.yml`:**
 
 ```yaml
-name: My Salesforce Project Code Analyzer Config
-version: 1.0.0
-
-rulesets:
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  # ... other rulesets ...
-
 engines:
+  pmd:
+    custom_rulesets:
+      - rulesets/structure/InnerClassesCannotBeStatic.xml
+      # ... other rulesets ...
   regex:
     custom_rules:
       NoConsecutiveBlankLines:
-        regex: /\n\s*\n\s*\n/
+        regex: /\n\s*\n\s*\n/g
         file_extensions: [".apex", ".cls", ".trigger"]
         description: "Prevents two or more consecutive blank lines in Apex code. Code should have at most one blank line between statements, methods, or other code elements."
         violation_message: "Two or more consecutive blank lines are not allowed. Use at most one blank line between statements."
@@ -213,33 +272,105 @@ Regex rules are useful for:
 
 For more information on creating Regex rules, see the [Regex Engine Reference](docs/REGEX.md).
 
-### Complete Example
+### Overriding Rule Properties
 
-Here's a complete `code-analyzer.yml` example combining custom rules, property configuration, and standard PMD rules:
+**Important:** Salesforce Code Analyzer does not support property overrides for PMD rules via `code-analyzer.yml`. Only `severity` and `tags` can be overridden in `code-analyzer.yml` for PMD rules.
+
+To override rule properties, you must create a custom ruleset XML file that references the original rule and overrides its properties using PMD's `ref=` syntax (similar to the [unhappy-soup approach](https://github.com/rsoesemann/unhappy-soup/blob/master/ruleset.xml)).
+
+**Example - Override Multiple Rule Properties:**
+
+1. Create a custom ruleset file (e.g., `rulesets/custom-overrides.xml`):
+
+```xml
+<?xml version="1.0"?>
+<ruleset
+    name="Custom Rule Overrides"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom property overrides for rules</description>
+    
+    <!-- Override EnumMinimumValues to require 4 values instead of default 3 -->
+    <rule ref="rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues">
+        <properties>
+            <property name="minValues">
+                <value>4</value>
+            </property>
+        </properties>
+    </rule>
+    
+    <!-- Override PreferSwitchOverIfElseChains to require 4 conditions instead of default 2 -->
+    <rule ref="rulesets/structure/PreferSwitchOverIfElseChains.xml/PreferSwitchOverIfElseChains">
+        <properties>
+            <property name="minElseIfStatements">
+                <value>4</value>
+            </property>
+        </properties>
+    </rule>
+    
+    <!-- Override ListInitializationMustBeMultiLine to require 3 items instead of default 2 -->
+    <rule ref="rulesets/code-style/ListInitializationMustBeMultiLine.xml/ListInitializationMustBeMultiLine">
+        <properties>
+            <property name="minItems">
+                <value>3</value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>
+```
+
+2. Reference the override ruleset in your `code-analyzer.yml`:
 
 ```yaml
-name: My Salesforce Project Code Analyzer Config
-version: 1.0.0
-
-rulesets:
-  # Custom rules from sca-extra repository
-  - rulesets/structure/InnerClassesCannotBeStatic.xml
-  - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
-  - rulesets/modifiers/FinalVariablesMustBeFinal.xml
-  - rulesets/naming/NoSingleLetterVariableNames.xml
-  - rulesets/naming/NoAbbreviations.xml
-  - rulesets/code-style/NoMethodCallsInConditionals.xml
+engines:
+  pmd:
+    custom_rulesets:
+      # Original rules (must be listed first)
+      - rulesets/structure/EnumMinimumValues.xml
+      - rulesets/structure/PreferSwitchOverIfElseChains.xml
+      - rulesets/code-style/ListInitializationMustBeMultiLine.xml
+      # Override ruleset (must come after the original rules)
+      - rulesets/custom-overrides.xml
 
 rules:
-  # Configure custom rule properties
+  # Override severity and tags (properties are NOT supported here)
+  EnumMinimumValues:
+    severity: "High"
+    tags: ["Recommended", "Structure"]
+```
+
+**Key Points:**
+- The `ref` attribute format is `{ruleset-path}/{rule-name}` (e.g., `rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues`)
+- The ruleset path should be relative to your project root
+- The override ruleset must be listed **after** the original ruleset in `custom_rulesets`
+- Property values in XML use `<value>` tags (strings don't need quotes, but can have them)
+- You can override multiple rules in a single custom ruleset file
+
+### Complete Example
+
+Here's a complete `code-analyzer.yml` example combining custom rules and standard PMD rules:
+
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      # Custom rules from sca-extra repository
+      - rulesets/structure/InnerClassesCannotBeStatic.xml
+      - rulesets/structure/InnerClassesCannotHaveStaticMembers.xml
+      - rulesets/modifiers/FinalVariablesMustBeFinal.xml
+      - rulesets/naming/NoSingleLetterVariableNames.xml
+      - rulesets/naming/NoAbbreviations.xml
+      - rulesets/code-style/NoMethodCallsInConditionals.xml
+      # Custom override ruleset (if you need property overrides)
+      - rulesets/custom-overrides.xml
+
+rules:
+  # Override severity and tags (properties are NOT supported here)
   NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c,e,x,y,z"  # Allow loop counters and common exceptions
-  
-  NoAbbreviations:
-    properties:
-      disallowedAbbreviations: "ctx,idx,msg,cfg"
-      allowedSuffixes: "Id|Api|Url|Html|Dto"
+    severity: "High"
+    tags: ["Recommended", "Naming"]
 ```
 
 **For more examples:** See the [unhappy-soup ruleset](https://github.com/rsoesemann/unhappy-soup/blob/master/ruleset.xml) for a comprehensive example of combining standard PMD rules with custom rules and configuration.
@@ -508,7 +639,8 @@ Boolean isManager = true;    // ✅ Descriptive and readable
 
 **Configurable Properties:**
 - `disallowedAbbreviations` (string): Comma-separated list of **exact variable names** to flag as abbreviations (e.g., `"ctx,idx,msg,cfg"`).  
-- `allowedSuffixes` (string): **Regex-style list of suffixes** (joined with `|`) that are treated as complete words when they appear at the end of a variable name (e.g., `"Id|Api|Url|Html|Dto"`).
+- `allowedSuffixes` (string): **Comma-separated list of suffixes** that are treated as complete words when they appear at the end of a variable name (e.g., `"Id,Api,Url,Html,Dto"`). Default: `"Api,Html,Id,Url"`.
+- `allowedPrefixes` (string): **Comma-separated list of prefixes** that are treated as complete words when they appear at the start of a variable name (e.g., `"pre,post"`). Default: empty (no prefixes allowed).
 
 These properties are defined in `rulesets/naming/NoAbbreviations.xml` and can be customized in `code-analyzer.yml` under the `NoAbbreviations` rule.
 

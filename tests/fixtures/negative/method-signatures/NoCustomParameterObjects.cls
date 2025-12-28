@@ -1,4 +1,9 @@
 public class Example {
+    // Violation: Inner class with only 1 field, no methods
+    public class SingleFieldParam {
+        public String name;
+    }
+
     // Violation: Inner class with only fields, no methods
     public class ParameterObject {
         public String name;

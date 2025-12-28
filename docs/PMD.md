@@ -82,28 +82,110 @@ Priority (1=High, 5=Low) filters rules via `--minimum-priority` CLI option:
 
 Override rule properties:
 
-**In ruleset XML:**
+**Important:** Salesforce Code Analyzer does not support property overrides for PMD rules via `code-analyzer.yml`. Only `severity` and `tags` can be overridden in `code-analyzer.yml`.
+
+**In ruleset XML (required for property overrides):**
 ```xml
 <rule ref="category/apex/design.xml/NPathComplexity">
     <properties>
-        <property name="reportLevel" value="150"/>
+        <property name="reportLevel">
+            <value>150</value>
+        </property>
     </properties>
 </rule>
 ```
 
-**In code-analyzer.yml:**
+**For custom rules (using ref= syntax):**
+```xml
+<rule ref="rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues">
+    <properties>
+        <property name="minValues">
+            <value>4</value>
+        </property>
+    </properties>
+</rule>
+```
+
+**In code-analyzer.yml (severity and tags only):**
 ```yaml
 rules:
-  NPathComplexity:
-    properties:
-      reportLevel: 150
+  pmd:
+    NPathComplexity:
+      severity: "High"
+      tags: ["Recommended"]
 ```
+
+**Complete Example - Override Multiple Rule Properties:**
+
+1. Create a custom ruleset file (e.g., `rulesets/custom-overrides.xml`):
+
+```xml
+<?xml version="1.0"?>
+<ruleset
+    name="Custom Property Overrides"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom property overrides for rules</description>
+    
+    <!-- Override EnumMinimumValues to require 4 values instead of default 3 -->
+    <rule ref="rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues">
+        <properties>
+            <property name="minValues">
+                <value>4</value>
+            </property>
+        </properties>
+    </rule>
+    
+    <!-- Override PreferSwitchOverIfElseChains to require 4 conditions instead of default 2 -->
+    <rule ref="rulesets/structure/PreferSwitchOverIfElseChains.xml/PreferSwitchOverIfElseChains">
+        <properties>
+            <property name="minElseIfStatements">
+                <value>4</value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>
+```
+
+2. Reference the override ruleset in `code-analyzer.yml`:
+
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      # Original rules (must be listed first)
+      - rulesets/structure/EnumMinimumValues.xml
+      - rulesets/structure/PreferSwitchOverIfElseChains.xml
+      # Override ruleset (must come after the original rules)
+      - rulesets/custom-overrides.xml
+```
+
+**Key Points:**
+- The `ref` attribute format is `{ruleset-path}/{rule-name}` (e.g., `rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues`)
+- The ruleset path should be relative to your project root
+- The override ruleset must be listed **after** the original ruleset in `custom_rulesets`
+- Property values in XML use `<value>` tags (strings don't need quotes, but can have them)
+- You can override multiple rules in a single custom ruleset file
 
 **Multivalued properties** (comma-separated):
 ```xml
 <property name="legalCollectionTypes" 
           value="java.util.ArrayList,java.util.Vector"/>
 ```
+
+**Note on XPathRule Custom Properties:**
+
+PMD 7.x does not validate custom properties for `XPathRule`. Custom rules using `XPathRule` should use property substitution in XPath with a default pattern instead of defining properties in XML:
+
+```xpath
+if ('${propertyName}' = '${propertyName}') then 'defaultValue' else '${propertyName}'
+```
+
+When the property is not defined, `${propertyName}` remains as a literal string, the check evaluates to `true`, and the default value is used. When the property is manually added to the XML, substitution occurs and the custom value is used.
+
+See [AI Agent Rule Guide](AI_AGENT_RULE_GUIDE.md#property-configuration-for-xpathrule) for detailed examples.
 
 ### Custom Messages
 

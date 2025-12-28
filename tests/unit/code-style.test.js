@@ -119,6 +119,26 @@ describe('Code Style Rules', () => {
 			);
 			assertNoViolations(violations, 'ListInitializationMustBeMultiLine');
 		});
+
+		describe('property behavior', () => {
+			it('should respect custom minItems property (3)', async () => {
+				// Test file with 2 items (should not violate with minItems=3)
+				const violations = await runPMD(
+					'tests/rulesets/ListInitializationMustBeMultiLine_MinItems3.xml',
+					'tests/fixtures/positive/code-style/ListInitializationMustBeMultiLine_MinItems3.cls'
+				);
+				assertNoViolations(violations, 'ListInitializationMustBeMultiLine');
+
+				// Test file with 3 items (should violate with minItems=3)
+				const violations2 = await runPMD(
+					'tests/rulesets/ListInitializationMustBeMultiLine_MinItems3.xml',
+					'tests/fixtures/negative/code-style/ListInitializationMustBeMultiLine_MinItems3.cls'
+				);
+				expect(
+					violations2.filter((v) => v.rule === 'ListInitializationMustBeMultiLine').length
+				).toBeGreaterThan(0);
+			});
+		});
 	});
 
 	describe('MapInitializationMustBeMultiLine', () => {
@@ -138,6 +158,26 @@ describe('Code Style Rules', () => {
 				'tests/fixtures/positive/code-style/MapInitializationMustBeMultiLine.cls'
 			);
 			assertNoViolations(violations, 'MapInitializationMustBeMultiLine');
+		});
+
+		describe('property behavior', () => {
+			it('should respect custom minEntries property (3)', async () => {
+				// Test file with 2 entries (should not violate with minEntries=3)
+				const violations = await runPMD(
+					'tests/rulesets/MapInitializationMustBeMultiLine_MinEntries3.xml',
+					'tests/fixtures/positive/code-style/MapInitializationMustBeMultiLine_MinEntries3.cls'
+				);
+				assertNoViolations(violations, 'MapInitializationMustBeMultiLine');
+
+				// Test file with 3 entries (should violate with minEntries=3)
+				const violations2 = await runPMD(
+					'tests/rulesets/MapInitializationMustBeMultiLine_MinEntries3.xml',
+					'tests/fixtures/negative/code-style/MapInitializationMustBeMultiLine_MinEntries3.cls'
+				);
+				expect(
+					violations2.filter((v) => v.rule === 'MapInitializationMustBeMultiLine').length
+				).toBeGreaterThan(0);
+			});
 		});
 	});
 
@@ -298,6 +338,26 @@ describe('Code Style Rules', () => {
 				'tests/fixtures/positive/code-style/MultipleStringContainsCalls.cls'
 			);
 			assertNoViolations(violations, 'MultipleStringContainsCalls');
+		});
+
+		describe('property behavior', () => {
+			it('should respect custom minCalls property (3)', async () => {
+				// Test file with 2 contains() calls (should not violate with minCalls=3)
+				const violations = await runPMD(
+					'tests/rulesets/MultipleStringContainsCalls_MinCalls3.xml',
+					'tests/fixtures/positive/code-style/MultipleStringContainsCalls_MinCalls3.cls'
+				);
+				assertNoViolations(violations, 'MultipleStringContainsCalls');
+
+				// Test file with 3 contains() calls (should violate with minCalls=3)
+				const violations2 = await runPMD(
+					'tests/rulesets/MultipleStringContainsCalls_MinCalls3.xml',
+					'tests/fixtures/negative/code-style/MultipleStringContainsCalls_MinCalls3.cls'
+				);
+				expect(
+					violations2.filter((v) => v.rule === 'MultipleStringContainsCalls').length
+				).toBeGreaterThan(0);
+			});
 		});
 	});
 

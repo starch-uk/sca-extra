@@ -15,13 +15,38 @@
 	>
 		<description>
 			Variable names must not use abbreviations. Use complete, descriptive words so that code
-			is
-			clear and self-explanatory. Abbreviations reduce code readability and can lead to confusion,
+			is clear and self-explanatory. Abbreviations reduce code readability and can lead to confusion,
 			especially for developers unfamiliar with the codebase. Common exceptions like 'Api', 'Html',
-			'Id', and 'Url' are allowed as suffixes.
+			'Id', and 'Url' are allowed as suffixes (configurable via allowedSuffixes
+			property, comma-separated).
+			Prefixes can also be allowed (configurable via allowedPrefixes property, comma-separated, empty by
+			default).
 		</description>
 		<priority>2</priority>
 		<properties>
+			<property
+				name="disallowedAbbreviations"
+				type="String"
+				description="Comma-separated list of disallowed abbreviations"
+			>
+				<value>
+					acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val
+				</value>
+			</property>
+			<property
+				name="allowedSuffixes"
+				type="String"
+				description="Comma-separated list of allowed suffixes"
+			>
+				<value>Api,Html,Id,Url</value>
+			</property>
+			<property
+				name="allowedPrefixes"
+				type="String"
+				description="Comma-separated list of allowed prefixes"
+			>
+				<value />
+			</property>
 			<property name="xpath">
 				<value
 				><![CDATA[
@@ -35,16 +60,12 @@
 							)
 								satisfies @Image = normalize-space($abbr)
 							and not(
-								matches(
-									@Image,
-									concat(
-										'(',
-										if ('${allowedSuffixes}' = '${allowedSuffixes}')
-										then 'Api|Html|Id|Url'
-										else '${allowedSuffixes}',
-										')$'
-									)
-								)
+								some $suffix in tokenize(if ('${allowedSuffixes}' = '${allowedSuffixes}') then 'Api,Html,Id,Url' else '${allowedSuffixes}', ',') satisfies matches(@Image, concat($suffix, '$'))
+							)
+							and not(
+								('${allowedPrefixes}' != '${allowedPrefixes}' 
+								and string-length('${allowedPrefixes}') > 0 
+								and (some $prefix in tokenize('${allowedPrefixes}', ',') satisfies matches(@Image, concat('^', $prefix))))
 							)
 						]
 					]

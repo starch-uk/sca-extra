@@ -39,14 +39,14 @@ For PMD rulesets, CLI usage, and configuration details, see [PMD Quick Reference
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `disable_engine` | boolean | false | Disable PMD engine |
-| `rulesets` | array | [] | PMD ruleset XML file paths (relative to project root) |
+| `custom_rulesets` | array | [] | PMD ruleset XML file paths (relative to project root) |
 | `java_command` | string | null | Java command/path for PMD. Auto-discovered if null. |
 
 **Example:**
 ```yaml
 engines:
   pmd:
-    rulesets:
+    custom_rulesets:
       - rulesets/structure/InnerClassesCannotBeStatic.xml
       - rulesets/naming/NoSingleLetterVariableNames.xml
 ```
@@ -149,7 +149,7 @@ rules:
 
 engines:
   pmd:
-    rulesets:
+    custom_rulesets:
       - rulesets/structure/InnerClassesCannotBeStatic.xml
       - rulesets/naming/NoSingleLetterVariableNames.xml
   
@@ -174,17 +174,88 @@ engines:
 ```yaml
 engines:
   pmd:
-    rulesets:
+    custom_rulesets:
       - rulesets/category/RuleName.xml
 ```
 
 ### Override Rule Properties
+
+**Important:** Salesforce Code Analyzer does not support property overrides for PMD rules via `code-analyzer.yml`. Only `severity` and `tags` can be overridden.
+
+To override rule properties, create a custom ruleset XML file that references the original rule using PMD's `ref=` syntax:
+
+**Example - Override Multiple Rule Properties:**
+
+1. Create `rulesets/custom-overrides.xml`:
+
+```xml
+<?xml version="1.0"?>
+<ruleset
+    name="Custom Rule Overrides"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+    <description>Custom property overrides for rules</description>
+    
+    <!-- Override EnumMinimumValues to require 4 values instead of default 3 -->
+    <rule ref="rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues">
+        <properties>
+            <property name="minValues">
+                <value>4</value>
+            </property>
+        </properties>
+    </rule>
+    
+    <!-- Override PreferSwitchOverIfElseChains to require 4 conditions instead of default 2 -->
+    <rule ref="rulesets/structure/PreferSwitchOverIfElseChains.xml/PreferSwitchOverIfElseChains">
+        <properties>
+            <property name="minElseIfStatements">
+                <value>4</value>
+            </property>
+        </properties>
+    </rule>
+    
+    <!-- Override ListInitializationMustBeMultiLine to require 3 items instead of default 2 -->
+    <rule ref="rulesets/code-style/ListInitializationMustBeMultiLine.xml/ListInitializationMustBeMultiLine">
+        <properties>
+            <property name="minItems">
+                <value>3</value>
+            </property>
+        </properties>
+    </rule>
+</ruleset>
+```
+
+2. Reference in `code-analyzer.yml`:
+
+```yaml
+engines:
+  pmd:
+    custom_rulesets:
+      # Original rules (must be listed first)
+      - rulesets/structure/EnumMinimumValues.xml
+      - rulesets/structure/PreferSwitchOverIfElseChains.xml
+      - rulesets/code-style/ListInitializationMustBeMultiLine.xml
+      # Override ruleset (must come after the original rules)
+      - rulesets/custom-overrides.xml
+```
+
+**Key Points:**
+- The `ref` attribute format is `{ruleset-path}/{rule-name}` (e.g., `rulesets/structure/EnumMinimumValues.xml/EnumMinimumValues`)
+- The ruleset path should be relative to your project root
+- The override ruleset must be listed **after** the original ruleset in `custom_rulesets`
+- Property values in XML use `<value>` tags (strings don't need quotes, but can have them)
+- You can override multiple rules in a single custom ruleset file
+
+**Override Severity and Tags (supported in code-analyzer.yml):**
+
 ```yaml
 rules:
   pmd:
     RuleName:
-      properties:
-        propertyName: "value"
+      severity: "High"
+      tags: ["Recommended"]
 ```
 
 ### Custom Regex Rule
@@ -205,9 +276,11 @@ engines:
 - **File location:** `code-analyzer.yml` or `code-analyzer.yaml` in project root
 - **Path resolution:** Relative paths use `config_root` (auto if null)
 - **Regex flags:** Must include global (`g`) modifier
-- **Rule overrides:** Use `rules.{engine}.{rule}.{property}` format
+- **Rule overrides:** Use `rules.{engine}.{rule}.{property}` format (severity and tags only for PMD rules)
+- **Property overrides:** PMD rule properties cannot be overridden via `code-analyzer.yml` - use custom ruleset XML files with `ref=` syntax instead
 - **Engine config:** Use `engines.{engine}.{property}` format
-- **PMD rulesets:** List XML file paths under `engines.pmd.rulesets`
+- **PMD rulesets:** Use `engines.pmd.custom_rulesets` (not `rulesets:`) to reference PMD rulesets
+- **PMD rulesets:** List XML file paths under `engines.pmd.custom_rulesets` (not `rulesets:`)
 - **Auto-discovery:** Many properties auto-discover if set to `null`
 
 ## Related Documentation

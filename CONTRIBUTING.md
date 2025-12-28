@@ -12,7 +12,7 @@ We appreciate your interest in improving sca-extra. Your contributions help make
 
 - **Node.js:** Version 18 or higher
 - **pnpm:** Latest version
-- **PMD:** For testing rules (Salesforce Code Analyzer)
+- **PMD CLI:** For testing rules (version 7.19.0 or higher)
 - **Git:** For version control
 
 ### Installation
@@ -94,12 +94,15 @@ pnpm run check-regressions  # Check for performance regressions
                <property name="xpath">
                    <value><![CDATA[
                    //XPath expression
+                   // Use property substitution with default pattern:
+                   // if ('${propertyName}' = '${propertyName}') then 'default' else '${propertyName}'
                    ]]></value>
                </property>
-               <!-- Configurable properties where applicable -->
-               <property name="maxLength" description="Maximum allowed length">
-                   <value>100</value>
-               </property>
+               <!-- 
+                   NOTE: PMD 7.x doesn't validate custom properties for XPathRule.
+                   Do NOT define properties here - use property substitution in XPath instead.
+                   See Property Configuration Guidelines below for details.
+               -->
            </properties>
        </rule>
    </ruleset>
@@ -136,11 +139,64 @@ pnpm run check-regressions  # Check for performance regressions
 
 ### Property Configuration Guidelines
 
+**Important:** PMD 7.x does not validate custom properties for `XPathRule` when they're not defined. To make properties configurable, use property substitution in XPath with a default pattern.
+
+**Pattern for Configurable Properties:**
+
+1. **Define properties in the XML** - Properties must be defined in the rule XML for PMD to accept overrides via `ref=` syntax in override rulesets. Use empty default values.
+2. **Use property substitution in XPath** with a default value pattern:
+   ```xpath
+   if ('${propertyName}' = '${propertyName}') then 'defaultValue' else '${propertyName}'
+   ```
+
+3. **How it works:**
+   - When property is not defined: `${propertyName}` stays as literal string
+   - The check `'${propertyName}' = '${propertyName}'` evaluates to `true`
+   - Default value is used
+   - When property is defined (manually added to XML): Substitution occurs, custom value is used
+
+**Example:**
+
+```xml
+<property name="xpath">
+    <value><![CDATA[
+    //SomeNode[
+        count(*) >= number(
+            if ('${minItems}' = '${minItems}') 
+            then '2' 
+            else '${minItems}'
+        )
+    ]
+    ]]></value>
+</property>
+```
+
+**To configure the property:**
+
+1. **For end users:** Create a custom ruleset XML file that references the original rule and overrides properties using `ref=` syntax (see README.md for examples).
+
+2. **For testing:** Create override ruleset files in `tests/rulesets/` with the naming pattern `RuleName_DetailsOfPropertyChanges.xml`. These files use `ref=` to reference the original rule and override properties. Example:
+
+   ```xml
+   <?xml version="1.0"?>
+   <ruleset name="Test Ruleset Override" ...>
+       <rule ref="rulesets/code-style/ListInitializationMustBeMultiLine.xml/ListInitializationMustBeMultiLine">
+           <properties>
+               <property name="minItems">
+                   <value>3</value>
+               </property>
+           </properties>
+       </rule>
+   </ruleset>
+   ```
+
+   Then use `runPMD('tests/rulesets/ListInitializationMustBeMultiLine_MinItems3.xml', 'tests/fixtures/...')` in your tests.
+
+**Guidelines:**
 - Use properties for configurable thresholds or lists
-- Provide sensible defaults
-- Document each property with a description
-- Use appropriate types (string, integer, boolean)
-- Consider backward compatibility when adding properties
+- Provide sensible defaults in the XPath expression
+- Document each property in the rule description
+- Consider backward compatibility when changing defaults
 
 ## Testing Requirements
 
@@ -158,9 +214,10 @@ pnpm run check-regressions  # Check for performance regressions
    - Test with different property configurations
 
 3. **Unit Tests** - Automated test cases
-   - Use test helper functions: `runPMD`, `parseViolations`, `assertViolation`
+   - Use test helper functions: `runPMD`, `parseViolations`, `assertViolation`, `assertNoViolations`
    - Test both positive and negative cases
-   - Test property configurations
+   - Test property configurations using pre-created override ruleset files in `tests/rulesets/`
+   - For property override tests, create override ruleset files with naming pattern `RuleName_DetailsOfPropertyChanges.xml` and use `runPMD()` directly with the override file path
    - See [Jest 30.0 Reference](docs/JEST30.md) for Jest API usage
 
 ### Test Coverage Expectations

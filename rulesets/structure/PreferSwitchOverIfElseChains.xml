@@ -10,25 +10,150 @@
 	<rule
 		name="PreferSwitchOverIfElseChains"
 		language="apex"
-		message="If-else chains with multiple else-if conditions should use switch statements instead for better readability and performance"
+		message="If-else chains, consecutive if statements, or OR conditions comparing the same variable should use switch statements instead for better readability and performance"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			If-else chains with more than one else-if condition should use switch statements
-			instead.
+			If-else chains, consecutive if statements, OR conditions, or any combination of these
+			patterns with a minimum number of conditions (configurable via minElseIfStatements
+			property, default: 2)
+			that compare the same variable should use switch statements instead.
 			This detects patterns like: if (x == 'a') {} else if (x == 'b') {} else if (x == 'c') {}
-			The rule triggers when there are at least 2 else-if statements in the chain. Switch statements
-			are more readable and can be more performant than long if-else chains. Note: This rule currently
-			only detects if-else-if chains, not sequential if statements.
+			or consecutive if statements: if (x == 'a') {} if (x == 'b') {} if (x == 'c') {}
+			or OR conditions: if (x == 'a' || x == 'b' || x == 'c') {}
+			or mixed patterns: if (x == 'a' || x == 'b') {} if (x == 'c') {} else
+			if (x == 'd') {} if (x == 'e') {}
+			The rule counts all conditions comparing the same variable across all if statements in a method, not
+			just within a single chain.
+			Switch statements are more readable and can be more performant than long if-else chains, multiple
+			consecutive if statements, or complex OR conditions.
+			Note: This rule only applies when all conditions compare the same variable/expression using
+			equality (==) and the variable type is compatible with switch
+			statements (Integer, Long, String, sObject, or Enum).
+			Other types like Boolean, Decimal, Date, etc. are not flagged as they cannot be used in switch
+			statements.
 		</description>
 		<priority>3</priority>
 		<properties>
+			<property
+				name="minElseIfStatements"
+				type="String"
+				description="Minimum number of else-if statements or conditions required"
+			>
+				<value>2</value>
+			</property>
 			<property name="xpath">
 				<value>
                     <![CDATA[
-                    //IfElseBlockStatement[
-                        count(IfBlockStatement) >= 3
-                    ]
+                    (
+                        //IfElseBlockStatement[
+                            count(IfBlockStatement) >= number(if ('${minElseIfStatements}' = '${minElseIfStatements}') then '2' else '${minElseIfStatements}')
+                            and count(IfBlockStatement[StandardCondition/BooleanExpression[@Op='==']/VariableExpression]) = count(IfBlockStatement)
+                            and (
+                                let $firstVar := IfBlockStatement[1]/StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image,
+                                    $varDecl := ancestor::Method[1]//VariableDeclaration[VariableExpression/@Image = $firstVar]
+                                return count(IfBlockStatement[StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image = $firstVar]) = count(IfBlockStatement)
+                                    and exists($varDecl)
+                                    and (
+                                        $varDecl/@Type = 'Integer' 
+                                        or $varDecl/@Type = 'Long' 
+                                        or $varDecl/@Type = 'String'
+                                        or exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type])
+                                        or (
+                                            lower-case($varDecl/@Type) != 'boolean' 
+                                            and lower-case($varDecl/@Type) != 'decimal' 
+                                            and lower-case($varDecl/@Type) != 'double' 
+                                            and lower-case($varDecl/@Type) != 'date' 
+                                            and lower-case($varDecl/@Type) != 'datetime' 
+                                            and lower-case($varDecl/@Type) != 'time' 
+                                            and lower-case($varDecl/@Type) != 'id' 
+                                            and lower-case($varDecl/@Type) != 'blob' 
+                                            and lower-case($varDecl/@Type) != 'object'
+                                            and not(exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type]))
+                                            and string-length($varDecl/@Type) > 0
+                                        )
+                                    )
+                            )
+                        ]
+                        |
+                        //IfBlockStatement[
+                            StandardCondition/BooleanExpression[@Op='==']/VariableExpression
+                            and not(ancestor::IfElseBlockStatement)
+                            and not(preceding-sibling::*[1][self::IfBlockStatement[
+                                not(ancestor::IfElseBlockStatement)
+                                and StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image = 
+                                ./StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image
+                            ]])
+                            and (
+                                let $var := StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image,
+                                    $method := ancestor::Method[1],
+                                    $varDecl := $method//VariableDeclaration[VariableExpression/@Image = $var],
+                                    $allStandaloneIfBlocks := $method//IfBlockStatement[not(ancestor::IfElseBlockStatement)]
+                                return exists($varDecl)
+                                    and (
+                                        $varDecl/@Type = 'Integer' 
+                                        or $varDecl/@Type = 'Long' 
+                                        or $varDecl/@Type = 'String'
+                                        or exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type])
+                                        or (
+                                            lower-case($varDecl/@Type) != 'boolean' 
+                                            and lower-case($varDecl/@Type) != 'decimal' 
+                                            and lower-case($varDecl/@Type) != 'double' 
+                                            and lower-case($varDecl/@Type) != 'date' 
+                                            and lower-case($varDecl/@Type) != 'datetime' 
+                                            and lower-case($varDecl/@Type) != 'time' 
+                                            and lower-case($varDecl/@Type) != 'id' 
+                                            and lower-case($varDecl/@Type) != 'blob' 
+                                            and lower-case($varDecl/@Type) != 'object'
+                                            and not(exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type]))
+                                            and string-length($varDecl/@Type) > 0
+                                        )
+                                    )
+                                    and sum(
+                                        for $block in $allStandaloneIfBlocks
+                                        return (
+                                            if (exists($block/StandardCondition/BooleanExpression[@Op='||'])) then
+                                                count($block/StandardCondition//BooleanExpression[@Op='==' and VariableExpression/@Image = $var])
+                                            else if ($block/StandardCondition/BooleanExpression[@Op='==']/VariableExpression/@Image = $var) then
+                                                1
+                                            else
+                                                0
+                                        )
+                                    ) >= number(if ('${minElseIfStatements}' = '${minElseIfStatements}') then '2' else '${minElseIfStatements}')
+                            )
+                        ]
+                        |
+                        //IfBlockStatement[
+                            StandardCondition/BooleanExpression[@Op='||']
+                            and (
+                                let $eqComparisons := StandardCondition//BooleanExpression[@Op='==' and VariableExpression],
+                                    $firstVar := $eqComparisons[1]/VariableExpression/@Image,
+                                    $varDecl := ancestor::Method[1]//VariableDeclaration[VariableExpression/@Image = $firstVar]
+                                return count($eqComparisons) >= number(if ('${minElseIfStatements}' = '${minElseIfStatements}') then '2' else '${minElseIfStatements}')
+                                    and count($eqComparisons[VariableExpression/@Image = $firstVar]) = count($eqComparisons)
+                                    and exists($varDecl)
+                                    and (
+                                        $varDecl/@Type = 'Integer' 
+                                        or $varDecl/@Type = 'Long' 
+                                        or $varDecl/@Type = 'String'
+                                        or exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type])
+                                        or (
+                                            lower-case($varDecl/@Type) != 'boolean' 
+                                            and lower-case($varDecl/@Type) != 'decimal' 
+                                            and lower-case($varDecl/@Type) != 'double' 
+                                            and lower-case($varDecl/@Type) != 'date' 
+                                            and lower-case($varDecl/@Type) != 'datetime' 
+                                            and lower-case($varDecl/@Type) != 'time' 
+                                            and lower-case($varDecl/@Type) != 'id' 
+                                            and lower-case($varDecl/@Type) != 'blob' 
+                                            and lower-case($varDecl/@Type) != 'object'
+                                            and not(exists(ancestor::ApexFile//UserEnum[@Image = $varDecl/@Type]))
+                                            and string-length($varDecl/@Type) > 0
+                                        )
+                                    )
+                            )
+                        ]
+                    )
                     ]]>
                 </value>
 			</property>

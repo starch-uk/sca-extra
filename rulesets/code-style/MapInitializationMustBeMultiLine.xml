@@ -10,21 +10,29 @@
 	<rule
 		name="MapInitializationMustBeMultiLine"
 		language="apex"
-		message="Map initialization with 2 or more entries must be formatted with each entry on its own line for better readability"
+		message="Map initialization with {0} or more entries must be formatted with each entry on its own line for better readability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Map initializations with 2 or more entries must be formatted with each entry on its own
-			line
-			to improve readability and maintainability. Single-entry maps may remain on a single line.
+			Map initializations with a minimum number of entries (configurable via minEntries
+			property)
+			must be formatted with each entry on its own line to improve readability and maintainability.
+			Maps with fewer entries may remain on a single line.
 		</description>
 		<priority>3</priority>
 		<properties>
+			<property
+				name="minEntries"
+				type="String"
+				description="Minimum number of map entries required for multi-line formatting"
+			>
+				<value>2</value>
+			</property>
 			<property name="xpath">
 				<value>
                     <![CDATA[
                     //NewMapLiteralExpression[
-                        count(MapEntryNode) >= 2
+                        count(MapEntryNode) >= number(if ('${minEntries}' = '${minEntries}') then '2' else '${minEntries}')
                         and @BeginLine = @EndLine
                     ]
                     ]]>

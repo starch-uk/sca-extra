@@ -10,22 +10,28 @@
 	<rule
 		name="MultipleStringContainsCalls"
 		language="apex"
-		message="Multiple String.contains() calls in a conditional should be replaced with a single regex pattern for better performance and maintainability"
+		message="Multiple String.contains() calls (at least {0}) in a conditional should be replaced with a single regex pattern for better performance and maintainability"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
 			Multiple String.contains() calls in conditionals should be replaced with a single regex
-			pattern
-			for better performance and maintainability. This rule detects when there are 2 or more
-			contains() calls in a conditional expression.
+			pattern for better performance and maintainability. This rule detects when there are a minimum
+			number (configurable via minCalls property) or more contains() calls in a conditional expression.
 		</description>
 		<priority>3</priority>
 		<properties>
+			<property
+				name="minCalls"
+				type="String"
+				description="Minimum number of contains() calls required to trigger the rule"
+			>
+				<value />
+			</property>
 			<property name="xpath">
 				<value
 				><![CDATA[
 					//StandardCondition[
-						count(.//MethodCallExpression[@MethodName = 'contains']) >= 2
+						count(.//MethodCallExpression[@MethodName = 'contains']) >= number(if ('${minCalls}' = '') then '2' else '${minCalls}')
 					]
 				]]></value>
 			</property>

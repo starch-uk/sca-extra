@@ -15,20 +15,27 @@
 	>
 		<description>
 			Custom parameter objects (classes or inner classes that only have attributes and
-			constructors
-			with no instance methods) should not be created solely for passing parameters. Instead,
-			refactor methods to stay within 3 parameters, which improves readability and follows best
+			constructors with no instance methods) should not be created solely for passing parameters.
+			Instead, refactor methods to stay within 3 parameters, which improves readability and follows best
 			practices for method design.
+			The rule flags inner classes with a number of fields greater than or equal to minFields (inclusive),
+			configurable via properties.
 		</description>
 		<priority>3</priority>
 		<properties>
+			<property
+				name="minFields"
+				type="String"
+				description="Minimum number of fields (inclusive) to trigger the rule"
+			>
+				<value>1</value>
+			</property>
 			<property name="xpath">
 				<value>
                     <![CDATA[
                     //UserClass[
                         count(Method) = 0
-                        and count(Field) >= 2
-                        and count(Field) < 10
+                        and count(Field) >= number(if ('${minFields}' = '${minFields}') then '1' else '${minFields}')
                         and @Nested = true()
                         and not(Field/ModifierNode/Annotation[@Name = 'InvocableVariable'])
                     ]

@@ -10,21 +10,29 @@
 	<rule
 		name="EnumMinimumValues"
 		language="apex"
-		message="Enum must contain at least 3 values. Enums with fewer than 3 values may indicate a design issue"
+		message="Enum must contain at least {0} values. Enums with fewer than {0} values may indicate a design issue"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Enums must contain at least 3 values. Enums with fewer than 3 values should be
-			reconsidered
+			Enums must contain at least a minimum number of values (configurable via minValues
+			property).
+			Enums with fewer than the minimum number of values should be reconsidered
 			as they may not provide sufficient flexibility or may indicate a design issue. For boolean-like
 			scenarios, consider using a boolean instead of an enum with only two values.
 		</description>
 		<priority>3</priority>
 		<properties>
+			<property
+				name="minValues"
+				type="String"
+				description="Minimum number of enum values required"
+			>
+				<value>3</value>
+			</property>
 			<property name="xpath">
 				<value>
                     <![CDATA[
-                    //UserEnum[count(Field) < 3]
+                    //UserEnum[count(Field) < number(if ('${minValues}' = '${minValues}') then '3' else '${minValues}')]
                     ]]>
                 </value>
 			</property>

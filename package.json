@@ -23,7 +23,8 @@
     "changelog": "node scripts/generate-changelog.js",
     "ci": "pnpm run format:check && pnpm run lint && pnpm test",
     "generate-test-ruleset": "node scripts/generate-test-ruleset.js",
-    "ast-dump": "bash scripts/ast-dump.sh"
+    "ast-dump": "bash scripts/ast-dump.sh",
+    "clean": "node scripts/clean.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
@@ -37,7 +38,8 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.2.5",
     "xml2js": "^0.6.2",
-    "xmldom": "^0.6.0"
+    "xmldom": "^0.6.0",
+    "yaml": "^2.6.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

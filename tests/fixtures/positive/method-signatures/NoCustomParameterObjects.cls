@@ -15,9 +15,13 @@ public class Example {
         public String input;
     }
 
-    // Valid: Outer class (not nested)
+    // Valid: Inner class with method
     public class RegularClass {
         public String value;
+
+        public String getValue() {
+            return value;
+        }
     }
 }
 

@@ -130,47 +130,64 @@ catch (Exception exception) { }  // ✅ Use descriptive name
 ```
 
 **Configuration Update:**
-```yaml
-# Before (v1.0.0)
-rules:
-  NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c"
 
-# After (v2.0.0) - Add 'e' to allowed names if needed
-rules:
-  NoSingleLetterVariableNames:
-    properties:
-      allowedNames: "i,c,e"  # Explicitly allow exception variable
+**Important:** Salesforce Code Analyzer does not support property overrides via `code-analyzer.yml`. Property overrides must be done via custom ruleset XML files.
+
+**Before (v1.0.0) - Custom ruleset XML:**
+```xml
+<rule ref="rulesets/naming/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames">
+    <properties>
+        <property name="allowedNames">
+            <value>i,c</value>
+        </property>
+    </properties>
+</rule>
+```
+
+**After (v2.0.0) - Update custom ruleset XML:**
+```xml
+<rule ref="rulesets/naming/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames">
+    <properties>
+        <property name="allowedNames">
+            <value>i,c,e</value>  <!-- Explicitly allow exception variable -->
+        </property>
+    </properties>
+</rule>
 ```
 
 ## Property Changes
 
 ### Renamed Properties
 
-If a property is renamed:
+If a property is renamed, update your custom ruleset XML file:
 
 **Before:**
-```yaml
-rules:
-  RuleName:
-    properties:
-      oldPropertyName: "value"
+```xml
+<rule ref="rulesets/category/RuleName.xml/RuleName">
+    <properties>
+        <property name="oldPropertyName">
+            <value>value</value>
+        </property>
+    </properties>
+</rule>
 ```
 
 **After:**
-```yaml
-rules:
-  RuleName:
-    properties:
-      newPropertyName: "value"  # Updated property name
+```xml
+<rule ref="rulesets/category/RuleName.xml/RuleName">
+    <properties>
+        <property name="newPropertyName">
+            <value>value</value>  <!-- Updated property name -->
+        </property>
+    </properties>
+</rule>
 ```
 
 ### Removed Properties
 
 If a property is removed:
 
-1. Remove the property from `code-analyzer.yml`
+1. Remove the property from your custom ruleset XML file (if you had overridden it)
 2. Review changelog for why it was removed
 3. Update code if the removed property affected behavior
 
@@ -221,7 +238,7 @@ If you encounter issues during migration:
 
 1. **Check documentation:**
    - Review this migration guide
-   - Check rule-specific documentation in README.md
+   - Check rule-specific documentation in the rule XML file and repository documentation
    - Review AI Agent Rule Guide
 
 2. **Review examples:**
@@ -252,6 +269,6 @@ For detailed version history, see:
 
 For migration support:
 - **Issues:** [GitHub Issues](https://github.com/starch-uk/sca-extra/issues)
-- **Documentation:** See [README.md](../README.md) and other docs
+- **Documentation:** See repository documentation files in `docs/` directory
 - **Examples:** See `tests/fixtures/` for code examples
 
