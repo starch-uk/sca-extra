@@ -8,6 +8,18 @@ public class Example {
 
         // Valid: String.join with single string
         String single = String.join('', new List<String>{'a'});
+
+        // Valid: String.join with non-empty separator (newline), even if list contains empty string
+        final String inputString = String.join(
+            new List<String>{
+                'items[3]:',
+                '  - a',
+                '',
+                '  - b',
+                '  - c'
+            },
+            '\n'
+        );
     }
 }
 

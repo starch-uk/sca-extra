@@ -29,8 +29,17 @@
 					//MethodCallExpression[
 						@MethodName = 'join'
 						and @FullMethodName = 'String.join'
-						and .//LiteralExpression[@String = true() and (@Image = "''" or @Image = '""' or string-length(@Image) = 0)]
 						and .//NewListLiteralExpression
+						and (
+							./LiteralExpression[
+								@String = true()
+								and (@Image = "''" or @Image = '""' or string-length(@Image) = 0)
+							]
+							or ./NewListLiteralExpression/following-sibling::LiteralExpression[
+								@String = true()
+								and (@Image = "''" or @Image = '""' or string-length(@Image) = 0)
+							]
+						)
 					]
 					]]>
 				</value>
