@@ -30,15 +30,15 @@ We appreciate your interest in improving sca-extra. Your contributions help make
 
 3. **Set up pre-commit hooks**
    ```bash
-   pnpm run prepare
+   pnpm prepare
    ```
 
 ### Running Tests Locally
 
 ```bash
-pnpm test              # Run all tests
-pnpm run test:watch    # Run tests in watch mode
-pnpm run test:coverage # Run tests with coverage report
+pnpm test          # Run all tests
+pnpm test:watch    # Run tests in watch mode
+pnpm test:coverage # Run tests with coverage report
 ```
 
 For Jest API reference when writing tests, see [Jest 30.0 Reference](docs/JEST30.md).
@@ -46,8 +46,8 @@ For Jest API reference when writing tests, see [Jest 30.0 Reference](docs/JEST30
 ### Running Benchmarks
 
 ```bash
-pnpm run benchmark     # Run performance benchmarks
-pnpm run check-regressions  # Check for performance regressions
+pnpm benchmark        # Run performance benchmarks
+pnpm check-regressions # Check for performance regressions
 ```
 
 ## Adding New Rules
@@ -69,6 +69,17 @@ pnpm run check-regressions  # Check for performance regressions
 3. **Follow the rule template**
 
    **Note:** This template follows the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd). The `<example>` element is optional but recommended, and multiple examples are supported.
+
+   **Important:** Element order matters! The XSD schema requires elements in this specific order within `<rule>`:
+   1. `<description>` (optional)
+   2. `<priority>` (optional)
+   3. `<properties>` (optional)
+   4. `<exclude>` (optional, can appear multiple times)
+   5. `<example>` (optional, can appear multiple times)
+
+   Use the provided scripts to ensure correct element order:
+   - `pnpm check-xml-order` - Check if element order is correct
+   - `pnpm fix-xml-order` - Automatically fix element order
 
    ```xml
    <?xml version="1.0" ?>
@@ -95,6 +106,17 @@ pnpm run check-regressions  # Check for performance regressions
                Version: 1.0.0
            </description>
            <priority>1-5</priority>
+           <properties>
+               <property name="xpath">
+                   <value><![CDATA[
+                   //XPath expression
+                   // For rules with configurable thresholds, use let expressions:
+                   // let $threshold := 3
+                   // return count(*) >= $threshold
+                   ]]></value>
+               </property>
+           </properties>
+           <!-- Multiple examples are supported (per PMD Ruleset XML Schema) -->
            <example>
                <![CDATA[
                // Violation: Code that triggers the rule
@@ -108,17 +130,6 @@ pnpm run check-regressions  # Check for performance regressions
                }
                ]]>
            </example>
-           <!-- Multiple examples are supported (per PMD Ruleset XML Schema) -->
-           <properties>
-               <property name="xpath">
-                   <value><![CDATA[
-                   //XPath expression
-                   // For rules with configurable thresholds, use let expressions:
-                   // let $threshold := 3
-                   // return count(*) >= $threshold
-                   ]]></value>
-               </property>
-           </properties>
        </rule>
    </ruleset>
    ```
@@ -138,9 +149,12 @@ pnpm run check-regressions  # Check for performance regressions
 
 6. **Validate the rule**
    ```bash
-   pnpm run validate    # Validate XML syntax and rule quality
+   pnpm validate        # Validate XML syntax and rule quality
+   pnpm check-xml-order # Check XML element order
    pnpm test            # Run tests
    ```
+   
+   **Note:** The `check-xml-order` script verifies that elements within `<rule>` follow the XSD schema order: `description` → `priority` → `properties` → `exclude` → `example`. If the order is incorrect, use `pnpm fix-xml-order` to automatically fix it.
 
 7. **Document the rule**
    - Add rule documentation to `README.md` with examples
@@ -181,8 +195,8 @@ pnpm run check-regressions  # Check for performance regressions
 
 ```bash
 pnpm test              # Run all tests
-pnpm run test:watch    # Run tests in watch mode
-pnpm run test:coverage # Check test coverage
+pnpm test:watch    # Run tests in watch mode
+pnpm test:coverage # Check test coverage
 ```
 
 For Jest API reference, see [Jest 30.0 Reference](docs/JEST30.md).
@@ -221,9 +235,9 @@ Before submitting a pull request, ensure:
 - [ ] Code follows project style guidelines
 - [ ] All tests pass (`pnpm test`)
 - [ ] Test coverage is maintained or improved
-- [ ] XML files are formatted with Prettier (`pnpm run format:check`)
-- [ ] JavaScript files pass ESLint (`pnpm run lint`)
-- [ ] Rule validation passes (`pnpm run validate`)
+- [ ] XML files are formatted with Prettier (`pnpm format:check`)
+- [ ] JavaScript files pass ESLint (`pnpm lint`)
+- [ ] Rule validation passes (`pnpm validate`)
 - [ ] Documentation is updated (README.md, AI_AGENT_RULE_GUIDE.md)
 - [ ] Rule has clear name and comprehensive description
 - [ ] Rule uses XPath only (no custom Java classes)
@@ -256,7 +270,7 @@ Before submitting a pull request, ensure:
 
 - All XML files are automatically formatted with Prettier
 - Pre-commit hook ensures formatting before commit
-- Run `pnpm run format` to format manually
+- Run `pnpm format` to format manually
 
 ### JavaScript/TypeScript Style
 

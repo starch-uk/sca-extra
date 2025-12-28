@@ -9,24 +9,25 @@ A comprehensive fixture containing violations across all rule categories. This f
 
 ### `stress-code-style.cls`
 Focused stress test for code-style rules with 200+ violations:
-- NoMethodCallsInConditionals (20 violations)
-- NoMethodChaining (20 violations)
-- PreferSafeNavigationOperator (15 violations)
-- PreferNullCoalescingOverTernary (15 violations)
+- AvoidOneLinerMethods (10 violations)
 - ListInitializationMustBeMultiLine (10 violations)
 - MapInitializationMustBeMultiLine (10 violations)
 - MapShouldBeInitializedWithValues (10 violations)
-- PreferStringJoinOverMultipleNewlines (10 violations)
-- PreferConcatenationOverStringJoinWithEmpty (10 violations)
-- PreferStringJoinOverConcatenation (10 violations)
 - MultipleStringContainsCalls (10 violations)
-- PreferMethodCallsInLoopConditions (10 violations)
+- NoMethodCallsAsArguments (10 violations)
+- NoMethodCallsInConditionals (20 violations)
+- NoMethodChaining (20 violations)
 - PreferBuilderPatternChaining (10 violations)
+- PreferConcatenationOverStringJoinWithEmpty (10 violations)
+- PreferMethodCallsInLoopConditions (10 violations)
+- PreferNullCoalescingOverTernary (15 violations)
+- PreferSafeNavigationOperator (15 violations)
+- PreferStringJoinOverConcatenation (10 violations)
+- PreferStringJoinOverMultipleNewlines (10 violations)
 - PreferStringJoinWithSeparatorOverEmpty (10 violations)
 - SingleArgumentMustBeSingleLine (10 violations)
-- NoMethodCallsAsArguments (10 violations)
-- NoConsecutiveBlankLines (multiple violations)
-- AvoidOneLinerMethods (10 violations)
+
+**Note:** NoConsecutiveBlankLines is a Regex rule (not PMD), so it's not included in PMD benchmark fixtures.
 
 ### `stress-structure.cls`
 Focused stress test for structure rules with 100+ violations:
@@ -65,19 +66,19 @@ Focused stress test for naming rules with 100+ violations:
 Run benchmarks with:
 
 ```bash
-pnpm run benchmark
+pnpm benchmark
 ```
 
 Generate baseline:
 
 ```bash
-pnpm run benchmark -- --baseline
+pnpm benchmark -- --baseline
 ```
 
 JSON output for CI:
 
 ```bash
-pnpm run benchmark -- --json
+pnpm benchmark -- --json
 ```
 
 ## Performance Characteristics

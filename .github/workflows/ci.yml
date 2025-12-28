@@ -49,10 +49,16 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Check XML formatting
-        run: pnpm run format:check
+        run: pnpm format:check
+
+      - name: Check XML element order
+        run: pnpm check-xml-order
+
+      - name: Validate rulesets
+        run: pnpm validate
 
       - name: Lint JavaScript
-        run: pnpm run lint
+        run: pnpm lint
 
       - name: Cache PMD
         id: cache-pmd

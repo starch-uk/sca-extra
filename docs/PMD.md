@@ -225,6 +225,10 @@ Add example code snippets to rules using the `<example>` element. Multiple examp
 ```xml
 <rule name="MyRule" language="apex" ...>
     <description>Rule description</description>
+    <priority>3</priority>
+    <properties>
+        <!-- XPath or other properties -->
+    </properties>
     <example>
         <![CDATA[
         // Violation: Code that triggers the rule
@@ -238,11 +242,10 @@ Add example code snippets to rules using the `<example>` element. Multiple examp
         }
         ]]>
     </example>
-    <properties>
-        <!-- XPath or other properties -->
-    </properties>
 </rule>
 ```
+
+**Note:** Elements must appear in the order: `description` → `priority` → `properties` → `exclude` → `example` (per XSD schema).
 
 **Example Element:**
 - Optional: Can be omitted if not needed
@@ -263,12 +266,14 @@ Override rule violation messages:
 
 According to the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd), a rule element supports:
 
-**Child Elements:**
-- `<description>` (optional): Rule description
-- `<priority>` (optional, default: 5): Priority level (1-5)
-- `<properties>` (optional): Rule properties configuration
-- `<exclude>` (optional, multiple): Exclude specific rules when referencing categories
-- `<example>` (optional, multiple): Example code snippets showing violations and valid code
+**Child Elements (must appear in this order):**
+1. `<description>` (optional): Rule description
+2. `<priority>` (optional, default: 5): Priority level (1-5)
+3. `<properties>` (optional): Rule properties configuration
+4. `<exclude>` (optional, multiple): Exclude specific rules when referencing categories
+5. `<example>` (optional, multiple): Example code snippets showing violations and valid code
+
+**Important:** Element order matters! The XSD schema requires elements to appear in the order listed above. Use `pnpm check-xml-order` to verify order, or `pnpm fix-xml-order` to automatically fix it.
 
 **Attributes:**
 - `name` (optional): Rule name (ID type)

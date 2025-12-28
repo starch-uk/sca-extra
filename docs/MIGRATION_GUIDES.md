@@ -219,12 +219,12 @@ If a new property is added:
 
 2. **Validate rules:**
    ```bash
-   pnpm run validate
+   pnpm validate
    ```
 
 3. **Check for regressions:**
    ```bash
-   pnpm run check-regressions
+   pnpm check-regressions
    ```
 
 4. **Test with your codebase:**

@@ -21,10 +21,13 @@
     "check-regressions": "node scripts/check-performance-regressions.js",
     "version:bump": "node scripts/version-bump.js",
     "changelog": "node scripts/generate-changelog.js",
-    "ci": "pnpm run format:check && pnpm run lint && pnpm test",
+    "ci": "pnpm format:check && pnpm lint && pnpm test",
     "generate-test-ruleset": "node scripts/generate-test-ruleset.js",
+    "list-test-files": "node scripts/list-test-files.js",
     "ast-dump": "bash scripts/ast-dump.sh",
-    "clean": "node scripts/clean.js"
+    "clean": "node scripts/clean.js",
+    "check-xml-order": "node scripts/check-xml-order.js",
+    "fix-xml-order": "node scripts/fix-xml-element-order.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
@@ -44,6 +47,15 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "unrs-resolver"
+    ]
+  },
+  "lint-staged": {
+    "*.xml": [
+      "prettier --write"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
     ]
   }
 }

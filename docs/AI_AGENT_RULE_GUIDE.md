@@ -152,11 +152,15 @@ return sum(for $block in $allBlocks return if (...) then 1 else 0) >= 5
 \`\`\`
 
 ### XML Structure
-Rules should follow this structure (per PMD Ruleset XML Schema):
-- `<description>`: Rule description
-- `<priority>`: Priority level (1-5)
-- `<example>`: Example code snippets (optional, multiple allowed)
-- `<properties>`: Rule properties (XPath, etc.)
+Rules should follow this structure (per [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd)). **Element order matters!** Elements must appear in this specific order:
+
+1. `<description>`: Rule description (optional)
+2. `<priority>`: Priority level 1-5 (optional)
+3. `<properties>`: Rule properties like XPath (optional)
+4. `<exclude>`: Exclusion patterns (optional, multiple allowed)
+5. `<example>`: Example code snippets (optional, multiple allowed)
+
+**Note:** Use `pnpm check-xml-order` to verify element order, or `pnpm fix-xml-order` to automatically fix it.
 
 ### Usage
 

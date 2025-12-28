@@ -754,9 +754,9 @@ pnpm install
 ### Running Tests
 
 ```bash
-pnpm test              # Run all tests
-pnpm run test:watch    # Run tests in watch mode
-pnpm run test:coverage # Run tests with coverage
+pnpm test          # Run all tests
+pnpm test:watch    # Run tests in watch mode
+pnpm test:coverage # Run tests with coverage
 ```
 
 For Jest API reference, see [Jest 30.0 Reference](docs/JEST30.md).
@@ -764,29 +764,88 @@ For Jest API reference, see [Jest 30.0 Reference](docs/JEST30.md).
 ### Formatting
 
 ```bash
-pnpm run format        # Format all files
-pnpm run format:check  # Check formatting without modifying
+pnpm format        # Format all files
+pnpm format:check  # Check formatting without modifying
 ```
 
 ### Linting
 
 ```bash
-pnpm run lint          # Lint JavaScript files
-pnpm run lint:fix      # Fix linting issues automatically
+pnpm lint      # Lint JavaScript files
+pnpm lint:fix  # Fix linting issues automatically
 ```
 
 ### Validation
 
 ```bash
-pnpm run validate      # Validate all rulesets
+pnpm validate        # Validate all rulesets
+pnpm check-xml-order # Check XML element order
 ```
+
+### XML Element Order
+
+PMD ruleset XML files must follow the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd), which requires elements within `<rule>` to be in a specific order:
+
+1. `<description>` (optional)
+2. `<priority>` (optional)
+3. `<properties>` (optional)
+4. `<exclude>` (optional, can appear multiple times)
+5. `<example>` (optional, can appear multiple times)
+
+**Scripts available:**
+- `pnpm check-xml-order` - Check if all XML files have correct element order
+- `pnpm fix-xml-order` - Automatically fix element order in all XML files
+
+These scripts use XML libraries (`xmldom`) to properly parse and manipulate XML, ensuring all elements (including multiple examples) are preserved.
 
 ### Benchmarking
 
 ```bash
-pnpm run benchmark     # Run performance benchmarks
-pnpm run check-regressions  # Check for performance regressions
+pnpm benchmark                    # Run performance benchmarks
+pnpm benchmark -- --baseline     # Generate baseline for regression detection
+pnpm benchmark -- --json         # JSON output for CI/CD integration
+pnpm benchmark -- --compare      # Compare mode (doesn't fail on regressions)
+pnpm check-regressions           # Check for performance regressions
 ```
+
+Results are saved to `benchmarks/results/`:
+- `results-{timestamp}.json` - Latest benchmark results
+- `baseline.json` - Baseline for regression comparison
+
+### Available Scripts
+
+All scripts in the `scripts/` directory have convenience commands in `package.json`:
+
+**Development:**
+- `pnpm test` - Run all tests
+- `pnpm test:watch` - Run tests in watch mode
+- `pnpm test:coverage` - Run tests with coverage
+- `pnpm validate` - Validate all rulesets
+- `pnpm format` - Format all files with Prettier
+- `pnpm format:check` - Check formatting without modifying
+- `pnpm lint` - Lint JavaScript files
+- `pnpm lint:fix` - Fix linting issues automatically
+
+**XML Management:**
+- `pnpm check-xml-order` - Check XML element order in all ruleset files
+- `pnpm fix-xml-order` - Automatically fix XML element order
+
+**Testing & Utilities:**
+- `pnpm list-test-files` - List all test files to verify Jest discovery
+- `pnpm generate-test-ruleset` - Generate test ruleset for validation
+- `pnpm ast-dump` - Dump PMD AST for Apex files (usage: `pnpm ast-dump <file>`)
+
+**Performance:**
+- `pnpm benchmark` - Run performance benchmarks
+- `pnpm check-regressions` - Check for performance regressions
+
+**Project Management:**
+- `pnpm version:bump` - Bump version number
+- `pnpm changelog` - Generate changelog
+- `pnpm clean` - Clean build artifacts and temporary files
+
+**CI/CD:**
+- `pnpm ci` - Run all CI checks (format, lint, test)
 
 ## Contributing
 
