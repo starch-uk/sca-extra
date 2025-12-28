@@ -17,11 +17,14 @@
 			Unnecessary multi-line formatting for single arguments is not allowed as
 			it reduces readability and wastes vertical space.
 			
+			This rule does not apply when the argument is a List or Map declaration,
+			as these often require multi-line formatting for readability.
+			
 			To customize this rule, edit the $maxArgs variable at the beginning of
 			the XPath expression (default: 1). This sets the maximum number of
 			arguments allowed before multi-line formatting is required.
 
-			Version: 1.0.0
+			Version: 1.1.0
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -32,6 +35,8 @@
 					return //MethodCallExpression[
 						@InputParametersSize <= $maxArgs
 						and @BeginLine != @EndLine
+						and not(.//NewListLiteralExpression)
+						and not(.//NewMapLiteralExpression)
 					]
 					]]>
 				</value>
@@ -46,6 +51,21 @@
 			
 			// Valid: Single argument on one line
 			String result = processValue(value);
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: List declaration as argument (excluded from rule)
+			processList(new List<String>{
+				'item1',
+				'item2'
+			});
+			
+			// Valid: Map declaration as argument (excluded from rule)
+			processMap(new Map<String, String>{
+				'key1' => 'value1',
+				'key2' => 'value2'
+			});
 			]]>
 		</example>
 	</rule>
