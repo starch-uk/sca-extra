@@ -27,6 +27,8 @@
 			used as arguments to constructors, method calls, or in nested expressions.
 			The rule correctly distinguishes between instance fields and local variables
 			with the same name.
+			- Method calls on instance fields (e.g., instanceField.method())
+			- Property access on instance fields (e.g., instanceField.property)
 			- The 'this' keyword
 			- Methods that are part of property declarations
 			- Abstract methods, constructors, and inner class methods
@@ -35,14 +37,24 @@
 			fields - if an instance field is accessed before a local variable with the
 			same name is declared, the method is still excluded from the rule.
 
-			Version: 1.3.0
+			Version: 1.4.0
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//Method[
+					let $isInstanceField := function($fieldName, $context) {
+						$fieldName != 'this'
+						and not($context/ancestor::Method/Parameter[@Image = $fieldName])
+						and not($context/ancestor::BlockStatement//VariableDeclarationStatements/VariableDeclaration[@Image = $fieldName])
+						and (
+							exists($context/ancestor::UserClass[1]//Field[@Name = $fieldName or @Image = $fieldName])
+							or exists($context/ancestor::UserClass[1]//FieldDeclaration[@Name = $fieldName or @Image = $fieldName])
+							or exists($context/ancestor::UserClass[1]//Property/Field[@Name = $fieldName or @Image = $fieldName])
+						)
+					}
+					return //Method[
 						not(ModifierNode[@Static = true()])
 						and not(ModifierNode[@Abstract = true()])
 						and not(@Constructor = true())
@@ -53,15 +65,20 @@
 						and not(BlockStatement//PrimaryExpression[ThisVariableExpression])
 						and not(
 							some $varExpr in BlockStatement//VariableExpression
+							satisfies $isInstanceField($varExpr/@Image, $varExpr)
+						)
+						and not(
+							some $methodCall in BlockStatement//MethodCallExpression
 							satisfies (
-								$varExpr/@Image != 'this'
-								and not($varExpr/ancestor::Method/Parameter[@Image = $varExpr/@Image])
-								and not($varExpr/ancestor::BlockStatement//VariableDeclarationStatements/VariableDeclaration[@Image = $varExpr/@Image])
-								and (
-									exists(ancestor::UserClass[1]//Field[@Name = $varExpr/@Image or @Image = $varExpr/@Image])
-									or exists(ancestor::UserClass[1]//FieldDeclaration[@Name = $varExpr/@Image or @Image = $varExpr/@Image])
-									or exists(ancestor::UserClass[1]//Property/Field[@Name = $varExpr/@Image or @Image = $varExpr/@Image])
-								)
+								$methodCall/ReferenceExpression[1]
+								and $isInstanceField($methodCall/ReferenceExpression[1]/@Image, $methodCall/ReferenceExpression[1])
+							)
+						)
+						and not(
+							some $varExpr in BlockStatement//VariableExpression
+							satisfies (
+								$varExpr/ReferenceExpression
+								and $isInstanceField($varExpr/ReferenceExpression/@Image, $varExpr/ReferenceExpression)
 							)
 						)
 					]
@@ -141,6 +158,48 @@
 			            10
 			        );
 			        return processor.process(items);
+			    }
+			}
+			
+			// Valid: Method calls on instance fields (cannot be static)
+			public class Renderer {
+			    private Evaluator evaluator;
+			    private Renderer renderer;
+			    
+			    public void process() {  // ✅ Calls method on instance field
+			        evaluator.process();
+			        renderer.render();
+			    }
+			    
+			    public Boolean isReady() {  // ✅ Calls method on instance field
+			        return evaluator.isReady();
+			    }
+			}
+			
+			// Valid: Property access on instance fields (cannot be static)
+			public class DataProcessor {
+			    private Config config;
+			    
+			    public String getPath() {  // ✅ Accesses property on instance field
+			        return config.path;
+			    }
+			    
+			    public void process() {  // ✅ Uses property access in method call
+			        processData(config.path, config.value);
+			    }
+			}
+			
+			// Valid: Mixed method calls and property access on instance fields (cannot be static)
+			public class ComplexProcessor {
+			    private Evaluator evaluator;
+			    private Renderer renderer;
+			    
+			    public void process() {  // ✅ Uses both method calls and property access
+			        if (evaluator.isReady()) {
+			            String path = evaluator.path;
+			            evaluator.process(path);
+			            renderer.render(evaluator.value);
+			        }
 			    }
 			}
 			]]>
