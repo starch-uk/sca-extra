@@ -21,8 +21,14 @@
 			the method's independence from instance state explicit, improves performance
 			by avoiding unnecessary instance creation, and follows best practices for
 			method design.
+			
+			This rule excludes methods that access instance state, including:
+			- Instance fields (both regular fields and property fields)
+			- The 'this' keyword
+			- Methods that are part of property declarations
+			- Abstract methods, constructors, and inner class methods
 
-			Version: 1.0.0
+			Version: 1.1.0
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -41,7 +47,7 @@
 						and not(
 							BlockStatement//VariableExpression[
 								@Image != 'this'
-								and ancestor::UserClass/Field[@Name = ./@Image]
+								and ancestor::UserClass//Field[@Name = ./@Image]
 								and not(ancestor::Method/Parameter[@Image = ./@Image])
 								and not(ancestor::BlockStatement//VariableDeclaration[@Image = ./@Image])
 							]
@@ -85,6 +91,18 @@
 			    
 			    public String getAccountId() {  // ✅ Uses instance field
 			        return accountId;
+			    }
+			}
+			
+			// Valid: Method uses property field (cannot be static)
+			public class Example {
+			    public Integer baseIndent { get; private set; }
+			    
+			    public Boolean hasBaseIndent() {  // ✅ Uses property field
+			        if (baseIndent == null) {
+			            return false;
+			        }
+			        return true;
 			    }
 			}
 			]]>
