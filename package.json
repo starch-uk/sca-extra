@@ -13,8 +13,8 @@
     "test:coverage": "node scripts/check-rule-coverage.js",
     "test:rules": "node scripts/validate-rules.js && pnpm test",
     "validate": "node scripts/validate-rules.js",
-    "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\"",
-    "format:check": "prettier --check \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\"",
+    "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\" \"*.yml\" \"*.yaml\" \".github/workflows/*.{yml,yaml}\"",
+    "format:check": "prettier --check \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\" \"*.yml\" \"*.yaml\" \".github/workflows/*.{yml,yaml}\"",
     "lint": "eslint tests/**/*.js scripts/**/*.js",
     "lint:fix": "eslint --fix tests/**/*.js scripts/**/*.js",
     "benchmark": "node scripts/benchmark.js",
@@ -52,6 +52,9 @@
   },
   "lint-staged": {
     "*.xml": [
+      "prettier --write"
+    ],
+    "*.{yml,yaml}": [
       "prettier --write"
     ],
     "*.{js,jsx,ts,tsx}": [
