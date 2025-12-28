@@ -668,3 +668,30 @@ public class NestedExpressionExamples {
   }
 }
 
+// Instance field in multi-line constructor with with sharing modifier
+public with sharing class ServiceWithSharing {
+  private Config config;
+
+  public ServiceWithSharing(Config configParam) {
+    this.config = configParam;
+  }
+
+  public List<String> processData(List<String> items) {
+    // Valid: uses instance field in multi-line constructor
+    final Processor processor = new Processor(
+      config,  // Instance field used as constructor argument
+      10
+    );
+    return processor.process(items);
+  }
+
+  public void processItems(List<String> items, Integer count) {
+    // Valid: uses instance field in multi-line constructor
+    final Helper helper = new Helper(
+      config,  // Instance field used as constructor argument
+      count
+    );
+    helper.execute(items);
+  }
+}
+

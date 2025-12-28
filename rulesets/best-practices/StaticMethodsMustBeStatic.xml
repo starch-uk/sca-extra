@@ -49,9 +49,9 @@
 							BlockStatement//VariableExpression[
 								@Image != 'this'
 								and (
-									ancestor::UserClass//Field[@Name = ./@Image]
-									or ancestor::UserClass//FieldDeclaration[@Name = ./@Image]
-									or ancestor::UserClass//Property/Field[@Name = ./@Image]
+									ancestor::UserClass//Field[@Name = ./@Image or @Image = ./@Image]
+									or ancestor::UserClass//FieldDeclaration[@Name = ./@Image or @Image = ./@Image]
+									or ancestor::UserClass//Property/Field[@Name = ./@Image or @Image = ./@Image]
 								)
 								and not(ancestor::Method/Parameter[@Image = ./@Image])
 								and not(ancestor::BlockStatement//VariableDeclaration[@Image = ./@Image])
@@ -121,6 +121,19 @@
 			            baseIndent
 			        );
 			        return processor.process(lines);
+			    }
+			}
+			
+			// Valid: Method uses instance field in multi-line constructor (cannot be static)
+			public with sharing class ServiceClass {
+			    private Config config;
+			    
+			    public List<String> processData(List<String> items) {  // ✅ Uses instance field
+			        final Processor processor = new Processor(
+			            config,  // Instance field used as constructor argument
+			            10
+			        );
+			        return processor.process(items);
 			    }
 			}
 			]]>
