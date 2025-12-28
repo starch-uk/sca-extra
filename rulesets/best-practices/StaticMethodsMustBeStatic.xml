@@ -23,12 +23,13 @@
 			method design.
 			
 			This rule excludes methods that access instance state, including:
-			- Instance fields (both regular fields and property fields)
+			- Instance fields (both regular fields and property fields), including when
+			used as arguments to constructors, method calls, or in nested expressions
 			- The 'this' keyword
 			- Methods that are part of property declarations
 			- Abstract methods, constructors, and inner class methods
 
-			Version: 1.1.0
+			Version: 1.2.0
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -47,7 +48,11 @@
 						and not(
 							BlockStatement//VariableExpression[
 								@Image != 'this'
-								and ancestor::UserClass//Field[@Name = ./@Image]
+								and (
+									ancestor::UserClass//Field[@Name = ./@Image]
+									or ancestor::UserClass//FieldDeclaration[@Name = ./@Image]
+									or ancestor::UserClass//Property/Field[@Name = ./@Image]
+								)
 								and not(ancestor::Method/Parameter[@Image = ./@Image])
 								and not(ancestor::BlockStatement//VariableDeclaration[@Image = ./@Image])
 							]
@@ -103,6 +108,19 @@
 			            return false;
 			        }
 			        return true;
+			    }
+			}
+			
+			// Valid: Method uses instance field in constructor argument (cannot be static)
+			public class BlockReader {
+			    private Config.Parser parserConfig;
+			    
+			    public List<List<String>> readBlocks(List<String> lines) {  // ✅ Uses instance field
+			        final Processor processor = new Processor(
+			            parserConfig,  // Instance field used as constructor argument
+			            baseIndent
+			        );
+			        return processor.process(lines);
 			    }
 			}
 			]]>
