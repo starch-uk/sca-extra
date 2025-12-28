@@ -424,3 +424,247 @@ public class OtherInstanceStatePatterns {
   }
 }
 
+public class NestedExpressionExamples {
+  // Instance field access in nested expressions
+  private Config.Parser parserConfig;
+  private Integer baseIndent;
+  private String context;
+  private List<String> items;
+
+  // Instance field in constructor argument (single line)
+  public void method1() {
+    Processor p = new Processor(parserConfig);
+  }
+
+  // Instance field in constructor argument (multi-line)
+  public void method2() {
+    Processor p = new Processor(
+      parserConfig,
+      baseIndent
+    );
+  }
+
+  // Instance field in constructor argument (deeply nested)
+  public void method3() {
+    Processor p = new Processor(
+      parserConfig,
+      baseIndent,
+      new Helper(context)
+    );
+  }
+
+  // Instance field in method call argument
+  public void method4() {
+    processData(parserConfig);
+  }
+
+  // Instance field in method call argument (multi-line)
+  public void method5() {
+    processData(
+      parserConfig,
+      baseIndent
+    );
+  }
+
+  // Instance field in method call with chaining
+  public void method6() {
+    getProcessor()
+      .process(parserConfig);
+  }
+
+  // Instance field in return statement with constructor
+  public Processor getProcessor() {
+    return new Processor(parserConfig);
+  }
+
+  // Instance field in conditional with constructor
+  public void method7() {
+    if (parserConfig != null) {
+      Processor p = new Processor(parserConfig);
+    }
+  }
+
+  // Instance field in loop with constructor
+  public void method8() {
+    for (String item : items) {
+      Processor p = new Processor(parserConfig, item);
+    }
+  }
+
+  // Instance field in try-catch with constructor
+  public void method9() {
+    try {
+      Processor p = new Processor(parserConfig);
+    } catch (Exception e) {
+      System.debug(e);
+    }
+  }
+
+  // Instance field in assignment with constructor
+  public void method10() {
+    Processor p;
+    p = new Processor(parserConfig);
+  }
+
+  // Instance field in ternary with constructor
+  public Processor method11() {
+    return parserConfig != null
+      ? new Processor(parserConfig)
+      : new Processor();
+  }
+
+  // Instance field in switch with constructor
+  public Processor method12() {
+    switch on context {
+      when 'test' {
+        return new Processor(parserConfig);
+      }
+      when else {
+        return new Processor();
+      }
+    }
+  }
+
+  // Multiple instance fields in constructor
+  public void method13() {
+    Processor p = new Processor(
+      parserConfig,
+      baseIndent,
+      context
+    );
+  }
+
+  // Instance field in nested method call
+  public void method14() {
+    processData(
+      transform(parserConfig)
+    );
+  }
+
+  // Instance field in list/map initialization
+  public void method15() {
+    List<Processor> processors = new List<Processor>{
+      new Processor(parserConfig),
+      new Processor(baseIndent)
+    };
+  }
+
+  // Instance field in map entry
+  public void method16() {
+    Map<String, Processor> map = new Map<String, Processor>{
+      'key' => new Processor(parserConfig)
+    };
+  }
+
+  // Instance field with null coalescing in constructor
+  public void method17() {
+    Processor p = new Processor(
+      parserConfig ?? new Config.Parser()
+    );
+  }
+
+  // Instance field with safe navigation in constructor
+  public void method18() {
+    Processor p = new Processor(
+      parserConfig?.getValue()
+    );
+  }
+
+  // Instance field in complex nested expression
+  public void method19() {
+    Processor p = new Processor(
+      parserConfig,
+      new Helper(
+        baseIndent,
+        context
+      )
+    );
+  }
+
+  // Instance field in builder pattern
+  public void method20() {
+    Builder b = new Builder()
+      .withConfig(parserConfig)
+      .withIndent(baseIndent);
+  }
+
+  // Instance field in static method call argument
+  public void method21() {
+    Utils.process(parserConfig);
+  }
+
+  // Instance field in instance method call argument
+  public void method22() {
+    this.processData(parserConfig);
+  }
+
+  // Instance field in super method call argument
+  public class Child extends NestedExpressionExamples {
+    public void method23() {
+      super.processData(parserConfig);
+    }
+  }
+
+  // Instance field in array access with constructor
+  public void method24() {
+    Processor[] processors = new Processor[]{
+      new Processor(parserConfig)
+    };
+  }
+
+  // Instance field in cast expression with constructor
+  public void method25() {
+    Processor p = (Processor) new Processor(parserConfig);
+  }
+
+  // Instance field in binary expression with constructor
+  public void method26() {
+    Processor p = new Processor(parserConfig) != null
+      ? new Processor(parserConfig)
+      : null;
+  }
+
+  // Instance field in unary expression with constructor
+  public void method27() {
+    Processor p = new Processor(!parserConfig.isNull() ? parserConfig : null);
+  }
+
+  // Instance field in instanceof check with constructor
+  public void method28() {
+    if (parserConfig instanceof Config.Parser) {
+      Processor p = new Processor(parserConfig);
+    }
+  }
+
+  // Instance field in assignment expression
+  public void method29() {
+    Processor p = new Processor(parserConfig);
+    p.setConfig(parserConfig);
+  }
+
+  // Instance field in return with method call
+  public Processor method30() {
+    return createProcessor(parserConfig);
+  }
+
+  private Processor createProcessor(Config.Parser config) {
+    return new Processor(config);
+  }
+
+  // Instance field in lambda expression
+  public void method31() {
+    items.forEach(item -> {
+      Processor p = new Processor(parserConfig, item);
+    });
+  }
+
+  // Instance field in anonymous class
+  public void method32() {
+    Runnable r = new Runnable() {
+      public void run() {
+        Processor p = new Processor(parserConfig);
+      }
+    };
+  }
+}
+
