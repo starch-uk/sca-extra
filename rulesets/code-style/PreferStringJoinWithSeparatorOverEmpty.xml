@@ -26,7 +26,7 @@
 			of the XPath expression (default: 3). This sets the minimum number of
 			strings required in the list before the rule applies.
 
-			Version: 1.0.0
+			Version: 1.1.0
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -37,7 +37,10 @@
 					return //MethodCallExpression[
 						@MethodName = 'join'
 						and @FullMethodName = 'String.join'
-						and .//LiteralExpression[@String = true() and (string-length(@Image) = 0 or @Image = "''" or @Image = '""')]
+						and (
+							./*[2][self::LiteralExpression[@String = true() and (string-length(@Image) = 0 or @Image = "''" or @Image = '""')]]
+							or ./*[3][self::LiteralExpression[@String = true() and (string-length(@Image) = 0 or @Image = "''" or @Image = '""')]]
+						)
 						and .//NewListLiteralExpression
 						and count(.//NewListLiteralExpression//LiteralExpression[@String = true()]) >= $minStrings
 					]
