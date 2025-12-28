@@ -52,20 +52,19 @@
 				><![CDATA[
 					//VariableDeclaration[
 						VariableExpression[
-							some $abbr in tokenize(
-								if ('${disallowedAbbreviations}' = '${disallowedAbbreviations}')
-								then 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val'
-								else '${disallowedAbbreviations}',
-								','
-							)
-								satisfies @Image = normalize-space($abbr)
-							and not(
-								some $suffix in tokenize(if ('${allowedSuffixes}' = '${allowedSuffixes}') then 'Api,Html,Id,Url' else '${allowedSuffixes}', ',') satisfies matches(@Image, concat($suffix, '$'))
+							(
+								if ('${disallowedAbbreviations}' = '${disallowedAbbreviations}' or '${disallowedAbbreviations}' = '')
+								then (@Image = 'acc' or @Image = 'addr' or @Image = 'attr' or @Image = 'calc' or @Image = 'cfg' or @Image = 'col' or @Image = 'con' or @Image = 'ctx' or @Image = 'curr' or @Image = 'desc' or @Image = 'dest' or @Image = 'doc' or @Image = 'dst' or @Image = 'elem' or @Image = 'fmt' or @Image = 'hdr' or @Image = 'idx' or @Image = 'impl' or @Image = 'init' or @Image = 'lbl' or @Image = 'len' or @Image = 'mgr' or @Image = 'msg' or @Image = 'opp' or @Image = 'opt' or @Image = 'org' or @Image = 'param' or @Image = 'pos' or @Image = 'prev' or @Image = 'ref' or @Image = 'repo' or @Image = 'req' or @Image = 'res' or @Image = 'resp' or @Image = 'spec' or @Image = 'src' or @Image = 'svc' or @Image = 'util' or @Image = 'val')
+								else (@Image = '${disallowedAbbreviations}' or contains(concat(',', '${disallowedAbbreviations}', ','), concat(',', @Image, ',')))
 							)
 							and not(
-								('${allowedPrefixes}' != '${allowedPrefixes}' 
-								and string-length('${allowedPrefixes}') > 0 
-								and (some $prefix in tokenize('${allowedPrefixes}', ',') satisfies matches(@Image, concat('^', $prefix))))
+								if ('${allowedSuffixes}' = '${allowedSuffixes}' or '${allowedSuffixes}' = '')
+								then matches(@Image, '(Api|Html|Id|Url)$')
+								else (matches(@Image, concat('${allowedSuffixes}', '$')) or contains(concat(',', '${allowedSuffixes}', ','), concat(',', substring(@Image, string-length(@Image) - string-length('${allowedSuffixes}') + 1), ',')))
+							)
+							and not(
+								'${allowedPrefixes}' != ''
+								and (starts-with(@Image, '${allowedPrefixes}') or contains(concat(',', '${allowedPrefixes}', ','), concat(',', substring(@Image, 1, string-length('${allowedPrefixes}')), ',')))
 							)
 						]
 					]

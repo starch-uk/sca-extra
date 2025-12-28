@@ -201,20 +201,44 @@ Override rule violation messages:
 Basic PMD CLI syntax:
 
 ```bash
-pmd -d <source_directory> -R <ruleset_file> -f <report_format>
+pmd check -d <source_directory> -R <ruleset_file> -f <report_format>
 ```
 
-Common options:
-- `-d`: Source directory
-- `-R`: Ruleset file path
-- `-f`: Report format (text, xml, html, csv, json, etc.)
-- `--minimum-priority`: Filter by priority (1-5 or High/Medium/Low)
-- `-l`: Language (apex, java, etc.)
-- `--fail-on-violation`: Exit with error code if violations found
+**Note:** PMD 7 uses `pmd check` as the main command (replaces `pmd` in PMD 6).
 
-**Example:**
+Common options:
+- `-d`, `--dir`: Source directory
+- `-R`, `--rulesets`: Ruleset file path
+- `-f`, `--format`: Report format (text, xml, html, csv, json, etc.)
+- `--minimum-priority`: Filter by priority (1-5 or High/Medium/Low)
+- `-l`, `--language`: Language (apex, java, etc.)
+- `--use-version`: Specify language version (PMD 7+)
+- `--fail-on-violation`: Exit with error code if violations found
+- `--no-cache`: Disable incremental analysis cache
+- `--cache`: Enable incremental analysis with cache file
+
+**PMD 7 CLI Parameter Changes:**
+
+| PMD 6 (deprecated) | PMD 7 |
+|-------------------|-------|
+| `-no-cache` | `--no-cache` |
+| `-failOnViolation` | `--fail-on-violation` |
+| `-reportfile` | `--report-file` |
+| `-language` | `--use-version` |
+
+**Example (PMD 7):**
 ```bash
-pmd -d src/main/apex -R rulesets/all.xml -f html -l apex
+pmd check -d src/main/apex -R rulesets/all.xml -f html -l apex
+```
+
+**Example with language version:**
+```bash
+pmd check -d src/main/apex -R rulesets/all.xml -l apex --use-version 60
+```
+
+**Check available language versions:**
+```bash
+pmd check --help
 ```
 
 ## Report Formats
@@ -376,6 +400,84 @@ steps:
 - File limit: Maximum 300 modified files when using `analyzeModifiedFilesOnly`
 
 See [PMD GitHub Action repository](https://github.com/pmd/pmd-github-action) for full documentation.
+
+## Language Versions
+
+PMD 7 introduces language versioning:
+
+- **Default versions**: Each language has a default version (usually the latest)
+- **Version specification**: Use `--use-version` CLI option to specify a version
+- **Rule versioning**: Rules can specify `minimumLanguageVersion` and `maximumLanguageVersion`
+- **Available versions**: Check `pmd check --help` for available versions per language
+
+**Example:**
+```bash
+# Use Apex version 60
+pmd check -d src/main/apex -R rulesets/all.xml -l apex --use-version 60
+```
+
+## Code Metrics
+
+PMD provides built-in metrics for code analysis. Metrics are available through the `ApexMetrics` class and `MetricsUtil` utilities.
+
+### ApexMetrics
+
+The `ApexMetrics` class provides built-in metrics for Apex code:
+
+- **CYCLO** (Cyclomatic Complexity): Measures code complexity based on decision points
+- **COGNITIVE_COMPLEXITY**: Measures code readability and maintainability
+- **NCSS** (Non-Commenting Source Statements): Counts executable statements
+- **WEIGHED_METHOD_COUNT**: Weighted method count metric
+
+**Usage in Java rules:**
+```java
+import net.sourceforge.pmd.lang.apex.metrics.ApexMetrics;
+import net.sourceforge.pmd.lang.metrics.MetricsUtil;
+
+// Get cyclomatic complexity
+int cyclo = MetricsUtil.computeMetric(ApexMetrics.CYCLO, node);
+
+// Get cognitive complexity
+int cognitive = MetricsUtil.computeMetric(ApexMetrics.COGNITIVE_COMPLEXITY, node);
+```
+
+### MetricsUtil
+
+The `MetricsUtil` class provides utilities for computing metrics:
+
+- **computeMetric()**: Compute a specific metric on a node
+- **getStatistics()**: Get statistical data over sequences of nodes
+- **Metric options**: Handle metric computation options
+
+**Example:**
+```java
+import net.sourceforge.pmd.lang.metrics.MetricsUtil;
+import net.sourceforge.pmd.lang.apex.metrics.ApexMetrics;
+
+// Compute metric on a method
+int complexity = MetricsUtil.computeMetric(ApexMetrics.CYCLO, methodNode);
+
+// Get statistics for multiple methods
+List<Method> methods = ...;
+int maxComplexity = MetricsUtil.getStatistics(ApexMetrics.CYCLO, methods).getMax();
+```
+
+**References:**
+- [ApexMetrics API](https://docs.pmd-code.org/apidocs/pmd-apex/7.20.0-SNAPSHOT/net/sourceforge/pmd/lang/apex/metrics/ApexMetrics.html)
+- [MetricsUtil API](https://docs.pmd-code.org/apidocs/pmd-core/7.20.0-SNAPSHOT/net/sourceforge/pmd/lang/metrics/MetricsUtil.html)
+
+## Apex Language Support
+
+PMD provides comprehensive support for the Apex programming language:
+
+- **Built-in rules**: Code style, design, error-prone, performance, and security rules
+- **AST parsing**: Summit AST parser (PMD 7+) for accurate code analysis
+- **Metrics**: Built-in metrics for complexity analysis (see Code Metrics section)
+- **Configuration**: Language-specific configuration options
+
+**References:**
+- [Apex Language Documentation](https://pmd.github.io/pmd/pmd_languages_apex.html) - Complete Apex language support documentation
+- [APEX_PMD_AST.md](APEX_PMD_AST.md) - Apex AST node reference
 
 ## Integration with Salesforce Code Analyzer
 

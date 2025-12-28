@@ -1,0 +1,466 @@
+
+(node:67526) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ PASS  tests/unit/documentation.test.js
+  Documentation Rules
+    ExceptionDocumentationRequired
+      ✓ should detect methods that throw exceptions without @throws documentation (1161 ms)
+      ✓ should not flag methods with @throws documentation (1108 ms)
+    SingleLineDocumentationFormat
+      ✓ should detect improperly formatted single-line ApexDoc comments (1007 ms)
+      ✓ should not flag properly formatted single-line or valid multi-line comments (1009 ms)
+
+(node:67527) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ PASS  tests/unit/method-signatures.test.js
+  Method Signature Rules
+    NoCustomParameterObjects
+      ✓ should detect innewi   only fields and no methods (1304 ms)
+      ✓ should not flag inner classes with methods or InvocableVarile annotations (1117 ms)
+    SingleParameterMustBeSingleLine
+      ✓ should detect methods with 0-1 parameters on multiple lines (968 ms)
+      ✓ should not flag methods with 0-1 parameters on one line (1085 ms)
+
+(node:67525) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ PASS  tests/unit/modifiers.test.js (9.767 s)
+  Modifier Rules
+    FinalVariablesMustBeFinal
+      ✓ should detect variables that should be final (1581 ms)
+      ✓ should not flag variables that are reassigned or already final (1112 ms)
+    StaticMethodsMustBeStatic
+      ✓ should detect methods that should be static (984 ms)
+      ✓ should not flag methods that use instance state or are already static (960 ms)
+    RegexPatternsMustBeStaticFinal
+      ✓ should detect inline regex patterns (852 ms)
+      ✓ should not flag static final regex patterns (790 ms)
+    StaticinalAndScreamingSnakeCase
+      ✓ should detect static variables that are not final or not SCREAMING_SNAKE_CASE (876 ms)
+      ✓ should not flag static final variables in SCREAMING_SNAKE_CASE (835 ms)
+    TestClassIsParallel
+      ✓ should detect test classes without IsParallel=true (827 ms)
+      ✓ should not flag test classes with IsParallel=true (828 ms)
+
+(node:67524) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ FAIL  tests/unit/naming.test.js (16.695 s)
+  Naming Rules
+    NoSingleLetterVariableNames
+      ✓ should detect single-letter variable names (1415 ms)
+      ✓ should not flag allowed single-letter names (i, c) or exception variables (1124 ms)
+      property behavior
+        ✓ should allow loop counter "i" by default (969 ms)
+        ✓ should allow loop counter "c" by default (1 ms)
+        ✓ should allow exception variable "e" in catch blocks (1054 ms)
+        ✓ should reject variables (x, y, z, etc.) (803 ms)
+    NoAbbreviations
+      ✓ should detect abbreviations in variable names (850 ms)
+      ✓ should not flag allowed abbreviations (Id suffix, Api, Url, Html) or loop/exception variables (841 ms)
+      property behavior (simulated overrides)
+        ✕ should respect a custom disallowedAbbreviations list (853 ms)
+        ✕ should work with completely different disallowedAbbreviations (foo,bar) - violations (809 ms)
+        ✓ should work with completely different disallowedAbbreviations (foo,bar) - no violations (846 ms)
+        ✕ should respect a custom allowedSuffixes pattern (Id) (1578 ms)
+        ✕ should work with completely different allowedSuffixes (Foo,Bar) (784 ms)
+        ✓ should respect custom allowedPrefixes property (793 ms)
+        ✓ should work with multiple allowedPrefixes (pre,post) (791 ms)
+    VariablesMustNotShareNamesWithClasses
+      ✓ should detect variables that share names with classes (782 ms)
+      ✓ ses with different names from classes (737 ms)
+    InnerClassesMustBeOneWord
+      ✓ should detect inner classes with underscores or multiple words (757 ms)
+      ✓ should not flag single-word inner class names (773 ms)
+
+  ● Naming Rules › NoAbbreviations › property behavior (simulated overrides) › should respect a custom disallowedAbbreviations list
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  0
+    + Received  + 11
+
+      Array [
+        3,
+    +   6,
+    +   9,
+    +   12,
+    +   15,
+    +   18,
+    +   21,
+    +   24,
+    +   27,
+    +   30,
+    +   33,
+    +   36,
+      ]
+
+       99 |                             // Only the first variable (ctx on line 3) should be flagged
+      100 |                             const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
+    > 101 |                             expect(noAbbrevViolations.map((v) => v.line)).toEqual([3]);
+          |                                                               ^
+      102 |                     });
+      103 |
+      104 |                     it('should work with completely different disallowedAbbreviations (foo,bar) - violations', async () => {
+
+      at Object.toEqual (tests/unit/naming.test.js:101:51)
+
+  ● Naming Rules › NoAbbreviations › property behavior (simulated overrides) › should work with completely different disallowedAbbreviations (foo,bar) - violations
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 4
+    + Received  + 1
+
+    - Array [
+    -   3,
+    -   4,
+    - ]
+    + Array []
+
+      110 |                             const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
+      111 |                             // foo and bar (lines 3 and 4) should be flagged, baz (line 5) should not
+    > 112 |                             expect(noAbbrevViolations.map((v) => v.line).sort()).toEqual([3, 4]);
+          |                                                                          ^
+      113 |                     });
+      114 |
+      115 |                     it('should work with completely different disallowedAbbreviations (foo,bar) - no violations', async () => {
+
+      at Object.toEqual (tests/unit/naming.test.js:112:58)
+
+  ● Naming Rules › NoAbbreviations › property behavior (simulated overrides) › should respect a custom allowedSuffixes pattern (Id)
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: 0
+
+      138 |
+      139 |                             const noAbbrevViolations = violations2.filter((v) => v.rule === 'NoAbbreviations');
+    > 140 |                             expect(noAbbrevViolations.length).toBe(1);
+          |                                                               ^
+      141 |                             expect(noAbbrevViolations[0].line).toBe(3);
+      142 |                     });
+      143 |
+
+      at Object.toBe (tests/unit/naming.test.js:140:39)
+
+  ● Naming Rules › NoAbbreviations › property behavior (simulated overrides) › should work with completely different allowedSuffixes (Foo,Bar)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 3
+    + Receiveday [
+    -   5,
+    - ]
+    + Array []
+
+      151 |                             const noAbbrevViolations = violations.filter((v) => v.rule === 'NoAbbreviations');
+      152 |                             // foo and bar should be allowed by suffix, baz (line 5) should be flagged
+    > 153 |                             expect(noAbbrevViolations.map((v) => v.line)).toEqual([5]);
+          |                                                                           ^
+      154 |                     });
+      155 |
+      156 |                     it('should respect custom allowedPrefixes property', async () => {
+
+      at Object.toEqual (tests/unit/naming.test.js:153:51)
+
+(node:67523) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ FAIL  tests/unit/code-style.test.js (32.033 s)
+  Code Style Rules
+    NoMethodCallsInConditionals
+      ✓ should detect method calls in if conditions (1685 ms)
+      ✓ should not  code with method results stored in variables (1056 ms)
+    NoMethodChaining
+      ✓ should detect method chaining (1029 ms)
+      ✓ should not flag code using intermediary variables (989 ms)
+    PreferSafeNavigationOperator
+      ✓ should detect explicit null checks before property access (852 ms)
+      ✓ should not flag code using safe navigation operator (809 ms)
+    PreferNullCoalescingOverTernary
+      ✓ should detect ternary operators for null checks (836 ms)
+      ✓ should not flag code using null coalescing operator (825 ms)
+    AvoidOneLinerMethods
+      ✓ should detect one-liner methods with single statement (911 ms)
+      ✓ should not flag abstract, override, interface, or multi-statement methods (875 ms)
+    ListInitializationMustBeMultiLine
+      ✓ should detect list initializations with 2+ items on same line (778 ms)
+      ✓ should not flag single-item lists or multi-line lists (742 ms)
+      property behavior
+        ✕ should respect custom minItems     MapInitializationMustBeMultiLine
+      ✓ should detect map initializations with 2+ entries on same line (758 ms)
+      ✓ should not flag single-entry maps or multi-line maps (726 ms)
+      property behavior
+        ✕ should respect custom minEntries property (3) (1468 ms)
+    NoConsecutiveBlankLines
+      ✓ should detect consecutive blank lines
+      ✓ should not flag single blank lines
+    ProhibitSuppressWarnings
+      ✓ should detect @SuppressWarnings annotations and NOPMD comments (2 ms)
+      ✓ should not flag code without suppressions (1 ms)
+    NoMethodCallsAsArguments
+      ✓ should detect method calls used directly as arguments (788 ms)
+      ✓ should not flag method calls extracted to variables (740 ms)
+    SingleArgumentMustBeSingleLine
+      ✓ should detect single-argument method calls on multiple lines (756 ms)
+      ✓ should not flag single-argument method calls on one line (759 ms)
+    PreferStringJoinOverConcatenation
+     ple string concatenations with common separator (777 ms)
+      ✓ should not flag String.join usage or concatenations without common separator (721 ms)
+    MultipleStringContainsCalls
+      ✕ should detect multiple contains() calls in conditionals (747 ms)
+      ✓ should not flag single contains() calls or regex patterns (728 ms)
+      property behavior
+        ✕ should respect custom minCalls property (3) (1511 ms)
+    MapShouldBeInitializedWithValues
+      ✓ should detect empty maps followed immediately by put() (785 ms)
+      ✓ should not flag maps initialized with values or put() called later (810 ms)
+    PreferStringJoinOverMultipleNewlines
+      ✓ should detect strings with multiple newlines (773 ms)
+      ✓ should not flag String.join usage or strings with single/no newlines (783 ms)
+    PreferConcatenationOverStringJoinWithEmpty
+      ✓ should detect String.join() with empty separator (778 ms)
+      ✓ should not flag concatenation or String.join with non-empty separator (781 CallsInLoopConditions
+      ✓ should detect while(true/false) with break and method call inside (770 ms)
+      ✓ should not flag method calls in loop conditions or breaks without method calls (742 ms)
+    PreferBuilderPatternChaining
+      ✓ should detect builder pattern with intermediary variable assignments (835 ms)
+      ✓ should not flag method chaining or assignments in constructors (715 ms)
+    PreferStringJoinWithSeparatorOverEmpty
+      ✓ should detect String.join with empty separator when strings have common suffix (751 ms)
+      ✓ should not flag String.join with separator or without common suffix (720 ms)
+
+  ● Code Style Rules › ListInitializationMustBeMultiLine › property behavior › should respect custom minItems property (3)
+
+    Expected no violations of rule "ListInitializationMustBeMultiLine", but found: [{"file":"/Users/beech/Documents/GitHub/sca-extra/tests/fixtures/positive/code-style/    Expected no violations of rule "ListInitializationMustBeMultiLine", but found: [{"file":"/Users/beech/Documents/GitHub/sca-extra/tests/fixtures/positive/code-style/ListInitializationMustBeMultiLine_MinItems3.cls","rule":"ListInitializationMustBeMultiLine","message":"List initialization with null or more items must be formatted with each item on its own line for better
+    Expected no violations of rule "ListInitializationMustBeMultiLine", but found: [{"file":"/Users/beech/Documents/GitHub/sca-extra/tests/fixtures/positive/code-style/ListInitializationMustBeMultiLine_MinItems3.cls","rule":"ListInitializationMustBeMultiLine","message":"List initialization with null or more items must be formatted with each item on its own line for better readability","line":3,"column":null}]
+
+      154 |     const ruleViolations = violations.filter((v) => v.rule === ruleName);
+      155 |     if (ruleViolations.length > 0) {
+    > 156 |             throw new Error(
+          |                   ^
+      157 |                     `Expected no violations of rule "${ruleName}", but found: ${JSON.stringify(ruleViolations)}`
+      158 |             );
+      159 |     }
+
+      at assertNoViolations (tests/helpers/pmd-helper.js:156:9)
+      at Object.assertNoViolations (tests/unit/code-style.test.js:130:5)
+
+  ● Code Style Rules › MapInitializationMustBeMultiLine › property behavior › should respect custom minEntries property (3)
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      177 |                             expect(
+      178 |                                     violations2.filter((v) => v.rule === 'MapInitializationMustBeMultiLine').length
+    > 179 |                             ).toBeGreaterThan(0);
+          |                               ^
+                        });
+      181 |             });
+      182 |     });
+
+      at Object.toBeGreaterThan (tests/unit/code-style.test.js:179:7)
+
+  ● Code Style Rules › MultipleStringContainsCalls › should detect multiple contains() calls in conditionals
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      330 |                     expect(
+      331 |                             violations.filter((v) => v.rule === 'MultipleStringContainsCalls').length
+    > 332 |                     ).toBeGreaterThan(0);
+          |                       ^
+      333 |             });
+      334 |
+      335 |             it('should not flag single contains() calls or regex patterns', async () => {
+
+      at Object.toBeGreaterThan (tests/unit/code-style.test.js:332:6)
+
+  ● Code Style Rules › MultipleStringContainsCalls › property behavior › should respect custom minCalls property (3)
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+                          expect(
+      358 |                                     violations2.filter((v) => v.rule === 'MultipleStringContainsCalls').length
+    > 359 |                             ).toBeGreaterThan(0);
+          |                               ^
+      360 |                     });
+      361 |             });
+      362 |     });
+
+      at Object.toBeGreaterThan (tests/unit/code-style.test.js:359:7)
+
+(node:67522) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ FAIL  tests/unit/structure.test.js (34.265 s)
+  Structure Rules
+    InnerClassesCannotBeStatic
+      ✓ should detect static inner classes (1013 ms)
+      ✓ should not flag non-static inner classes (985 ms)
+    InnerClassesCannotHaveStaticMembers
+      ✓ should detect static members in inner classes (970 ms)
+      ✓ should not flag non-static members in inner classes (944 ms)
+    ClassesMustHaveMethods
+      ✓ should detect classes with onand constructors (922 ms)
+      ✓ should not flag classes with instance methods (819 ms)
+    AvoidTrivialPropertyGetters
+      ✓ should detect trivial getters that only return fields (894 ms)
+      ✓ should not flag getters with logic or auto-properties (847 ms)
+    AvoidLowValueWrapperMethods
+      ✓ should detect methods that only wrap instanceof checks (788 ms)
+      ✓ should not flag methods with additional logic (862 ms)
+    NoParameterClasses
+      ✓ should detect classes with only fields and constructors (909 ms)
+      ✓ should not flag classes with instance methods (791 ms)
+    NoThisOutsideConstructors
+      ✓ should detect use of this. outside constructors (785 ms)
+      ✓ should not flag use of this. in constructors or returning this (750 ms)
+    EnumMinimumValues
+      ✓ should detect enums with fewer than 3 values (735 ms)
+      ✓ should not flag enums with 3 or more values (749 ms)
+      property behavior
+        ✓ should respect c (4) (1486 ms)
+    CombineNestedIfStatements
+      ✓ should detect nested if statements that can be combined (751 ms)
+      ✓ should not flag combined if statements or nested ifs with else/multiple statements (744 ms)
+    NoUnnecessaryAttributeVariables
+      ✓ should detect variables for attributes used only once (810 ms)
+      ✓ should not flag variables used multiple times, reassigned, or collections/objects (782 ms)
+    NoUnnecessaryReturnVariables
+      ✓ should detect variables created immediately before return (729 ms)
+      ✓ should not flag variables used or modified before return (727 ms)
+    PreferSwitchOverIfElseChains
+      ✓ should detect if-else chains with 2+ conditions comparing the same variable (779 ms)
+      ✓ should not flag switch statements, single conditions, or chains comparing different variables (772 ms)
+      ✓ should detect violations for all switch-compatible types (String, Integer, Long, Enum, sObject fields) (784 ms)
+      ✓ shotch-compatible types (Boolean, Decimal, Double, Date, DateTime, Time, Id, Blob) (789 ms)
+      OR conditions
+        ✓ should not flag OR condition with different variables (786 ms)
+        property behavior for OR conditions
+          ✕ should respect custom minElseIfStatements property (3) for OR conditions (1626 ms)
+          ✕ should respect custom minElseIfStatements property (5) for OR conditions (1643 ms)
+      mixed patterns
+        ✕ should detect mixed if-else chain followed by consecutive if statements (825 ms)
+      property behavior
+        ✕ should respect custom minElseIfStatements property (3) (1591 ms)
+        ✕ should respect custom minElseIfStatements property (4) (1602 ms)
+        ✕ should respect custom minElseIfStatements property (5) (1622 ms)
+    PreferPropertySyntaxOverGetterMethods
+      ✓ should detect public getters for private fields (746 ms)
+      ✓ should not flag property syntax or getters with logic (762 ms)
+
+  ● Structure Rules › PreferSwitchOverIfElseChains › OR conditions › property behavior for OR conditions › should respect custoty (3) for OR conditions
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      303 |                                     expect(
+      304 |                                             violations2.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
+    > 305 |                                     ).toBeGreaterThan(0);
+          |                                       ^
+      306 |                             });
+      307 |
+      308 |                             it('should respect custom minElseIfStatements property (5) for OR conditions', async () => {
+
+      at Object.toBeGreaterThan (tests/unit/structure.test.js:305:8)
+
+  ● Structure Rules › PreferSwitchOverIfElseChains › OR conditions › property behavior for OR conditions › should respect custom minElseIfStatements property (5) for OR conditions
+
+    expect(reBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      321 |                                     expect(
+      322 |                                             violations2.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
+    > 323 |                                     ).toBeGreaterThan(0);
+          |                                       ^
+      324 |                             });
+      325 |                     });
+      326 |             });
+
+      at Object.toBeGreaterThan (tests/unit/structure.test.js:323:8)
+
+  ● Structure Rules › PreferSwitchOverIfElseChains › mixed patterns › should detect mixed if-else chain followed by consecutive if statements
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      335 |                             expect(
+      336 |                                     violations.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
+    > 337 |                             ).toBeGreat);
+          |                               ^
+      338 |                     });
+      339 |             });
+      340 |
+
+      at Object.toBeGreaterThan (tests/unit/structure.test.js:337:7)
+
+  ● Structure Rules › PreferSwitchOverIfElseChains › property behavior › should respect custom minElseIfStatements property (3)
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      355 |                             expect(
+      356 |                                     violations2.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
+    > 357 |                             ).toBeGreaterThan(0);
+          |                               ^
+      358 |                     });
+      359 |
+      360 |                     it('should respect custom minElseIfStatements property (4)', async () => {
+
+      at Object.toBeGreaterThan (tests/unit/structure.test.js:357:7)
+
+  ● Structure Rules › PreferSwitchOverIfElseChaty behavior › should respect custom minElseIfStatements property (4)
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      373 |                             expect(
+      374 |                                     violations2.filter((v) => v.rule === 'PreferSwitchOverIfElseChains').length
+    > 375 |                             ).toBeGreaterThan(0);
+          |                               ^
+      376 |                     });
+      377 |
+      378 |                     it('should respect custom minElseIfStatements property (5)', async () => {
+
+      at Object.toBeGreaterThan (tests/unit/structure.test.js:375:7)
+
+  ● Structure Rules › PreferSwitchOverIfElseChains › property behavior › should respect custom minElseIfStatements property (5)
+
+    Expected no violations of rule "PreferSwitchOverIfElseChains", but found: [{"file":"/Users/beech/Documents/GitHub/sca-extra/tests/fixtures/positive/structure/PreferSwitceCha
+    Expected no violations of rule "PreferSwitchOverIfElseChains", but found: [{"file":"/Users/beech/Documents/GitHub/sca-extra/tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_MixedMin5.cls","rule":"PreferSwitchOverIfElseChains","message":"If-else chains, consecutive if statements, or OR conditions comparing the same variable should use switch statements in
+    Expected no violations of rule "PreferSwitchOverIfElseChains", but found: [{"file":"/Users/beech/Documents/GitHub/sca-extra/tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_MixedMin5.cls","rule":"PreferSwitchOverIfElseChains","message":"If-else chains, consecutive if statements, or OR conditions comparing the same variable should use switch statements instead for better readability and performance","line":5,"column":null},{"file":"/Users/beech/Documents/GitHub/sca-extra/tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_Mixed
+    Expected no violations of rule "PreferSwitchOverIfElseChains", but found: [{"file":"/Users/beech/Documents/GitHub/sca-extra/tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_MixedMin5.cls","rule":"PreferSwitchOverIfElseChains","message":"If-else chains, consecutive if statements, or OR conditions comparing the same variable should use switch statements instead for better readability and performance","line":5,"column":null},{"file":"/Users/beech/Documents/GitHub/sca-extra/tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_MixedMin5.cls","rule":"PreferSwitchOverIfElseChains","message":"If-else chains, consecutive if statements, or OR conditions comparing the same variable should use switch statements instead for
+    Expected no violations of rule "PreferSwitchOverIfElseChains", but found: [{"file":"/Users/beech/Documents/GitHub/sca-extra/tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_MixedMin5.cls","rule":"PreferSwitchOverIfElseChains","message":"If-else chains, consecutive if statements, or OR conditions comparing the same variable should use switch statements instead for better readability and performance","line":5,"column":null},{"file":"/Users/beech/Documents/GitHub/sca-extra/tests/fixtures/positive/structure/PreferSwitchOverIfElseChains_MixedMin5.cls","rule":"PreferSwitchOverIfElseChains","message":"If-else chains, consecutive if statements, or OR conditions comparing the same variable should use switch statements instead for better readability and performance","line":9,"column":null}]
+
+      154 |     const ruleViolations = violations.filter((v) => v.rule === ruleName);
+      155 |     if (ruleViolations.length > 0) {
+    > 156 |             throw new Error(
+          |                   ^
+      157 |                     `Expected no violations of rule "${ruleName}", but found: ${JSON.stringify(ruleViolations)}`
+      158 |             );
+      159 |     }
+
+      at assertNoViolations (tests/helpers/pmd-helper.js:156:9)
+      at Object.assertNoViolations (tests/unit/structure.test.js:393:5)
+
+Test Suites: 3 failed, 3 passed, 6 total
+Tests:       14 failed, 100 passed, 114 total
+Snapshots:   0 total
+Time:        34.426 s, estimated 42 s
+Ran all test suites.

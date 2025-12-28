@@ -11,6 +11,7 @@ Configure PMD rules for Salesforce Apex code analysis. Provides rule info, viola
 - **[REGEX.md](REGEX.md)** - Regex engine rules
 - **[SUPPRESS_WARNINGS.md](SUPPRESS_WARNINGS.md)** - Suppression methods
 - **[APEXDOC.md](APEXDOC.md)** - ApexDoc syntax
+- **[MIGRATION_GUIDES.md](MIGRATION_GUIDES.md)** - PMD 7 migration and rule versioning
 
 ## Creating Rules
 
@@ -18,6 +19,90 @@ Configure PMD rules for Salesforce Apex code analysis. Provides rule info, viola
 2. **XPath** - Use XPATH31.md syntax; test against positive/negative cases
 3. **Format** - Follow PMD Rule Format below; use property substitution
 4. **Config** - Show `code-analyzer.yml` examples with properties
+
+### Java Rules: Defining Properties (PMD 7)
+
+For Java-based rules, use `PropertyFactory` to define properties (PMD 7):
+
+**PMD 6 (deprecated):**
+```java
+StringProperty.named("propertyName")
+    .desc("Description")
+    .defaultValue("default")
+    .uiOrder(1.0f)  // Removed in PMD 7
+    .build();
+```
+
+**PMD 7:**
+```java
+import net.sourceforge.pmd.properties.PropertyFactory;
+
+PropertyFactory.stringProperty("propertyName")
+    .desc("Description")
+    .defaultValue("default")
+    .build();
+```
+
+**Property Types:**
+- `PropertyFactory.stringProperty()` - String properties
+- `PropertyFactory.intProperty()` - Integer properties
+- `PropertyFactory.doubleProperty()` - Double properties
+- `PropertyFactory.booleanProperty()` - Boolean properties
+- `PropertyFactory.enumProperty()` - Enum properties
+- `PropertyFactory.stringListProperty()` - List of strings
+- `PropertyFactory.regexProperty()` - Regular expression properties
+
+**Example:**
+```java
+private static final PropertyDescriptor<Integer> MIN_VALUE =
+    PropertyFactory.intProperty("minValue")
+        .desc("Minimum value threshold")
+        .defaultValue(10)
+        .build();
+
+private static final PropertyDescriptor<List<String>> ALLOWED_NAMES =
+    PropertyFactory.stringListProperty("allowedNames")
+        .desc("List of allowed names")
+        .defaultValues("i", "j", "k")
+        .build();
+```
+
+**Retrieving Property Values:**
+```java
+int minValue = getProperty(MIN_VALUE);
+List<String> allowedNames = getProperty(ALLOWED_NAMES);
+```
+
+### Java Rules: Reporting Violations (PMD 7)
+
+**PMD 6 (deprecated):**
+```java
+addViolation(data, node, message);
+addViolation(data, node, message, args);
+```
+
+**PMD 7:**
+```java
+asCtx(data).addViolation(node, message);
+asCtx(data).addViolation(node, message, args);
+```
+
+**Example:**
+```java
+@Override
+public Object visit(ASTMethod node, Object data) {
+    if (violatesRule(node)) {
+        asCtx(data).addViolation(node, "Method violates rule");
+    }
+    return super.visit(node, data);
+}
+```
+
+**Note:** `uiOrder` property is removed in PMD 7. Just remove it from property definitions.
+
+**References:**
+- [Defining Rule Properties](https://pmd.github.io/pmd/pmd_userdocs_extending_defining_properties.html)
+- [PMD 7 Migration Guide](https://pmd.github.io/pmd/pmd_userdocs_migrating_to_pmd7.html)
 
 ## XPathRule Property Configuration
 
