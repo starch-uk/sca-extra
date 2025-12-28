@@ -19,6 +19,7 @@ When working with PMD rules, XPath expressions, Apex AST structure, testing, or 
 **Testing & Development:**
 - **@docs/JEST30.md** - Jest 30.0 API reference for writing and running tests
 - **@docs/PNPM.md** - pnpm package manager reference for dependency management and workspace configuration
+- **@docs/HUSKY9.md** - Husky v9 reference for Git hooks management and configuration
 - **@docs/MIGRATION_GUIDES.md** - Rule migration and versioning information
 
 Use these documents to:
@@ -31,6 +32,7 @@ Use these documents to:
 - Configure `code-analyzer.yml` with proper engines and properties
 - Write and maintain Jest tests using the Jest 30.0 API
 - Manage dependencies and workspaces using pnpm
+- Configure Git hooks using Husky v9
 - Understand ApexDoc syntax and documentation requirements
 - Suppress rule violations when necessary
 

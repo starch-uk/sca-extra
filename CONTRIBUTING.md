@@ -32,6 +32,8 @@ We appreciate your interest in improving sca-extra. Your contributions help make
    ```bash
    pnpm prepare
    ```
+   
+   For more information about Husky v9 and Git hooks, see [Husky v9 Reference](docs/HUSKY9.md).
 
 ### Running Tests Locally
 
@@ -273,7 +275,7 @@ Before submitting a pull request, ensure:
 ### XML Formatting
 
 - All XML files are automatically formatted with Prettier
-- Pre-commit hook ensures formatting before commit
+- Pre-commit hook ensures formatting before commit (see [Husky v9 Reference](docs/HUSKY9.md) for Git hooks setup)
 - Run `pnpm format` to format manually
 
 ### JavaScript/TypeScript Style

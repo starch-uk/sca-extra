@@ -826,6 +826,7 @@ For security vulnerabilities, please see [SECURITY.md](SECURITY.md) for reportin
 - [Migration Guides](docs/MIGRATION_GUIDES.md) - Rule migration and versioning information
 - [Jest 30.0 Reference](docs/JEST30.md) - Jest 30.0 API reference for writing and running tests
 - [pnpm Reference](docs/PNPM.md) - pnpm package manager reference for dependency management and workspace configuration
+- [Husky v9 Reference](docs/HUSKY9.md) - Husky v9 Git hooks manager reference for setting up pre-commit and other Git hooks
 
 ## AI Agent Configuration
 
@@ -844,6 +845,7 @@ When setting up AI agent rules, you should reference these documentation files:
 - **[ApexDoc Reference](docs/APEXDOC.md)** - ApexDoc syntax, tags, and documentation format for Apex code
 - **[Suppressing Warnings](docs/SUPPRESS_WARNINGS.md)** - How to suppress PMD rule violations using annotations, comments, and rule properties
 - **[pnpm Reference](docs/PNPM.md)** - pnpm package manager reference for dependency management and workspace configuration
+- **[Husky v9 Reference](docs/HUSKY9.md)** - Husky v9 Git hooks manager reference for setting up pre-commit and other Git hooks
 
 ### Setting Up in Cursor
 
