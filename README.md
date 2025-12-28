@@ -77,98 +77,95 @@ engines:
 
 ### Customizing Rules
 
-**Important:** PMD 7+ does not support dynamic properties for XPath rules. To customize rules (e.g., change thresholds, modify behavior), you need to edit the XPath expression directly in the rule XML file.
+**Important:** PMD 7+ does not support dynamic properties for XPath rules via `code-analyzer.yml`. However, rules are designed with configurable variables at the top of their XPath expressions, making customization straightforward.
 
 **How to Customize a Rule:**
 
 1. **Locate the rule file** in the `rulesets/` directory (e.g., `rulesets/design/EnumMinimumValues.xml`)
 
-2. **Edit the XPath expression** in the `<property name="xpath">` section to change the rule's behavior
+2. **Edit the configurable variables** at the top of the XPath expression (usually in a `let` statement). You don't need to edit the entire XPath - just change the variable values.
 
-3. **Update the rule description** to reflect your changes
+3. **Update the rule description** to reflect your changes (optional but recommended)
 
 **Example 1 - Change EnumMinimumValues threshold from 3 to 4:**
 
-Open `rulesets/design/EnumMinimumValues.xml` and change:
+Open `rulesets/design/EnumMinimumValues.xml` and find the variable at the top of the XPath expression:
 
 ```xml
-<!-- Before -->
 <property name="xpath">
     <value>
         <![CDATA[
-        //UserEnum[count(Field) < 3]
+        let $minValues := 3  <!-- Change this value -->
+        return //UserEnum[
+            count(Field) < $minValues
+        ]
         ]]>
     </value>
 </property>
 ```
 
-To:
+Change `3` to `4`:
 
 ```xml
-<!-- After -->
 <property name="xpath">
     <value>
         <![CDATA[
-        //UserEnum[count(Field) < 4]
+        let $minValues := 4  <!-- Changed from 3 to 4 -->
+        return //UserEnum[
+            count(Field) < $minValues
+        ]
         ]]>
     </value>
 </property>
 ```
 
-Also update the description:
+**Example 2 - Customize NoAbbreviations to change which abbreviations are flagged:**
 
-```xml
-<description>
-    Enums must contain at least 4 values. Enums with fewer than 4 values should be reconsidered...
-</description>
-```
-
-**Example 2 - Change PreferSwitchOverIfElseChains threshold from 2 to 4:**
-
-Open `rulesets/design/PreferSwitchOverIfElseChains.xml` and find all occurrences of `>= 2` in the XPath expression, then change them to `>= 4`:
-
-```xml
-<!-- Before -->
-count(IfBlockStatement) >= 2
-```
-
-To:
-
-```xml
-<!-- After -->
-count(IfBlockStatement) >= 4
-```
-
-**Example 3 - Customize NoAbbreviations to flag different abbreviations:**
-
-Open `rulesets/code-style/NoAbbreviations.xml` and modify the XPath expression. For example, to only flag `ctx` and `idx`:
+Open `rulesets/code-style/NoAbbreviations.xml` and find the variables at the top:
 
 ```xml
 <property name="xpath">
     <value><![CDATA[
-        //VariableDeclaration[
-            VariableExpression[
-                (@Image = 'ctx' or @Image = 'idx')
-                and not(matches(@Image, 'Api$') or matches(@Image, 'Html$') or matches(@Image, 'Id$') or matches(@Image, 'Url$'))
-            ]
+        let $disallowedAbbreviations := 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val',
+            $allowedSuffixes := 'Api,Html,Id,Url',
+            $allowedPrefixes := 'test'
+        return //VariableDeclaration[
+            <!-- ... rest of XPath expression ... -->
+        ]
+    ]]></value>
+</property>
+```
+
+To only flag `ctx` and `idx`, change the `$disallowedAbbreviations` variable:
+
+```xml
+<property name="xpath">
+    <value><![CDATA[
+        let $disallowedAbbreviations := 'ctx,idx',  <!-- Changed to only flag ctx and idx -->
+            $allowedSuffixes := 'Api,Html,Id,Url',
+            $allowedPrefixes := 'test'
+        return //VariableDeclaration[
+            <!-- ... rest of XPath expression stays the same ... -->
         ]
     ]]></value>
 </property>
 ```
 
 **Best Practices:**
+- **Look for variables at the top** - Most rules have configurable variables in `let` statements at the beginning of the XPath expression
+- **Only change variable values** - You typically don't need to modify the rest of the XPath expression
 - **Keep a backup** of the original rule file before making changes
 - **Document your changes** in comments or commit messages
 - **Test your changes** by running `sf code-analyzer run` on your codebase
 - **Consider version control** - if you customize rules, you may want to maintain your own fork or keep custom rules in a separate directory
-- **Update rule descriptions** to reflect your customizations
+- **Update rule descriptions** to reflect your customizations (optional)
 
 **Note:** If you need different behavior for different parts of your codebase, you can:
 1. Create multiple copies of the rule with different names (e.g., `EnumMinimumValues4.xml`, `EnumMinimumValues5.xml`)
 2. Reference both in your `code-analyzer.yml`
 3. Use PMD's exclusion patterns if needed
 
-**Rule Examples:** All rules include `<example>` sections in their XML files showing violations and valid code patterns. These examples help clarify the rule's intent. Rules with configurable thresholds (like `EnumMinimumValues`, `PreferSwitchOverIfElseChains`, `NoAbbreviations`) use easy-to-edit variables at the top of the XPath expression, making customization straightforward.
+**Rule Examples:** All rules include `<example>` sections in their XML files showing violations and valid code patterns. These examples help clarify the rule's intent. Rules with configurable thresholds use easy-to-edit variables at the top of the XPath expression, making customization straightforward - you only need to change the variable values, not the entire XPath logic.
 
 ### Disabling Default Rules
 
@@ -288,99 +285,6 @@ Regex rules are useful for:
 
 For more information on creating Regex rules, see the [Regex Engine Reference](docs/REGEX.md).
 
-### Customizing Rules
-
-**Important:** PMD 7+ does not support dynamic properties for XPath rules. To customize rules (e.g., change thresholds, modify behavior), you need to edit the XPath expression directly in the rule XML file.
-
-**How to Customize a Rule:**
-
-1. **Locate the rule file** in the `rulesets/` directory (e.g., `rulesets/design/EnumMinimumValues.xml`)
-
-2. **Edit the XPath expression** in the `<property name="xpath">` section to change the rule's behavior
-
-3. **Update the rule description** to reflect your changes
-
-**Example 1 - Change EnumMinimumValues threshold from 3 to 4:**
-
-Open `rulesets/design/EnumMinimumValues.xml` and change:
-
-```xml
-<!-- Before -->
-<property name="xpath">
-    <value>
-        <![CDATA[
-        //UserEnum[count(Field) < 3]
-        ]]>
-    </value>
-</property>
-```
-
-To:
-
-```xml
-<!-- After -->
-<property name="xpath">
-    <value>
-        <![CDATA[
-        //UserEnum[count(Field) < 4]
-        ]]>
-    </value>
-</property>
-```
-
-Also update the description:
-
-```xml
-<description>
-    Enums must contain at least 4 values. Enums with fewer than 4 values should be reconsidered...
-</description>
-```
-
-**Example 2 - Change PreferSwitchOverIfElseChains threshold from 2 to 4:**
-
-Open `rulesets/design/PreferSwitchOverIfElseChains.xml` and find all occurrences of `>= 2` in the XPath expression, then change them to `>= 4`:
-
-```xml
-<!-- Before -->
-count(IfBlockStatement) >= 2
-```
-
-To:
-
-```xml
-<!-- After -->
-count(IfBlockStatement) >= 4
-```
-
-**Example 3 - Customize NoAbbreviations to flag different abbreviations:**
-
-Open `rulesets/code-style/NoAbbreviations.xml` and modify the XPath expression. For example, to only flag `ctx` and `idx`:
-
-```xml
-<property name="xpath">
-    <value><![CDATA[
-        //VariableDeclaration[
-            VariableExpression[
-                (@Image = 'ctx' or @Image = 'idx')
-                and not(matches(@Image, 'Api$') or matches(@Image, 'Html$') or matches(@Image, 'Id$') or matches(@Image, 'Url$'))
-            ]
-        ]
-    ]]></value>
-</property>
-```
-
-**Best Practices:**
-- **Keep a backup** of the original rule file before making changes
-- **Document your changes** in comments or commit messages
-- **Test your changes** by running `sf code-analyzer run` on your codebase
-- **Consider version control** - if you customize rules, you may want to maintain your own fork or keep custom rules in a separate directory
-- **Update rule descriptions** to reflect your customizations
-
-**Note:** If you need different behavior for different parts of your codebase, you can:
-1. Create multiple copies of the rule with different names (e.g., `EnumMinimumValues4.xml`, `EnumMinimumValues5.xml`)
-2. Reference both in your `code-analyzer.yml`
-3. Use PMD's exclusion patterns if needed
-
 ### Complete Example
 
 Here's a complete `code-analyzer.yml` example combining custom rules and standard PMD rules:
@@ -406,7 +310,7 @@ rules:
 
 **For more examples:** See the [unhappy-soup ruleset](https://github.com/rsoesemann/unhappy-soup/blob/master/ruleset.xml) for a comprehensive example of combining standard PMD rules with custom rules and configuration.
 
-**To customize rule behavior:** See the [Customizing Rules](#customizing-rules) section above for instructions on editing XPath expressions directly.
+**To customize rule behavior:** See the [Customizing Rules](#customizing-rules) section above for instructions on customizing rules by editing configurable variables at the top of XPath expressions.
 
 ## Quick Start
 
@@ -670,7 +574,7 @@ String configuration = 'x';  // ✅ Uses full word
 Boolean isManager = true;    // ✅ Descriptive and readable
 ```
 
-**Note:** To customize this rule (e.g., change which abbreviations are flagged or which suffixes are allowed), edit the XPath expression directly in `rulesets/code-style/NoAbbreviations.xml`. See the [Customizing Rules](#customizing-rules) section below for details.
+**Note:** To customize this rule (e.g., change which abbreviations are flagged or which suffixes are allowed), edit the configurable variables at the top of the XPath expression in `rulesets/code-style/NoAbbreviations.xml`. See the [Customizing Rules](#customizing-rules) section above for details.
 
 ### Code Style Rules
 
