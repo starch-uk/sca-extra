@@ -17,10 +17,9 @@
 	>
 		<description>
 			Variable names should not match class names to avoid confusion. When
-			a
-			variable shares a name with a class, it can be unclear whether the
-			identifier refers to the class or an instance, making the code harder to
-			read and understand.
+			a variable shares a name with a class, it can be unclear whether the
+			identifier refers to the class or an instance, making the code harder
+			to read and understand.
 
 			Version: 1.0.0
 		</description>
@@ -31,7 +30,14 @@
 					<![CDATA[
 					//VariableDeclaration[
 						VariableExpression
-						and (ancestor::ApexFile//UserClass[lower-case(@Name) = lower-case(VariableExpression/@Image)] or ancestor::ApexFile//UserClass[lower-case(@SimpleName) = lower-case(VariableExpression/@Image)])
+						and (
+							ancestor::ApexFile//UserClass[@Name = VariableExpression/@Image]
+							or ancestor::ApexFile//UserClass[@SimpleName = VariableExpression/@Image]
+							or ancestor::ApexFile//UserClass[@Image = VariableExpression/@Image]
+							or ancestor::ApexFile//UserClass[lower-case(@Name) = lower-case(VariableExpression/@Image)]
+							or ancestor::ApexFile//UserClass[lower-case(@SimpleName) = lower-case(VariableExpression/@Image)]
+							or ancestor::ApexFile//UserClass[lower-case(@Image) = lower-case(VariableExpression/@Image)]
+						)
 					]
 					]]>
 				</value>
@@ -45,14 +51,19 @@
 			}
 			
 			public void method() {
-			    Account Account = new Account();  // ❌ Variable name matches class
-			    Account ACCOUNT = new Account();  // ❌ Variable name matches class
+			    Account Account = new Account();  // ❌ Variable name matches class (exact case)
+			    Account ACCOUNT = new Account();  // ❌ Variable name matches class (uppercase)
+			    Account account = new Account();  // ❌ Variable name matches class (lowercase)
+			    Account AcCoUnT = new Account();  // ❌ Variable name matches class (mixed case)
 			}
 			
 			// Valid: Use different variable name
 			public void method() {
-			    Account account = new Account();  // ✅ Different case
-			    Account acc = new Account();  // ✅ Different name
+			    Account acc = new Account();  // ✅ Different name (abbreviation)
+			    Account accountInstance = new Account();  // ✅ Different name (with suffix)
+			    Account accountBob = new Account();  // ✅ Different name (with suffix)
+			    Account myAccount = new Account();  // ✅ Different name (with prefix)
+			    Account accounts = new Account();  // ✅ Different name (plural)
 			}
 			]]>
 		</example>
@@ -65,13 +76,51 @@
 			    }
 			    
 			    public void method() {
-			        Inner Inner = new Inner();  // ❌ Variable name matches inner class
+			        Inner Inner = new Inner();  // ❌ Variable name matches inner class (exact case)
+			        Inner inner = new Inner();  // ❌ Variable name matches inner class (lowercase)
+			        Inner INNER = new Inner();  // ❌ Variable name matches inner class (uppercase)
 			    }
 			}
 			
 			// Valid: Use different variable name
 			public void method() {
-			    Inner inner = new Inner();  // ✅
+			    Inner innerInstance = new Inner();  // ✅ Different name (with suffix)
+			    Inner innerBob = new Inner();  // ✅ Different name (with suffix)
+			    Inner myInner = new Inner();  // ✅ Different name (with prefix)
+			    Inner item = new Inner();  // ✅ Different name (generic)
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Multi-word class names also checked
+			public class TestHelper {
+			    // ...
+			}
+			
+			public void method() {
+			    TestHelper TestHelper = new TestHelper();  // ❌ Variable name matches class
+			    TestHelper testHelper = new TestHelper();  // ❌ Variable name matches class (case-insensitive)
+			    TestHelper TESTHELPER = new TestHelper();  // ❌ Variable name matches class (uppercase)
+			}
+			
+			// Valid: Different variable names
+			public void method() {
+			    TestHelper helper = new TestHelper();  // ✅ Different name
+			    TestHelper testHelperInstance = new TestHelper();  // ✅ Different name (with suffix)
+			    TestHelper myTestHelper = new TestHelper();  // ✅ Different name (with prefix)
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Partial matches are allowed (variable contains class name but is different)
+			public class Account {
+			    public void method() {
+			        String accountName = 'Test';  // ✅ Valid: accountName != Account
+			        String accountId = '123';  // ✅ Valid: accountId != Account
+			        Account accountInstance = new Account();  // ✅ Valid: accountInstance != Account
+			    }
 			}
 			]]>
 		</example>
