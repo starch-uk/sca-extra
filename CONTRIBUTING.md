@@ -316,6 +316,40 @@ Before submitting a pull request, ensure:
 - Use meaningful variable names
 - Add comments for complex logic
 
+### Security Best Practices for Scripts
+
+When writing or modifying scripts in the `scripts/` directory, follow these
+security best practices:
+
+- **File System Operations:** Use file descriptors (`fs.openSync`,
+  `fs.writeFileSync` with file descriptor) instead of file paths to prevent
+  time-of-check to time-of-use (TOCTOU) race conditions
+    - **Never use `fs.existsSync()` before opening files** - This creates a race
+      condition. Open files directly and handle errors if they don't exist
+    - Open files once with `O_RDWR` for read-write operations, `O_RDONLY` for
+      read-only, or `O_CREAT | O_WRONLY | O_TRUNC` for write-only
+    - Wrap file open operations in try-catch to handle cases where files don't
+      exist
+    - Use the same file descriptor for both read and write operations
+    - Always close file descriptors in `finally` blocks
+
+- **Shell Command Execution:** Use `execFileSync` instead of `execSync` when
+  passing dynamic paths or arguments to prevent shell command injection
+  vulnerabilities
+    - Pass command and arguments separately:
+      `execFileSync('git', ['show', path], {...})`
+    - Avoid constructing shell commands with string interpolation
+
+- **Path Validation:** Scripts accepting file paths from user input must:
+    - Use `sanitize-filename` package to sanitize file paths
+    - Validate paths to prevent path traversal attacks (reject paths containing
+      `..`)
+    - Reject absolute paths when relative paths are expected
+    - Use `fs.realpathSync()` to resolve symbolic links and validate resolved
+      paths
+
+For more details, see [SECURITY.md](SECURITY.md).
+
 ### Documentation Requirements
 
 - All rules must be documented in README.md

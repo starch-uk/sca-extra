@@ -399,12 +399,24 @@ is NOT an npm package and must be installed separately.
 - Support baseline comparison and JSON output for CI
 - Create `pnpm run benchmark` script
 - Create `pnpm run check-regressions` script
-- **Script Security**: Scripts accepting file paths from user input must
-  implement security measures:
-    - Use `sanitize-filename` package to sanitize file paths
-    - Validate paths to prevent path traversal attacks (reject `..` sequences)
-    - Use `fs.realpathSync()` to resolve symbolic links and validate containment
-    - Reject absolute paths when relative paths are expected
+- **Script Security**: All scripts must implement security best practices:
+    - **File System Operations**: Use file descriptors instead of file paths to
+      prevent TOCTOU race conditions:
+        - Never use `fs.existsSync()` before opening files - open files directly
+          and handle errors
+        - Use `fs.openSync()` with appropriate flags and file descriptors for
+          all file operations
+        - Always close file descriptors in `finally` blocks
+    - **Shell Command Execution**: Use `execFileSync` instead of `execSync` when
+      passing dynamic paths or arguments to prevent shell command injection
+    - **Path Validation** (for user input): Scripts accepting file paths from
+      user input must:
+        - Use `sanitize-filename` package to sanitize file paths
+        - Validate paths to prevent path traversal attacks (reject `..`
+          sequences)
+        - Use `fs.realpathSync()` to resolve symbolic links and validate
+          containment
+        - Reject absolute paths when relative paths are expected
 
 ### Phase 3: Rule Implementation
 

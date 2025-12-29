@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 
 /**
  * Run tests and identify which rules have failing tests
@@ -196,9 +196,13 @@ function getRulesWithFailingExistingTests(rulesWithFailingTests) {
 		for (const testFile of testJsFiles) {
 			try {
 				// Check if this test file contains tests for this rule
-				const testFileContent = execSync(`git show HEAD:${testFile}`, {
-					encoding: 'utf-8',
-				});
+				const testFileContent = execFileSync(
+					'git',
+					['show', `HEAD:${testFile}`],
+					{
+						encoding: 'utf-8',
+					}
+				);
 				// Look for describe block with this rule name
 				if (
 					testFileContent.includes(`describe('${ruleName}'`) ||
@@ -309,16 +313,32 @@ function bumpRuleVersions() {
 	let patchBumped = 0;
 
 	changedRules.forEach((rulePath) => {
-		if (!fs.existsSync(rulePath)) {
+		// Open file with file descriptor for both read and write to prevent race conditions
+		// Try to open the file directly without checking existence first to avoid TOCTOU race condition
+		let fd;
+		try {
+			fd = fs.openSync(rulePath, fs.constants.O_RDWR, 0o644);
+		} catch {
+			// File doesn't exist or can't be opened - skip this rule
 			return;
 		}
 
-		const content = fs.readFileSync(rulePath, 'utf-8');
+		let content;
+		try {
+			// Read content using file descriptor
+			content = fs.readFileSync(fd, 'utf-8');
+		} catch (error) {
+			fs.closeSync(fd);
+			console.warn(`⚠️  Could not read ${rulePath}: ${error.message}`);
+			return;
+		}
+
 		const ruleName = path.basename(rulePath, '.xml');
 
 		// Extract current version
 		const versionMatch = content.match(/Version:\s*(\d+)\.(\d+)\.(\d+)/);
 		if (!versionMatch) {
+			fs.closeSync(fd);
 			console.warn(`⚠️  No version found in ${rulePath}`);
 			return;
 		}
@@ -331,10 +351,14 @@ function bumpRuleVersions() {
 				path.join(__dirname, '..'),
 				rulePath
 			);
-			const headContent = execSync(`git show HEAD:${relativePath}`, {
-				encoding: 'utf-8',
-				stdio: ['pipe', 'pipe', 'ignore'],
-			});
+			const headContent = execFileSync(
+				'git',
+				['show', `HEAD:${relativePath}`],
+				{
+					encoding: 'utf-8',
+					stdio: ['pipe', 'pipe', 'ignore'],
+				}
+			);
 			const headVersionMatch = headContent.match(
 				/Version:\s*(\d+)\.(\d+)\.(\d+)/
 			);
@@ -391,6 +415,7 @@ function bumpRuleVersions() {
 		if (headVersion && versionMatch[0] !== headVersion) {
 			// If current version matches target, it's already correctly bumped
 			if (currentVersion === targetVersion) {
+				fs.closeSync(fd);
 				console.log(
 					`⏭️  ${ruleName}: Version already correctly bumped from ${headVersion} to Version: ${targetVersion}, skipping`
 				);
@@ -402,7 +427,13 @@ function bumpRuleVersions() {
 			const oldVersion = versionMatch[0];
 			const newVersionLine = `Version: ${targetVersion}`;
 			const newContent = content.replace(oldVersion, newVersionLine);
-			fs.writeFileSync(rulePath, newContent, 'utf-8');
+			try {
+				// Truncate file and write new content using same file descriptor
+				fs.ftruncateSync(fd, 0);
+				fs.writeFileSync(fd, newContent, { encoding: 'utf-8' });
+			} finally {
+				fs.closeSync(fd);
+			}
 
 			console.log(
 				`🔧 ${ruleName}: Fixed version from ${oldVersion} to ${newVersionLine} (${bumpType})`
@@ -427,7 +458,13 @@ function bumpRuleVersions() {
 		// Replace version in content
 		const newContent = content.replace(oldVersion, newVersionLine);
 
-		fs.writeFileSync(rulePath, newContent, 'utf-8');
+		try {
+			// Truncate file and write new content using same file descriptor
+			fs.ftruncateSync(fd, 0);
+			fs.writeFileSync(fd, newContent, { encoding: 'utf-8' });
+		} finally {
+			fs.closeSync(fd);
+		}
 
 		// Update counters
 		if (bumpType === 'major') {

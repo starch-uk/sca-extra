@@ -1007,8 +1007,30 @@ All scripts in the `scripts/` directory have convenience commands in
 
 ### Script Security
 
-Scripts that accept file paths from user input implement security measures to
-prevent path traversal attacks:
+All scripts in the `scripts/` directory implement security best practices:
+
+#### File System Operations
+
+- **File Descriptors**: Scripts use file descriptors (`fs.openSync`,
+  `fs.writeFileSync` with file descriptor) instead of file paths to prevent
+  time-of-check to time-of-use (TOCTOU) race conditions
+- **No Existence Checks**: Scripts never use `fs.existsSync()` before opening
+  files - files are opened directly and errors are handled if they don't exist
+- **Atomic Operations**: File operations are atomic with respect to file
+  descriptors, preventing race conditions
+
+#### Shell Command Execution
+
+- **execFileSync**: Scripts use `execFileSync` instead of `execSync` when
+  passing dynamic paths or arguments to prevent shell command injection
+  vulnerabilities
+- **Separate Arguments**: Commands and arguments are passed separately (e.g.,
+  `execFileSync('git', ['show', path], {...})`)
+
+#### Path Validation (for user input)
+
+Scripts that accept file paths from user input implement additional security
+measures:
 
 - **Path Sanitization**: The `sanitize-filename` package is used to sanitize
   file paths, eliminating dangerous characters
@@ -1020,9 +1042,14 @@ prevent path traversal attacks:
 
 Scripts implementing these measures:
 
-- `scripts/check-performance-regressions.js` - Accepts optional results file
-  path
-- `scripts/ast-dump.sh` - Accepts Apex file path
+- `scripts/benchmark.js` - File descriptor usage for read/write operations
+- `scripts/bump-rule-versions.js` - File descriptors and `execFileSync` for git
+  operations
+- `scripts/check-performance-regressions.js` - Path validation for user input
+- `scripts/ast-dump.sh` - Path validation for user input
+
+For more details, see [SECURITY.md](SECURITY.md) and
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Contributing
 
