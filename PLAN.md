@@ -171,6 +171,7 @@ sca-extra/
      - `lint-staged` (^16.0.0) - Staged file linting
      - `@xmldom/xmldom` (^0.8.11) - DOM implementation for XML parsing
      - `yaml` (^2.6.1) - YAML parsing
+     - `sanitize-filename` (^1.6.3) - File path sanitization for scripts accepting user input
    - Configure pnpm scripts for testing, validation, linting, and development
    - Add Prettier for XML formatting of rulesets
 
@@ -353,11 +354,16 @@ sca-extra/
      - `stress-documentation.cls` - Documentation focused (30+ violations)
    - Create `benchmarks/README.md` - Benchmark documentation
    - Create `benchmarks/FIXTURES.md` - Fixture statistics and coverage
-   - Create `scripts/check-performance-regressions.js` - Regression detection
-   - Results stored in `benchmarks/results/` (gitignored)
-   - Support baseline comparison and JSON output for CI
-   - Create `pnpm run benchmark` script
-   - Create `pnpm run check-regressions` script
+  - Create `scripts/check-performance-regressions.js` - Regression detection
+  - Results stored in `benchmarks/results/` (gitignored)
+  - Support baseline comparison and JSON output for CI
+  - Create `pnpm run benchmark` script
+  - Create `pnpm run check-regressions` script
+  - **Script Security**: Scripts accepting file paths from user input must implement security measures:
+    - Use `sanitize-filename` package to sanitize file paths
+    - Validate paths to prevent path traversal attacks (reject `..` sequences)
+    - Use `fs.realpathSync()` to resolve symbolic links and validate containment
+    - Reject absolute paths when relative paths are expected
 
 ### Phase 3: Rule Implementation
 
@@ -612,6 +618,7 @@ This ensures:
   - Outputs AST in text format
   - Optionally saves to XML file
   - Usage: `pnpm run ast-dump <apex-file>` or `bash scripts/ast-dump.sh <apex-file>`
+  - **Security**: Must validate file paths to prevent path traversal attacks (reject `..` sequences, use `realpath` to resolve symlinks)
 - **Documentation:** Document common AST patterns in `docs/APEX_PMD_AST.md`
   - Node types and relationships
   - Common XPath patterns

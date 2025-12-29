@@ -1003,6 +1003,19 @@ All scripts in the `scripts/` directory have convenience commands in
 
 - `pnpm ci` - Run all CI checks (format, lint, test)
 
+### Script Security
+
+Scripts that accept file paths from user input implement security measures to prevent path traversal attacks:
+
+- **Path Sanitization**: The `sanitize-filename` package is used to sanitize file paths, eliminating dangerous characters
+- **Path Validation**: Paths are validated to ensure they don't contain path traversal sequences (`..`) and are relative paths
+- **Symbolic Link Resolution**: `fs.realpathSync()` is used to resolve symbolic links and ensure files are within expected directories
+- **Defense in Depth**: Multiple validation layers ensure robust security
+
+Scripts implementing these measures:
+- `scripts/check-performance-regressions.js` - Accepts optional results file path
+- `scripts/ast-dump.sh` - Accepts Apex file path
+
 ## Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for

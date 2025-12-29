@@ -76,7 +76,8 @@ Security researchers who responsibly report vulnerabilities will be:
 
 - **Dependency Management:** Keep dependencies up to date
 - **Code Review:** Review code for security issues
-- **Input Validation:** Validate all inputs
+- **Input Validation:** Validate all inputs, especially file paths from user input
+- **Script Security:** Scripts accepting file paths must use `sanitize-filename` package and validate paths to prevent path traversal attacks
 - **Error Handling:** Don't expose sensitive information in error messages
 - **Secrets:** Never commit secrets, API keys, or credentials
 
