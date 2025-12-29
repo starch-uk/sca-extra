@@ -106,11 +106,14 @@ When creating or modifying PMD rules:
     - Run this before committing rule changes to ensure proper versioning
 24. **Script security**: **Scripts must implement security best practices** - When creating or modifying scripts in `scripts/`, follow these security guidelines:
     - **File System Operations**: Use file descriptors instead of file paths to prevent time-of-check to time-of-use (TOCTOU) race conditions:
-      - Use `fs.openSync()` with appropriate flags (`O_RDWR` for read-write, `O_CREAT | O_WRONLY | O_TRUNC` for write-only)
+      - **Never use `fs.existsSync()` before opening files** - This creates a race condition. Instead, open files directly and handle errors if they don't exist
+      - Use `fs.openSync()` with appropriate flags (`O_RDWR` for read-write, `O_CREAT | O_WRONLY | O_TRUNC` for write-only, `O_RDONLY` for read-only)
+      - Wrap file open operations in try-catch to handle cases where files don't exist
       - Use the same file descriptor for both read and write operations when possible
       - Always close file descriptors in `finally` blocks to ensure cleanup
       - Use `fs.readFileSync(fd, ...)` and `fs.writeFileSync(fd, ...)` with file descriptors instead of paths
       - Use `fs.ftruncateSync(fd, 0)` before writing when overwriting files
+      - Example pattern: Open file directly, catch errors if it doesn't exist, then read/write using the file descriptor
     - **Shell Command Execution**: Use `execFileSync` instead of `execSync` when passing dynamic paths or arguments:
       - Pass command and arguments separately: `execFileSync('git', ['show', path], {...})`
       - Avoid constructing shell commands with string interpolation

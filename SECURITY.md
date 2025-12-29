@@ -78,7 +78,7 @@ Security researchers who responsibly report vulnerabilities will be:
 - **Code Review:** Review code for security issues
 - **Input Validation:** Validate all inputs, especially file paths from user input
 - **Script Security:** Scripts accepting file paths must use `sanitize-filename` package and validate paths to prevent path traversal attacks
-- **File System Operations:** Use file descriptors (`fs.openSync`, `fs.writeFileSync` with file descriptor) instead of file paths to prevent time-of-check to time-of-use (TOCTOU) race conditions
+- **File System Operations:** Use file descriptors (`fs.openSync`, `fs.writeFileSync` with file descriptor) instead of file paths to prevent time-of-check to time-of-use (TOCTOU) race conditions. Never use `fs.existsSync()` before opening files - open files directly and handle errors if they don't exist
 - **Shell Command Execution:** Use `execFileSync` instead of `execSync` when passing dynamic paths or arguments to prevent shell command injection vulnerabilities
 - **Error Handling:** Don't expose sensitive information in error messages
 - **Secrets:** Never commit secrets, API keys, or credentials

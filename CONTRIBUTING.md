@@ -290,7 +290,9 @@ Before submitting a pull request, ensure:
 When writing or modifying scripts in the `scripts/` directory, follow these security best practices:
 
 - **File System Operations:** Use file descriptors (`fs.openSync`, `fs.writeFileSync` with file descriptor) instead of file paths to prevent time-of-check to time-of-use (TOCTOU) race conditions
-  - Open files once with `O_RDWR` for read-write operations
+  - **Never use `fs.existsSync()` before opening files** - This creates a race condition. Open files directly and handle errors if they don't exist
+  - Open files once with `O_RDWR` for read-write operations, `O_RDONLY` for read-only, or `O_CREAT | O_WRONLY | O_TRUNC` for write-only
+  - Wrap file open operations in try-catch to handle cases where files don't exist
   - Use the same file descriptor for both read and write operations
   - Always close file descriptors in `finally` blocks
 
