@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { DOMParser } = require('xmldom');
+const { DOMParser } = require('@xmldom/xmldom');
 
 /**
  * Extract XPath expression from XML rule file

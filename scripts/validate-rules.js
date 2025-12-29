@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { DOMParser } = require('xmldom');
+const { DOMParser } = require('@xmldom/xmldom');
 
 /**
  * Validate all PMD ruleset XML files
