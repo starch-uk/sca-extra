@@ -20,7 +20,7 @@
 			Return the expression directly instead of creating an intermediate variable.
 			This reduces unnecessary indirection and improves code clarity.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -28,8 +28,10 @@
 				<value>
 					<![CDATA[
 					//VariableDeclarationStatements[
-						following-sibling::*[1][self::ReturnStatement]
-						and following-sibling::ReturnStatement[1]/VariableExpression/@Image = VariableDeclaration/VariableExpression/@Image
+						let $varName := VariableDeclaration/VariableExpression/@Image,
+							$nextStmt := following-sibling::*[1]
+						return $nextStmt[self::ReturnStatement]
+							and $nextStmt/VariableExpression/@Image = $varName
 					]
 					]]>
 				</value>

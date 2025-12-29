@@ -22,7 +22,7 @@
 			nested conditionals improves readability and reduces unnecessary indentation
 			levels.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -32,7 +32,12 @@
 					//IfBlockStatement[
 						BlockStatement
 						and count(BlockStatement/*) = 1
-						and (BlockStatement/IfBlockStatement or BlockStatement/IfElseBlockStatement[count(IfBlockStatement) = 1])
+						and (
+							BlockStatement/IfBlockStatement
+							or BlockStatement/IfElseBlockStatement[
+								count(IfBlockStatement) = 1
+							]
+						)
 					]
 					]]>
 				</value>

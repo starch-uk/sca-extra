@@ -14,24 +14,36 @@
 	>
 		<description>
 			Always prefer the safe navigation operator (?.) over null checks
-			before accessing object
-			properties or calling methods. The safe navigation operator is more concise and
-			clearly
-			expresses the intent of safely accessing members that may be null.
+			before
+			accessing object properties or calling methods. The safe navigation operator
+			is more concise and clearly expresses the intent of safely accessing members
+			that may be null.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//IfBlockStatement[
-						StandardCondition/BooleanExpression[@Op = ('==', '!=')]
-						and (StandardCondition/BooleanExpression/VariableExpression[@Image = 'null'] | StandardCondition/BooleanExpression/LiteralExpression[@Null = true()])
-						and BlockStatement//MethodCallExpression
-						and BlockStatement//MethodCallExpression/ReferenceExpression/@Image = StandardCondition/BooleanExpression/VariableExpression[@Image != 'null']/@Image
-						and count(BlockStatement/*) = 1
+					let $nullOps := ('==', '!='),
+						$isNullCheck := function($expr) {
+							$expr/VariableExpression[@Image = 'null']
+							or $expr/LiteralExpression[@Null = true()]
+						}
+					return //IfBlockStatement[
+						let $cond := StandardCondition/BooleanExpression[@Op = $nullOps],
+							$varExpr := $cond/VariableExpression[@Image != 'null'],
+							$varName := $varExpr/@Image
+						return exists($cond)
+							and (
+								$isNullCheck($cond)
+								or exists($cond[VariableExpression[@Image = 'null']])
+							)
+							and exists($varName)
+							and count(BlockStatement/*) = 1
+							and BlockStatement//MethodCallExpression
+							/ReferenceExpression/@Image = $varName
 					]
 					]]>
 				</value>
@@ -44,8 +56,36 @@
 				obj.doSomething();
 			}
 			
+			// Violation: Explicit null check before property access
+			if (account != null) {
+				String name = account.Name;
+			}
+			
 			// Valid: Use safe navigation operator
 			obj?.doSomething();
+			String name = account?.Name;
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Null check with method call
+			if (user != null) {
+				String email = user.getEmail();
+			}
+			
+			// Violation: Null check with chained property access
+			if (account != null) {
+				String ownerName = account.Owner.Name;
+			}
+			
+			// Valid: Use safe navigation operator
+			String email = user?.getEmail();
+			String ownerName = account?.Owner?.Name;
+			
+			// Valid: Complex null checks with logic (not flagged)
+			if (obj != null && obj.isValid()) {
+				obj.process();
+			}
 			]]>
 		</example>
 	</rule>

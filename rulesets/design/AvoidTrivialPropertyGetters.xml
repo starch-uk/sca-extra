@@ -22,7 +22,7 @@
 			should be replaced with Apex property syntax, which is more concise and
 			idiomatic.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -34,7 +34,11 @@
 						and @ReturnType != 'void'
 						and count(BlockStatement//ReturnStatement) = 1
 						and BlockStatement//ReturnStatement/VariableExpression
-						and lower-case(BlockStatement//ReturnStatement/VariableExpression/@Image) = lower-case(substring-after(@Image, 'get'))
+						and (
+							let $methodName := @Image,
+								$returnVar := BlockStatement//ReturnStatement/VariableExpression/@Image
+							return lower-case($returnVar) = lower-case(substring-after($methodName, 'get'))
+						)
 						and not(BlockStatement//MethodCallExpression)
 						and not(BlockStatement//IfBlockStatement)
 						and not(BlockStatement//ForLoopStatement)

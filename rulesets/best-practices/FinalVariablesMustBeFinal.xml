@@ -22,43 +22,52 @@
 			variable's value won't change, and helps prevent accidental reassignment
 			bugs. Any variable that can be final without adding code must be final.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					for $var in //VariableDeclaration[
+					let $modificationOps := (
+							'+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '>>>=',
+							'&amp;=', '^=', '|='
+						),
+						$incrementOps := ('++', '--')
+					return //VariableDeclaration[
 						not(ModifierNode[@Final = true()])
 						and not(ancestor::*[ModifierNode[@Final = true()]])
 						and not(ancestor::Parameter)
 						and not(ancestor::ForLoopStatement)
 						and not(ancestor::ForEachStatement)
 						and ancestor::Method
-					]
-					return if (
-						not(
-							$var/ancestor::Method//AssignmentExpression[
-								.//VariableExpression/@Image = $var/VariableExpression/@Image
-								and @BeginLine > $var/@BeginLine
-							] or
-							$var/ancestor::Method//UnaryExpression[
-								.//VariableExpression/@Image = $var/VariableExpression/@Image
-								and @BeginLine > $var/@BeginLine
-							] or
-							$var/ancestor::Method//BinaryExpression[
-								@Op = ('+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '>>>=', '&amp;=', '^=', '|=')
-								and .//VariableExpression/@Image = $var/VariableExpression/@Image
-								and @BeginLine > $var/@BeginLine
-							] or
-							$var/ancestor::Method//*[
-								(@Op = ('++', '--') or local-name() = ('PostfixExpression', 'PrefixExpression'))
-								and .//VariableExpression/@Image = $var/VariableExpression/@Image
-								and @BeginLine > $var/@BeginLine
-							]
+						and (
+							let $varName := VariableExpression/@Image,
+								$method := ancestor::Method[1],
+								$beginLine := @BeginLine
+							return not(
+								$method//AssignmentExpression[
+									.//VariableExpression/@Image = $varName
+									and @BeginLine > $beginLine
+								]
+								or $method//UnaryExpression[
+									.//VariableExpression/@Image = $varName
+									and @BeginLine > $beginLine
+								]
+								or $method//BinaryExpression[
+									@Op = $modificationOps
+									and .//VariableExpression/@Image = $varName
+									and @BeginLine > $beginLine
+								]
+								or $method//*[
+									(@Op = $incrementOps
+									or local-name() = ('PostfixExpression', 'PrefixExpression'))
+									and .//VariableExpression/@Image = $varName
+									and @BeginLine > $beginLine
+								]
+							)
 						)
-					) then $var else ()
+					]
 					]]>
 				</value>
 			</property>

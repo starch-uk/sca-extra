@@ -18,10 +18,11 @@
 		<description>
 			Methods that only wrap simple operations (such as a single
 			instanceof
-			check) should be inlined. These wrapper methods add unnecessary indirection
-			without providing value, making the code harder to understand and maintain.
+			check) should be inlined. These wrapper methods add unnecessary
+			indirection without providing value, making the code harder to understand
+			and maintain.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -43,9 +44,28 @@
 				return obj instanceof Account;
 			}
 			
+			// Violation: Method that only wraps instanceof check
+			public Boolean isContact(Object obj) {
+				return obj instanceof Contact;
+			}
+			
 			// Valid: Inline the instanceof check directly
 			if (obj instanceof Account) {
 				// ...
+			}
+			
+			// Valid: Method with additional logic (not flagged)
+			public Boolean isAccount(Object obj) {
+				if (obj == null) {
+					return false;
+				}
+				return obj instanceof Account;
+			}
+			
+			// Valid: Method with multiple statements (not flagged)
+			public Boolean isAccount(Object obj) {
+				Boolean result = obj instanceof Account;
+				return result;
 			}
 			]]>
 		</example>

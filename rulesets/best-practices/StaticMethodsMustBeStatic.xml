@@ -16,11 +16,12 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Methods that do not use instance state should be declared as static.
-			Any method that can be static without adding logic must be static. This makes
-			the method's independence from instance state explicit, improves performance
-			by avoiding unnecessary instance creation, and follows best practices for
-			method design.
+			Methods that do not use instance state should be declared as
+			static. Any
+			method that can be static without adding logic must be static. This makes
+			the method's independence from instance state explicit, improves
+			performance by avoiding unnecessary instance creation, and follows best
+			practices for method design.
 			
 			This rule excludes methods that access instance state, including:
 			- Instance fields (both regular fields and property fields), including when
@@ -34,11 +35,11 @@
 			- Methods that are part of property declarations
 			- Abstract methods, constructors, and inner class methods
 			
-			Note: The rule correctly handles cases where local variables shadow instance
-			fields - if an instance field is accessed before a local variable with the
-			same name is declared, the method is still excluded from the rule.
+			Note: The rule correctly handles cases where local variables shadow
+			instance fields - if an instance field is accessed before a local variable
+			with the same name is declared, the method is still excluded from the rule.
 
-			Version: 1.5.0
+			Version: 1.5.1
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -48,10 +49,17 @@
 					let $isInstanceField := function($fieldName, $context) {
 						$fieldName != 'this'
 						and not($context/ancestor::Method/Parameter[@Image = $fieldName])
-						and not($context/ancestor::BlockStatement//VariableDeclarationStatements/VariableDeclaration[@Image = $fieldName])
+						and not(
+							$context/ancestor::BlockStatement//VariableDeclarationStatements
+							/VariableDeclaration[@Image = $fieldName]
+						)
 						and (
 							let $class := $context/ancestor::UserClass[1]
-							return exists($class//(Field | FieldDeclaration | Property/Field)[@Name = $fieldName or @Image = $fieldName])
+							return exists(
+								$class//(Field | FieldDeclaration | Property/Field)[
+									@Name = $fieldName or @Image = $fieldName
+								]
+							)
 						)
 					},
 					$isInstanceMethodCall := function($methodCall, $currentMethod) {
@@ -59,11 +67,16 @@
 						return (
 							empty($receiver)
 							or $receiver/@Image = 'this'
-							or exists($receiver/ancestor::PrimaryExpression[ThisVariableExpression])
+							or exists(
+								$receiver/ancestor::PrimaryExpression[ThisVariableExpression]
+							)
 						)
 						and exists(
 							$currentMethod/ancestor::UserClass[1]//Method[
-								(@Image = $methodCall/@MethodName or @Image = $methodCall/@Image or @MethodName = $methodCall/@MethodName or @MethodName = $methodCall/@Image)
+								(@Image = $methodCall/@MethodName
+								or @Image = $methodCall/@Image
+								or @MethodName = $methodCall/@MethodName
+								or @MethodName = $methodCall/@Image)
 								and not(ModifierNode[@Static = true()])
 								and not(@Constructor = true())
 								and not(ancestor::Property)
@@ -87,14 +100,20 @@
 							some $methodCall in BlockStatement//MethodCallExpression
 							satisfies (
 								$methodCall/ReferenceExpression[1]
-								and $isInstanceField($methodCall/ReferenceExpression[1]/@Image, $methodCall/ReferenceExpression[1])
+								and $isInstanceField(
+									$methodCall/ReferenceExpression[1]/@Image,
+									$methodCall/ReferenceExpression[1]
+								)
 							)
 						)
 						and not(
 							some $varExpr in BlockStatement//VariableExpression
 							satisfies (
 								$varExpr/ReferenceExpression
-								and $isInstanceField($varExpr/ReferenceExpression/@Image, $varExpr/ReferenceExpression)
+								and $isInstanceField(
+									$varExpr/ReferenceExpression/@Image,
+									$varExpr/ReferenceExpression
+								)
 							)
 						)
 						and not(

@@ -14,12 +14,13 @@
 	>
 		<description>
 			Methods that contain throw statements must document the exceptions
-			they throw using @throws tags in their ApexDoc comments. This rule checks
+			they
+			throw using @throws tags in their ApexDoc comments. This rule checks
 			methods that have ApexDoc comments but are missing the required @throws
 			documentation for exceptions they throw. Proper exception documentation
 			helps developers understand what exceptions a method can throw and when.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -46,6 +47,19 @@
 				}
 			}
 			
+			// Violation: Multiple exceptions thrown but not documented
+			/**
+			 * Validates and processes data.
+			 */
+			public void processData(String data) {
+				if (data == null) {
+					throw new IllegalArgumentException('Data cannot be null');
+				}
+				if (data.length() == 0) {
+					throw new ValidationException('Data cannot be empty');
+				}
+			}
+			
 			// Valid: Method with @throws documentation
 			/**
 			 * Processes the account.
@@ -55,6 +69,39 @@
 				if (acc == null) {
 					throw new IllegalArgumentException('Account cannot be null');
 				}
+			}
+			
+			// Valid: Multiple exceptions documented
+			/**
+			 * Validates and processes data.
+			 * @throws IllegalArgumentException if data is null
+			 * @throws ValidationException if data is empty
+			 */
+			public void processData(String data) {
+				if (data == null) {
+					throw new IllegalArgumentException('Data cannot be null');
+				}
+				if (data.length() == 0) {
+					throw new ValidationException('Data cannot be empty');
+				}
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Method without ApexDoc comment (not flagged)
+			public void processAccount(Account acc) {
+				if (acc == null) {
+					throw new IllegalArgumentException('Account cannot be null');
+				}
+			}
+			
+			// Valid: Method with ApexDoc but no throw statements (not flagged)
+			/**
+			 * Processes the account.
+			 */
+			public void processAccount(Account acc) {
+				// No exceptions thrown
 			}
 			]]>
 		</example>

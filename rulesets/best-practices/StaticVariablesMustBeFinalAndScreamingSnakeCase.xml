@@ -22,7 +22,7 @@
 			follows the standard naming convention for constants, making them easily
 			identifiable in code.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>2</priority>
 		<properties>
@@ -30,8 +30,9 @@
 				<value>
 					<![CDATA[
 					//FieldDeclaration[
-						ancestor::FieldDeclarationStatements/ModifierNode[@Static = true()]
-						and (not(ancestor::FieldDeclarationStatements/ModifierNode[@Final = true()]) or not(matches(VariableExpression/@Image, '^[A-Z][A-Z0-9_]*$')))
+						let $modifiers := ancestor::FieldDeclarationStatements/ModifierNode
+						return $modifiers[@Static = true()]
+							and (not($modifiers[@Final = true()]) or not(matches(VariableExpression/@Image, '^[A-Z][A-Z0-9_]*$')))
 					]
 					]]>
 				</value>
@@ -44,9 +45,27 @@
 			
 			// Violation: Static variable not in SCREAMING_SNAKE_CASE
 			private static final String defaultValue = 'test';
+			private static final String default_value = 'test';
+			private static final String DefaultValue = 'test';
 			
 			// Valid: Static final variable in SCREAMING_SNAKE_CASE
 			private static final String DEFAULT_VALUE = 'test';
+			private static final String MAX_RETRY_COUNT = 3;
+			private static final String API_BASE_URL = 'https://api.example.com';
+			private static final Integer DEFAULT_TIMEOUT = 30;
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Static final variables with numbers and underscores
+			private static final String CONFIG_KEY_1 = 'key1';
+			private static final Integer MAX_SIZE_2X = 200;
+			private static final String API_V2_ENDPOINT = '/api/v2';
+			
+			// Violation: Mixed case or lowercase
+			private static final String configKey = 'key';  // ❌ Not SCREAMING_SNAKE_CASE
+			private static final String ConfigKey = 'key';  // ❌ Not SCREAMING_SNAKE_CASE
+			private static final String config_key = 'key';  // ❌ Not SCREAMING_SNAKE_CASE
 			]]>
 		</example>
 	</rule>

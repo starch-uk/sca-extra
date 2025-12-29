@@ -15,12 +15,12 @@
 		<description>
 			Single-line ApexDoc comments must be formatted with
 			spaces: /** comment
-			*/ not /**comment*/. Multi-line ApexDoc comments should only be used when
-			the content genuinely requires multiple lines. This ensures consistent
-			formatting and prevents unnecessary multi-line comments for simple
-			documentation.
+			*/ not /**comment*/. Multi-line ApexDoc comments should only be used
+			when the content genuinely requires multiple lines. This ensures
+			consistent formatting and prevents unnecessary multi-line comments for
+			simple documentation.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -31,8 +31,18 @@
 						starts-with(@Image, '/**')
 						and ends-with(@Image, '*/')
 						and (
-							(@BeginLine = @EndLine and (not(starts-with(substring-after(@Image, '/**'), ' ')) or not(ends-with(substring-before(@Image, '*/'), ' '))))
-							or (@BeginLine != @EndLine and contains(@Image, ' * ') and not(contains(substring-after(@Image, ' * '), ' * ')))
+							(
+								@BeginLine = @EndLine
+								and (
+									not(starts-with(substring-after(@Image, '/**'), ' '))
+									or not(ends-with(substring-before(@Image, '*/'), ' '))
+								)
+							)
+							or (
+								@BeginLine != @EndLine
+								and contains(@Image, ' * ')
+								and not(contains(substring-after(@Image, ' * '), ' * '))
+							)
 						)
 					]
 					]]>
@@ -46,6 +56,16 @@
 			public void method() {
 			}
 			
+			// Violation: Missing space after /**
+			/**comment */
+			public void method() {
+			}
+			
+			// Violation: Missing space before */
+			/** comment*/
+			public void method() {
+			}
+			
 			// Valid: Properly formatted single-line comment
 			/** Comment */
 			public void method() {
@@ -54,9 +74,39 @@
 			// Valid: Multi-line comment when needed
 			/**
 			 * Longer comment that requires
-			 * multiple lines.
+			 * multiple lines to explain
+			 * complex functionality.
 			 */
 			public void method() {
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Single-line with proper spacing
+			/** Returns the account name */
+			public String getName() {
+				return name;
+			}
+			
+			// Valid: Multi-line for complex documentation
+			/**
+			 * Processes the account with validation.
+			 * This method performs multiple checks
+			 * and updates the account status.
+			 */
+			public void processAccount(Account acc) {
+				// ...
+			}
+			
+			// Valid: Multi-line with parameters
+			/**
+			 * Calculates the total value.
+			 * @param items List of items to calculate
+			 * @return Total value as Decimal
+			 */
+			public Decimal calculateTotal(List<Item> items) {
+				// ...
 			}
 			]]>
 		</example>

@@ -22,7 +22,7 @@
 			Using 'this.' outside constructors is unnecessary and reduces code
 			readability.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>2</priority>
 		<properties>
@@ -44,14 +44,60 @@
 				this.value = 5;
 			}
 			
+			// Violation: Using this. to access attribute
+			public String getName() {
+				return this.name;
+			}
+			
+			// Violation: Using this. in method call
+			public void process() {
+				this.doSomething();
+			}
+			
 			// Valid: Use this. only in constructor
 			public MyClass(String name) {
 				this.name = name;
 			}
 			
-			// Valid: Returning this is allowed
+			// Valid: Returning this is allowed (fluent interface)
 			public MyClass method() {
 				return this;
+			}
+			
+			// Valid: Access attribute without this.
+			public String getName() {
+				return name;
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Using this. in constructor to disambiguate
+			public class Account {
+				private String name;
+				
+				public Account(String name) {
+					this.name = name;  // ✅ Disambiguates parameter from field
+				}
+			}
+			
+			// Violation: Using this. in regular method
+			public class Account {
+				private String name;
+				
+				public void setName(String name) {
+					this.name = name;  // ❌ Not in constructor
+				}
+			}
+			
+			// Valid: Fluent interface pattern (returning this)
+			public class Builder {
+				private String value;
+				
+				public Builder setValue(String value) {
+					this.value = value;  // ❌ Still a violation - not in constructor
+					return this;  // ✅ Returning this is allowed
+				}
 			}
 			]]>
 		</example>

@@ -14,12 +14,12 @@
 	>
 		<description>
 			Method calls should not be used directly as arguments to
-			constructors, method calls, or
-			expressions. Extract method calls to variables first for better
-			readability, debugging,
-			and to avoid potential side effects from multiple evaluations.
+			constructors,
+			method calls, or expressions. Extract method calls to variables first for
+			better readability, debugging, and to avoid potential side effects from
+			multiple evaluations.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>2</priority>
 		<properties>
@@ -27,22 +27,68 @@
 				<value>
 					<![CDATA[
 					//MethodCallExpression[
-						(parent::MethodCallExpression or parent::NewObjectExpression or ancestor::MethodCallExpression[position() > 1] or ancestor::NewObjectExpression)
-						and not(ancestor::VariableDeclaration[VariableExpression] or ancestor::AssignmentExpression[VariableExpression] or parent::VariableDeclaration)
+						(
+							parent::MethodCallExpression
+							or parent::NewObjectExpression
+							or ancestor::MethodCallExpression[position() > 1]
+							or ancestor::NewObjectExpression
+						)
+						and not(
+							ancestor::VariableDeclaration[VariableExpression]
+							or ancestor::AssignmentExpression[VariableExpression]
+							or parent::VariableDeclaration
+						)
 					]
-					| //NewObjectExpression[.//MethodCallExpression]/MethodCallExpression
+					| //NewObjectExpression[.//MethodCallExpression]
+					//MethodCallExpression
 					]]>
 				</value>
 			</property>
 		</properties>
 		<example>
 			<![CDATA[
-			// Violation: Method call as argument
+			// Violation: Method call as argument to method
 			String result = processValue(getValue());
+			
+			// Violation: Method call as argument to constructor
+			MyClass obj = new MyClass(getValue());
+			
+			// Violation: Nested method calls as arguments
+			String result = processValue(transformValue(getValue()));
 			
 			// Valid: Extract method call to variable
 			Integer value = getValue();
 			String result = processValue(value);
+			
+			// Valid: Extract nested method calls to variables
+			Integer value = getValue();
+			Integer transformed = transformValue(value);
+			String result = processValue(transformed);
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Method call in constructor argument
+			public class Example {
+				public Example(String name) {
+					this.name = name;
+				}
+			}
+			
+			Example obj = new Example(getName());  // ❌ Method call as argument
+			
+			// Valid: Extract to variable first
+			String name = getName();
+			Example obj = new Example(name);  // ✅
+			
+			// Violation: Multiple method calls as arguments
+			processData(getId(), getName(), getValue());  // ❌
+			
+			// Valid: Extract all to variables
+			Integer id = getId();
+			String name = getName();
+			Integer value = getValue();
+			processData(id, name, value);  // ✅
 			]]>
 		</example>
 	</rule>
