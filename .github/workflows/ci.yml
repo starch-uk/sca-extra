@@ -43,7 +43,7 @@ jobs:
             - name: Setup pnpm
               # Pinned to commit SHA for security (immutable version)
               # pnpm/action-setup version: v4
-              uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c
+              uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
               with:
                   version: '10.26.2'
 
