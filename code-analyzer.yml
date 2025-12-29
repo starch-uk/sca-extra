@@ -44,3 +44,16 @@ engines:
                     method, and variable names to improve readability.'
                 severity: 'Moderate'
                 tags: ['CodeStyle', 'Recommended']
+            ProhibitPrettierIgnore:
+                regex: /\/\/\s*prettier-ignore/gi
+                file_extensions: ['.apex', '.cls', '.trigger']
+                description:
+                    'Prohibits the use of prettier-ignore comments in Apex code.
+                    Code should be formatted consistently without exceptions.
+                    Using prettier-ignore comments undermines code formatting
+                    standards and makes the codebase less maintainable.'
+                violation_message:
+                    'Prettier-ignore comments are not allowed. Code should be
+                    formatted consistently without exceptions.'
+                severity: 'Moderate'
+                tags: ['CodeStyle', 'Recommended']

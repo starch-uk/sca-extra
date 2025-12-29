@@ -136,10 +136,8 @@ describe('Code Style Rules', () => {
 		it('should detect consecutive blank lines', async () => {
 			const { runRegexRule } = require('../helpers/pmd-helper');
 			const violations = await runRegexRule(
-				'/\\n\\s*\\n\\s*\\n/g',
-				'tests/fixtures/negative/code-style/NoConsecutiveBlankLines.cls',
 				'NoConsecutiveBlankLines',
-				'Two or more consecutive blank lines are not allowed. Use at most one blank line between statements.'
+				'tests/fixtures/negative/code-style/NoConsecutiveBlankLines.cls'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'NoConsecutiveBlankLines')
@@ -150,10 +148,8 @@ describe('Code Style Rules', () => {
 		it('should not flag single blank lines', async () => {
 			const { runRegexRule } = require('../helpers/pmd-helper');
 			const violations = await runRegexRule(
-				'/\\n\\s*\\n\\s*\\n/g',
-				'tests/fixtures/positive/code-style/NoConsecutiveBlankLines.cls',
 				'NoConsecutiveBlankLines',
-				'Two or more consecutive blank lines are not allowed. Use at most one blank line between statements.'
+				'tests/fixtures/positive/code-style/NoConsecutiveBlankLines.cls'
 			);
 			assertNoViolations(violations, 'NoConsecutiveBlankLines');
 		});
@@ -178,10 +174,8 @@ describe('Code Style Rules', () => {
 			for (const file of files) {
 				const filePath = path.join(negativeDir, file);
 				const violations = await runRegexRule(
-					'/@SuppressWarnings\\([^)]*\\)|\\/\\/\\s*NOPMD/gi',
-					filePath,
 					'ProhibitSuppressWarnings',
-					'Suppression of warnings is not allowed. Fix the underlying issue or improve the rule instead of suppressing violations.'
+					filePath
 				);
 				expect(
 					violations.filter(
@@ -209,10 +203,8 @@ describe('Code Style Rules', () => {
 			for (const file of files) {
 				const filePath = path.join(positiveDir, file);
 				const violations = await runRegexRule(
-					'/@SuppressWarnings\\([^)]*\\)|\\/\\/\\s*NOPMD/gi',
-					filePath,
 					'ProhibitSuppressWarnings',
-					'Suppression of warnings is not allowed. Fix the underlying issue or improve the rule instead of suppressing violations.'
+					filePath
 				);
 				assertNoViolations(violations, 'ProhibitSuppressWarnings');
 			}
@@ -223,10 +215,8 @@ describe('Code Style Rules', () => {
 		it('should detect lines longer than 80 characters', async () => {
 			const { runRegexRule } = require('../helpers/pmd-helper');
 			const violations = await runRegexRule(
-				'/.{81,}/gm',
-				'tests/fixtures/negative/code-style/NoLongLines.cls',
 				'NoLongLines',
-				'Line exceeds 80 characters. Use shorter class, attribute, method, and variable names to improve readability.'
+				'tests/fixtures/negative/code-style/NoLongLines.cls'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'NoLongLines').length
@@ -236,10 +226,8 @@ describe('Code Style Rules', () => {
 		it('should not flag lines 80 characters or shorter', async () => {
 			const { runRegexRule } = require('../helpers/pmd-helper');
 			const violations = await runRegexRule(
-				'/.{81,}/gm',
-				'tests/fixtures/positive/code-style/NoLongLines.cls',
 				'NoLongLines',
-				'Line exceeds 80 characters. Use shorter class, attribute, method, and variable names to improve readability.'
+				'tests/fixtures/positive/code-style/NoLongLines.cls'
 			);
 			assertNoViolations(violations, 'NoLongLines');
 		});
@@ -471,6 +459,29 @@ describe('Code Style Rules', () => {
 				violations,
 				'PreferStringJoinWithSeparatorOverEmpty'
 			);
+		});
+	});
+
+	describe('ProhibitPrettierIgnore', () => {
+		it('should detect prettier-ignore comments', async () => {
+			const { runRegexRule } = require('../helpers/pmd-helper');
+			const violations = await runRegexRule(
+				'ProhibitPrettierIgnore',
+				'tests/fixtures/negative/code-style/ProhibitPrettierIgnore.cls'
+			);
+			expect(
+				violations.filter((v) => v.rule === 'ProhibitPrettierIgnore')
+					.length
+			).toBeGreaterThan(0);
+		});
+
+		it('should not flag code without prettier-ignore comments', async () => {
+			const { runRegexRule } = require('../helpers/pmd-helper');
+			const violations = await runRegexRule(
+				'ProhibitPrettierIgnore',
+				'tests/fixtures/positive/code-style/ProhibitPrettierIgnore.cls'
+			);
+			assertNoViolations(violations, 'ProhibitPrettierIgnore');
 		});
 	});
 });

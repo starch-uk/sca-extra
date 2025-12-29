@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { DOMParser } = require('@xmldom/xmldom');
+const yaml = require('yaml');
 
 /**
  * Run PMD CLI against an Apex file with a ruleset
@@ -196,19 +197,79 @@ function readFixture(category, ruleName, type) {
 }
 
 /**
- * Run a Regex rule against an Apex file
- * @param {string} regexPattern - Regular expression pattern (with flags)
- * @param {string} apexFilePath - Path to the Apex file to test
+ * Load regex rules from code-analyzer.yml
+ * @returns {Object} Object mapping rule names to rule configurations
+ */
+function loadRegexRulesFromConfig() {
+	const configPath = path.resolve(process.cwd(), 'code-analyzer.yml');
+	if (!fs.existsSync(configPath)) {
+		throw new Error(
+			`code-analyzer.yml not found at ${configPath}. Make sure you're running from the project root.`
+		);
+	}
+
+	const configContent = fs.readFileSync(configPath, 'utf-8');
+	const config = yaml.parse(configContent);
+
+	return config?.engines?.regex?.custom_rules || {};
+}
+
+/**
+ * Get regex rule configuration by name from code-analyzer.yml
  * @param {string} ruleName - Name of the rule
- * @param {string} violationMessage - Message to show for violations
+ * @returns {Object|null} Rule configuration or null if not found
+ */
+function getRegexRuleConfig(ruleName) {
+	const rules = loadRegexRulesFromConfig();
+	return rules[ruleName] || null;
+}
+
+/**
+ * Run a Regex rule against an Apex file
+ * @param {string|Object} regexPatternOrRuleName - Regular expression pattern (with flags) or rule name to load from code-analyzer.yml
+ * @param {string} apexFilePath - Path to the Apex file to test
+ * @param {string} ruleName - Name of the rule (required if first param is a regex pattern)
+ * @param {string} violationMessage - Message to show for violations (optional if loading from config)
  * @returns {Promise<Array>} Array of violations
  */
 async function runRegexRule(
-	regexPattern,
+	regexPatternOrRuleName,
 	apexFilePath,
 	ruleName,
 	violationMessage
 ) {
+	let regexPattern;
+	let actualRuleName;
+	let actualViolationMessage;
+
+	// Check if first parameter is a rule name (string without / at start) or a regex pattern
+	if (
+		typeof regexPatternOrRuleName === 'string' &&
+		!regexPatternOrRuleName.startsWith('/')
+	) {
+		// First parameter is a rule name - load from config
+		actualRuleName = regexPatternOrRuleName;
+		const ruleConfig = getRegexRuleConfig(actualRuleName);
+		if (!ruleConfig) {
+			throw new Error(
+				`Regex rule "${actualRuleName}" not found in code-analyzer.yml`
+			);
+		}
+		regexPattern = ruleConfig.regex;
+		actualViolationMessage =
+			ruleConfig.violation_message || ruleConfig.description;
+	} else {
+		// First parameter is a regex pattern - use provided values (backward compatibility)
+		regexPattern = regexPatternOrRuleName;
+		actualRuleName = ruleName;
+		actualViolationMessage = violationMessage;
+	}
+
+	if (!actualRuleName) {
+		throw new Error(
+			'Rule name is required when providing a regex pattern directly'
+		);
+	}
 	const fileContent = fs.readFileSync(apexFilePath, 'utf-8');
 	const violations = [];
 
@@ -256,8 +317,10 @@ async function runRegexRule(
 
 		violations.push({
 			file: apexFilePath,
-			rule: ruleName,
-			message: violationMessage || `Match found for rule ${ruleName}`,
+			rule: actualRuleName,
+			message:
+				actualViolationMessage ||
+				`Match found for rule ${actualRuleName}`,
 			line: lineNumber,
 			column: column,
 		});
@@ -284,4 +347,6 @@ module.exports = {
 	assertNoViolations,
 	readFixture,
 	runRegexRule,
+	loadRegexRulesFromConfig,
+	getRegexRuleConfig,
 };

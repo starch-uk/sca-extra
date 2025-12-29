@@ -33,6 +33,20 @@ engines:
                 tags: ['Tag1', 'Tag2']
 ```
 
+**Important for Repository Maintainers:** When creating new regex rules in this
+repository, you must:
+
+1. Create test fixtures in `tests/fixtures/positive/` and
+   `tests/fixtures/negative/`
+2. Write unit tests in `tests/unit/{category}.test.js`
+3. **Add the rule to `code-analyzer.yml`** under `engines.regex.custom_rules`
+    - This is required for the rule to be available to users
+    - Follow the existing pattern of other regex rules in the repository
+    - Include all required properties: `regex`, `file_extensions`,
+      `description`, `violation_message`, `severity`, `tags`
+
+See `CONTRIBUTING.md` for complete instructions on creating regex rules.
+
 ## Rule Properties
 
 | Property            | Required | Type       | Default           | Description                                                       |
@@ -120,9 +134,13 @@ sf scanner:run
   multiline)
 - **File matching:** Rules only run on files matching `file_extensions`
 - **Performance:** Regex is fast but less precise than PMD for code analysis
-- **Comments:** Regex can search comments; PMD cannot
+- **Comments:** Regex can search all comments (including single-line `//`
+  comments); PMD's Apex parser only includes block comments (`/* */`) and
+  ApexDoc comments (`/** */`) in the AST as `FormalComment` nodes. Single-line
+  comments are **not** in the AST, so use regex rules for detecting patterns in
+  single-line comments (e.g., `// prettier-ignore`, `// NOPMD`).
 - **Pattern precision:** Use PMD for AST-based analysis; Regex for simple text
-  patterns
+  patterns or when you need to detect patterns in single-line comments
 
 ## Related Documentation
 
