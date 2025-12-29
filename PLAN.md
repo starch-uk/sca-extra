@@ -14,7 +14,7 @@ Regex engine for pattern-based matching.
 
 This plan describes the project scope and components that will be implemented:
 
-- **43 PMD rules and 3 Regex rules** across PMD's 8 standard categories
+- **43 PMD rules and 4 Regex rules** across PMD's 8 standard categories
   (best-practices, code-style, design, documentation, error-prone,
   multithreading, performance, security)
 - **Comprehensive test infrastructure** with positive and negative test fixtures
@@ -420,7 +420,7 @@ is NOT an npm package and must be installed separately.
 
 ### Phase 3: Rule Implementation
 
-**Note:** All 46 rules will be implemented with comprehensive test coverage. The
+**Note:** All 47 rules will be implemented with comprehensive test coverage. The
 following represents the planned implementation order.
 
 #### P1 Rules (Start Here)
@@ -463,6 +463,7 @@ following represents the planned implementation order.
     - PreferStringJoinOverConcatenation
     - PreferStringJoinOverMultipleNewlines
     - PreferStringJoinWithSeparatorOverEmpty
+    - ProhibitPrettierIgnore (Regex rule)
     - ProhibitSuppressWarnings (Regex rule)
     - SingleArgumentMustBeSingleLine
 
@@ -495,7 +496,7 @@ following represents the planned implementation order.
     - PreferPropertySyntaxOverGetterMethods
     - PreferSwitchOverIfElseChains
 
-**Total: 46 rules across PMD's 8 standard categories (43 PMD rules + 3 Regex
+**Total: 47 rules across PMD's 8 standard categories (43 PMD rules + 4 Regex
 rules)**
 
 ### Phase 4: Validation & Quality
@@ -843,7 +844,7 @@ This ensures:
 4. **P4** (Low): Complex rules requiring thorough testing (e.g.,
    AvoidOneLinerMethods)
 
-**Total Planned:** 46 rules across PMD's 8 standard categories (43 PMD rules + 3
+**Total Planned:** 47 rules across PMD's 8 standard categories (43 PMD rules + 4
 Regex rules):
 
 - **Code Style:** 20 PMD rules (includes naming conventions and code style
@@ -1067,7 +1068,7 @@ The project will be considered complete when the following criteria are met:
 - [ ] Versioning tooling is implemented (automated version bumping, changelog
       generation)
 - [ ] Rule migration guides are created and documented
-- [ ] All 46 rules are implemented with comprehensive test coverage
+- [ ] All 47 rules are implemented with comprehensive test coverage
 - [ ] Codecov integration is configured for coverage reporting
 
 ## License

@@ -206,6 +206,13 @@ declarations
 
 **FormalComment** - Javadoc/comment
 
+**Important:** PMD's Apex parser only includes block comments (`/* */`) and
+ApexDoc comments (`/** */`) in the AST as `FormalComment` nodes. Single-line
+comments (`//`) are **not** included in the AST and cannot be detected using
+XPath expressions. For rules that need to detect single-line comments (e.g.,
+`// prettier-ignore`, `// NOPMD`), use regex-based rules instead of PMD XPath
+rules. See `docs/REGEX.md` for creating regex-based rules.
+
 **UserEnum** - Enum declaration
 
 - Children: `Field` (enum values)

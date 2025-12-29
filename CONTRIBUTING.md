@@ -99,6 +99,12 @@ pnpm check-regressions # Check for performance regressions
     - `pnpm check-xml-order` - Check if element order is correct
     - `pnpm fix-xml-order` - Automatically fix element order
 
+    **Important:** The XML schema location must use
+    `http://pmd.sourceforge.net/ruleset/2.0.0` (with dots, not underscores) in
+    the namespace, and `https://pmd.sourceforge.io/ruleset_2_0_0.xsd` (with
+    underscores) in the schema location URL. Do not use `2_0_0.xsd` in the
+    namespace.
+
     ```xml
     <?xml version="1.0" ?>
     <ruleset
@@ -175,6 +181,9 @@ pnpm check-regressions # Check for performance regressions
     - Create negative test case:
       `tests/fixtures/negative/{category}/{RuleName}.cls`
     - Write unit test: `tests/unit/{category}.test.js`
+    - **Important:** Apex files can only contain one top-level class. Test
+      fixtures must use a single class with multiple methods or fields to test
+      different scenarios, not multiple top-level classes.
 
 6. **Validate the rule**
 
@@ -192,6 +201,81 @@ pnpm check-regressions # Check for performance regressions
 7. **Document the rule**
     - Add rule documentation to `README.md` with examples
     - Update `docs/AI_AGENT_RULE_GUIDE.md` with rule details
+
+### Creating Regex Rules
+
+For rules that need to detect patterns in single-line comments (`//`) or simple
+text patterns, use the Regex engine instead of PMD XPath rules. PMD's Apex
+parser does not include single-line comments in the AST.
+
+1. **Create test fixtures** (same as PMD rules):
+    - Positive test case: `tests/fixtures/positive/{category}/{RuleName}.cls`
+    - Negative test case: `tests/fixtures/negative/{category}/{RuleName}.cls`
+
+2. **Write unit tests** in `tests/unit/{category}.test.js`:
+    - Use `runRegexRule()` helper function from `tests/helpers/pmd-helper.js`
+    - **Pass the rule name as the first parameter** - the helper will
+      automatically load the regex pattern and violation message from
+      `code-analyzer.yml`
+    - Example: `runRegexRule('RuleName', 'tests/fixtures/negative/...')`
+    - Test both positive and negative cases
+
+3. **Add the rule to `code-analyzer.yml`**:
+    - **CRITICAL**: All regex rules must be added to `code-analyzer.yml` under
+      `engines.regex.custom_rules`
+    - Follow the existing pattern of other regex rules (e.g.,
+      `NoConsecutiveBlankLines`, `ProhibitSuppressWarnings`, `NoLongLines`,
+      `ProhibitPrettierIgnore`)
+    - Include all required properties: `regex`, `file_extensions`,
+      `description`, `violation_message`, `severity`, `tags`
+
+4. **Example regex rule configuration**:
+
+    ```yaml
+    engines:
+        regex:
+            custom_rules:
+                ProhibitPrettierIgnore:
+                    regex: /\/\/\s*prettier-ignore/gi
+                    file_extensions: ['.apex', '.cls', '.trigger']
+                    description:
+                        'Prohibits the use of prettier-ignore comments in Apex
+                        code. Code should be formatted consistently without
+                        exceptions.'
+                    violation_message:
+                        'Prettier-ignore comments are not allowed. Code should
+                        be formatted consistently without exceptions.'
+                    severity: 'Moderate'
+                    tags: ['CodeStyle', 'Recommended']
+    ```
+
+5. **Example test using rule name** (preferred approach):
+
+    ```javascript
+    const { runRegexRule } = require('../helpers/pmd-helper');
+
+    // Preferred: Pass rule name - automatically loads from code-analyzer.yml
+    const violations = await runRegexRule(
+        'ProhibitPrettierIgnore',
+        'tests/fixtures/negative/code-style/ProhibitPrettierIgnore.cls'
+    );
+    ```
+
+    **Note:** The `runRegexRule()` function automatically loads the regex
+    pattern and violation message from `code-analyzer.yml` when you pass a rule
+    name. This ensures tests use the same configuration as the actual rule,
+    preventing duplication and inconsistencies.
+
+6. **Validate and test**:
+    ```bash
+    pnpm test            # Run tests
+    pnpm format          # Format code-analyzer.yml
+    pnpm lint            # Lint JavaScript files
+    ```
+
+**Important:** Unlike PMD rules (which are XML files in `rulesets/`), regex
+rules are defined directly in `code-analyzer.yml`. Always add new regex rules to
+`code-analyzer.yml` in the repository, not just in test files.
 
 ### Rule Naming Conventions
 

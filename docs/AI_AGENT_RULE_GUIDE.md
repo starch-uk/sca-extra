@@ -24,6 +24,19 @@ violations, valid examples, and configuration properties.
 3. **Format** - Follow PMD Rule Format below; use property substitution
 4. **Config** - Show `code-analyzer.yml` examples with properties
 
+**Important Notes:**
+
+- **XML Schema Location**: The `xsi:schemaLocation` attribute must use
+  `http://pmd.sourceforge.net/ruleset/2.0.0` (with dots) for the namespace and
+  `https://pmd.sourceforge.io/ruleset_2_0_0.xsd` (with underscores) for the
+  schema URL. Do not use `2_0_0.xsd` in the namespace.
+- **Apex File Structure**: Apex files can only contain one top-level class. Test
+  fixtures must use a single class with multiple methods/fields, not multiple
+  top-level classes.
+- **Single-Line Comments**: PMD's Apex parser does not include single-line
+  comments (`//`) in the AST. Use regex-based rules (see `docs/REGEX.md`) for
+  detecting patterns in single-line comments.
+
 ### Java Rules: Defining Properties (PMD 7)
 
 For Java-based rules, use `PropertyFactory` to define properties (PMD 7):
@@ -155,7 +168,7 @@ return sum(for $block in $allBlocks return if (...) then 1 else 0) >= 5
 [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd). All
 rules should include `<example>` elements in their XML files.
 
-```markdown
+````markdown
 ## RuleName
 
 **Category:**
@@ -182,6 +195,16 @@ Rules should follow this structure (per
 4. `<exclude>`: Exclusion patterns (optional, multiple allowed)
 5. `<example>`: Example code snippets (optional, multiple allowed)
 
+**Important:** The XML schema location in the `<ruleset>` element must be:
+
+```xml
+xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+```
+````
+
+Note that the namespace uses dots (`2.0.0`) while the schema URL uses
+underscores (`2_0_0.xsd`). Do not use `2_0_0.xsd` in the namespace.
+
 **Note:** Use `pnpm check-xml-order` to verify element order, or
 `pnpm fix-xml-order` to automatically fix it.
 
@@ -190,7 +213,8 @@ Rules should follow this structure (per
 **Basic configuration (code-analyzer.yml):** \`\`\`yaml engines: pmd:
 custom_rulesets: - rulesets/category/RuleName.xml rules: pmd: RuleName:
 severity: "High" tags: ["Recommended"] \`\`\`
-```
+
+````
 
 ---
 
@@ -198,40 +222,40 @@ severity: "High" tags: ["Recommended"] \`\`\`
 
 ### InnerClassesCannotBeStatic
 
-**Category:** design | **Priority:** P1  
+**Category:** design | **Priority:** P1
 Inner classes cannot be static. Remove static modifier.
 
-❌ `public static class Inner { }`  
+❌ `public static class Inner { }`
 ✅ `public class Inner { }`
 
 ### InnerClassesCannotHaveStaticMembers
 
-**Category:** design | **Priority:** P1  
+**Category:** design | **Priority:** P1
 Inner classes cannot have static members.
 
-❌ `public class Inner { public static Integer value; }`  
+❌ `public class Inner { public static Integer value; }`
 ✅ `public class Inner { public Integer value; }`
 
 ### EnumMinimumValues
 
-**Category:** design | **Priority:** P3  
+**Category:** design | **Priority:** P3
 Enums must have minimum values (default: 3).
 
-❌ `public enum Status { ACTIVE, INACTIVE }`  
+❌ `public enum Status { ACTIVE, INACTIVE }`
 ✅ `public enum Status { ACTIVE, INACTIVE, PENDING }`
 
 ### PreferSwitchOverIfElseChains
 
-**Category:** design | **Priority:** P3  
+**Category:** design | **Priority:** P3
 If-else chains, consecutive ifs, or OR conditions comparing same variable should
 use switch.
 
-❌ `if (x=='a') {} else if (x=='b') {} else if (x=='c') {}`  
-❌ `if (x=='a' || x=='b' || x=='c') {}`  
+❌ `if (x=='a') {} else if (x=='b') {} else if (x=='c') {}`
+❌ `if (x=='a' || x=='b' || x=='c') {}`
 ✅ `switch on x { when 'a' {} when 'b' {} when 'c' {} }`
 
 **Note:** Only applies to switch-compatible types: `Integer`, `Long`, `String`,
-`sObject`, or `Enum`.  
+`sObject`, or `Enum`.
 Non-switch types like `Boolean`, `Decimal`, `Date`, `DateTime`, `Time`, `Id`,
 `Blob` are not flagged.
 
@@ -241,52 +265,52 @@ Non-switch types like `Boolean`, `Decimal`, `Date`, `DateTime`, `Time`, `Id`,
 
 ### NoSingleLetterVariableNames
 
-**Category:** code-style | **Priority:** P2  
+**Category:** code-style | **Priority:** P2
 No single-letter names except loop counters/exception vars.
 
-❌ `Integer x = 5;`  
+❌ `Integer x = 5;`
 ✅ `Integer index = 5;` | `for (Integer i...)` | `catch (Exception e)`
 
 ### NoAbbreviations
 
-**Category:** code-style | **Priority:** P2  
+**Category:** code-style | **Priority:** P2
 No abbreviations in variable names.
 
-❌ `Integer acc = 5; String cfg = 'x'; Boolean isMgr = true;`  
+❌ `Integer acc = 5; String cfg = 'x'; Boolean isMgr = true;`
 ✅ `Integer accountCount = 5; String configuration = 'x';`
 
 ---
 
 ### NoMethodCallsInConditionals
 
-**Category:** code-style | **Priority:** P2  
+**Category:** code-style | **Priority:** P2
 Extract method calls to variables before conditionals.
 
-❌ `if (getValue() > 0) {}`  
+❌ `if (getValue() > 0) {}`
 ✅ `Integer value = getValue(); if (value > 0) {}`
 
 ### ListInitializationMustBeMultiLine
 
-**Category:** code-style | **Priority:** P3  
+**Category:** code-style | **Priority:** P3
 List initializations with minItems+ must be multi-line.
 
-❌ `new List<String>{ 'a', 'b' };`  
+❌ `new List<String>{ 'a', 'b' };`
 ✅ `new List<String>{ 'a' };` | `new List<String>{\n  'a',\n  'b'\n};`
 
 ### MapInitializationMustBeMultiLine
 
-**Category:** code-style | **Priority:** P3  
+**Category:** code-style | **Priority:** P3
 Map initializations with minEntries+ must be multi-line.
 
-❌ `new Map<String,Integer>{ 'a'=>1, 'b'=>2 };`  
+❌ `new Map<String,Integer>{ 'a'=>1, 'b'=>2 };`
 ✅ `new Map<String,Integer>{\n  'a'=>1,\n  'b'=>2\n};`
 
 ### MultipleStringContainsCalls
 
-**Category:** code-style | **Priority:** P3  
+**Category:** code-style | **Priority:** P3
 Replace multiple contains() with regex.
 
-❌ `if (str.contains('a') || str.contains('b')) {}`  
+❌ `if (str.contains('a') || str.contains('b')) {}`
 ✅ `if (Pattern.matches('.*(a|b).*', str)) {}`
 
 ---
@@ -295,10 +319,10 @@ Replace multiple contains() with regex.
 
 ### NoCustomParameterObjects
 
-**Category:** design | **Priority:** P3  
+**Category:** design | **Priority:** P3
 Avoid inner classes with only fields/constructors for passing parameters.
 
-❌ `public class Param { String f1; }` (1+ fields)  
+❌ `public class Param { String f1; }` (1+ fields)
 ✅ `public void method(String f1) {}`
 
 ---
@@ -307,18 +331,18 @@ Avoid inner classes with only fields/constructors for passing parameters.
 
 ### FinalVariablesMustBeFinal
 
-**Category:** best-practices | **Priority:** P2  
+**Category:** best-practices | **Priority:** P2
 Final variables cannot be reassigned.
 
-❌ `final Integer v = 5; v = 10;`  
+❌ `final Integer v = 5; v = 10;`
 ✅ `final Integer v = 5;`
 
 ### StaticMethodsMustBeStatic
 
-**Category:** best-practices | **Priority:** P2  
+**Category:** best-practices | **Priority:** P2
 Methods not using instance state should be static.
 
-❌ `public Integer add(Integer a, Integer b) { return a+b; }`  
+❌ `public Integer add(Integer a, Integer b) { return a+b; }`
 ✅ `public static Integer add(Integer a, Integer b) { return a+b; }`
 
 ---
@@ -340,7 +364,7 @@ rules:
     NoSingleLetterVariableNames:
         severity: 'High'
         tags: ['Recommended', 'Naming']
-```
+````
 
 ---
 

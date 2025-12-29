@@ -16,7 +16,8 @@ This project provides a comprehensive set of PMD and Regex rules for Salesforce
 Apex code analysis. Most rules are implemented using XPath 3.1 expressions only
 (no custom Java classes), making them easy to understand, modify, and maintain.
 Some rules use the Regex engine for pattern-based matching (e.g.,
-`NoConsecutiveBlankLines`, `ProhibitSuppressWarnings`, `NoLongLines`).
+`NoConsecutiveBlankLines`, `ProhibitPrettierIgnore`, `ProhibitSuppressWarnings`,
+`NoLongLines`).
 
 ## Configuring code-analyzer.yml
 
@@ -28,9 +29,9 @@ to customize your configuration.
 
 - Most rules are defined as XML rulesets under the `rulesets/` directory,
   grouped by category (see **Rule Categories** below for an overview).
-- Some rules (like `NoConsecutiveBlankLines`, `ProhibitSuppressWarnings`, and
-  `NoLongLines`) are defined as Regex rules in the repository's
-  `code-analyzer.yml` under `engines.regex.custom_rules`.
+- Some rules (like `NoConsecutiveBlankLines`, `ProhibitPrettierIgnore`,
+  `ProhibitSuppressWarnings`, and `NoLongLines`) are defined as Regex rules in
+  the repository's `code-analyzer.yml` under `engines.regex.custom_rules`.
 - You can copy the entire `rulesets/` folder into your Salesforce project, or
   just the specific category folders you want to enable.
 
@@ -359,6 +360,19 @@ engines:
                 violation_message:
                     'Line exceeds 80 characters. Use shorter class, attribute,
                     method, and variable names to improve readability.'
+                severity: 'Moderate'
+                tags: ['CodeStyle', 'Recommended']
+            ProhibitPrettierIgnore:
+                regex: /\/\/\s*prettier-ignore/gi
+                file_extensions: ['.apex', '.cls', '.trigger']
+                description:
+                    'Prohibits the use of prettier-ignore comments in Apex code.
+                    Code should be formatted consistently without exceptions.
+                    Using prettier-ignore comments undermines code formatting
+                    standards and makes the codebase less maintainable.'
+                violation_message:
+                    'Prettier-ignore comments are not allowed. Code should be
+                    formatted consistently without exceptions.'
                 severity: 'Moderate'
                 tags: ['CodeStyle', 'Recommended']
 ```
@@ -865,11 +879,12 @@ languages):
 - **performance/** - Suboptimal code detection (currently empty)
 - **security/** - Potential security flaws (currently empty)
 
-**Total: 43 PMD rules + 3 Regex rules = 46 rules**
+**Total: 43 PMD rules + 4 Regex rules = 47 rules**
 
-In addition to the PMD rules above, 3 Regex rules are provided:
+In addition to the PMD rules above, 4 Regex rules are provided:
 
 - `NoConsecutiveBlankLines` - Prevents consecutive blank lines
+- `ProhibitPrettierIgnore` - Prohibits prettier-ignore comments
 - `ProhibitSuppressWarnings` - Prohibits suppression annotations and comments
 - `NoLongLines` - Enforces maximum line length of 80 characters
 

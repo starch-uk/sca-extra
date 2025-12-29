@@ -105,16 +105,35 @@ When creating or modifying PMD rules:
    AST** - Use `pnpm ast-dump <apex-file>` to inspect the actual AST structure
    of test fixtures before modifying XPath expressions. This ensures you
    understand the exact node structure and relationships before making changes.
-9. **Every rule should use properties for things that should be configurable** -
-   Add configurable properties (thresholds, lists, etc.) instead of hardcoding
-   values
-10. **New subfolders can be created under rulesets/** - Make sure they follow
+9. **XML Schema Location**: The `xsi:schemaLocation` attribute in ruleset XML
+   files must use `http://pmd.sourceforge.net/ruleset/2.0.0` (with dots) for the
+   namespace and `https://pmd.sourceforge.io/ruleset_2_0_0.xsd` (with
+   underscores) for the schema URL. Do not use `2_0_0.xsd` in the namespace.
+10. **Apex File Structure**: Apex files can only contain one top-level class.
+    Test fixtures must use a single class with multiple methods or fields to
+    test different scenarios, not multiple top-level classes.
+11. **Single-Line Comments in AST**: PMD's Apex parser does not include
+    single-line comments (`//`) in the AST. Only block comments (`/* */`) and
+    ApexDoc comments (`/** */`) are included as `FormalComment` nodes. For rules
+    that need to detect single-line comments (e.g., `// prettier-ignore`,
+    `// NOPMD`), use regex-based rules instead of PMD XPath rules. See
+    `docs/REGEX.md` for creating regex-based rules.
+12. **Regex Rules Must Be Added to code-analyzer.yml**: When creating regex
+    rules, you must add them to `code-analyzer.yml` under
+    `engines.regex.custom_rules`. Unlike PMD rules (which are XML files in
+    `rulesets/`), regex rules are defined directly in `code-analyzer.yml`.
+    Always add new regex rules to the repository's `code-analyzer.yml` file, not
+    just in test files. See `CONTRIBUTING.md` for complete instructions.
+13. **Every rule should use properties for things that should be
+    configurable** - Add configurable properties (thresholds, lists, etc.)
+    instead of hardcoding values
+14. **New subfolders can be created under rulesets/** - Make sure they follow
     PMD's 8 standard categories (best-practices, code-style, design,
     documentation, error-prone, multithreading, performance, security)
-11. **Every rule must have both positive and negative test cases** - Create test
+15. **Every rule must have both positive and negative test cases** - Create test
     fixtures in `tests/fixtures/positive/` and `tests/fixtures/negative/`
     covering all parts of the XPath expression
-12. **XML element order must be correct** - PMD ruleset XML files must follow
+16. **XML element order must be correct** - PMD ruleset XML files must follow
     the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd).
     Elements within `<rule>` must appear in this order: `description` →
     `priority` → `properties` → `exclude` → `example`. Use
@@ -122,14 +141,14 @@ When creating or modifying PMD rules:
     automatically fix it. These scripts use XML libraries (`xmldom`) to properly
     parse and manipulate XML, ensuring all elements (including multiple
     examples) are preserved.
-13. **All code should be linted and formatted following any changes** - Run
+17. **All code should be linted and formatted following any changes** - Run
     `pnpm format` and `pnpm lint` (or `pnpm lint:fix`). **CRITICAL**: **Always
     run lint commands with full permissions** - Use
     `required_permissions: ['all']` when running lint commands. ESLint will fail
     with `EPERM: operation not permitted` errors when run without full
     permissions due to pnpm's module resolution requiring full filesystem access
     to read files from `node_modules/.pnpm/`.
-14. **All tests should be run and regressions checked following any changes** -
+18. **All tests should be run and regressions checked following any changes** -
     Run `pnpm test` and verify no test regressions. **CRITICAL**: **Always run
     `pnpm test` with full permissions the first time** - Use
     `required_permissions: ['all']` when running test commands. Jest will fail
@@ -139,9 +158,9 @@ When creating or modifying PMD rules:
     successful run, subsequent runs may work without full permissions, but
     always use full permissions for initial test runs. Reference
     **@docs/JEST30.md** for Jest API usage when writing or modifying tests.
-15. **README.md should be updated with any pertinent changes** - Document new
+19. **README.md should be updated with any pertinent changes** - Document new
     rules, rule changes, or significant updates in the README
-16. **PLAN.md is a planning document** - PLAN.md should be written as if the
+20. **PLAN.md is a planning document** - PLAN.md should be written as if the
     project has not yet been created. It details what needs to happen to create
     the project, not the current state of the project. PLAN.md should:
     - Use future tense ("will be", "should be", "needs to", "must be")
@@ -153,8 +172,8 @@ When creating or modifying PMD rules:
     - NOT include historical context or references to past states
     - The current state of the project is documented in README.md and other
       documentation files, not in PLAN.md
-17. Test XPath expressions against both positive and negative test cases
-18. **Benchmark stress tests must be kept up to date** - When adding or
+21. Test XPath expressions against both positive and negative test cases
+22. **Benchmark stress tests must be kept up to date** - When adding or
     modifying rules, update the benchmark fixtures:
     - **New rules**: Add violations to
       `benchmarks/fixtures/stress-test-all-rules.cls` and the appropriate
@@ -170,7 +189,7 @@ When creating or modifying PMD rules:
     - **Run benchmarks after updates**: `pnpm benchmark` to verify performance
     - **Regenerate baseline if needed**: `pnpm benchmark -- --baseline` after
       significant changes
-19. **Stress test fixtures location**: `benchmarks/fixtures/` contains
+23. **Stress test fixtures location**: `benchmarks/fixtures/` contains
     comprehensive stress-test files:
     - `stress-test-all-rules.cls` - Comprehensive fixture with violations across
       all 43 PMD rules
@@ -181,9 +200,10 @@ When creating or modifying PMD rules:
     - `stress-best-practices.cls` - Best practices rules (5 rules, 100+
       violations, includes modifiers)
     - `stress-documentation.cls` - Documentation rules (2 rules, 30+ violations)
-    - **Note**: Regex rules (NoConsecutiveBlankLines, ProhibitSuppressWarnings)
-      are not included in PMD benchmark fixtures as they use a different engine.
-20. **Running specific tests**: When debugging or working on a specific rule,
+    - **Note**: Regex rules (NoConsecutiveBlankLines, ProhibitPrettierIgnore,
+      ProhibitSuppressWarnings, NoLongLines) are not included in PMD benchmark
+      fixtures as they use a different engine.
+24. **Running specific tests**: When debugging or working on a specific rule,
     use Jest's `--testNamePattern` flag to run only matching tests instead of
     the full test suite. This saves time and focuses output. Reference
     **@docs/JEST30.md** for Jest CLI options and API. The pattern matches test
@@ -204,7 +224,7 @@ When creating or modifying PMD rules:
           Runs only the "should detect" test for ProhibitSuppressWarnings rule
         - `pnpm test -- --testNamePattern="should not flag"` - Runs all tests
           that verify rules don't produce false positives
-21. **Using PMD AST dump tool**: Use the AST dump script to inspect the actual
+25. **Using PMD AST dump tool**: Use the AST dump script to inspect the actual
     AST structure of Apex files:
     - `pnpm ast-dump <apex-file>` - Dump AST for a file (text format)
     - `pmd ast-dump --file=<apex-file> -l apex -f xml` - Dump AST in XML format
@@ -217,7 +237,7 @@ When creating or modifying PMD rules:
       first or use valid test files for AST inspection.
     - **Tip**: Use AST dump to understand node relationships, attributes, and
       structure before writing XPath expressions.
-22. **PMD command execution**: **Always use the `-r <file>` flag when running
+26. **PMD command execution**: **Always use the `-r <file>` flag when running
     PMD commands** to avoid progressbar rendering conflicts with STDOUT. PMD
     will show a warning:
     `[WARN] Progressbar rendering conflicts with reporting to STDOUT. No progressbar will be shown. Try running with argument -r <file> to output the report to a file instead.`
@@ -231,7 +251,7 @@ When creating or modifying PMD rules:
       any new PMD invocations should follow the same pattern
     - When running PMD manually or in scripts, always use `-r <file>` to write
       output to a file, then read the file contents
-23. **Version bumping**: **Always run `pnpm bump-rule-versions` after making
+27. **Version bumping**: **Always run `pnpm bump-rule-versions` after making
     rule changes** - This script automatically bumps rule versions based on
     changes:
     - **Major bump** (X.0.0): Rules with failing existing tests (tests that
@@ -242,7 +262,7 @@ When creating or modifying PMD rules:
     - The script runs tests, detects failures, checks git history, and bumps
       versions accordingly
     - Run this before committing rule changes to ensure proper versioning
-24. **Script security**: **Scripts must implement security best practices** -
+28. **Script security**: **Scripts must implement security best practices** -
     When creating or modifying scripts in `scripts/`, follow these security
     guidelines:
     - **File System Operations**: Use file descriptors instead of file paths to
