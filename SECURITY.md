@@ -99,7 +99,7 @@ Security researchers who responsibly report vulnerabilities will be:
 ### For Users
 
 - **Keep Updated:** Use the latest version of sca-extra
-- **Review Rules:** Review PMD rules before using in production
+- **Review Rules:** Review PMD rules before using them
 - **Validate Inputs:** Validate Apex code before analysis
 - **Report Issues:** Report security issues responsibly
 
