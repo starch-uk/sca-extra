@@ -13,23 +13,29 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Method calls should not be used directly in conditional
-			expressions. Extract method call
-			results to variables first to improve readability, avoid potential side effects
-			from multiple
-			evaluations, and make debugging easier. This rule applies to
-			if, else-if, while, for,
-			switch, and ternary expressions.
+			Method calls should not be used directly in conditional expressions.
+			Extract method call results to variables first to improve readability,
+			avoid potential side effects from multiple evaluations, and make debugging
+			easier. This rule applies to if, else-if, while, for, switch, and ternary
+			expressions.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>2</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//(IfBlockStatement | WhileLoopStatement | SwitchStatement | ForLoopStatement | TernaryExpression)[StandardCondition//MethodCallExpression]
-					| //IfElseBlockStatement[IfBlockStatement/StandardCondition//MethodCallExpression]
+					//(
+						IfBlockStatement
+						| WhileLoopStatement
+						| SwitchStatement
+						| ForLoopStatement
+						| TernaryExpression
+					)[StandardCondition//MethodCallExpression]
+					| //IfElseBlockStatement[
+						IfBlockStatement/StandardCondition//MethodCallExpression
+					]
 					]]>
 				</value>
 			</property>

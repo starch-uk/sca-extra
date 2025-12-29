@@ -17,15 +17,15 @@
 	>
 		<description>
 			Methods with 0-1 parameters should be formatted on a single line.
-			Unnecessary multi-line formatting for single parameters is not allowed as it
-			reduces readability and wastes vertical space. This prevents excessive line
-			wrapping due to long identifiers.
+			Unnecessary multi-line formatting for single parameters is not allowed
+			as it reduces readability and wastes vertical space. This prevents
+			excessive line wrapping due to long identifiers.
 			
 			To customize this rule, edit the $maxParams variable at the beginning
 			of the XPath expression (default: 1). This sets the maximum number of
 			parameters allowed before multi-line formatting is required.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>

@@ -14,29 +14,33 @@
 	>
 		<description>
 			When using builder patterns, prefer method chaining over multiple
-			intermediary variable
-			assignments. Use final variables with chained method calls instead of
-			reassigning the same
-			variable multiple times. This follows the builder pattern idiom and improves
-			code clarity.
+			intermediary variable assignments. Use final variables with chained
+			method calls instead of reassigning the same variable multiple times.
+			This follows the builder pattern idiom and improves code clarity.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					for $assign in //AssignmentExpression[
+					//AssignmentExpression[
 						@Op = '='
 						and VariableExpression
 						and MethodCallExpression
+						and MethodCallExpression/ReferenceExpression[1]
+						and (
+							let $receiverVar := MethodCallExpression/ReferenceExpression[1]/@Image,
+								$assign := .,
+								$method := ancestor::Method[1]
+							return exists($method//VariableDeclarationStatements[
+								VariableDeclaration/VariableExpression[@Image = $receiverVar]
+								and . << $assign
+							])
+						)
+						and not(ancestor::Method[@Constructor = true()])
 					]
-					return if (
-						$assign/MethodCallExpression/ReferenceExpression[1]/@Image = $assign/VariableExpression/@Image
-						and $assign/ancestor::Method//VariableDeclarationStatements/VariableDeclaration/VariableExpression[@Image = $assign/VariableExpression/@Image]
-						and not($assign/ancestor::Method[@Constructor = true()])
-					) then $assign else ()
 					]]>
 				</value>
 			</property>

@@ -18,7 +18,8 @@
 			the last end with the same non-empty sequence of characters, use
 			String.join() for better readability and maintainability.
 			
-			Use: String.join(new List &lt; String > {'line1', 'line2', 'line3'}, '\n');
+			Use: String.join(new List &lt; String > {'line1', 'line2', 'line3'},
+			'\n');
 			The second argument to String.join() should be the repeating separator
 			pattern (not an empty string).
 			
@@ -26,7 +27,7 @@
 			of the XPath expression (default: 3). This sets the minimum number of
 			strings required before String.join() is recommended.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>

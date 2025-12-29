@@ -16,17 +16,18 @@
 			When using String.join() with an empty string separator and all
 			strings
 			in the list except the last one end with the same non-empty sequence of
-			characters, use the common suffix as the separator instead. This makes
-			the intent clearer and removes redundant characters from the strings.
+			characters, use the common suffix as the separator instead. This makes the
+			intent clearer and removes redundant characters from the strings.
 			
-			Instead of: String.join('', new List &lt; String > {'line1\n', 'line2\n', 'last'});
+			Instead of: String.join('', new List &lt; String > {'line1\n', 'line2\n',
+			'last'});
 			Use: String.join('\n', new List &lt; String > {'line1', 'line2', 'last'});
 			
-			To customize this rule, edit the $minStrings variable at the beginning
-			of the XPath expression (default: 3). This sets the minimum number of
+			To customize this rule, edit the $minStrings variable at the beginning of
+			the XPath expression (default: 3). This sets the minimum number of
 			strings required in the list before the rule applies.
 
-			Version: 1.1.0
+			Version: 1.1.1
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -38,11 +39,32 @@
 						@MethodName = 'join'
 						and @FullMethodName = 'String.join'
 						and (
-							./*[2][self::LiteralExpression[@String = true() and (string-length(@Image) = 0 or @Image = "''" or @Image = '""')]]
-							or ./*[3][self::LiteralExpression[@String = true() and (string-length(@Image) = 0 or @Image = "''" or @Image = '""')]]
+							./*[2][
+								self::LiteralExpression[
+									@String = true()
+									and (
+										string-length(@Image) = 0
+										or @Image = "''"
+										or @Image = '""'
+									)
+								]
+							]
+							or ./*[3][
+								self::LiteralExpression[
+									@String = true()
+									and (
+										string-length(@Image) = 0
+										or @Image = "''"
+										or @Image = '""'
+									)
+								]
+							]
 						)
 						and .//NewListLiteralExpression
-						and count(.//NewListLiteralExpression//LiteralExpression[@String = true()]) >= $minStrings
+						and count(
+							.//NewListLiteralExpression
+							//LiteralExpression[@String = true()]
+						) >= $minStrings
 					]
 					]]>
 				</value>

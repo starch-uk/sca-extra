@@ -14,36 +14,37 @@
 	>
 		<description>
 			Maps should be initialized with values directly using the map
-			literal syntax instead of
-			creating an empty map and immediately calling put(). This improves readability
-			and reduces
-			unnecessary method calls.
+			literal
+			syntax instead of creating an empty map and immediately calling put().
+			This improves readability and reduces unnecessary method calls.
 			
 			Use: new Map &lt; String, String > {'key' = > 'value'}
 			Instead of: new Map &lt; String, String > (); map.put('key', 'value');
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					for $stmt in //VariableDeclarationStatements[
+					//VariableDeclarationStatements[
 						VariableDeclaration[
 							contains(@Type, 'Map')
 							and NewMapInitExpression
 							and not(NewMapInitExpression/MapEntryNode)
 							and VariableExpression
 						]
+						and (
+							let $varName := VariableDeclaration/VariableExpression/@Image,
+								$nextStmt := following-sibling::*[1]
+							return $nextStmt[self::ExpressionStatement]
+								and $nextStmt//MethodCallExpression[
+									@MethodName = 'put'
+									and ReferenceExpression[1]/@Image = $varName
+								]
+						)
 					]
-					return if (
-						$stmt/following-sibling::*[1][self::ExpressionStatement]
-						and $stmt/following-sibling::ExpressionStatement[1]/MethodCallExpression[
-							@MethodName = 'put'
-							and ReferenceExpression[1]/@Image = $stmt/VariableDeclaration/VariableExpression/@Image
-						]
-					) then $stmt else ()
 					]]>
 				</value>
 			</property>

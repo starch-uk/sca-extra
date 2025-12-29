@@ -98,3 +98,9 @@ When creating or modifying PMD rules:
     - **Incorrect**: `pmd check --no-cache -d "${file}" -R "${ruleset}" -f xml` (outputs to STDOUT, causes warning)
     - The `tests/helpers/pmd-helper.js` file already implements this correctly - any new PMD invocations should follow the same pattern
     - When running PMD manually or in scripts, always use `-r <file>` to write output to a file, then read the file contents
+23. **Version bumping**: **Always run `pnpm bump-rule-versions` after making rule changes** - This script automatically bumps rule versions based on changes:
+    - **Major bump** (X.0.0): Rules with failing existing tests (tests that existed at HEAD) - indicates breaking changes
+    - **Minor bump** (0.X.0): Rules with new tests - indicates new features
+    - **Patch bump** (0.0.X): Other changed rules - indicates bug fixes/improvements
+    - The script runs tests, detects failures, checks git history, and bumps versions accordingly
+    - Run this before committing rule changes to ensure proper versioning

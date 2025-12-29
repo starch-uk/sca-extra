@@ -17,12 +17,12 @@
 	>
 		<description>
 			Test classes must include IsParallel=true in their @IsTest
-			annotation
-			to enable parallel test execution. This improves test performance by
-			allowing tests to run in parallel, reducing overall test execution time and
+			annotation to
+			enable parallel test execution. This improves test performance by allowing
+			tests to run in parallel, reducing overall test execution time and
 			improving developer productivity.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -31,7 +31,13 @@
 					<![CDATA[
 					//UserClass[
 						.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
-						and not(.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]/AnnotationParameter[@Name = 'IsParallel' and (@Value = 'true' or @Image = 'true')])
+						and not(
+							.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
+							/AnnotationParameter[
+								@Name = 'IsParallel'
+								and (@Value = 'true' or @Image = 'true')
+							]
+						)
 					]
 					]]>
 				</value>
@@ -42,11 +48,47 @@
 			// Violation: Test class without IsParallel=true
 			@IsTest
 			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        // Test code
+			    }
+			}
+			
+			// Violation: Test class with IsParallel=false
+			@IsTest(IsParallel=false)
+			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        // Test code
+			    }
 			}
 			
 			// Valid: Test class with IsParallel=true
 			@IsTest(IsParallel=true)
 			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        // Test code
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Test class with IsParallel=true (alternative syntax)
+			@IsTest(IsParallel = true)
+			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        // Test code
+			    }
+			}
+			
+			// Valid: Non-test classes are not flagged
+			public class MyRegularClass {
+			    public void regularMethod() {
+			        // Regular code
+			    }
 			}
 			]]>
 		</example>

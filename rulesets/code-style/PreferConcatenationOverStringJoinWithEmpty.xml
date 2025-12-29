@@ -19,26 +19,31 @@
 			Instead of: String.join('', new List &lt; String > {'a', 'b', 'c'});
 			Use: 'a' + 'b' + 'c';
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>4</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//MethodCallExpression[
+					let $isEmptyString := function($expr) {
+						$expr/@String = true()
+							and (
+								$expr/@Image = "''"
+								or $expr/@Image = '""'
+								or string-length($expr/@Image) = 0
+							)
+					}
+					return //MethodCallExpression[
 						@MethodName = 'join'
 						and @FullMethodName = 'String.join'
 						and .//NewListLiteralExpression
 						and (
-							./LiteralExpression[
-								@String = true()
-								and (@Image = "''" or @Image = '""' or string-length(@Image) = 0)
-							]
-							or ./NewListLiteralExpression/following-sibling::LiteralExpression[
-								@String = true()
-								and (@Image = "''" or @Image = '""' or string-length(@Image) = 0)
-							]
+							$isEmptyString(./LiteralExpression)
+							or $isEmptyString(
+								./NewListLiteralExpression
+								/following-sibling::LiteralExpression
+							)
 						)
 					]
 					]]>
@@ -49,9 +54,24 @@
 			<![CDATA[
 			// Violation: String.join with empty separator
 			String result = String.join('', new List<String> {'a', 'b', 'c'});
+			String text = String.join('', new List<String> {'Hello', 'World'});
 			
 			// Valid: Use string concatenation
 			String result = 'a' + 'b' + 'c';
+			String text = 'Hello' + 'World';
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Empty separator with multiple strings
+			String path = String.join('', new List<String> {'/api', '/v1', '/users'});
+			
+			// Valid: Use string concatenation
+			String path = '/api' + '/v1' + '/users';
+			
+			// Valid: String.join with non-empty separator (not flagged)
+			String result = String.join(',', new List<String> {'a', 'b', 'c'});
+			String text = String.join('\n', new List<String> {'line1', 'line2'});
 			]]>
 		</example>
 	</rule>

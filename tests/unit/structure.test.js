@@ -261,10 +261,22 @@ describe('Design Rules - Structure', () => {
 			assertNoViolations(violations, 'PreferSwitchOverIfElseChains');
 		});
 
-		it('should detect violations for all switch-compatible types (String, Integer, Long, Enum, sObject fields)', async () => {
+		it('should detect violations for all switch-compatible types (String, Integer, Long, Enum, SObjectType, SObject instances)', async () => {
 			const violations = await runPMD(
 				'rulesets/design/PreferSwitchOverIfElseChains.xml',
 				'tests/fixtures/negative/design/PreferSwitchOverIfElseChains_SwitchTypes.cls'
+			);
+			expect(
+				violations.filter(
+					(v) => v.rule === 'PreferSwitchOverIfElseChains'
+				).length
+			).toBeGreaterThan(0);
+		});
+
+		it('should detect instanceof patterns with SObject instances', async () => {
+			const violations = await runPMD(
+				'rulesets/design/PreferSwitchOverIfElseChains.xml',
+				'tests/fixtures/negative/design/PreferSwitchOverIfElseChains_Instanceof.cls'
 			);
 			expect(
 				violations.filter(

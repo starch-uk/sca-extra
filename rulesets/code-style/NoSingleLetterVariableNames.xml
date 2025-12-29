@@ -18,9 +18,9 @@
 		<description>
 			Single-letter variable names are not allowed except for loop
 			counters
-			(i, c) or exception variables (e). Use descriptive names instead to improve
-			code readability and make the code self-documenting. Single-letter names
-			provide no context about the variable's purpose.
+			(i, c) or exception variables (e). Use descriptive names instead to
+			improve code readability and make the code self-documenting.
+			Single-letter names provide no context about the variable's purpose.
 			
 			To customize this rule, edit the variables at the beginning of the XPath
 			expression:
@@ -29,7 +29,7 @@
 			- $allowedExceptionNames: Comma-separated list of allowed exception
 			variable names (default: 'e')
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>2</priority>
 		<properties>
@@ -37,22 +37,27 @@
 				<value>
 					<![CDATA[
 					let $allowedLoopNames := 'i,c',
-						$allowedExceptionNames := 'e'
+						$allowedExceptionNames := 'e',
+						$isAllowedLoopName := function($name) {
+							contains($allowedLoopNames, $name)
+						},
+						$isAllowedExceptionName := function($name) {
+							contains($allowedExceptionNames, $name)
+						}
 					return (
 						//VariableDeclaration[
-							let $varName := @Image,
-								$isInCatchBlock := exists(ancestor::CatchBlockStatement)
+							let $varName := @Image
 							return string-length($varName) = 1
-							and (
-								($isInCatchBlock and not(contains($allowedExceptionNames, $varName)))
-								or (not($isInCatchBlock) and not(contains($allowedLoopNames, $varName)))
-							)
+								and (
+									(exists(ancestor::CatchBlockStatement) and not($isAllowedExceptionName($varName)))
+									or (not(exists(ancestor::CatchBlockStatement)) and not($isAllowedLoopName($varName)))
+								)
 						]
 						|
 						//CatchBlockStatement[
 							let $varName := @VariableName
 							return string-length($varName) = 1
-							and not(contains($allowedExceptionNames, $varName))
+								and not($isAllowedExceptionName($varName))
 						]
 					)
 					]]>

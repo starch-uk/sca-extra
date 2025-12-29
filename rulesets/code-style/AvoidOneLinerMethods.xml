@@ -18,15 +18,16 @@
 			and should be inlined at their call sites. This rule detects methods with
 			exactly one statement in their body.
 			
-			Exceptions: Methods that are part of interfaces, abstract methods, override
-			methods, overloaded methods, switch statements with more than one outcome,
-			or methods that update a class attribute are excluded from this rule.
+			Exceptions: Methods that are part of interfaces, abstract methods,
+			override methods, overloaded methods, switch statements with more than
+			one outcome, or methods that update a class attribute are excluded from
+			this rule.
 			
 			To customize this rule, edit the $minParams variable at the beginning of
 			the XPath expression (default: 1). This sets the minimum number of
 			parameters a method must have to be flagged as a one-liner.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>4</priority>
 		<properties>
@@ -77,10 +78,74 @@
 				return 5;
 			}
 			
-			// Valid: Method with multiple statements or exceptions
+			// Violation: One-liner method with single statement
+			public String getName() {
+				return 'John';
+			}
+			
+			// Valid: Method with multiple statements
 			public Integer getValue() {
 				Integer value = calculateValue();
 				return value * 2;
+			}
+			
+			// Valid: Method with multiple statements
+			public String getName() {
+				String firstName = getFirstName();
+				String lastName = getLastName();
+				return firstName + ' ' + lastName;
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Abstract methods are excluded
+			public abstract class Base {
+				public abstract Integer getValue();  // ✅ Abstract methods excluded
+			}
+			
+			// Valid: Override methods are excluded
+			public class Child extends Base {
+				@Override
+				public Integer getValue() {  // ✅ Override methods excluded
+					return 5;
+				}
+			}
+			
+			// Valid: Interface methods are excluded
+			public interface MyInterface {
+				Integer getValue();  // ✅ Interface methods excluded
+			}
+			
+			// Valid: Overloaded methods are excluded
+			public class Example {
+				public Integer getValue() {  // ✅ Overloaded method
+					return 5;
+				}
+				public Integer getValue(Integer multiplier) {  // ✅ Overloaded method
+					return 5 * multiplier;
+				}
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Methods that update class attributes are excluded
+			public class Example {
+				private Integer value;
+				
+				public void setValue(Integer newValue) {  // ✅ Updates class attribute
+					this.value = newValue;
+				}
+			}
+			
+			// Valid: Switch statements with multiple outcomes are excluded
+			public String getStatus(Integer code) {
+				switch on code {
+					when 1 { return 'Active'; }
+					when 2 { return 'Inactive'; }
+					when else { return 'Unknown'; }
+				}
 			}
 			]]>
 		</example>

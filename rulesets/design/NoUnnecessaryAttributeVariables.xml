@@ -17,37 +17,48 @@
 	>
 		<description>
 			Variables that extract a single attribute from an object and are
-			only
-			used once should be inlined. This rule does not apply to collection types
-			(List, Set, Map) or object/class instances, only primitive types.
-			Inlining these variables reduces unnecessary indirection and improves code
-			clarity.
+			only used
+			once should be inlined. This rule does not apply to collection types (List,
+			Set, Map) or object/class instances, only primitive types. Inlining these
+			variables reduces unnecessary indirection and improves code clarity.
 			
-			To customize this rule, edit the $primitiveTypes variable at the
-			beginning of the XPath expression (default: 'String', 'Integer', 'Long',
-			'Double', 'Decimal', 'Boolean', 'Date', 'DateTime', 'Time', 'Id', 'Blob').
-			This sets which types are considered primitive and subject to this rule.
+			To customize this rule, edit the $primitiveTypes variable at the beginning
+			of the XPath expression (default: 'String', 'Integer', 'Long', 'Double',
+			'Decimal', 'Boolean', 'Date', 'DateTime', 'Time', 'Id', 'Blob'). This sets
+			which types are considered primitive and subject to this rule.
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					let $primitiveTypes := ('String', 'Integer', 'Long', 'Double', 'Decimal', 'Boolean', 'Date', 'DateTime', 'Time', 'Id', 'Blob')
-					return for $var in //VariableDeclaration[
+					let $primitiveTypes := (
+							'String', 'Integer', 'Long', 'Double', 'Decimal',
+							'Boolean', 'Date', 'DateTime', 'Time', 'Id', 'Blob'
+						)
+					return //VariableDeclaration[
 						VariableExpression[1]/ReferenceExpression
-						and (some $type in $primitiveTypes satisfies @Type = $type)
+						and @Type = $primitiveTypes
 						and VariableExpression[2]
+						and (
+							let $varName := VariableExpression[2]/@Image,
+								$method := ancestor::Method[1]
+							return not(
+								$method//AssignmentExpression[
+									VariableExpression[@Image = $varName]
+									and not(ancestor::VariableDeclaration[1] = .)
+								]
+							)
+								and count(
+									$method//VariableExpression[
+										@Image = $varName
+										and not(ancestor::VariableDeclaration[1] = .)
+									]
+								) = 1
+						)
 					]
-					return if (
-						not($var/ancestor::Method//AssignmentExpression[
-							VariableExpression[@Image = $var/VariableExpression[2]/@Image]
-							and not(ancestor::VariableDeclaration[1] = $var)
-						])
-						and count($var/ancestor::Method//VariableExpression[@Image = $var/VariableExpression[2]/@Image and not(ancestor::VariableDeclaration[1] = $var)]) = 1
-					) then $var else ()
 					]]>
 				</value>
 			</property>
@@ -58,8 +69,34 @@
 			String name = account.Name;
 			processName(name);
 			
+			// Violation: Primitive attribute extracted and used once
+			Integer count = items.size();
+			System.debug(count);
+			
 			// Valid: Inline the attribute access
 			processName(account.Name);
+			System.debug(items.size());
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Variable used multiple times (not flagged)
+			String name = account.Name;
+			processName(name);
+			System.debug(name);
+			
+			// Valid: Collection types are excluded
+			List<String> names = account.Names;
+			processNames(names);
+			
+			// Valid: Object instances are excluded
+			Contact owner = account.Owner;
+			processOwner(owner);
+			
+			// Valid: Variable reassigned (not flagged)
+			String name = account.Name;
+			name = 'Updated';
+			processName(name);
 			]]>
 		</example>
 	</rule>
