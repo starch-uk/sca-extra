@@ -8,11 +8,32 @@ const path = require('path');
  */
 function checkPerformanceRegressions(resultsPath) {
 	const rootDir = path.join(__dirname, '..');
-	const safeResultsPath = path.resolve(rootDir, resultsPath);
+
+	// Validate input path to prevent path traversal attacks
+	if (!resultsPath || typeof resultsPath !== 'string') {
+		console.error(`❌ Invalid results path: ${resultsPath}`);
+		process.exit(1);
+	}
+
+	// Reject paths containing path traversal sequences or absolute paths
+	if (resultsPath.includes('..') || path.isAbsolute(resultsPath)) {
+		console.error(
+			`❌ Invalid results path (contains path traversal or is absolute): ${resultsPath}`
+		);
+		process.exit(1);
+	}
+
+	// Normalize and resolve the path
+	const normalizedPath = path.normalize(resultsPath);
+	const safeResultsPath = path.resolve(rootDir, normalizedPath);
 
 	// Ensure the resolved results path is within the repository root
-	if (!safeResultsPath.startsWith(rootDir + path.sep)) {
-		console.error(`❌ Invalid results path (outside project root): ${resultsPath}`);
+	// Use path.relative to check containment more reliably
+	const relativePath = path.relative(rootDir, safeResultsPath);
+	if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+		console.error(
+			`❌ Invalid results path (outside project root): ${resultsPath}`
+		);
 		process.exit(1);
 	}
 
