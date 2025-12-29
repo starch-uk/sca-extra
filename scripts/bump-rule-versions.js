@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 
 /**
  * Run tests and identify which rules have failing tests
@@ -196,9 +196,13 @@ function getRulesWithFailingExistingTests(rulesWithFailingTests) {
 		for (const testFile of testJsFiles) {
 			try {
 				// Check if this test file contains tests for this rule
-				const testFileContent = execSync(`git show HEAD:${testFile}`, {
-					encoding: 'utf-8',
-				});
+				const testFileContent = execFileSync(
+					'git',
+					['show', `HEAD:${testFile}`],
+					{
+						encoding: 'utf-8',
+					}
+				);
 				// Look for describe block with this rule name
 				if (
 					testFileContent.includes(`describe('${ruleName}'`) ||
@@ -331,10 +335,14 @@ function bumpRuleVersions() {
 				path.join(__dirname, '..'),
 				rulePath
 			);
-			const headContent = execSync(`git show HEAD:${relativePath}`, {
-				encoding: 'utf-8',
-				stdio: ['pipe', 'pipe', 'ignore'],
-			});
+			const headContent = execFileSync(
+				'git',
+				['show', `HEAD:${relativePath}`],
+				{
+					encoding: 'utf-8',
+					stdio: ['pipe', 'pipe', 'ignore'],
+				}
+			);
 			const headVersionMatch = headContent.match(
 				/Version:\s*(\d+)\.(\d+)\.(\d+)/
 			);
@@ -402,7 +410,18 @@ function bumpRuleVersions() {
 			const oldVersion = versionMatch[0];
 			const newVersionLine = `Version: ${targetVersion}`;
 			const newContent = content.replace(oldVersion, newVersionLine);
-			fs.writeFileSync(rulePath, newContent, 'utf-8');
+			const fd = fs.openSync(
+				rulePath,
+				fs.constants.O_CREAT |
+					fs.constants.O_WRONLY |
+					fs.constants.O_TRUNC,
+				0o644
+			);
+			try {
+				fs.writeFileSync(fd, newContent, { encoding: 'utf-8' });
+			} finally {
+				fs.closeSync(fd);
+			}
 
 			console.log(
 				`🔧 ${ruleName}: Fixed version from ${oldVersion} to ${newVersionLine} (${bumpType})`
@@ -427,7 +446,16 @@ function bumpRuleVersions() {
 		// Replace version in content
 		const newContent = content.replace(oldVersion, newVersionLine);
 
-		fs.writeFileSync(rulePath, newContent, 'utf-8');
+		const fd = fs.openSync(
+			rulePath,
+			fs.constants.O_CREAT | fs.constants.O_WRONLY | fs.constants.O_TRUNC,
+			0o644
+		);
+		try {
+			fs.writeFileSync(fd, newContent, { encoding: 'utf-8' });
+		} finally {
+			fs.closeSync(fd);
+		}
 
 		// Update counters
 		if (bumpType === 'major') {

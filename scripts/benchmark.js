@@ -284,15 +284,31 @@ async function benchmark() {
 
 	// Save results
 	const resultsPath = path.join(resultsDir, `results-${Date.now()}.json`);
-	fs.writeFileSync(resultsPath, JSON.stringify(results, null, 2), 'utf-8');
+	const resultsData = JSON.stringify(results, null, 2);
+	const resultsFd = fs.openSync(
+		resultsPath,
+		fs.constants.O_CREAT | fs.constants.O_WRONLY | fs.constants.O_TRUNC,
+		0o644
+	);
+	try {
+		fs.writeFileSync(resultsFd, resultsData, { encoding: 'utf-8' });
+	} finally {
+		fs.closeSync(resultsFd);
+	}
 
 	// Save as baseline if requested
 	if (args.includes('--baseline')) {
-		fs.writeFileSync(
+		const baselineData = JSON.stringify(results, null, 2);
+		const baselineFd = fs.openSync(
 			baselinePath,
-			JSON.stringify(results, null, 2),
-			'utf-8'
+			fs.constants.O_CREAT | fs.constants.O_WRONLY | fs.constants.O_TRUNC,
+			0o644
 		);
+		try {
+			fs.writeFileSync(baselineFd, baselineData, { encoding: 'utf-8' });
+		} finally {
+			fs.closeSync(baselineFd);
+		}
 		console.log('✅ Baseline saved');
 	}
 
