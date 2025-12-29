@@ -33,17 +33,15 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
-    "@jest/test-sequencer": "^30.2.0",
     "@prettier/plugin-xml": "^3.4.2",
     "@types/jest": "^30.0.0",
+    "@xmldom/xmldom": "^0.8.11",
     "eslint": "^9.39.2",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
-    "xml2js": "^0.6.2",
-    "xmldom": "^0.6.0",
     "yaml": "^2.8.2"
   },
   "pnpm": {

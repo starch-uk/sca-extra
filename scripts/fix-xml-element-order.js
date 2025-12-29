@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { DOMParser, XMLSerializer } = require('xmldom');
+const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 
 /**
  * Fix element order in PMD ruleset XML files to match XSD schema

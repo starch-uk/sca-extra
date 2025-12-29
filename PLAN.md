@@ -169,8 +169,7 @@ sca-extra/
      - `@prettier/plugin-xml` (^3.0.0) - XML formatting support
      - `husky` (^9.0.0) - Git hooks
      - `lint-staged` (^16.0.0) - Staged file linting
-     - `xml2js` (^0.6.0) - XML parsing
-     - `xmldom` (^0.6.0) - DOM implementation for XML parsing
+     - `@xmldom/xmldom` (^0.8.11) - DOM implementation for XML parsing
      - `yaml` (^2.6.1) - YAML parsing
    - Configure pnpm scripts for testing, validation, linting, and development
    - Add Prettier for XML formatting of rulesets
@@ -316,7 +315,7 @@ sca-extra/
      - Timeout: 30 seconds
      - Error handling for missing PMD CLI
    - `parseViolations(pmdOutput)` - Parse PMD XML output
-     - Uses `xmldom` DOMParser
+     - Uses `@xmldom/xmldom` DOMParser
      - Extracts: file, rule, message, line, column
      - Returns array of violation objects
    - `assertViolation(violations, ruleName, lineNumber)` - Assert specific violation exists
@@ -558,8 +557,7 @@ This ensures:
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
-    "@jest/test-sequencer": "^30.2.0",
-    "@prettier/plugin-xml": "^3.2.0",
+    "@prettier/plugin-xml": "^3.4.2",
     "@types/jest": "^30.0.0",
     "eslint": "^9.39.2",
     "globals": "^16.5.0",
@@ -567,8 +565,7 @@ This ensures:
     "jest": "^30.2.0",
     "lint-staged": "^16.2.7",
     "prettier": "^3.2.5",
-    "xml2js": "^0.6.2",
-    "xmldom": "^0.6.0",
+    "@xmldom/xmldom": "^0.8.11",
     "yaml": "^2.6.1"
   },
   "pnpm": {

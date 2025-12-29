@@ -938,7 +938,7 @@ requires elements within `<rule>` to be in a specific order:
 - `pnpm fix-xml-order` - Automatically fix element order in all XML files
 - `pnpm add-version-info` - Add version information to all rule descriptions
 
-These scripts use XML libraries (`xmldom`) to properly parse and manipulate XML,
+These scripts use XML libraries (`@xmldom/xmldom`) to properly parse and manipulate XML,
 ensuring all elements (including multiple examples) are preserved.
 
 ### Benchmarking

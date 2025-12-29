@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { DOMParser, XMLSerializer } = require('xmldom');
+const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 
 /**
  * Generate a combined test ruleset from all individual rulesets
