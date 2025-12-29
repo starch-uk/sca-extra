@@ -13,8 +13,8 @@
     "test:coverage": "node scripts/check-rule-coverage.js",
     "test:rules": "node scripts/validate-rules.js && pnpm test",
     "validate": "node scripts/validate-rules.js",
-    "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\" \"*.yml\" \"*.yaml\" \".github/workflows/*.{yml,yaml}\"",
-    "format:check": "prettier --check \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\" \"*.yml\" \"*.yaml\" \".github/workflows/*.{yml,yaml}\"",
+    "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\" \"*.yml\" \"*.yaml\" \".github/workflows/*.{yml,yaml}\" \"*.md\" \"docs/**/*.md\" \"benchmarks/**/*.md\" \".cursor/rules/**/*.mdc\"",
+    "format:check": "prettier --check \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\" \"*.yml\" \"*.yaml\" \".github/workflows/*.{yml,yaml}\" \"*.md\" \"docs/**/*.md\" \"benchmarks/**/*.md\" \".cursor/rules/**/*.mdc\"",
     "lint": "eslint tests/**/*.js scripts/**/*.js",
     "lint:fix": "eslint --fix tests/**/*.js scripts/**/*.js",
     "benchmark": "node scripts/benchmark.js",
@@ -60,6 +60,12 @@
     "*.{js,jsx,ts,tsx}": [
       "prettier --write",
       "eslint --fix"
+    ],
+    "*.md": [
+      "prettier --write"
+    ],
+    "*.mdc": [
+      "prettier --write"
     ]
   }
 }

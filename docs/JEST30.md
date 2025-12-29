@@ -14,28 +14,32 @@ Jest provides global functions (no imports needed in JS, but required in TS):
 - **`afterEach(fn, timeout)`** - Run after each test
 
 **TypeScript imports:**
+
 ```typescript
 import { describe, expect, test } from '@jest/globals';
 ```
 
 **Modifiers:**
+
 - **`.only`** - Run only this test/describe (e.g., `test.only`, `describe.only`)
 - **`.skip`** - Skip this test/describe (e.g., `test.skip`, `describe.skip`)
 - **`.todo(name)`** - Mark test as TODO (no implementation)
 
 **`.each`** - Parameterized tests:
+
 ```javascript
 test.each([
-  [1, 2, 3],
-  [2, 3, 5]
+    [1, 2, 3],
+    [2, 3, 5],
 ])('adds %i + %i = %i', (a, b, expected) => {
-  expect(a + b).toBe(expected);
+    expect(a + b).toBe(expected);
 });
 ```
 
 ## Expect API
 
 **Basic matchers:**
+
 - **`.toBe(value)`** - Strict equality (`===`)
 - **`.toEqual(value)`** - Deep equality
 - **`.toBeNull()`** - Matches `null`
@@ -45,6 +49,7 @@ test.each([
 - **`.toBeFalsy()`** - Falsy value
 
 **Number matchers:**
+
 - **`.toBeGreaterThan(n)`** - `> n`
 - **`.toBeGreaterThanOrEqual(n)`** - `>= n`
 - **`.toBeLessThan(n)`** - `< n`
@@ -52,28 +57,34 @@ test.each([
 - **`.toBeCloseTo(n, numDigits?)`** - Floating point equality
 
 **String matchers:**
+
 - **`.toMatch(regexp | string)`** - String matches pattern
 - **`.toContain(substring)`** - String contains substring
 
 **Array/Object matchers:**
+
 - **`.toContain(item)`** - Array contains item
 - **`.toContainEqual(item)`** - Array contains equal item
 - **`.toHaveLength(n)`** - Array/string length
 - **`.toHaveProperty(keyPath, value?)`** - Object has property
 
 **Exception matchers:**
+
 - **`.toThrow(error?)`** - Function throws error
 - **`.toThrowError(error?)`** - Alias for `toThrow`
 
 **Promise matchers:**
+
 - **`.resolves`** - Awaits promise resolution
 - **`.rejects`** - Awaits promise rejection
+
 ```javascript
 await expect(promise).resolves.toBe(value);
 await expect(promise).rejects.toThrow();
 ```
 
 **Mock matchers:**
+
 - **`.toHaveBeenCalled()`** - Mock was called
 - **`.toHaveBeenCalledTimes(n)`** - Called n times
 - **`.toHaveBeenCalledWith(...args)`** - Called with args
@@ -86,6 +97,7 @@ await expect(promise).rejects.toThrow();
 - **`.toHaveNthReturnedWith(n, value)`** - Nth return value
 
 **Modifiers:**
+
 - **`.not`** - Negate matcher: `expect(value).not.toBe(null)`
 - **`.resolves`** - Unwrap promise: `await expect(promise).resolves.toBe(value)`
 - **`.rejects`** - Unwrap rejection: `await expect(promise).rejects.toThrow()`
@@ -93,18 +105,23 @@ await expect(promise).rejects.toThrow();
 ## Mock Functions
 
 **Creating mocks:**
+
 - **`jest.fn(implementation?)`** - Create mock function
 - **`jest.spyOn(object, methodName)`** - Spy on object method
-- **`jest.spyOn(object, methodName, accessType?)`** - Spy on getter/setter (`'get'` or `'set'`)
+- **`jest.spyOn(object, methodName, accessType?)`** - Spy on getter/setter
+  (`'get'` or `'set'`)
 
 **Mock properties:**
+
 - **`.mock.calls`** - Array of call arguments: `[[arg1, arg2], [arg3]]`
-- **`.mock.results`** - Array of return values: `[{type: 'return', value: x}, ...]`
+- **`.mock.results`** - Array of return values:
+  `[{type: 'return', value: x}, ...]`
 - **`.mock.instances`** - Instances created with `new`
 - **`.mock.contexts`** - `this` contexts for each call
 - **`.mock.invocationCallOrder`** - Order of mock calls
 
 **Mock implementations:**
+
 - **`.mockImplementation(fn)`** - Set implementation
 - **`.mockImplementationOnce(fn)`** - One-time implementation
 - **`.mockReturnValue(value)`** - Return value
@@ -120,6 +137,7 @@ await expect(promise).rejects.toThrow();
 ## Jest Object
 
 **Module mocking:**
+
 - **`jest.mock(moduleName, factory?, options?)`** - Mock module
 - **`jest.unmock(moduleName)`** - Unmock module
 - **`jest.doMock(moduleName, factory?, options?)`** - Mock (hoisted)
@@ -128,11 +146,13 @@ await expect(promise).rejects.toThrow();
 - **`jest.requireMock(moduleName)`** - Get mocked module
 
 **Mock management:**
+
 - **`jest.clearAllMocks()`** - Clear all mocks (calls/instances)
 - **`jest.resetAllMocks()`** - Reset all mocks (calls/instances/implementations)
 - **`jest.restoreAllMocks()`** - Restore all spies
 
 **Timers:**
+
 - **`jest.useFakeTimers()`** - Use fake timers
 - **`jest.useRealTimers()`** - Use real timers
 - **`jest.advanceTimersByTime(ms)`** - Advance timers
@@ -146,6 +166,7 @@ await expect(promise).rejects.toThrow();
 - **`jest.getRealSystemTime()`** - Get real system time
 
 **Other:**
+
 - **`jest.setTimeout(timeout)`** - Set test timeout
 - **`jest.retryTimes(numRetries, options?)`** - Retry failed tests
 
@@ -154,6 +175,7 @@ await expect(promise).rejects.toThrow();
 **Config file:** `jest.config.js` or `jest` key in `package.json`
 
 **Common options:**
+
 - **`testEnvironment`** - `'node'` | `'jsdom'` | `'jest-environment-node'`
 - **`testMatch`** - Array of glob patterns: `['**/__tests__/**/*.js']`
 - **`testPathIgnorePatterns`** - Array of regex patterns to ignore
@@ -172,20 +194,22 @@ await expect(promise).rejects.toThrow();
 - **`testEnvironmentOptions`** - Options for test environment
 
 **Example:**
+
 ```javascript
 module.exports = {
-  testEnvironment: 'node',
-  testMatch: ['**/tests/**/*.test.js'],
-  collectCoverageFrom: ['src/**/*.js'],
-  coverageDirectory: 'coverage',
-  verbose: true,
-  testTimeout: 10000,
+    testEnvironment: 'node',
+    testMatch: ['**/tests/**/*.test.js'],
+    collectCoverageFrom: ['src/**/*.js'],
+    coverageDirectory: 'coverage',
+    verbose: true,
+    testTimeout: 10000,
 };
 ```
 
 ## CLI Options
 
 **Common flags:**
+
 - **`--watch`** / **`-w`** - Watch mode
 - **`--coverage`** - Collect coverage
 - **`--runInBand`** / **`-i`** - Run serially (no workers)
@@ -202,6 +226,7 @@ module.exports = {
 - **`--clearCache`** - Clear cache
 
 **Examples:**
+
 ```bash
 jest --watch
 jest --coverage
@@ -219,31 +244,32 @@ jest --testPathPattern="code-style"
 ## Code Transformation
 
 **Transformers:**
+
 - **`babel-jest`** - Babel transformation
 - **`ts-jest`** - TypeScript transformation
 - **Custom transformer** - Function or module path
 
 **Configuration:**
+
 ```javascript
 module.exports = {
-  transform: {
-    '^.+\\.js$': 'babel-jest',
-    '^.+\\.ts$': 'ts-jest',
-  },
-  transformIgnorePatterns: [
-    'node_modules/(?!(module-to-transform)/)',
-  ],
+    transform: {
+        '^.+\\.js$': 'babel-jest',
+        '^.+\\.ts$': 'ts-jest',
+    },
+    transformIgnorePatterns: ['node_modules/(?!(module-to-transform)/)'],
 };
 ```
 
 **Transformer function:**
+
 ```javascript
 module.exports = {
-  transform: {
-    '^.+\\.custom$': (src, filename, config, options) => {
-      return transformedCode;
+    transform: {
+        '^.+\\.custom$': (src, filename, config, options) => {
+            return transformedCode;
+        },
     },
-  },
 };
 ```
 
@@ -263,21 +289,24 @@ module.exports = {
 ## Common Patterns
 
 **Async test:**
+
 ```javascript
 test('async operation', async () => {
-  const result = await asyncFunction();
-  expect(result).toBe(expected);
+    const result = await asyncFunction();
+    expect(result).toBe(expected);
 });
 ```
 
 **Mocking modules:**
+
 ```javascript
 jest.mock('./module', () => ({
-  functionName: jest.fn(),
+    functionName: jest.fn(),
 }));
 ```
 
 **Spying on methods:**
+
 ```javascript
 const spy = jest.spyOn(object, 'method');
 // ... test code ...
@@ -285,13 +314,15 @@ spy.mockRestore();
 ```
 
 **Testing errors:**
+
 ```javascript
 expect(() => {
-  throwError();
+    throwError();
 }).toThrow('Error message');
 ```
 
 **Testing promises:**
+
 ```javascript
 await expect(asyncFunction()).resolves.toBe(value);
 await expect(asyncFunction()).rejects.toThrow();
@@ -301,42 +332,52 @@ await expect(asyncFunction()).rejects.toThrow();
 
 ### Node.js 25 `--localstorage-file` Warning
 
-**Issue:** When running Jest tests with Node.js 25+, you may see the following warning:
+**Issue:** When running Jest tests with Node.js 25+, you may see the following
+warning:
+
 ```
 (node:xxxxx) Warning: `--localstorage-file` was provided without a valid path
 ```
 
-**Root Cause:** Jest's Node environment (`jest-environment-node`) accesses Node.js's webstorage API during test teardown. Node.js 25 requires the `--localstorage-file` flag to have a valid path when webstorage is accessed.
+**Root Cause:** Jest's Node environment (`jest-environment-node`) accesses
+Node.js's webstorage API during test teardown. Node.js 25 requires the
+`--localstorage-file` flag to have a valid path when webstorage is accessed.
 
-**Solution:** Provide a valid path for the `--localstorage-file` flag by setting `NODE_OPTIONS` in your test scripts:
+**Solution:** Provide a valid path for the `--localstorage-file` flag by setting
+`NODE_OPTIONS` in your test scripts:
 
 ```json
 {
-  "scripts": {
-    "test": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest",
-    "test:watch": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest --watch",
-    "test:coverage": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest --coverage"
-  }
+    "scripts": {
+        "test": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest",
+        "test:watch": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest --watch",
+        "test:coverage": "NODE_OPTIONS='--localstorage-file=.jest-localstorage' jest --coverage"
+    }
 }
 ```
 
 **Additional Steps:**
-1. Add `.jest-localstorage` to your `.gitignore` file to prevent committing the temporary file:
-   ```
-   .jest-localstorage
-   ```
 
-2. The file will be automatically created by Node.js when Jest accesses the webstorage API.
+1. Add `.jest-localstorage` to your `.gitignore` file to prevent committing the
+   temporary file:
 
-**Stack Trace Location:**
-The warning originates from:
+    ```
+    .jest-localstorage
+    ```
+
+2. The file will be automatically created by Node.js when Jest accesses the
+   webstorage API.
+
+**Stack Trace Location:** The warning originates from:
+
 - `node:internal/webstorage:32:25` - Node.js webstorage module
 - `jest-util/build/index.js:417:59` - `deleteProperties` function
 - `jest-environment-node/build/index.js:265:40` - `GlobalProxy.clear` method
-- `jest-environment-node/build/index.js:213:23` - `NodeEnvironment.teardown` method
+- `jest-environment-node/build/index.js:213:23` - `NodeEnvironment.teardown`
+  method
 
-**Verification:**
-To trace the warning source, use:
+**Verification:** To trace the warning source, use:
+
 ```bash
 NODE_OPTIONS='--trace-warnings' pnpm test
 ```

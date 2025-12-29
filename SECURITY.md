@@ -11,7 +11,8 @@ We actively support the following versions of sca-extra with security updates:
 
 ## Reporting a Vulnerability
 
-We take security vulnerabilities seriously. If you discover a security vulnerability, please report it responsibly.
+We take security vulnerabilities seriously. If you discover a security
+vulnerability, please report it responsibly.
 
 ### How to Report
 
@@ -20,15 +21,16 @@ We take security vulnerabilities seriously. If you discover a security vulnerabi
 Instead, please report security vulnerabilities by:
 
 1. **Email:** Send details to [security@starch.uk](mailto:security@starch.uk)
-   - Include "SECURITY" in the subject line
-   - Provide a clear description of the vulnerability
-   - Include steps to reproduce (if applicable)
-   - Suggest a fix (if you have one)
+    - Include "SECURITY" in the subject line
+    - Provide a clear description of the vulnerability
+    - Include steps to reproduce (if applicable)
+    - Suggest a fix (if you have one)
 
-2. **GitHub Security Advisory:** Use GitHub's private vulnerability reporting feature
-   - Go to the repository's Security tab
-   - Click "Report a vulnerability"
-   - Fill out the security advisory form
+2. **GitHub Security Advisory:** Use GitHub's private vulnerability reporting
+   feature
+    - Go to the repository's Security tab
+    - Click "Report a vulnerability"
+    - Fill out the security advisory form
 
 ### What to Include
 
@@ -39,13 +41,15 @@ When reporting a security vulnerability, please include:
 - **Steps to Reproduce:** Detailed steps to reproduce the issue
 - **Affected Versions:** Which versions are affected
 - **Suggested Fix:** If you have a suggested fix (optional but appreciated)
-- **Proof of Concept:** If applicable, include a proof of concept (but be careful not to include exploit code)
+- **Proof of Concept:** If applicable, include a proof of concept (but be
+  careful not to include exploit code)
 
 ### Response Time
 
 - **Initial Response:** We aim to respond within 7 days
 - **Status Update:** We will provide status updates within 28 days
-- **Resolution:** We will work to resolve critical vulnerabilities as quickly as possible
+- **Resolution:** We will work to resolve critical vulnerabilities as quickly as
+  possible
 
 ## Disclosure Policy
 
@@ -66,6 +70,7 @@ When reporting a security vulnerability, please include:
 ### Credit Policy
 
 Security researchers who responsibly report vulnerabilities will be:
+
 - Credited in security advisories (if desired)
 - Listed in release notes (if desired)
 - Acknowledged in project documentation (if desired)
@@ -76,10 +81,18 @@ Security researchers who responsibly report vulnerabilities will be:
 
 - **Dependency Management:** Keep dependencies up to date
 - **Code Review:** Review code for security issues
-- **Input Validation:** Validate all inputs, especially file paths from user input
-- **Script Security:** Scripts accepting file paths must use `sanitize-filename` package and validate paths to prevent path traversal attacks
-- **File System Operations:** Use file descriptors (`fs.openSync`, `fs.writeFileSync` with file descriptor) instead of file paths to prevent time-of-check to time-of-use (TOCTOU) race conditions. Never use `fs.existsSync()` before opening files - open files directly and handle errors if they don't exist
-- **Shell Command Execution:** Use `execFileSync` instead of `execSync` when passing dynamic paths or arguments to prevent shell command injection vulnerabilities
+- **Input Validation:** Validate all inputs, especially file paths from user
+  input
+- **Script Security:** Scripts accepting file paths must use `sanitize-filename`
+  package and validate paths to prevent path traversal attacks
+- **File System Operations:** Use file descriptors (`fs.openSync`,
+  `fs.writeFileSync` with file descriptor) instead of file paths to prevent
+  time-of-check to time-of-use (TOCTOU) race conditions. Never use
+  `fs.existsSync()` before opening files - open files directly and handle errors
+  if they don't exist
+- **Shell Command Execution:** Use `execFileSync` instead of `execSync` when
+  passing dynamic paths or arguments to prevent shell command injection
+  vulnerabilities
 - **Error Handling:** Don't expose sensitive information in error messages
 - **Secrets:** Never commit secrets, API keys, or credentials
 
@@ -111,4 +124,3 @@ For security-related questions or concerns:
 - **GitHub:** Use GitHub Security Advisory feature
 
 Thank you for helping keep sca-extra secure!
-
