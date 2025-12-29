@@ -7,12 +7,21 @@ const path = require('path');
  * Check for performance regressions in benchmark results
  */
 function checkPerformanceRegressions(resultsPath) {
-	if (!fs.existsSync(resultsPath)) {
+	const rootDir = path.join(__dirname, '..');
+	const safeResultsPath = path.resolve(rootDir, resultsPath);
+
+	// Ensure the resolved results path is within the repository root
+	if (!safeResultsPath.startsWith(rootDir + path.sep)) {
+		console.error(`❌ Invalid results path (outside project root): ${resultsPath}`);
+		process.exit(1);
+	}
+
+	if (!fs.existsSync(safeResultsPath)) {
 		console.error(`❌ Results file not found: ${resultsPath}`);
 		process.exit(1);
 	}
 
-	const results = JSON.parse(fs.readFileSync(resultsPath, 'utf-8'));
+	const results = JSON.parse(fs.readFileSync(safeResultsPath, 'utf-8'));
 	const baselinePath = path.join(
 		__dirname,
 		'..',
