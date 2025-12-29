@@ -317,12 +317,25 @@ function bumpRuleVersions() {
 			return;
 		}
 
-		const content = fs.readFileSync(rulePath, 'utf-8');
+		// Open file with file descriptor for both read and write to prevent race conditions
+		const fd = fs.openSync(rulePath, fs.constants.O_RDWR, 0o644);
+
+		let content;
+		try {
+			// Read content using file descriptor
+			content = fs.readFileSync(fd, 'utf-8');
+		} catch (error) {
+			fs.closeSync(fd);
+			console.warn(`⚠️  Could not read ${rulePath}: ${error.message}`);
+			return;
+		}
+
 		const ruleName = path.basename(rulePath, '.xml');
 
 		// Extract current version
 		const versionMatch = content.match(/Version:\s*(\d+)\.(\d+)\.(\d+)/);
 		if (!versionMatch) {
+			fs.closeSync(fd);
 			console.warn(`⚠️  No version found in ${rulePath}`);
 			return;
 		}
@@ -399,6 +412,7 @@ function bumpRuleVersions() {
 		if (headVersion && versionMatch[0] !== headVersion) {
 			// If current version matches target, it's already correctly bumped
 			if (currentVersion === targetVersion) {
+				fs.closeSync(fd);
 				console.log(
 					`⏭️  ${ruleName}: Version already correctly bumped from ${headVersion} to Version: ${targetVersion}, skipping`
 				);
@@ -410,14 +424,9 @@ function bumpRuleVersions() {
 			const oldVersion = versionMatch[0];
 			const newVersionLine = `Version: ${targetVersion}`;
 			const newContent = content.replace(oldVersion, newVersionLine);
-			const fd = fs.openSync(
-				rulePath,
-				fs.constants.O_CREAT |
-					fs.constants.O_WRONLY |
-					fs.constants.O_TRUNC,
-				0o644
-			);
 			try {
+				// Truncate file and write new content using same file descriptor
+				fs.ftruncateSync(fd, 0);
 				fs.writeFileSync(fd, newContent, { encoding: 'utf-8' });
 			} finally {
 				fs.closeSync(fd);
@@ -446,12 +455,9 @@ function bumpRuleVersions() {
 		// Replace version in content
 		const newContent = content.replace(oldVersion, newVersionLine);
 
-		const fd = fs.openSync(
-			rulePath,
-			fs.constants.O_CREAT | fs.constants.O_WRONLY | fs.constants.O_TRUNC,
-			0o644
-		);
 		try {
+			// Truncate file and write new content using same file descriptor
+			fs.ftruncateSync(fd, 0);
 			fs.writeFileSync(fd, newContent, { encoding: 'utf-8' });
 		} finally {
 			fs.closeSync(fd);
