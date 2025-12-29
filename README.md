@@ -16,7 +16,7 @@ This project provides a comprehensive set of PMD and Regex rules for Salesforce
 Apex code analysis. Most rules are implemented using XPath 3.1 expressions only
 (no custom Java classes), making them easy to understand, modify, and maintain.
 Some rules use the Regex engine for pattern-based matching (e.g.,
-`NoConsecutiveBlankLines`, `ProhibitSuppressWarnings`).
+`NoConsecutiveBlankLines`, `ProhibitSuppressWarnings`, `NoLongLines`).
 
 ## Configuring code-analyzer.yml
 
@@ -28,7 +28,7 @@ to customize your configuration.
 
 - Most rules are defined as XML rulesets under the `rulesets/` directory,
   grouped by category (see **Rule Categories** below for an overview).
-- Some rules (like `NoConsecutiveBlankLines` and `ProhibitSuppressWarnings`) are
+- Some rules (like `NoConsecutiveBlankLines`, `ProhibitSuppressWarnings`, and `NoLongLines`) are
   defined as Regex rules in the repository's `code-analyzer.yml` under
   `engines.regex.custom_rules`.
 - You can copy the entire `rulesets/` folder into your Salesforce project, or
@@ -852,21 +852,29 @@ public class Utils {
 Rules are organized into PMD's 8 standard categories (consistent across
 languages):
 
-- **best-practices/** - Generally accepted best practices (modifier rules, test
+- **best-practices/** - Generally accepted best practices (5 PMD rules: modifier rules, test
   class rules)
-- **code-style/** - Coding style enforcement (formatting, naming conventions,
+- **code-style/** - Coding style enforcement (20 PMD rules: formatting, naming conventions,
   code style patterns)
-- **design/** - Design issue detection (code structure, method signatures, class
+- **design/** - Design issue detection (16 PMD rules: code structure, method signatures, class
   organization)
-- **documentation/** - Code documentation rules
+- **documentation/** - Code documentation rules (2 PMD rules)
 - **error-prone/** - Broken/confusing/runtime-error-prone constructs (currently
   empty)
 - **multithreading/** - Multi-threaded execution issues (currently empty)
 - **performance/** - Suboptimal code detection (currently empty)
 - **security/** - Potential security flaws (currently empty)
 
+**Total: 43 PMD rules + 3 Regex rules = 46 rules**
+
+In addition to the PMD rules above, 3 Regex rules are provided:
+- `NoConsecutiveBlankLines` - Prevents consecutive blank lines
+- `ProhibitSuppressWarnings` - Prohibits suppression annotations and comments
+- `NoLongLines` - Enforces maximum line length of 80 characters
+
 For a complete list of all rules, see the `rulesets/` directory. Each rule XML
-file contains detailed descriptions and XPath expressions.
+file contains detailed descriptions and XPath expressions. Regex rules are
+defined in `code-analyzer.yml` under `engines.regex.custom_rules`.
 
 ## Development
 
@@ -1005,6 +1013,8 @@ guidelines on:
 - Testing requirements
 - Pull request process
 - Code style guidelines
+
+Please note that this project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
 
 ## Security
 

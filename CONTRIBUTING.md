@@ -331,7 +331,7 @@ Contributors will be credited in:
 
 ## Code of Conduct
 
-Please be respectful and constructive in all interactions. We aim to maintain a welcoming and inclusive community.
+This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please be respectful and constructive in all interactions. We aim to maintain a welcoming and inclusive community.
 
 Thank you for contributing to sca-extra!
 
