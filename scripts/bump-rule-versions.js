@@ -313,12 +313,15 @@ function bumpRuleVersions() {
 	let patchBumped = 0;
 
 	changedRules.forEach((rulePath) => {
-		if (!fs.existsSync(rulePath)) {
+		// Open file with file descriptor for both read and write to prevent race conditions
+		// Try to open the file directly without checking existence first to avoid TOCTOU race condition
+		let fd;
+		try {
+			fd = fs.openSync(rulePath, fs.constants.O_RDWR, 0o644);
+		} catch {
+			// File doesn't exist or can't be opened - skip this rule
 			return;
 		}
-
-		// Open file with file descriptor for both read and write to prevent race conditions
-		const fd = fs.openSync(rulePath, fs.constants.O_RDWR, 0o644);
 
 		let content;
 		try {
