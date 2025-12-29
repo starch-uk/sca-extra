@@ -235,8 +235,22 @@ async function benchmark() {
 
 	// Load baseline if exists
 	const baselinePath = path.join(resultsDir, 'baseline.json');
-	if (fs.existsSync(baselinePath)) {
-		const baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf-8'));
+	let baseline = null;
+	try {
+		// Try to open baseline file for reading using file descriptor to prevent race conditions
+		const baselineFd = fs.openSync(baselinePath, fs.constants.O_RDONLY);
+		try {
+			const baselineContent = fs.readFileSync(baselineFd, 'utf-8');
+			baseline = JSON.parse(baselineContent);
+		} finally {
+			fs.closeSync(baselineFd);
+		}
+	} catch {
+		// Baseline file doesn't exist or can't be read - this is expected for first run
+		baseline = null;
+	}
+
+	if (baseline) {
 		results.baselineTime = baseline.totalTime;
 
 		// Check for regressions (compare mean execution times after outlier removal)
