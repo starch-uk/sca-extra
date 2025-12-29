@@ -17,6 +17,13 @@
       "options": {
         "proseWrap": "preserve"
       }
+    },
+    {
+      "files": ["*.md", "*.mdc"],
+      "options": {
+        "parser": "markdown",
+        "useTabs": false
+      }
     }
   ]
 }

@@ -1,13 +1,15 @@
 # PMD Warning Suppression Guide for AI Agents
 
-Quick reference for suppressing PMD rule violations in Apex code. Use suppressions sparingly—prefer fixing issues or improving rules when possible.
+Quick reference for suppressing PMD rule violations in Apex code. Use
+suppressions sparingly—prefer fixing issues or improving rules when possible.
 
 ## Suppression Methods (Priority Order)
 
 1. **Fix the issue or improve the rule** (preferred)
 2. **Annotations** - Class/method level
 3. **NOPMD comment** - Line level
-4. **Rule properties** - Global suppression via `violationSuppressRegex` or `violationSuppressXPath`
+4. **Rule properties** - Global suppression via `violationSuppressRegex` or
+   `violationSuppressXPath`
 
 ## Annotations
 
@@ -41,7 +43,8 @@ public class MyClass {
 }
 ```
 
-**Note:** Apex uses single quotes and comma-separated values (not JSON array syntax like Java).
+**Note:** Apex uses single quotes and comma-separated values (not JSON array
+syntax like Java).
 
 ## NOPMD Comment
 
@@ -53,7 +56,8 @@ public class MyClass {
 }
 ```
 
-**Important:** The `// NOPMD` marker must be on the same line as the violation. Optional message after marker appears in reports:
+**Important:** The `// NOPMD` marker must be on the same line as the violation.
+Optional message after marker appears in reports:
 
 ```apex
 if (condition) { // NOPMD - temporary workaround
@@ -70,7 +74,9 @@ sf code-analyzer run --suppress-marker "TURN_OFF_WARNINGS"
 
 ## Rule Properties (Global Suppression)
 
-**Important:** Salesforce Code Analyzer does not support property overrides via `code-analyzer.yml`. Configure suppression properties via custom ruleset XML files using `ref=` syntax.
+**Important:** Salesforce Code Analyzer does not support property overrides via
+`code-analyzer.yml`. Configure suppression properties via custom ruleset XML
+files using `ref=` syntax.
 
 Create a custom ruleset XML file to suppress violations matching patterns.
 
@@ -78,9 +84,12 @@ Create a custom ruleset XML file to suppress violations matching patterns.
 
 Suppress violations where the message matches a regex:
 
-**Important:** Salesforce Code Analyzer does not support property overrides via `code-analyzer.yml`. Configure suppression properties via custom ruleset XML files.
+**Important:** Salesforce Code Analyzer does not support property overrides via
+`code-analyzer.yml`. Configure suppression properties via custom ruleset XML
+files.
 
 **Custom ruleset XML:**
+
 ```xml
 <rule ref="category/apex/bestpractices.xml/UnusedFormalParameter">
     <properties>
@@ -92,6 +101,7 @@ Suppress violations where the message matches a regex:
 ```
 
 **For custom rules:**
+
 ```xml
 <rule ref="rulesets/design/SomeRule.xml/SomeRule">
     <properties>
@@ -104,13 +114,17 @@ Suppress violations where the message matches a regex:
 
 ### violationSuppressXPath
 
-Suppress violations where XPath query matches (XPath 3.1, context node is the violation node):
+Suppress violations where XPath query matches (XPath 3.1, context node is the
+violation node):
 
-**Important:** Salesforce Code Analyzer does not support property overrides via `code-analyzer.yml`. Configure suppression properties via custom ruleset XML files.
+**Important:** Salesforce Code Analyzer does not support property overrides via
+`code-analyzer.yml`. Configure suppression properties via custom ruleset XML
+files.
 
 **Custom ruleset XML:**
+
 ```xml
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <ruleset
     name="Suppression Rules"
     xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
@@ -118,7 +132,7 @@ Suppress violations where XPath query matches (XPath 3.1, context node is the vi
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
 >
     <description>Suppression rules for specific patterns</description>
-    
+
     <!-- Suppress String parameters -->
     <rule ref="category/apex/bestpractices.xml/UnusedFormalParameter">
         <properties>
@@ -127,30 +141,36 @@ Suppress violations where XPath query matches (XPath 3.1, context node is the vi
             </property>
         </properties>
     </rule>
-    
+
     <!-- Suppress in classes containing "Bean" -->
     <rule ref="rulesets/design/SomeRule.xml/SomeRule">
         <properties>
             <property name="violationSuppressXPath">
-                <value>./ancestor-or-self::ClassDeclaration[contains(@SimpleName, 'Bean')]</value>
+                <value>
+                    ./ancestor-or-self::ClassDeclaration[contains(@SimpleName, 'Bean')]
+                </value>
             </property>
         </properties>
     </rule>
-    
+
     <!-- Suppress in equals/hashCode methods -->
     <rule ref="rulesets/design/AnotherRule.xml/AnotherRule">
         <properties>
             <property name="violationSuppressXPath">
-                <value>./ancestor-or-self::MethodDeclaration[@Name = ('equals', 'hashCode')]</value>
+                <value>
+                    ./ancestor-or-self::MethodDeclaration[@Name = ('equals', 'hashCode')]
+                </value>
             </property>
         </properties>
     </rule>
-    
+
     <!-- Suppress in classes ending with "Bean" (regex match) -->
     <rule ref="rulesets/design/YetAnotherRule.xml/YetAnotherRule">
         <properties>
             <property name="violationSuppressXPath">
-                <value>./ancestor-or-self::ClassDeclaration[matches(@SimpleName, '^.*Bean$')]</value>
+                <value>
+                    ./ancestor-or-self::ClassDeclaration[matches(@SimpleName, '^.*Bean$')]
+                </value>
             </property>
         </properties>
     </rule>
@@ -158,17 +178,19 @@ Suppress violations where XPath query matches (XPath 3.1, context node is the vi
 ```
 
 Then reference in `code-analyzer.yml`:
+
 ```yaml
 engines:
-  pmd:
-    custom_rulesets:
-      - rulesets/design/SomeRule.xml
-      - rulesets/design/AnotherRule.xml
-      - rulesets/design/YetAnotherRule.xml
-      - rulesets/suppression-rules.xml  # Custom suppression ruleset
+    pmd:
+        custom_rulesets:
+            - rulesets/design/SomeRule.xml
+            - rulesets/design/AnotherRule.xml
+            - rulesets/design/YetAnotherRule.xml
+            - rulesets/suppression-rules.xml # Custom suppression ruleset
 ```
 
 **XPath Notes:**
+
 - Use `.` to reference the context node (the violation node)
 - Prefer `./ancestor-or-self::` over `//` to avoid over-suppressing
 - Context node varies by rule (check rule implementation)
@@ -176,15 +198,21 @@ engines:
 
 ## Best Practices
 
-1. **Fix or improve rules first** - Suppressions hide issues; better to fix root cause
-2. **Be specific** - Suppress only what's necessary (specific rules, not all PMD warnings)
+1. **Fix or improve rules first** - Suppressions hide issues; better to fix root
+   cause
+2. **Be specific** - Suppress only what's necessary (specific rules, not all PMD
+   warnings)
 3. **Document why** - Add comments explaining suppression reason
-4. **Review periodically** - Suppressions may become unnecessary after code/rule changes
+4. **Review periodically** - Suppressions may become unnecessary after code/rule
+   changes
 
 ## Related Documentation
 
-- **[PMD Quick Reference](PMD.md)** - PMD essentials (includes CPD suppression via `CPD-OFF`/`CPD-ON`)
-- **[AI Agent Rule Guide](AI_AGENT_RULE_GUIDE.md)** - Rule configuration and examples
-- **[XPath 3.1 Reference](XPATH31.md)** - XPath syntax for `violationSuppressXPath`
-- **[PMD Apex AST Reference](APEX_PMD_AST.md)** - Understanding violation node types
-
+- **[PMD Quick Reference](PMD.md)** - PMD essentials (includes CPD suppression
+  via `CPD-OFF`/`CPD-ON`)
+- **[AI Agent Rule Guide](AI_AGENT_RULE_GUIDE.md)** - Rule configuration and
+  examples
+- **[XPath 3.1 Reference](XPATH31.md)** - XPath syntax for
+  `violationSuppressXPath`
+- **[PMD Apex AST Reference](APEX_PMD_AST.md)** - Understanding violation node
+  types

@@ -1,14 +1,20 @@
 # Benchmark Fixtures
 
-This directory contains comprehensive stress-test fixtures designed to benchmark PMD rule performance.
+This directory contains comprehensive stress-test fixtures designed to benchmark
+PMD rule performance.
 
 ## Fixture Files
 
 ### `stress-test-all-rules.cls`
-A comprehensive fixture containing violations across all rule categories. This file is designed to stress test the entire rule set simultaneously.
+
+A comprehensive fixture containing violations across all rule categories. This
+file is designed to stress test the entire rule set simultaneously.
 
 ### `stress-code-style.cls`
-Focused stress test for code-style rules (including naming) with 300+ violations:
+
+Focused stress test for code-style rules (including naming) with 300+
+violations:
+
 - AvoidOneLinerMethods (10 violations)
 - ListInitializationMustBeMultiLine (10 violations)
 - MapInitializationMustBeMultiLine (10 violations)
@@ -30,10 +36,14 @@ Focused stress test for code-style rules (including naming) with 300+ violations
 - VariablesMustNotShareNamesWithClasses (10 violations)
 - InnerClassesMustBeOneWord (5 violations)
 
-**Note:** NoConsecutiveBlankLines is a Regex rule (not PMD), so it's not included in PMD benchmark fixtures.
+**Note:** NoConsecutiveBlankLines is a Regex rule (not PMD), so it's not
+included in PMD benchmark fixtures.
 
 ### `stress-design.cls`
-Focused stress test for design rules (structure + method signatures) with 130+ violations:
+
+Focused stress test for design rules (structure + method signatures) with 130+
+violations:
+
 - InnerClassesCannotBeStatic (1 violation)
 - InnerClassesCannotHaveStaticMembers (2 violations)
 - InnerClassesMustBeOneWord (2 violations)
@@ -52,7 +62,9 @@ Focused stress test for design rules (structure + method signatures) with 130+ v
 - SingleParameterMustBeSingleLine (15 violations)
 
 ### `stress-best-practices.cls`
+
 Focused stress test for best practices rules (modifiers) with 100+ violations:
+
 - StaticVariablesMustBeFinalAndScreamingSnakeCase (20 violations)
 - RegexPatternsMustBeStaticFinal (20 violations)
 - FinalVariablesMustBeFinal (20 violations)
@@ -82,7 +94,9 @@ pnpm benchmark -- --json
 ## Performance Characteristics
 
 These fixtures are designed to:
-1. **Stress test XPath expressions** - Complex nested structures challenge XPath performance
+
+1. **Stress test XPath expressions** - Complex nested structures challenge XPath
+   performance
 2. **Trigger multiple violations** - Each rule is tested with many violations
 3. **Simulate real-world code** - Patterns reflect common Apex code issues
 4. **Measure scalability** - Large files test rule performance at scale
@@ -90,8 +104,8 @@ These fixtures are designed to:
 ## Benchmark Results
 
 Results are saved to `benchmarks/results/` and include:
+
 - Execution time per rule
 - Number of violations detected
 - Performance regression detection
 - Comparison against baseline
-

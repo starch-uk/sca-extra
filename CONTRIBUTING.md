@@ -1,10 +1,13 @@
 # Contributing to sca-extra
 
-Thank you for your interest in contributing to sca-extra! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to sca-extra! This document provides
+guidelines and instructions for contributing to the project.
 
 ## Welcome
 
-We appreciate your interest in improving sca-extra. Your contributions help make this project better for everyone. Please take a moment to review this guide before submitting contributions.
+We appreciate your interest in improving sca-extra. Your contributions help make
+this project better for everyone. Please take a moment to review this guide
+before submitting contributions.
 
 ## Development Setup
 
@@ -18,22 +21,26 @@ We appreciate your interest in improving sca-extra. Your contributions help make
 ### Installation
 
 1. **Fork the repository**
-   ```bash
-   git clone https://github.com/starch-uk/sca-extra.git
-   cd sca-extra
-   ```
+
+    ```bash
+    git clone https://github.com/starch-uk/sca-extra.git
+    cd sca-extra
+    ```
 
 2. **Install dependencies**
-   ```bash
-   pnpm install
-   ```
+
+    ```bash
+    pnpm install
+    ```
 
 3. **Set up pre-commit hooks**
-   ```bash
-   pnpm prepare
-   ```
-   
-   For more information about Husky v9 and Git hooks, see [Husky v9 Reference](docs/HUSKY9.md).
+
+    ```bash
+    pnpm prepare
+    ```
+
+    For more information about Husky v9 and Git hooks, see
+    [Husky v9 Reference](docs/HUSKY9.md).
 
 ### Running Tests Locally
 
@@ -43,7 +50,8 @@ pnpm test:watch    # Run tests in watch mode
 pnpm test:coverage # Run tests with coverage report
 ```
 
-For Jest API reference when writing tests, see [Jest 30.0 Reference](docs/JEST30.md).
+For Jest API reference when writing tests, see
+[Jest 30.0 Reference](docs/JEST30.md).
 
 ### Running Benchmarks
 
@@ -57,114 +65,133 @@ pnpm check-regressions # Check for performance regressions
 ### Step-by-Step Guide
 
 1. **Choose the appropriate category**
-   - `code-style/` - Code style and formatting rules
-   - `documentation/` - Documentation quality rules
-   - `best-practices/` - Generally accepted best practices
-   - `code-style/` - Coding style enforcement (including naming)
-   - `design/` - Design issue detection (structure, method signatures)
-   - `documentation/` - Code documentation rules
-   - `error-prone/` - Broken/confusing/runtime-error-prone constructs
-   - `multithreading/` - Multi-threaded execution issues
-   - `performance/` - Suboptimal code detection
-   - `security/` - Potential security flaws
+    - `code-style/` - Code style and formatting rules
+    - `documentation/` - Documentation quality rules
+    - `best-practices/` - Generally accepted best practices
+    - `code-style/` - Coding style enforcement (including naming)
+    - `design/` - Design issue detection (structure, method signatures)
+    - `documentation/` - Code documentation rules
+    - `error-prone/` - Broken/confusing/runtime-error-prone constructs
+    - `multithreading/` - Multi-threaded execution issues
+    - `performance/` - Suboptimal code detection
+    - `security/` - Potential security flaws
 
 2. **Create the rule XML file**
-   - File name should match the rule name (PascalCase)
-   - Example: `rulesets/design/MyNewRule.xml`
+    - File name should match the rule name (PascalCase)
+    - Example: `rulesets/design/MyNewRule.xml`
 
 3. **Follow the rule template**
 
-   **Note:** This template follows the [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd). The `<example>` element is optional but recommended, and multiple examples are supported.
+    **Note:** This template follows the
+    [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd). The
+    `<example>` element is optional but recommended, and multiple examples are
+    supported.
 
-   **Important:** Element order matters! The XSD schema requires elements in this specific order within `<rule>`:
-   1. `<description>` (optional)
-   2. `<priority>` (optional)
-   3. `<properties>` (optional)
-   4. `<exclude>` (optional, can appear multiple times)
-   5. `<example>` (optional, can appear multiple times)
+    **Important:** Element order matters! The XSD schema requires elements in
+    this specific order within `<rule>`:
+    1. `<description>` (optional)
+    2. `<priority>` (optional)
+    3. `<properties>` (optional)
+    4. `<exclude>` (optional, can appear multiple times)
+    5. `<example>` (optional, can appear multiple times)
 
-   Use the provided scripts to ensure correct element order:
-   - `pnpm check-xml-order` - Check if element order is correct
-   - `pnpm fix-xml-order` - Automatically fix element order
+    Use the provided scripts to ensure correct element order:
+    - `pnpm check-xml-order` - Check if element order is correct
+    - `pnpm fix-xml-order` - Automatically fix element order
 
-   ```xml
-   <?xml version="1.0" ?>
-   <ruleset
-       name="Category Name"
-       xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
-   >
-       <description>Category description</description>
+    ```xml
+    <?xml version="1.0" ?>
+    <ruleset
+        name="Category Name"
+        xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+    >
+        <description>Category description</description>
 
-       <rule
-           name="RuleName"
-           language="apex"
-           message="User-friendly violation message"
-           class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
-       >
-           <description>
-               Detailed description explaining what the rule checks and why it exists.
-               Include examples of violations if helpful.
-               
-               To customize this rule, edit the configurable values in the XPath expression (if applicable).
-               
-               Version: 1.0.0
-           </description>
-           <priority>1-5</priority>
-           <properties>
-               <property name="xpath">
-                   <value><![CDATA[
-                   //XPath expression
-                   // For rules with configurable thresholds, use let expressions:
-                   // let $threshold := 3
-                   // return count(*) >= $threshold
-                   ]]></value>
-               </property>
-           </properties>
-           <!-- Multiple examples are supported (per PMD Ruleset XML Schema) -->
-           <example>
-               <![CDATA[
-               // Violation: Code that triggers the rule
-               public void badExample() {
-                   // ...
-               }
-               
-               // Valid: Code that doesn't trigger the rule
-               public void goodExample() {
-                   // ...
-               }
-               ]]>
-           </example>
-       </rule>
-   </ruleset>
-   ```
+        <rule
+            name="RuleName"
+            language="apex"
+            message="User-friendly violation message"
+            class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+        >
+            <description>
+                Detailed description explaining what the rule checks and why it
+                exists.
+                Include examples of violations if helpful.
+                
+                To customize this rule, edit the configurable values in the
+                XPath expression (if applicable).
+                
+                Version: 1.0.0
+            </description>
+            <priority>1-5</priority>
+            <properties>
+                <property name="xpath">
+                    <value><![CDATA[
+                    //XPath expression
+                    // For rules with configurable thresholds, use let expressions:
+                    // let $threshold := 3
+                    // return count(*) >= $threshold
+                    ]]></value>
+                </property>
+            </properties>
+            <!-- Multiple examples are supported (per PMD Ruleset XML Schema) -->
+            <example>
+                <![CDATA[
+                // Violation: Code that triggers the rule
+                public void badExample() {
+                    // ...
+                }
+                
+                // Valid: Code that doesn't trigger the rule
+                public void goodExample() {
+                    // ...
+                }
+                ]]>
+            </example>
+        </rule>
+    </ruleset>
+    ```
 
 4. **Rule Requirements**
-   - **XPath Only**: All rules MUST use XPath 3.1 expressions only. No custom Java classes.
-   - **Clear Naming**: Use PascalCase and descriptive names (e.g., `NoSingleLetterVariableNames`)
-   - **Comprehensive Description**: Include what the rule checks, why it exists, and examples
-   - **Examples**: Include `<example>` elements showing violations and valid code (per [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd))
-   - **Versioning**: Include version in description (semantic versioning: major.minor.patch)
-   - **Easy to Edit**: Use variables at the top of XPath expressions for configurable thresholds (e.g., `let $minValues := 3`)
+    - **XPath Only**: All rules MUST use XPath 3.1 expressions only. No custom
+      Java classes.
+    - **Clear Naming**: Use PascalCase and descriptive names (e.g.,
+      `NoSingleLetterVariableNames`)
+    - **Comprehensive Description**: Include what the rule checks, why it
+      exists, and examples
+    - **Examples**: Include `<example>` elements showing violations and valid
+      code (per
+      [PMD Ruleset XML Schema](https://pmd.sourceforge.io/ruleset_2_0_0.xsd))
+    - **Versioning**: Include version in description (semantic versioning:
+      major.minor.patch)
+    - **Easy to Edit**: Use variables at the top of XPath expressions for
+      configurable thresholds (e.g., `let $minValues := 3`)
 
 5. **Write tests**
-   - Create positive test case: `tests/fixtures/positive/{category}/{RuleName}.cls`
-   - Create negative test case: `tests/fixtures/negative/{category}/{RuleName}.cls`
-   - Write unit test: `tests/unit/{category}.test.js`
+    - Create positive test case:
+      `tests/fixtures/positive/{category}/{RuleName}.cls`
+    - Create negative test case:
+      `tests/fixtures/negative/{category}/{RuleName}.cls`
+    - Write unit test: `tests/unit/{category}.test.js`
 
 6. **Validate the rule**
-   ```bash
-   pnpm validate        # Validate XML syntax and rule quality
-   pnpm check-xml-order # Check XML element order
-   pnpm test            # Run tests
-   ```
-   
-   **Note:** The `check-xml-order` script verifies that elements within `<rule>` follow the XSD schema order: `description` → `priority` → `properties` → `exclude` → `example`. If the order is incorrect, use `pnpm fix-xml-order` to automatically fix it.
+
+    ```bash
+    pnpm validate        # Validate XML syntax and rule quality
+    pnpm check-xml-order # Check XML element order
+    pnpm test            # Run tests
+    ```
+
+    **Note:** The `check-xml-order` script verifies that elements within
+    `<rule>` follow the XSD schema order: `description` → `priority` →
+    `properties` → `exclude` → `example`. If the order is incorrect, use
+    `pnpm fix-xml-order` to automatically fix it.
 
 7. **Document the rule**
-   - Add rule documentation to `README.md` with examples
-   - Update `docs/AI_AGENT_RULE_GUIDE.md` with rule details
+    - Add rule documentation to `README.md` with examples
+    - Update `docs/AI_AGENT_RULE_GUIDE.md` with rule details
 
 ### Rule Naming Conventions
 
@@ -178,18 +205,19 @@ pnpm check-regressions # Check for performance regressions
 ### All Rules Must Have:
 
 1. **Positive Test Cases** - Code that should NOT trigger the rule
-   - Verify rule doesn't produce false positives
-   - Test edge cases and exceptions
+    - Verify rule doesn't produce false positives
+    - Test edge cases and exceptions
 
 2. **Negative Test Cases** - Code that SHOULD trigger the rule
-   - Verify rule detects violations correctly
-   - Test at correct line numbers
-   - Test multiple violations in same file
+    - Verify rule detects violations correctly
+    - Test at correct line numbers
+    - Test multiple violations in same file
 
 3. **Unit Tests** - Automated test cases
-   - Use test helper functions: `runPMD`, `parseViolations`, `assertViolation`, `assertNoViolations`
-   - Test both positive and negative cases
-   - See [Jest 30.0 Reference](docs/JEST30.md) for Jest API usage
+    - Use test helper functions: `runPMD`, `parseViolations`, `assertViolation`,
+      `assertNoViolations`
+    - Test both positive and negative cases
+    - See [Jest 30.0 Reference](docs/JEST30.md) for Jest API usage
 
 ### Test Coverage Expectations
 
@@ -211,7 +239,8 @@ For Jest API reference, see [Jest 30.0 Reference](docs/JEST30.md).
 
 ### Branch Naming
 
-- Use descriptive branch names: `feature/add-new-rule`, `fix/rule-bug`, `docs/update-readme`
+- Use descriptive branch names: `feature/add-new-rule`, `fix/rule-bug`,
+  `docs/update-readme`
 - Prefix with type: `feature/`, `fix/`, `docs/`, `refactor/`
 
 ### Commit Message Format
@@ -227,6 +256,7 @@ feat: Add NoMethodCallsInConditionals rule
 ```
 
 **Commit Types:**
+
 - `feat:` - New feature (rule, functionality)
 - `fix:` - Bug fix
 - `docs:` - Documentation changes
@@ -255,27 +285,28 @@ Before submitting a pull request, ensure:
 ### Review Process
 
 1. **Automated Checks**
-   - GitHub Actions will run:
-     - Formatting check (Prettier)
-     - Linting (ESLint)
-     - Unit tests
-     - Benchmarking (if applicable)
+    - GitHub Actions will run:
+        - Formatting check (Prettier)
+        - Linting (ESLint)
+        - Unit tests
+        - Benchmarking (if applicable)
 
 2. **Code Review**
-   - Maintainers will review your PR
-   - Address any feedback or requested changes
-   - Ensure all checks pass
+    - Maintainers will review your PR
+    - Address any feedback or requested changes
+    - Ensure all checks pass
 
 3. **Approval and Merge**
-   - Once approved, your PR will be merged
-   - Thank you for your contribution!
+    - Once approved, your PR will be merged
+    - Thank you for your contribution!
 
 ## Code Style
 
 ### XML Formatting
 
 - All XML files are automatically formatted with Prettier
-- Pre-commit hook ensures formatting before commit (see [Husky v9 Reference](docs/HUSKY9.md) for Git hooks setup)
+- Pre-commit hook ensures formatting before commit (see
+  [Husky v9 Reference](docs/HUSKY9.md) for Git hooks setup)
 - Run `pnpm format` to format manually
 
 ### JavaScript/TypeScript Style
@@ -293,7 +324,8 @@ Before submitting a pull request, ensure:
 
 ## Community-Contributed Rules
 
-We welcome community-contributed rules! All community rules must meet the same requirements as core rules:
+We welcome community-contributed rules! All community rules must meet the same
+requirements as core rules:
 
 - Must use XPath only (no custom Java classes)
 - Must have clear names and comprehensive descriptions
@@ -303,14 +335,15 @@ We welcome community-contributed rules! All community rules must meet the same r
 
 ### Proposing New Rules
 
-1. **Create an issue** using the [Rule Request template](.github/ISSUE_TEMPLATE/rule_request.md)
-   - Provide motivation and examples
-   - Include violation and valid code examples
-   - Specify category and priority
+1. **Create an issue** using the
+   [Rule Request template](.github/ISSUE_TEMPLATE/rule_request.md)
+    - Provide motivation and examples
+    - Include violation and valid code examples
+    - Specify category and priority
 
 2. **Wait for feedback** from maintainers
-   - Rule may need refinement
-   - May be better suited as a different type of check
+    - Rule may need refinement
+    - May be better suited as a different type of check
 
 3. **Implement the rule** following the guidelines above
 
@@ -319,6 +352,7 @@ We welcome community-contributed rules! All community rules must meet the same r
 ### Attribution
 
 Contributors will be credited in:
+
 - Git commit history
 - Release notes
 - Project documentation (if applicable)
@@ -329,9 +363,22 @@ Contributors will be credited in:
 - **Discussions:** Use GitHub Discussions for questions
 - **Documentation:** See [README.md](README.md) and [docs/](docs/) directory
 
+### Code Analyzer Usage Documentation
+
+For information on using Salesforce Code Analyzer:
+
+- **[Salesforce CLI Commands](docs/SFCLI.md)** - Using Code Analyzer via CLI
+- **[VS Code Extension](docs/VSCODE.md)** - Using Code Analyzer in VS Code
+- **[CI/CD Integration](docs/CICD.md)** - Integrating into CI/CD pipelines
+- **[MCP Tools](docs/MCP.md)** - Using Model Context Protocol tools
+- **[Code Analyzer Configuration](docs/CODE_ANALYZER_CONFIG.md)** - Complete
+  configuration reference
+
 ## Code of Conduct
 
-This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please be respectful and constructive in all interactions. We aim to maintain a welcoming and inclusive community.
+This project adheres to the
+[Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating,
+you are expected to uphold this code. Please be respectful and constructive in
+all interactions. We aim to maintain a welcoming and inclusive community.
 
 Thank you for contributing to sca-extra!
-

@@ -23,7 +23,7 @@ Rule versions are documented in the rule XML file's description:
 
 ```xml
 <description>
-	Rule description here.
+    Rule description here.
     
     Version: 1.2.3
 </description>
@@ -199,13 +199,13 @@ files.
 
 ```xml
 <rule
-	ref="rulesets/code-style/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames"
+    ref="rulesets/code-style/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames"
 >
-	<properties>
-		<property name="allowedNames">
-			<value>i,c</value>
-		</property>
-	</properties>
+    <properties>
+        <property name="allowedNames">
+            <value>i,c</value>
+        </property>
+    </properties>
 </rule>
 ```
 
@@ -213,14 +213,14 @@ files.
 
 ```xml
 <rule
-	ref="rulesets/code-style/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames"
+    ref="rulesets/code-style/NoSingleLetterVariableNames.xml/NoSingleLetterVariableNames"
 >
-	<properties>
-		<property name="allowedNames">
-			<value>i,c,e</value>
-			<!-- Explicitly allow exception variable -->
-		</property>
-	</properties>
+    <properties>
+        <property name="allowedNames">
+            <value>i,c,e</value>
+            <!-- Explicitly allow exception variable -->
+        </property>
+    </properties>
 </rule>
 ```
 
@@ -254,7 +254,7 @@ To find configurable variables in a rule:
 
 ```xml
 <property name="xpath">
-	<value>
+    <value>
         <![CDATA[
         let $minCalls := 2
         return //StandardCondition[
@@ -284,7 +284,7 @@ To customize a rule's behavior:
 
 ```xml
 <property name="xpath">
-	<value>
+    <value>
         <![CDATA[
         let $minCalls := 2
         return //StandardCondition[...]
@@ -297,7 +297,7 @@ To customize a rule's behavior:
 
 ```xml
 <property name="xpath">
-	<value>
+    <value>
         <![CDATA[
         let $minCalls := 3
         return //StandardCondition[...]
@@ -443,7 +443,7 @@ custom rule copy.
 
 ```xml
 <property name="xpath">
-	<value>
+    <value>
         <![CDATA[
         <!-- Customized: Increased from default 2 to 3 for our codebase -->
         let $minItems := 3
@@ -477,11 +477,11 @@ If a property is renamed, update your custom ruleset XML file:
 
 ```xml
 <rule ref="rulesets/category/RuleName.xml/RuleName">
-	<properties>
-		<property name="oldPropertyName">
-			<value>value</value>
-		</property>
-	</properties>
+    <properties>
+        <property name="oldPropertyName">
+            <value>value</value>
+        </property>
+    </properties>
 </rule>
 ```
 
@@ -489,12 +489,12 @@ If a property is renamed, update your custom ruleset XML file:
 
 ```xml
 <rule ref="rulesets/category/RuleName.xml/RuleName">
-	<properties>
-		<property name="newPropertyName">
-			<value>value</value>
-			<!-- Updated property name -->
-		</property>
-	</properties>
+    <properties>
+        <property name="newPropertyName">
+            <value>value</value>
+            <!-- Updated property name -->
+        </property>
+    </properties>
 </rule>
 ```
 

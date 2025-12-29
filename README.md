@@ -28,9 +28,9 @@ to customize your configuration.
 
 - Most rules are defined as XML rulesets under the `rulesets/` directory,
   grouped by category (see **Rule Categories** below for an overview).
-- Some rules (like `NoConsecutiveBlankLines`, `ProhibitSuppressWarnings`, and `NoLongLines`) are
-  defined as Regex rules in the repository's `code-analyzer.yml` under
-  `engines.regex.custom_rules`.
+- Some rules (like `NoConsecutiveBlankLines`, `ProhibitSuppressWarnings`, and
+  `NoLongLines`) are defined as Regex rules in the repository's
+  `code-analyzer.yml` under `engines.regex.custom_rules`.
 - You can copy the entire `rulesets/` folder into your Salesforce project, or
   just the specific category folders you want to enable.
 
@@ -125,7 +125,7 @@ the XPath expression:
 
 ```xml
 <property name="xpath">
-	<value>
+    <value>
         <![CDATA[
         let $minValues := 3  <!-- Change this value -->
         return //UserEnum[
@@ -140,7 +140,7 @@ Change `3` to `4`:
 
 ```xml
 <property name="xpath">
-	<value>
+    <value>
         <![CDATA[
         let $minValues := 4  <!-- Changed from 3 to 4 -->
         return //UserEnum[
@@ -159,7 +159,7 @@ top:
 
 ```xml
 <property name="xpath">
-	<value><![CDATA[
+    <value><![CDATA[
         let $disallowedAbbreviations := 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val',
             $allowedSuffixes := 'Api,Html,Id,Url',
             $allowedPrefixes := 'test'
@@ -174,7 +174,7 @@ To only flag `ctx` and `idx`, change the `$disallowedAbbreviations` variable:
 
 ```xml
 <property name="xpath">
-	<value><![CDATA[
+    <value><![CDATA[
         let $disallowedAbbreviations := 'ctx,idx',  <!-- Changed to only flag ctx and idx -->
             $allowedSuffixes := 'Api,Html,Id,Url',
             $allowedPrefixes := 'test'
@@ -221,18 +221,18 @@ file that references the category but excludes specific rules:
 ```xml
 <?xml version="1.0" ?>
 <ruleset name="CustomPMDRules" xmlns="http://pmd.sourceforge.net/ruleset/2.0.0">
-	<description>Custom PMD rules with some defaults disabled</description>
+    <description>Custom PMD rules with some defaults disabled</description>
 
-	<!-- Include standard security rules, but exclude ApexCRUDViolation -->
-	<rule ref="category/apex/security.xml">
-		<exclude name="ApexCRUDViolation" />
-	</rule>
+    <!-- Include standard security rules, but exclude ApexCRUDViolation -->
+    <rule ref="category/apex/security.xml">
+        <exclude name="ApexCRUDViolation" />
+    </rule>
 
-	<!-- Include best practices, but exclude specific rules -->
-	<rule ref="category/apex/bestpractices.xml">
-		<exclude name="DebugsShouldUseLoggingLevel" />
-		<exclude name="ApexUnitTestClassShouldHaveRunAs" />
-	</rule>
+    <!-- Include best practices, but exclude specific rules -->
+    <rule ref="category/apex/bestpractices.xml">
+        <exclude name="DebugsShouldUseLoggingLevel" />
+        <exclude name="ApexUnitTestClassShouldHaveRunAs" />
+    </rule>
 </ruleset>
 ```
 
@@ -256,26 +256,26 @@ custom rulesets from this repository are typically referenced separately in
 ```xml
 <?xml version="1.0" ?>
 <ruleset
-	name="ComprehensiveRules"
-	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    name="ComprehensiveRules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
 >
-	<description>Standard PMD rules with custom exclusions</description>
+    <description>Standard PMD rules with custom exclusions</description>
 
-	<!-- Standard PMD rules with some disabled -->
-	<rule ref="category/apex/security.xml">
-		<priority>1</priority>
-		<exclude name="ApexCRUDViolation" />
-	</rule>
+    <!-- Standard PMD rules with some disabled -->
+    <rule ref="category/apex/security.xml">
+        <priority>1</priority>
+        <exclude name="ApexCRUDViolation" />
+    </rule>
 
-	<rule ref="category/apex/bestpractices.xml">
-		<priority>2</priority>
-		<exclude name="DebugsShouldUseLoggingLevel" />
-	</rule>
+    <rule ref="category/apex/bestpractices.xml">
+        <priority>2</priority>
+        <exclude name="DebugsShouldUseLoggingLevel" />
+    </rule>
 
-	<!-- Standard PMD category rulesets -->
-	<rule ref="category/apex/design.xml">
-		<priority>2</priority>
-	</rule>
+    <!-- Standard PMD category rulesets -->
+    <rule ref="category/apex/design.xml">
+        <priority>2</priority>
+    </rule>
 </ruleset>
 ```
 
@@ -852,12 +852,12 @@ public class Utils {
 Rules are organized into PMD's 8 standard categories (consistent across
 languages):
 
-- **best-practices/** - Generally accepted best practices (5 PMD rules: modifier rules, test
-  class rules)
-- **code-style/** - Coding style enforcement (20 PMD rules: formatting, naming conventions,
-  code style patterns)
-- **design/** - Design issue detection (16 PMD rules: code structure, method signatures, class
-  organization)
+- **best-practices/** - Generally accepted best practices (5 PMD rules: modifier
+  rules, test class rules)
+- **code-style/** - Coding style enforcement (20 PMD rules: formatting, naming
+  conventions, code style patterns)
+- **design/** - Design issue detection (16 PMD rules: code structure, method
+  signatures, class organization)
 - **documentation/** - Code documentation rules (2 PMD rules)
 - **error-prone/** - Broken/confusing/runtime-error-prone constructs (currently
   empty)
@@ -868,6 +868,7 @@ languages):
 **Total: 43 PMD rules + 3 Regex rules = 46 rules**
 
 In addition to the PMD rules above, 3 Regex rules are provided:
+
 - `NoConsecutiveBlankLines` - Prevents consecutive blank lines
 - `ProhibitSuppressWarnings` - Prohibits suppression annotations and comments
 - `NoLongLines` - Enforces maximum line length of 80 characters
@@ -938,8 +939,9 @@ requires elements within `<rule>` to be in a specific order:
 - `pnpm fix-xml-order` - Automatically fix element order in all XML files
 - `pnpm add-version-info` - Add version information to all rule descriptions
 
-These scripts use XML libraries (`@xmldom/xmldom`) to properly parse and manipulate XML,
-ensuring all elements (including multiple examples) are preserved.
+These scripts use XML libraries (`@xmldom/xmldom`) to properly parse and
+manipulate XML, ensuring all elements (including multiple examples) are
+preserved.
 
 ### Benchmarking
 
@@ -1005,15 +1007,21 @@ All scripts in the `scripts/` directory have convenience commands in
 
 ### Script Security
 
-Scripts that accept file paths from user input implement security measures to prevent path traversal attacks:
+Scripts that accept file paths from user input implement security measures to
+prevent path traversal attacks:
 
-- **Path Sanitization**: The `sanitize-filename` package is used to sanitize file paths, eliminating dangerous characters
-- **Path Validation**: Paths are validated to ensure they don't contain path traversal sequences (`..`) and are relative paths
-- **Symbolic Link Resolution**: `fs.realpathSync()` is used to resolve symbolic links and ensure files are within expected directories
+- **Path Sanitization**: The `sanitize-filename` package is used to sanitize
+  file paths, eliminating dangerous characters
+- **Path Validation**: Paths are validated to ensure they don't contain path
+  traversal sequences (`..`) and are relative paths
+- **Symbolic Link Resolution**: `fs.realpathSync()` is used to resolve symbolic
+  links and ensure files are within expected directories
 - **Defense in Depth**: Multiple validation layers ensure robust security
 
 Scripts implementing these measures:
-- `scripts/check-performance-regressions.js` - Accepts optional results file path
+
+- `scripts/check-performance-regressions.js` - Accepts optional results file
+  path
 - `scripts/ast-dump.sh` - Accepts Apex file path
 
 ## Contributing
@@ -1027,7 +1035,9 @@ guidelines on:
 - Pull request process
 - Code style guidelines
 
-Please note that this project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+Please note that this project follows the
+[Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating,
+you are expected to uphold this code.
 
 ## Security
 
@@ -1035,6 +1045,8 @@ For security vulnerabilities, please see [SECURITY.md](SECURITY.md) for
 reporting instructions.
 
 ## Documentation
+
+### Core PMD & Rule Development
 
 - [PMD Quick Reference](docs/PMD.md) - Condensed guide to PMD essentials
   (rulesets, CLI, CPD, configuration)
@@ -1047,18 +1059,61 @@ reporting instructions.
   configuration guide for AI coding assistants
 - [Regex Engine Reference](docs/REGEX.md) - Regex engine configuration and
   custom rule creation
+
+### Documentation & Suppression
+
 - [ApexDoc Reference](docs/APEXDOC.md) - ApexDoc syntax, tags, and documentation
   format for Apex code
 - [Suppressing Warnings](docs/SUPPRESS_WARNINGS.md) - How to suppress PMD rule
   violations using annotations, comments, and rule properties
-- [Migration Guides](docs/MIGRATION_GUIDES.md) - Rule migration and versioning
-  information
+
+### Testing & Development
+
 - [Jest 30.0 Reference](docs/JEST30.md) - Jest 30.0 API reference for writing
   and running tests
 - [pnpm Reference](docs/PNPM.md) - pnpm package manager reference for dependency
   management and workspace configuration
 - [Husky v9 Reference](docs/HUSKY9.md) - Husky v9 Git hooks manager reference
   for setting up pre-commit and other Git hooks
+- [Migration Guides](docs/MIGRATION_GUIDES.md) - Rule migration and versioning
+  information
+
+### Usage Guides
+
+- [Salesforce CLI Commands](docs/SFCLI.md) - Using Code Analyzer via Salesforce
+  CLI
+- [VS Code Extension](docs/VSCODE.md) - Using Code Analyzer in Visual Studio
+  Code
+- [CI/CD Integration](docs/CICD.md) - Integrating Code Analyzer into CI/CD
+  pipelines
+- [MCP Tools](docs/MCP.md) - Using Model Context Protocol tools with Code
+  Analyzer
+
+### Additional Code Analyzer Engines
+
+- [CPD Engine Reference](docs/CPD.md) - Copy/Paste Detector engine for duplicate
+  code detection across multiple languages
+- [ESLint Reference](docs/ESLINT.md) - ESLint engine configuration for
+  JavaScript, TypeScript, and LWC static analysis
+- [Flow Scanner Reference](docs/FLOWSCANNER.md) - Flow Scanner engine for
+  auditing Salesforce Flows for security vulnerabilities
+- [RetireJS Reference](docs/RETIREJS.md) - RetireJS engine for detecting
+  security vulnerabilities in JavaScript dependencies
+
+### Graph Engine Documentation
+
+- [Graph Engine Reference](docs/GRAPHENGINE.md) - Salesforce Graph Engine
+  configuration and usage
+- [Gremlin Query Language Reference](docs/GREMLIN.md) - Gremlin query language
+  reference for graph traversal
+- [Apache TinkerPop Reference](docs/TINKERPOP.md) - Apache TinkerPop framework
+  reference for graph computing
+- [GraphML Reference](docs/GRAPHML.md) - GraphML format for graph serialization
+- [GraphSON Reference](docs/GRAPHSON.md) - GraphSON format for graph
+  serialization
+- [Gryo Reference](docs/GRYO.md) - Gryo binary format for graph serialization
+- [GraphBinary Reference](docs/GRAPHBINARY.md) - GraphBinary format for graph
+  serialization
 
 ## AI Agent Configuration
 
@@ -1072,6 +1127,8 @@ properties.
 
 When setting up AI agent rules, you should reference these documentation files:
 
+**Core PMD & Rule Development:**
+
 - **[PMD Quick Reference](docs/PMD.md)** - PMD essentials (rulesets, CLI, CPD,
   configuration)
 - **[Code Analyzer Configuration](docs/CODE_ANALYZER_CONFIG.md)** - Complete
@@ -1084,14 +1141,74 @@ When setting up AI agent rules, you should reference these documentation files:
   and patterns
 - **[Regex Engine Reference](docs/REGEX.md)** - Regex engine configuration and
   custom rule creation
+
+**Documentation & Suppression:**
+
 - **[ApexDoc Reference](docs/APEXDOC.md)** - ApexDoc syntax, tags, and
   documentation format for Apex code
 - **[Suppressing Warnings](docs/SUPPRESS_WARNINGS.md)** - How to suppress PMD
   rule violations using annotations, comments, and rule properties
+
+**Testing & Development:**
+
+- **[Jest 30.0 Reference](docs/JEST30.md)** - Jest 30.0 API reference for
+  writing and running tests
 - **[pnpm Reference](docs/PNPM.md)** - pnpm package manager reference for
   dependency management and workspace configuration
 - **[Husky v9 Reference](docs/HUSKY9.md)** - Husky v9 Git hooks manager
   reference for setting up pre-commit and other Git hooks
+- **[Migration Guides](docs/MIGRATION_GUIDES.md)** - Rule migration and
+  versioning information
+
+**Usage Guides:**
+
+- **[Salesforce CLI Commands](docs/SFCLI.md)** - Using Code Analyzer via
+  Salesforce CLI
+- **[VS Code Extension](docs/VSCODE.md)** - Using Code Analyzer in Visual Studio
+  Code
+- **[CI/CD Integration](docs/CICD.md)** - Integrating Code Analyzer into CI/CD
+  pipelines
+- **[MCP Tools](docs/MCP.md)** - Using Model Context Protocol tools with Code
+  Analyzer
+
+**Additional Engines:**
+
+- **[CPD Engine Reference](docs/CPD.md)** - Copy/Paste Detector engine for
+  duplicate code detection
+- **[ESLint Reference](docs/ESLINT.md)** - ESLint engine configuration for
+  JavaScript, TypeScript, and LWC
+- **[Flow Scanner Reference](docs/FLOWSCANNER.md)** - Flow Scanner engine for
+  auditing Salesforce Flows
+- **[RetireJS Reference](docs/RETIREJS.md)** - RetireJS engine for detecting
+  security vulnerabilities in JavaScript dependencies
+
+**Usage Guides:**
+
+- **[Salesforce CLI Commands](docs/SFCLI.md)** - Using Code Analyzer via
+  Salesforce CLI
+- **[VS Code Extension](docs/VSCODE.md)** - Using Code Analyzer in Visual Studio
+  Code
+- **[CI/CD Integration](docs/CICD.md)** - Integrating Code Analyzer into CI/CD
+  pipelines
+- **[MCP Tools](docs/MCP.md)** - Using Model Context Protocol tools with Code
+  Analyzer
+
+**Graph Engine Documentation:**
+
+- **[Graph Engine Reference](docs/GRAPHENGINE.md)** - Salesforce Graph Engine
+  configuration and usage
+- **[Gremlin Query Language Reference](docs/GREMLIN.md)** - Gremlin query
+  language reference for graph traversal
+- **[Apache TinkerPop Reference](docs/TINKERPOP.md)** - Apache TinkerPop
+  framework reference
+- **[GraphML Reference](docs/GRAPHML.md)** - GraphML format for graph
+  serialization
+- **[GraphSON Reference](docs/GRAPHSON.md)** - GraphSON format for graph
+  serialization
+- **[Gryo Reference](docs/GRYO.md)** - Gryo binary format for graph
+  serialization
+- **[GraphBinary Reference](docs/GRAPHBINARY.md)** - GraphBinary format for
+  graph serialization
 
 ### Setting Up in Cursor
 

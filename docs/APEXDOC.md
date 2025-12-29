@@ -2,16 +2,18 @@
 
 ## Overview
 
-ApexDoc is Salesforce's standardized documentation format for Apex code. Uses Javadoc-style comments (`/** ... */`) placed immediately before class, method, property, or enum declarations.
+ApexDoc is Salesforce's standardized documentation format for Apex code. Uses
+Javadoc-style comments (`/** ... */`) placed immediately before class, method,
+property, or enum declarations.
 
 ## Basic Syntax
 
 ```apex
 /**
  * Description text (first line is summary)
- * 
+ *
  * Additional description paragraphs.
- * 
+ *
  * @tagName tag content
  */
 ```
@@ -29,9 +31,11 @@ ApexDoc is Salesforce's standardized documentation format for Apex code. Uses Ja
 ### Method Documentation
 
 - `@description` - Method purpose and behavior
-- `@param parameterName Description` - Parameter documentation (one per parameter)
+- `@param parameterName Description` - Parameter documentation (one per
+  parameter)
 - `@return Description` - Return value description
-- `@throws ExceptionType Description` - Exception documentation (one per exception)
+- `@throws ExceptionType Description` - Exception documentation (one per
+  exception)
 - `@example` - Usage example (code block)
 - `@see` - Reference to related methods/classes
 
@@ -98,7 +102,7 @@ ApexDoc is Salesforce's standardized documentation format for Apex code. Uses Ja
  * @date 2024-01-15
  */
 public class StringUtils {
-    
+
     /**
      * @description Reverses the given string
      * @param input The string to reverse
@@ -113,7 +117,7 @@ public class StringUtils {
         }
         return input.reverse();
     }
-    
+
     /**
      * @description Capitalizes the first letter of a string
      * @param input The string to capitalize
@@ -156,8 +160,10 @@ public enum OrderStatus {
 
 - **First line is summary** - Brief one-line description
 - **Additional paragraphs** - Detailed explanation if needed
-- **Tag order** - `@description`, `@param`, `@return`, `@throws`, `@example`, `@see`
-- **Complete documentation** - Document all public classes, methods, and properties
+- **Tag order** - `@description`, `@param`, `@return`, `@throws`, `@example`,
+  `@see`
+- **Complete documentation** - Document all public classes, methods, and
+  properties
 - **Clear descriptions** - Use clear, concise language
 - **Examples** - Include `@example` for complex methods
 - **Exception documentation** - Document all thrown exceptions with `@throws`
@@ -171,14 +177,20 @@ In PMD AST, ApexDoc comments appear as **FormalComment** nodes:
 //Method[preceding-sibling::FormalComment]
 ```
 
-**Note:** PMD typically ignores comments in XPath queries. For ApexDoc validation, use Regex engine or custom Java rules.
+**Note:** PMD typically ignores comments in XPath queries. For ApexDoc
+validation, use Regex engine or custom Java rules.
 
 ## Related Documentation
 
-- **[PMD Quick Reference](PMD.md)** - PMD essentials (PMD typically ignores comments; use Regex for ApexDoc validation)
-- **[PMD Apex AST Reference](APEX_PMD_AST.md)** - PMD AST structure (ApexDoc appears as FormalComment nodes)
-- **[Salesforce ApexDoc Introduction](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_intro.htm)** - Official ApexDoc overview
-- **[ApexDoc Format](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_format.htm)** - Formatting guidelines
-- **[ApexDoc Constructs](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_constructs.htm)** - Available tags and constructs
-- **[ApexDoc Examples](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_examples.htm)** - Complete examples
-
+- **[PMD Quick Reference](PMD.md)** - PMD essentials (PMD typically ignores
+  comments; use Regex for ApexDoc validation)
+- **[PMD Apex AST Reference](APEX_PMD_AST.md)** - PMD AST structure (ApexDoc
+  appears as FormalComment nodes)
+- **[Salesforce ApexDoc Introduction](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_intro.htm)** -
+  Official ApexDoc overview
+- **[ApexDoc Format](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_format.htm)** -
+  Formatting guidelines
+- **[ApexDoc Constructs](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_constructs.htm)** -
+  Available tags and constructs
+- **[ApexDoc Examples](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_examples.htm)** -
+  Complete examples
