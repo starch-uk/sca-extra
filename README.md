@@ -1005,14 +1005,14 @@ public class Utils {
 #### MethodsRequireExampleTag
 
 **Priority:** P3 (Medium)  
-**Version:** 1.0.1  
+**Version:** 1.0.2  
 **Source:** [`rulesets/documentation/MethodsRequireExampleTag.xml`](rulesets/documentation/MethodsRequireExampleTag.xml)  
 **Description:**
 Methods must have at least one `@example` tag in their ApexDoc comments
 containing a properly formatted `{@code}` block (with both opening `{` and
-closing `}`), unless they have annotations, are override methods, or are
-interface method declarations. This helps developers understand how to use
-methods correctly. According to the
+closing `}`), unless they have annotations, are override methods, are interface
+method declarations, are constructors, or return void and take no arguments.
+This helps developers understand how to use methods correctly. According to the
 [Salesforce ApexDoc format specification](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_format.htm),
 `@example` tags must contain `{@code}` blocks to properly format code examples.
 
@@ -1102,6 +1102,22 @@ public interface MyInterface {
      * Interface method without @example.
      */
     void doSomething();  // ✅ Interface method exempt
+}
+
+// Valid: Constructor (exempt)
+/**
+ * Creates a new instance.
+ */
+public MyClass() {  // ✅ Constructor exempt
+    // Constructor implementation
+}
+
+// Valid: Void method with no parameters (exempt)
+/**
+ * Initializes the instance.
+ */
+public void initialize() {  // ✅ Void method with no parameters exempt
+    // Method implementation
 }
 ```
 

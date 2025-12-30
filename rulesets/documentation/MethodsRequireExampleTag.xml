@@ -26,8 +26,10 @@
 			- Have any annotation (e.g., @IsTest, @InvocableMethod, @AuraEnabled)
 			- Are override methods (marked with @Override)
 			- Are interface method declarations (methods defined in interfaces)
+			- Are constructors
+			- Return void and take no arguments (void methods with no parameters)
 
-			Version: 1.0.1
+			Version: 1.0.2
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -35,20 +37,20 @@
 				<value>
 					<![CDATA[
 					//Method[
-						FormalComment[starts-with(@Image, '/**') 
-							and (
-								not(contains(@Image, '@example'))
-								or (contains(@Image, '@example') 
-									and not(
-										contains(@Image, '@code')
-										and contains(substring-before(@Image, '@code'), '{')
-										and contains(substring-after(@Image, '@code'), '}')
-									)
-								)
-							)]
+						not(
+							FormalComment[starts-with(@Image, '/**')
+								and contains(@Image, '@example')
+								and contains(@Image, '@code')
+								and contains(substring-before(@Image, '@code'), '{')
+								and contains(substring-after(@Image, '@code'), '}')
+							]
+						)
+						and FormalComment[starts-with(@Image, '/**')]
 						and not(ModifierNode/Annotation)
 						and not(ModifierNode[@Override = true()])
 						and not(ancestor::UserClass[@Interface = 'true'])
+						and not(@Constructor = true())
+						and not(@ReturnType = 'void' and count(Parameter) = 0)
 					]
 					]]>
 				</value>
@@ -173,6 +175,22 @@
 			 */
 			public String process(String input, Boolean flag) {
 				return input;
+			}
+			
+			// Valid: Constructor (exempt)
+			/**
+			 * Creates a new instance.
+			 */
+			public MyClass() {
+				// Constructor implementation
+			}
+			
+			// Valid: Void method with no parameters (exempt)
+			/**
+			 * Initializes the instance.
+			 */
+			public void initialize() {
+				// Method implementation
 			}
 			]]>
 		</example>

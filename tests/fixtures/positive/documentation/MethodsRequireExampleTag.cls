@@ -146,5 +146,35 @@ public class MethodsRequireExampleTag {
     public void customMethod() {
         // Implementation
     }
+
+    // Valid: Constructor (exempt)
+    /**
+     * Creates a new instance.
+     */
+    public MethodsRequireExampleTag() {
+        // Constructor implementation
+    }
+
+    // Valid: Constructor with parameters (exempt)
+    /**
+     * Creates a new instance with a name.
+     * @param name The name
+     */
+    public MethodsRequireExampleTag(String name) {
+        // Constructor implementation
+    }
+
+    // Valid: Void method with no parameters (exempt)
+    /**
+     * Initializes the instance.
+     */
+    public void initialize() {
+        // Method implementation
+    }
+
+    // Valid: Void method with no parameters and no ApexDoc (exempt)
+    public void reset() {
+        // Method implementation
+    }
 }
 

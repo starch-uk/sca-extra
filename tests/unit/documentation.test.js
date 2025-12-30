@@ -123,5 +123,13 @@ describe('Documentation Rules', () => {
 			);
 			assertNoViolations(violations, 'MethodsRequireExampleTag');
 		});
+
+		it('should correctly detect @example tags with {@code} blocks even when there are orphaned comments', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/MethodsRequireExampleTag.xml',
+				'tests/fixtures/positive/documentation/MethodsRequireExampleTagWithOrphanedComment.cls'
+			);
+			assertNoViolations(violations, 'MethodsRequireExampleTag');
+		});
 	});
 });
