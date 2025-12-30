@@ -1,0 +1,148 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Documentation Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>Custom rules for Apex documentation standards</description>
+	<rule
+		name="MethodsRequireExampleTag"
+		language="apex"
+		message="Methods must have at least one @example tag in their ApexDoc comments, unless they have annotations, are overrides, or are interface methods"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Methods must have at least one @example tag in their ApexDoc
+			comments containing a {@code} block to provide usage examples. This
+			helps developers understand how to use the method correctly.
+
+			According to the Salesforce ApexDoc format specification, @example tags
+			must contain {@code} blocks to properly format code examples.
+
+			Exceptions: Methods are exempt from this requirement if they:
+			- Have any annotation (e.g., @IsTest, @InvocableMethod, @AuraEnabled)
+			- Are override methods (marked with @Override)
+			- Are interface method declarations (methods defined in interfaces)
+
+			Version: 1.0.0
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//Method[
+						FormalComment[starts-with(@Image, '/**') 
+							and (
+								not(contains(@Image, '@example'))
+								or (contains(@Image, '@example') and not(contains(@Image, '{@code}')))
+							)]
+						and not(ModifierNode/Annotation)
+						and not(ModifierNode[@Override = true()])
+						and not(ancestor::UserClass[@Interface = 'true'])
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Method with ApexDoc but no @example tag
+			/**
+			 * Processes the account.
+			 * @param acc The account to process
+			 * @return The processed account
+			 */
+			public Account processAccount(Account acc) {
+				return acc;
+			}
+			
+			// Violation: Method with ApexDoc but missing @example
+			/**
+			 * Calculates the total value.
+			 * @param items List of items
+			 * @return Total as Decimal
+			 */
+			public Decimal calculateTotal(List<Item> items) {
+				Decimal total = 0;
+				for (Item item : items) {
+					total += item.getAmount();
+				}
+				return total;
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Method with @example tag containing {@code} block
+			/**
+			 * Processes the account.
+			 * @param acc The account to process
+			 * @return The processed account
+			 * @example
+			 * {@code
+			 * Account acc = new Account(Name = 'Test');
+			 * Account result = processor.processAccount(acc);
+			 * }
+			 */
+			public Account processAccount(Account acc) {
+				return acc;
+			}
+			
+			// Valid: Method with annotation (exempt)
+			/**
+			 * Test method for account processing.
+			 */
+			@IsTest
+			public static void testProcessAccount() {
+				// Test code
+			}
+			
+			// Valid: Override method (exempt)
+			/**
+			 * String representation.
+			 */
+			@Override
+			public String toString() {
+				return 'Example';
+			}
+			
+			// Valid: Interface method declaration (exempt)
+			public interface MyInterface {
+				/**
+				 * Interface method without @example.
+				 */
+				void doSomething();
+			}
+			
+			// Violation: @example tag without {@code} block
+			/**
+			 * Processes the account.
+			 * @param acc The account to process
+			 * @example
+			 * Account acc = new Account(Name = 'Test');
+			 */
+			public Account processAccount(Account acc) {
+				return acc;
+			}
+			
+			// Valid: Method with multiple @example tags containing {@code} blocks
+			/**
+			 * Processes data in different ways.
+			 * @example
+			 * {@code
+			 * String result1 = processor.process('input1');
+			 * }
+			 * @example
+			 * {@code
+			 * String result2 = processor.process('input2', true);
+			 * }
+			 */
+			public String process(String input, Boolean flag) {
+				return input;
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>

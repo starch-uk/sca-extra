@@ -159,7 +159,14 @@ When creating or modifying PMD rules:
     always use full permissions for initial test runs. Reference
     **@docs/JEST30.md** for Jest API usage when writing or modifying tests.
 19. **README.md should be updated with any pertinent changes** - Document new
-    rules, rule changes, or significant updates in the README
+    rules, rule changes, or significant updates in the README. When adding a new
+    rule:
+    - Add a short description in the rule categories section (e.g., under
+      "Documentation Quality")
+    - Add a comprehensive rule documentation section with priority, source link,
+      description, violations, and valid code examples
+    - Update the rule count in the "Rule Categories" section
+    - Add the rule to the comprehensive `code-analyzer.yml` example in README.md
 20. **PLAN.md is a planning document** - PLAN.md should be written as if the
     project has not yet been created. It details what needs to happen to create
     the project, not the current state of the project. PLAN.md should:

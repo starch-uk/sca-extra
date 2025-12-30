@@ -87,4 +87,25 @@ describe('Documentation Rules', () => {
 			assertNoViolations(violations, 'ProhibitAuthorSinceVersionTags');
 		});
 	});
+
+	describe('MethodsRequireExampleTag', () => {
+		it('should detect methods without @example tag in ApexDoc', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/MethodsRequireExampleTag.xml',
+				'tests/fixtures/negative/documentation/MethodsRequireExampleTag.cls'
+			);
+			expect(
+				violations.filter((v) => v.rule === 'MethodsRequireExampleTag')
+					.length
+			).toBeGreaterThan(0);
+		});
+
+		it('should not flag methods with @example tag, annotations, overrides, or interface methods', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/MethodsRequireExampleTag.xml',
+				'tests/fixtures/positive/documentation/MethodsRequireExampleTag.cls'
+			);
+			assertNoViolations(violations, 'MethodsRequireExampleTag');
+		});
+	});
 });

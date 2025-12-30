@@ -396,12 +396,24 @@ engines:
     pmd:
         custom_rulesets:
             # Custom rules from sca-extra repository
+            # Design rules
             - rulesets/design/InnerClassesCannotBeStatic.xml
             - rulesets/design/InnerClassesCannotHaveStaticMembers.xml
+
+            # Best practices rules
             - rulesets/best-practices/FinalVariablesMustBeFinal.xml
+
+            # Code style rules
             - rulesets/code-style/NoSingleLetterVariableNames.xml
             - rulesets/code-style/NoAbbreviations.xml
             - rulesets/code-style/NoMethodCallsInConditionals.xml
+
+            # Documentation rules
+            - rulesets/documentation/ExceptionDocumentationRequired.xml
+            - rulesets/documentation/ValidGroupTagValues.xml
+            - rulesets/documentation/ProhibitAuthorSinceVersionTags.xml
+            - rulesets/documentation/SingleLineDocumentationFormat.xml
+            - rulesets/documentation/MethodsRequireExampleTag.xml
 
 rules:
     # Override severity and tags
@@ -487,6 +499,8 @@ or similar formatters.
         - `ValidGroupTagValues` - Ensures @group tags use valid values
         - `ProhibitAuthorSinceVersionTags` - Prohibits @author, @since, and
           @version tags
+        - `MethodsRequireExampleTag` - Requires methods to have @example tags in
+          ApexDoc
 
 ### What Prettier Handles (Not PMD Rules):
 
@@ -864,6 +878,87 @@ public class Utils {
 }
 ```
 
+### Documentation Rules
+
+#### MethodsRequireExampleTag
+
+**Priority:** P3 (Medium)  
+**Source:** [`rulesets/documentation/MethodsRequireExampleTag.xml`](rulesets/documentation/MethodsRequireExampleTag.xml)  
+**Description:**
+Methods must have at least one `@example` tag in their ApexDoc comments
+containing a `{@code}` block, unless they have annotations, are override
+methods, or are interface method declarations. This helps developers understand
+how to use methods correctly. According to the
+[Salesforce ApexDoc format specification](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_format.htm),
+`@example` tags must contain `{@code}` blocks to properly format code examples.
+
+**Violations:**
+
+```apex
+/**
+ * Processes the account.
+ * @param acc The account to process
+ * @return The processed account
+ */
+public Account processAccount(Account acc) {  // ❌ Missing @example tag
+    return acc;
+}
+
+/**
+ * Processes the account.
+ * @param acc The account to process
+ * @example
+ * Account acc = new Account(Name = 'Test');
+ */
+public Account processAccount(Account acc) {  // ❌ @example without {@code} block
+    return acc;
+}
+```
+
+**Valid Code:**
+
+```apex
+/**
+ * Processes the account.
+ * @param acc The account to process
+ * @return The processed account
+ * @example
+ * {@code
+ * Account acc = new Account(Name = 'Test');
+ * Account result = processor.processAccount(acc);
+ * }
+ */
+public Account processAccount(Account acc) {  // ✅ Has @example with {@code} block
+    return acc;
+}
+
+// Valid: Method with annotation (exempt)
+/**
+ * Test method for account processing.
+ */
+@IsTest
+public static void testProcessAccount() {  // ✅ Annotated method exempt
+    // Test code
+}
+
+// Valid: Override method (exempt)
+/**
+ * String representation.
+ */
+@Override
+public String toString() {  // ✅ Override method exempt
+    return 'Example';
+}
+
+// Valid: Interface method declaration (exempt)
+public interface MyInterface {
+    /**
+     * Interface method without @example.
+     */
+    void doSomething();  // ✅ Interface method exempt
+}
+```
+
 ## Rule Categories
 
 Rules are organized into PMD's 8 standard categories (consistent across
@@ -875,14 +970,14 @@ languages):
   conventions, code style patterns)
 - **design/** - Design issue detection (16 PMD rules: code structure, method
   signatures, class organization)
-- **documentation/** - Code documentation rules (4 PMD rules)
+- **documentation/** - Code documentation rules (5 PMD rules)
 - **error-prone/** - Broken/confusing/runtime-error-prone constructs (currently
   empty)
 - **multithreading/** - Multi-threaded execution issues (currently empty)
 - **performance/** - Suboptimal code detection (currently empty)
 - **security/** - Potential security flaws (currently empty)
 
-**Total: 45 PMD rules + 4 Regex rules = 49 rules**
+**Total: 46 PMD rules + 4 Regex rules = 50 rules**
 
 In addition to the PMD rules above, 4 Regex rules are provided:
 
