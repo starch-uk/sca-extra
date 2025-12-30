@@ -88,28 +88,6 @@ describe('Code Style Rules', () => {
 		});
 	});
 
-	describe('MapInitializationMustBeMultiLine', () => {
-		it('should detect map initializations with 2+ entries on same line', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/MapInitializationMustBeMultiLine.xml',
-				'tests/fixtures/negative/code-style/MapInitializationMustBeMultiLine.cls'
-			);
-			expect(
-				violations.filter(
-					(v) => v.rule === 'MapInitializationMustBeMultiLine'
-				).length
-			).toBeGreaterThan(0);
-		});
-
-		it('should not flag single-entry maps or multi-line maps', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/MapInitializationMustBeMultiLine.xml',
-				'tests/fixtures/positive/code-style/MapInitializationMustBeMultiLine.cls'
-			);
-			assertNoViolations(violations, 'MapInitializationMustBeMultiLine');
-		});
-	});
-
 	describe('NoConsecutiveBlankLines', () => {
 		it('should detect consecutive blank lines', async () => {
 			const { runRegexRule } = require('../helpers/pmd-helper');

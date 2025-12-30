@@ -16,7 +16,6 @@ Focused stress test for code-style rules (including naming) with 300+
 violations:
 
 - AvoidOneLinerMethods (10 violations)
-- MapInitializationMustBeMultiLine (10 violations)
 - MapShouldBeInitializedWithValues (10 violations)
 - MultipleStringContainsCalls (10 violations)
 - NoMethodCallsAsArguments (10 violations)

@@ -92,20 +92,6 @@ public class StressCodeStyle {
     Integer r7 = v2 == null ? 0 : v2;
   }
 
-  public void stressMapInitializationMustBeMultiLine() {
-    // 10 violations: MapInitializationMustBeMultiLine
-    Map<String, String> m1 = new Map<String, String>{ 'a' => '1', 'b' => '2' };
-    Map<String, Integer> m2 = new Map<String, Integer>{ 'x' => 1, 'y' => 2 };
-    Map<Integer, String> m3 = new Map<Integer, String>{ 1 => 'a', 2 => 'b' };
-    Map<String, Boolean> m4 = new Map<String, Boolean>{ 't' => true, 'f' => false };
-    Map<String, String> m5 = new Map<String, String>{ 'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3' };
-    Map<Integer, Integer> m6 = new Map<Integer, Integer>{ 1 => 10, 2 => 20, 3 => 30 };
-    Map<String, String> m7 = new Map<String, String>{ 'a' => '1', 'b' => '2', 'c' => '3', 'd' => '4' };
-    Map<String, Integer> m8 = new Map<String, Integer>{ 'x' => 1, 'y' => 2, 'z' => 3 };
-    Map<Integer, String> m9 = new Map<Integer, String>{ 1 => 'a', 2 => 'b', 3 => 'c', 4 => 'd', 5 => 'e' };
-    Map<String, Boolean> m10 = new Map<String, Boolean>{ 't1' => true, 't2' => false, 't3' => true };
-  }
-
   public void stressMapShouldBeInitializedWithValues() {
     // 10 violations: MapShouldBeInitializedWithValues
     Map<String, String> m1 = new Map<String, String>();

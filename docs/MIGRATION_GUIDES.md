@@ -456,7 +456,6 @@ custom rule copy.
 
 ### Examples of Rules with Configurable Variables
 
-- **`MapInitializationMustBeMultiLine`** - `$minEntries` (default: 2)
 - **`MultipleStringContainsCalls`** - `$minCalls` (default: 2)
 - **`EnumMinimumValues`** - `$minValues` (default: 3)
 - **`SingleArgumentMustBeSingleLine`** - `$maxArgs` (default: 1)

@@ -44,4 +44,68 @@ describe('Documentation Rules', () => {
 			assertNoViolations(violations, 'SingleLineDocumentationFormat');
 		});
 	});
+
+	describe('ValidGroupTagValues', () => {
+		it('should detect @group tags with invalid values', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/ValidGroupTagValues.xml',
+				'tests/fixtures/negative/documentation/ValidGroupTagValues.cls'
+			);
+			expect(
+				violations.filter((v) => v.rule === 'ValidGroupTagValues')
+					.length
+			).toBeGreaterThan(0);
+		});
+
+		it('should not flag @group tags with valid values', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/ValidGroupTagValues.xml',
+				'tests/fixtures/positive/documentation/ValidGroupTagValues.cls'
+			);
+			assertNoViolations(violations, 'ValidGroupTagValues');
+		});
+	});
+
+	describe('ProhibitAuthorSinceVersionTags', () => {
+		it('should detect @author, @since, or @version tags', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/ProhibitAuthorSinceVersionTags.xml',
+				'tests/fixtures/negative/documentation/ProhibitAuthorSinceVersionTags.cls'
+			);
+			expect(
+				violations.filter(
+					(v) => v.rule === 'ProhibitAuthorSinceVersionTags'
+				).length
+			).toBeGreaterThan(0);
+		});
+
+		it('should not flag comments without @author, @since, or @version tags', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/ProhibitAuthorSinceVersionTags.xml',
+				'tests/fixtures/positive/documentation/ProhibitAuthorSinceVersionTags.cls'
+			);
+			assertNoViolations(violations, 'ProhibitAuthorSinceVersionTags');
+		});
+	});
+
+	describe('MethodsRequireExampleTag', () => {
+		it('should detect methods without @example tag in ApexDoc', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/MethodsRequireExampleTag.xml',
+				'tests/fixtures/negative/documentation/MethodsRequireExampleTag.cls'
+			);
+			expect(
+				violations.filter((v) => v.rule === 'MethodsRequireExampleTag')
+					.length
+			).toBeGreaterThan(0);
+		});
+
+		it('should not flag methods with @example tag, annotations, overrides, or interface methods', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/MethodsRequireExampleTag.xml',
+				'tests/fixtures/positive/documentation/MethodsRequireExampleTag.cls'
+			);
+			assertNoViolations(violations, 'MethodsRequireExampleTag');
+		});
+	});
 });
