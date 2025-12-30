@@ -65,4 +65,26 @@ describe('Documentation Rules', () => {
 			assertNoViolations(violations, 'ValidGroupTagValues');
 		});
 	});
+
+	describe('ProhibitAuthorSinceVersionTags', () => {
+		it('should detect @author, @since, or @version tags', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/ProhibitAuthorSinceVersionTags.xml',
+				'tests/fixtures/negative/documentation/ProhibitAuthorSinceVersionTags.cls'
+			);
+			expect(
+				violations.filter(
+					(v) => v.rule === 'ProhibitAuthorSinceVersionTags'
+				).length
+			).toBeGreaterThan(0);
+		});
+
+		it('should not flag comments without @author, @since, or @version tags', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/ProhibitAuthorSinceVersionTags.xml',
+				'tests/fixtures/positive/documentation/ProhibitAuthorSinceVersionTags.cls'
+			);
+			assertNoViolations(violations, 'ProhibitAuthorSinceVersionTags');
+		});
+	});
 });

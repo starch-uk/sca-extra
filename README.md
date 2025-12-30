@@ -485,6 +485,8 @@ or similar formatters.
     - Examples:
         - `ExceptionDocumentationRequired` - Ensures exceptions are documented
         - `ValidGroupTagValues` - Ensures @group tags use valid values
+        - `ProhibitAuthorSinceVersionTags` - Prohibits @author, @since, and
+          @version tags
 
 ### What Prettier Handles (Not PMD Rules):
 
@@ -873,14 +875,14 @@ languages):
   conventions, code style patterns)
 - **design/** - Design issue detection (16 PMD rules: code structure, method
   signatures, class organization)
-- **documentation/** - Code documentation rules (3 PMD rules)
+- **documentation/** - Code documentation rules (4 PMD rules)
 - **error-prone/** - Broken/confusing/runtime-error-prone constructs (currently
   empty)
 - **multithreading/** - Multi-threaded execution issues (currently empty)
 - **performance/** - Suboptimal code detection (currently empty)
 - **security/** - Potential security flaws (currently empty)
 
-**Total: 44 PMD rules + 4 Regex rules = 48 rules**
+**Total: 45 PMD rules + 4 Regex rules = 49 rules**
 
 In addition to the PMD rules above, 4 Regex rules are provided:
 

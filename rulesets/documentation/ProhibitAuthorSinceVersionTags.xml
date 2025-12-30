@@ -1,0 +1,108 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Documentation Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>Custom rules for Apex documentation standards</description>
+	<rule
+		name="ProhibitAuthorSinceVersionTags"
+		language="apex"
+		message="ApexDoc should not contain @author, @since, or @version tags as they are anti-patterns better suited to version control"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			ApexDoc comments should not contain @author, @since, or @version
+			tags.
+			These tags are considered anti-patterns because version control systems
+			provide better tracking of authorship, creation dates, and version history.
+			Instead of using these tags, rely on Git history, commit messages, and
+			version control metadata for this information.
+
+			Version: 1.0.0
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//FormalComment[
+						starts-with(@Image, '/**')
+						and (
+							contains(@Image, '@author')
+							or contains(@Image, '@since')
+							or contains(@Image, '@version')
+						)
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Contains @author tag
+			/**
+			 * Class description
+			 * @author John Doe
+			 */
+			public class MyClass {
+			}
+			
+			// Violation: Contains @since tag
+			/**
+			 * Method description
+			 * @since 2024-01-15
+			 */
+			public void myMethod() {
+			}
+			
+			// Violation: Contains @version tag
+			/**
+			 * Property description
+			 * @version 1.0.0
+			 */
+			public String myProperty { get; set; }
+			
+			// Violation: Contains multiple prohibited tags
+			/**
+			 * Class description
+			 * @author John Doe
+			 * @since 2024-01-15
+			 * @version 1.0.0
+			 */
+			public class MyClass {
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: No prohibited tags
+			/**
+			 * Class description
+			 */
+			public class MyClass {
+			}
+			
+			// Valid: Other ApexDoc tags are allowed
+			/**
+			 * Method description
+			 * @param value The input value
+			 * @return The result
+			 * @throws IllegalArgumentException if value is null
+			 */
+			public String processValue(String value) {
+				return value;
+			}
+			
+			// Valid: @group tag is allowed
+			/**
+			 * Class description
+			 * @group Class
+			 */
+			public class MyClass {
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>
