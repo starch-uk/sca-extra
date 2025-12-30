@@ -1,0 +1,116 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Documentation Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>Custom rules for Apex documentation standards</description>
+	<rule
+		name="ValidGroupTagValues"
+		language="apex"
+		message="ApexDoc @group tag must be one of: Class, Interface, Enum, Method, Property, Variable"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			ApexDoc @group tags must use one of the allowed values: Class,
+			Interface, Enum, Method, Property, or Variable. This ensures
+			consistent grouping and categorization of documented elements.
+
+			Version: 1.0.0
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//FormalComment[
+						starts-with(@Image, '/**')
+						and contains(@Image, '@group')
+						and not(
+							matches(@Image, '@group\s+(Class|Interface|Enum|Method|Property|Variable)(\s|\*/|$)')
+						)
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Invalid @group value
+			/**
+			 * @group InvalidValue
+			 */
+			public class MyClass {
+			}
+			
+			// Violation: @group with invalid value
+			/**
+			 * @group Custom
+			 */
+			public interface MyInterface {
+			}
+			
+			// Valid: @group with Class value
+			/**
+			 * @group Class
+			 */
+			public class MyClass {
+			}
+			
+			// Valid: @group with Interface value
+			/**
+			 * @group Interface
+			 */
+			public interface MyInterface {
+			}
+			
+			// Valid: @group with Enum value
+			/**
+			 * @group Enum
+			 */
+			public enum MyEnum {
+				VALUE1,
+				VALUE2
+			}
+			
+			// Valid: @group with Method value
+			/**
+			 * @group Method
+			 */
+			public void myMethod() {
+			}
+			
+			// Valid: @group with Property value
+			/**
+			 * @group Property
+			 */
+			public String myProperty { get; set; }
+			
+			// Valid: @group with Variable value
+			/**
+			 * @group Variable
+			 */
+			public String myVariable;
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: No @group tag (not flagged)
+			/**
+			 * Class description
+			 */
+			public class MyClass {
+			}
+			
+			// Valid: @group with valid value and additional text
+			/**
+			 * @group Class
+			 * Additional description
+			 */
+			public class MyClass {
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>

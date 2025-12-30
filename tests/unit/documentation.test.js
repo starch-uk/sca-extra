@@ -44,4 +44,25 @@ describe('Documentation Rules', () => {
 			assertNoViolations(violations, 'SingleLineDocumentationFormat');
 		});
 	});
+
+	describe('ValidGroupTagValues', () => {
+		it('should detect @group tags with invalid values', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/ValidGroupTagValues.xml',
+				'tests/fixtures/negative/documentation/ValidGroupTagValues.cls'
+			);
+			expect(
+				violations.filter((v) => v.rule === 'ValidGroupTagValues')
+					.length
+			).toBeGreaterThan(0);
+		});
+
+		it('should not flag @group tags with valid values', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/ValidGroupTagValues.xml',
+				'tests/fixtures/positive/documentation/ValidGroupTagValues.cls'
+			);
+			assertNoViolations(violations, 'ValidGroupTagValues');
+		});
+	});
 });

@@ -484,6 +484,7 @@ or similar formatters.
     - Documentation completeness
     - Examples:
         - `ExceptionDocumentationRequired` - Ensures exceptions are documented
+        - `ValidGroupTagValues` - Ensures @group tags use valid values
 
 ### What Prettier Handles (Not PMD Rules):
 
@@ -872,14 +873,14 @@ languages):
   conventions, code style patterns)
 - **design/** - Design issue detection (16 PMD rules: code structure, method
   signatures, class organization)
-- **documentation/** - Code documentation rules (2 PMD rules)
+- **documentation/** - Code documentation rules (3 PMD rules)
 - **error-prone/** - Broken/confusing/runtime-error-prone constructs (currently
   empty)
 - **multithreading/** - Multi-threaded execution issues (currently empty)
 - **performance/** - Suboptimal code detection (currently empty)
 - **security/** - Potential security flaws (currently empty)
 
-**Total: 43 PMD rules + 4 Regex rules = 47 rules**
+**Total: 44 PMD rules + 4 Regex rules = 48 rules**
 
 In addition to the PMD rules above, 4 Regex rules are provided:
 
