@@ -1005,12 +1005,14 @@ public class Utils {
 #### MethodsRequireExampleTag
 
 **Priority:** P3 (Medium)  
+**Version:** 1.0.1  
 **Source:** [`rulesets/documentation/MethodsRequireExampleTag.xml`](rulesets/documentation/MethodsRequireExampleTag.xml)  
 **Description:**
 Methods must have at least one `@example` tag in their ApexDoc comments
-containing a `{@code}` block, unless they have annotations, are override
-methods, or are interface method declarations. This helps developers understand
-how to use methods correctly. According to the
+containing a properly formatted `{@code}` block (with both opening `{` and
+closing `}`), unless they have annotations, are override methods, or are
+interface method declarations. This helps developers understand how to use
+methods correctly. According to the
 [Salesforce ApexDoc format specification](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_doc_format.htm),
 `@example` tags must contain `{@code}` blocks to properly format code examples.
 
@@ -1033,6 +1035,28 @@ public Account processAccount(Account acc) {  // ❌ Missing @example tag
  * Account acc = new Account(Name = 'Test');
  */
 public Account processAccount(Account acc) {  // ❌ @example without {@code} block
+    return acc;
+}
+
+/**
+ * Processes the account.
+ * @param acc The account to process
+ * @example
+ * @code
+ * Account acc = new Account(Name = 'Test');
+ */
+public Account processAccount(Account acc) {  // ❌ @code without curly braces (should be {@code})
+    return acc;
+}
+
+/**
+ * Processes the account.
+ * @param acc The account to process
+ * @example
+ * {@code
+ * Account acc = new Account(Name = 'Test');
+ */
+public Account processAccount(Account acc) {  // ❌ {@code without closing }
     return acc;
 }
 ```
