@@ -99,5 +99,31 @@ public class MethodsRequireExampleTag {
     public String process(String input) {
         return input;
     }
+
+    // Violation: @example tag with @code but without curly braces (should be {@code})
+    /**
+     * Retrieves data for a given name.
+     * @param name The name to filter by
+     * @return List of records
+     * @example
+     * @code
+     * List<Record> records = MethodsWithIncorrrectCodeBlocks.getData('Test');
+     */
+    public static List<Record> getData(String name) {
+        return new List<Record>();
+    }
+
+    // Violation: @example tag with {@code but missing closing curly brace
+    /**
+     * Processes data for a given input.
+     * @param input The input to process
+     * @return Processed result
+     * @example
+     * {@code
+     * String result = MethodsRequireExampleTag.process('input');
+     */
+    public static String process(String input) {
+        return input;
+    }
 }
 

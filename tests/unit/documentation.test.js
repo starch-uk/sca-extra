@@ -107,5 +107,21 @@ describe('Documentation Rules', () => {
 			);
 			assertNoViolations(violations, 'MethodsRequireExampleTag');
 		});
+
+		it('should correctly detect @example tags with {@code} blocks (fix for curly braces pattern matching)', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/MethodsRequireExampleTag.xml',
+				'tests/fixtures/positive/documentation/MethodsRequireExampleTagWithCodeBlock.cls'
+			);
+			assertNoViolations(violations, 'MethodsRequireExampleTag');
+		});
+
+		it('should correctly detect @example tags with {@code} blocks even when class has a class-level comment', async () => {
+			const violations = await runPMD(
+				'rulesets/documentation/MethodsRequireExampleTag.xml',
+				'tests/fixtures/positive/documentation/MethodsRequireExampleTagWithClassComment.cls'
+			);
+			assertNoViolations(violations, 'MethodsRequireExampleTag');
+		});
 	});
 });

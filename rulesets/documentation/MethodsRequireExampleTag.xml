@@ -14,18 +14,20 @@
 	>
 		<description>
 			Methods must have at least one @example tag in their ApexDoc
-			comments containing a {@code} block to provide usage examples. This
-			helps developers understand how to use the method correctly.
+			comments containing a properly formatted {@code} block (with both
+			opening { and closing }) to provide usage examples. This helps
+			developers understand how to use the method correctly.
 
 			According to the Salesforce ApexDoc format specification, @example tags
-			must contain {@code} blocks to properly format code examples.
+			must contain {@code} blocks to properly format code examples. The
+			{@code} block must be properly closed with a closing brace.
 
 			Exceptions: Methods are exempt from this requirement if they:
 			- Have any annotation (e.g., @IsTest, @InvocableMethod, @AuraEnabled)
 			- Are override methods (marked with @Override)
 			- Are interface method declarations (methods defined in interfaces)
 
-			Version: 1.0.0
+			Version: 1.0.1
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -33,18 +35,17 @@
 				<value>
 					<![CDATA[
 					//Method[
-						(
-							FormalComment[starts-with(@Image, '/**') 
-								and (
-									not(contains(@Image, '@example'))
-									or (contains(@Image, '@example') and not(contains(@Image, '{@code}')))
-								)]
-							or preceding-sibling::FormalComment[starts-with(@Image, '/**') 
-								and (
-									not(contains(@Image, '@example'))
-									or (contains(@Image, '@example') and not(contains(@Image, '{@code}')))
-								)]
-						)
+						FormalComment[starts-with(@Image, '/**') 
+							and (
+								not(contains(@Image, '@example'))
+								or (contains(@Image, '@example') 
+									and not(
+										contains(@Image, '@code')
+										and contains(substring-before(@Image, '@code'), '{')
+										and contains(substring-after(@Image, '@code'), '}')
+									)
+								)
+							)]
 						and not(ModifierNode/Annotation)
 						and not(ModifierNode[@Override = true()])
 						and not(ancestor::UserClass[@Interface = 'true'])
@@ -132,6 +133,30 @@
 			 */
 			public Account processAccount(Account acc) {
 				return acc;
+			}
+			
+			// Violation: @example tag with @code but without opening curly brace
+			/**
+			 * Retrieves data for a given name.
+			 * @param name The name to filter by
+			 * @example
+			 * @code
+			 * List<Record> records = MyClass.getData('Test');
+			 */
+			public static List<Record> getData(String name) {
+				return new List<Record>();
+			}
+			
+			// Violation: @example tag with {@code but missing closing curly brace
+			/**
+			 * Processes data for a given input.
+			 * @param input The input to process
+			 * @example
+			 * {@code
+			 * String result = MyClass.process('input');
+			 */
+			public static String process(String input) {
+				return input;
 			}
 			
 			// Valid: Method with multiple @example tags containing {@code} blocks
