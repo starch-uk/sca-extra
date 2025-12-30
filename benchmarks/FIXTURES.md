@@ -28,7 +28,6 @@ not included in PMD benchmark fixtures as they use a different engine.
 ### Code Style Rules (200+ violations)
 
 - ✅ AvoidOneLinerMethods (10 violations)
-- ✅ ListInitializationMustBeMultiLine (10 violations)
 - ✅ MapInitializationMustBeMultiLine (10 violations)
 - ✅ MapShouldBeInitializedWithValues (10 violations)
 - ✅ MultipleStringContainsCalls (10 violations)

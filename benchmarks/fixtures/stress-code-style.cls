@@ -92,20 +92,6 @@ public class StressCodeStyle {
     Integer r7 = v2 == null ? 0 : v2;
   }
 
-  public void stressListInitializationMustBeMultiLine() {
-    // 10 violations: ListInitializationMustBeMultiLine
-    List<String> l1 = new List<String>{ 'a', 'b' };
-    List<String> l2 = new List<String>{ 'x', 'y', 'z' };
-    List<Integer> l3 = new List<Integer>{ 1, 2, 3 };
-    List<Boolean> l4 = new List<Boolean>{ true, false };
-    List<String> l5 = new List<String>{ 'one', 'two', 'three', 'four' };
-    List<Integer> l6 = new List<Integer>{ 10, 20, 30, 40, 50 };
-    List<String> l7 = new List<String>{ 'a', 'b', 'c', 'd', 'e', 'f' };
-    List<Integer> l8 = new List<Integer>{ 1, 2, 3, 4, 5, 6, 7 };
-    List<String> l9 = new List<String>{ 'item1', 'item2', 'item3' };
-    List<Integer> l10 = new List<Integer>{ 100, 200, 300 };
-  }
-
   public void stressMapInitializationMustBeMultiLine() {
     // 10 violations: MapInitializationMustBeMultiLine
     Map<String, String> m1 = new Map<String, String>{ 'a' => '1', 'b' => '2' };

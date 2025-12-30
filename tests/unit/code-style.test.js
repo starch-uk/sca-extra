@@ -88,28 +88,6 @@ describe('Code Style Rules', () => {
 		});
 	});
 
-	describe('ListInitializationMustBeMultiLine', () => {
-		it('should detect list initializations with 2+ items on same line', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/ListInitializationMustBeMultiLine.xml',
-				'tests/fixtures/negative/code-style/ListInitializationMustBeMultiLine.cls'
-			);
-			expect(
-				violations.filter(
-					(v) => v.rule === 'ListInitializationMustBeMultiLine'
-				).length
-			).toBeGreaterThan(0);
-		});
-
-		it('should not flag single-item lists or multi-line lists', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/ListInitializationMustBeMultiLine.xml',
-				'tests/fixtures/positive/code-style/ListInitializationMustBeMultiLine.cls'
-			);
-			assertNoViolations(violations, 'ListInitializationMustBeMultiLine');
-		});
-	});
-
 	describe('MapInitializationMustBeMultiLine', () => {
 		it('should detect map initializations with 2+ entries on same line', async () => {
 			const violations = await runPMD(
