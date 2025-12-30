@@ -312,8 +312,6 @@ To customize a rule's behavior:
 
 Many rules use numeric thresholds:
 
-- **`$minItems`** - Minimum number of items (e.g.,
-  `ListInitializationMustBeMultiLine`)
 - **`$minCalls`** - Minimum number of method calls (e.g.,
   `MultipleStringContainsCalls`)
 - **`$minValues`** - Minimum number of enum values (e.g., `EnumMinimumValues`)
@@ -458,7 +456,6 @@ custom rule copy.
 
 ### Examples of Rules with Configurable Variables
 
-- **`ListInitializationMustBeMultiLine`** - `$minItems` (default: 2)
 - **`MapInitializationMustBeMultiLine`** - `$minEntries` (default: 2)
 - **`MultipleStringContainsCalls`** - `$minCalls` (default: 2)
 - **`EnumMinimumValues`** - `$minValues` (default: 3)

@@ -99,9 +99,6 @@ public class StressTestAllRules {
     String city = account != null ? account.BillingCity : 'Unknown';
     // Violations: PreferNullCoalescingOverTernary
 
-    List<String> items = new List<String>{ 'a', 'b', 'c' };
-    // Violations: ListInitializationMustBeMultiLine
-
     Map<String, Integer> map1 = new Map<String, Integer>{ 'a' => 1, 'b' => 2 };
     // Violations: MapInitializationMustBeMultiLine
 
