@@ -10,14 +10,14 @@ These fixtures enable performance benchmarking and regression detection.
 
 | Fixture                     | Size    | Estimated Violations | Primary Focus                                | Rules Covered    |
 | --------------------------- | ------- | -------------------- | -------------------------------------------- | ---------------- |
-| `stress-test-all-rules.cls` | 5.5 KB  | 100+                 | All rules (comprehensive)                    | All 42 PMD rules |
-| `stress-code-style.cls`     | 15 KB   | 200+                 | Code style rules                             | 16 rules         |
+| `stress-test-all-rules.cls` | 5.5 KB  | 100+                 | All rules (comprehensive)                    | All 41 PMD rules |
+| `stress-code-style.cls`     | 15 KB   | 200+                 | Code style rules                             | 15 rules         |
 | `stress-design.cls`         | 10.3 KB | 130+                 | Design rules (structure + method signatures) | 15 rules         |
 | `stress-best-practices.cls` | 5.7 KB  | 100+                 | Best practices rules (modifiers)             | 5 rules          |
-| `stress-code-style.cls`     | 18.2 KB | 300+                 | Code style rules (including naming)          | 20 rules         |
+| `stress-code-style.cls`     | 18.2 KB | 300+                 | Code style rules (including naming)          | 19 rules         |
 | `stress-documentation.cls`  | 3.9 KB  | 30+                  | Documentation rules                          | 2 rules          |
 
-**Total: ~43 KB of stress-test code with 560+ potential violations across 42 PMD
+**Total: ~43 KB of stress-test code with 560+ potential violations across 41 PMD
 rules**
 
 **Note:** Regex rules (NoConsecutiveBlankLines, ProhibitSuppressWarnings) are
@@ -28,7 +28,6 @@ not included in PMD benchmark fixtures as they use a different engine.
 ### Code Style Rules (200+ violations)
 
 - ✅ AvoidOneLinerMethods (10 violations)
-- ✅ MapInitializationMustBeMultiLine (10 violations)
 - ✅ MapShouldBeInitializedWithValues (10 violations)
 - ✅ MultipleStringContainsCalls (10 violations)
 - ✅ NoMethodCallsAsArguments (10 violations)

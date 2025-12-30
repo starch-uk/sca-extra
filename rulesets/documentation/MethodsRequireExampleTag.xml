@@ -33,11 +33,18 @@
 				<value>
 					<![CDATA[
 					//Method[
-						FormalComment[starts-with(@Image, '/**') 
-							and (
-								not(contains(@Image, '@example'))
-								or (contains(@Image, '@example') and not(contains(@Image, '{@code}')))
-							)]
+						(
+							FormalComment[starts-with(@Image, '/**') 
+								and (
+									not(contains(@Image, '@example'))
+									or (contains(@Image, '@example') and not(contains(@Image, '{@code}')))
+								)]
+							or preceding-sibling::FormalComment[starts-with(@Image, '/**') 
+								and (
+									not(contains(@Image, '@example'))
+									or (contains(@Image, '@example') and not(contains(@Image, '{@code}')))
+								)]
+						)
 						and not(ModifierNode/Annotation)
 						and not(ModifierNode[@Override = true()])
 						and not(ancestor::UserClass[@Interface = 'true'])

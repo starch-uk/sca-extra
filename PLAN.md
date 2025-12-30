@@ -437,17 +437,16 @@ following represents the planned implementation order.
 
 3. **NoMethodCallsInConditionals**
 4. **NoSingleLetterVariableNames**
-5. **Multi-line formatting rules** (MapInitializationMustBeMultiLine,
-   SingleArgumentMustBeSingleLine, SingleParameterMustBeSingleLine)
+5. **Multi-line formatting rules** (SingleArgumentMustBeSingleLine,
+   SingleParameterMustBeSingleLine)
 6. **Modifier rules** (FinalVariablesMustBeFinal, StaticMethodsMustBeStatic,
    StaticVariablesMustBeFinalAndScreamingSnakeCase,
    RegexPatternsMustBeStaticFinal, TestClassIsParallel)
 
 #### P3 Rules
 
-7. **Code Style Rules** (16 total):
+7. **Code Style Rules** (15 total):
     - AvoidOneLinerMethods
-    - MapInitializationMustBeMultiLine
     - MapShouldBeInitializedWithValues
     - MultipleStringContainsCalls
     - NoConsecutiveBlankLines (Regex rule)

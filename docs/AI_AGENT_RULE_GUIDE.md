@@ -289,14 +289,6 @@ Extract method calls to variables before conditionals.
 ❌ `if (getValue() > 0) {}`
 ✅ `Integer value = getValue(); if (value > 0) {}`
 
-### MapInitializationMustBeMultiLine
-
-**Category:** code-style | **Priority:** P3
-Map initializations with minEntries+ must be multi-line.
-
-❌ `new Map<String,Integer>{ 'a'=>1, 'b'=>2 };`
-✅ `new Map<String,Integer>{\n  'a'=>1,\n  'b'=>2\n};`
-
 ### MultipleStringContainsCalls
 
 **Category:** code-style | **Priority:** P3

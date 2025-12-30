@@ -47,6 +47,125 @@ to customize your configuration.
   rules configuration from the `engines.regex.custom_rules` section into your
   own `code-analyzer.yml` (see **Regex Rules** section below).
 
+### Comprehensive Example (All Rules)
+
+Here's a complete `code-analyzer.yml` configuration that includes all 46 PMD
+rules and 4 Regex rules from this repository:
+
+```yaml
+engines:
+    pmd:
+        disable_engine: false
+        file_extensions:
+            apex:
+                - .apex
+                - .cls
+                - .trigger
+        custom_rulesets:
+            - rulesets/best-practices/FinalVariablesMustBeFinal.xml
+            - rulesets/best-practices/RegexPatternsMustBeStaticFinal.xml
+            - rulesets/best-practices/StaticMethodsMustBeStatic.xml
+            - rulesets/best-practices/StaticVariablesMustBeFinalAndScreamingSnakeCase.xml
+            - rulesets/best-practices/TestClassIsParallel.xml
+            - rulesets/code-style/AvoidOneLinerMethods.xml
+            - rulesets/code-style/InnerClassesMustBeOneWord.xml
+            - rulesets/code-style/MapShouldBeInitializedWithValues.xml
+            - rulesets/code-style/MultipleStringContainsCalls.xml
+            - rulesets/code-style/NoAbbreviations.xml
+            - rulesets/code-style/NoMethodCallsAsArguments.xml
+            - rulesets/code-style/NoMethodCallsInConditionals.xml
+            - rulesets/code-style/NoSingleLetterVariableNames.xml
+            - rulesets/code-style/PreferBuilderPatternChaining.xml
+            - rulesets/code-style/PreferConcatenationOverStringJoinWithEmpty.xml
+            - rulesets/code-style/PreferMethodCallsInLoopConditions.xml
+            - rulesets/code-style/PreferNullCoalescingOverTernary.xml
+            - rulesets/code-style/PreferSafeNavigationOperator.xml
+            - rulesets/code-style/PreferStringJoinOverConcatenation.xml
+            - rulesets/code-style/PreferStringJoinOverMultipleNewlines.xml
+            - rulesets/code-style/PreferStringJoinWithSeparatorOverEmpty.xml
+            - rulesets/code-style/SingleArgumentMustBeSingleLine.xml
+            - rulesets/code-style/VariablesMustNotShareNamesWithClasses.xml
+            - rulesets/design/AvoidLowValueWrapperMethods.xml
+            - rulesets/design/AvoidTrivialPropertyGetters.xml
+            - rulesets/design/ClassesMustHaveMethods.xml
+            - rulesets/design/CombineNestedIfStatements.xml
+            - rulesets/design/EnumMinimumValues.xml
+            - rulesets/design/InnerClassesCannotBeStatic.xml
+            - rulesets/design/InnerClassesCannotHaveStaticMembers.xml
+            - rulesets/design/NoCustomParameterObjects.xml
+            - rulesets/design/NoInterfacesEndingWithCallback.xml
+            - rulesets/design/NoParameterClasses.xml
+            - rulesets/design/NoThisOutsideConstructors.xml
+            - rulesets/design/NoUnnecessaryAttributeVariables.xml
+            - rulesets/design/NoUnnecessaryReturnVariables.xml
+            - rulesets/design/PreferPropertySyntaxOverGetterMethods.xml
+            - rulesets/design/PreferSwitchOverIfElseChains.xml
+            - rulesets/design/SingleParameterMustBeSingleLine.xml
+            - rulesets/documentation/ExceptionDocumentationRequired.xml
+            - rulesets/documentation/MethodsRequireExampleTag.xml
+            - rulesets/documentation/ProhibitAuthorSinceVersionTags.xml
+            - rulesets/documentation/SingleLineDocumentationFormat.xml
+            - rulesets/documentation/ValidGroupTagValues.xml
+    regex:
+        custom_rules:
+            NoConsecutiveBlankLines:
+                regex: /\n\s*\n\s*\n/g
+                file_extensions: ['.apex', '.cls', '.trigger']
+                description:
+                    'Prevents two or more consecutive blank lines in Apex code.
+                    Code should have at most one blank line between statements,
+                    methods, or other code elements.'
+                violation_message:
+                    'Two or more consecutive blank lines are not allowed. Use at
+                    most one blank line between statements.'
+                severity: 'Moderate'
+                tags: ['CodeStyle', 'Recommended']
+            ProhibitSuppressWarnings:
+                regex: /@SuppressWarnings\([^)]*\)|\/\/\s*NOPMD/gi
+                file_extensions: ['.apex', '.cls', '.trigger']
+                description:
+                    'Prohibits the use of @SuppressWarnings annotations and
+                    NOPMD comments in Apex code. Suppressions hide code quality
+                    issues; prefer fixing the underlying problems or improving
+                    rules instead.'
+                violation_message:
+                    'Suppression of warnings is not allowed. Fix the underlying
+                    issue or improve the rule instead of suppressing violations.'
+                severity: 'High'
+                tags: ['CodeStyle', 'Recommended']
+            NoLongLines:
+                regex: /.{81,}/gm
+                file_extensions: ['.apex', '.cls', '.trigger']
+                description:
+                    'Enforces a maximum line length of 80 characters. Lines
+                    longer than 80 characters reduce readability and make code
+                    harder to review. Use shorter class, attribute, method, and
+                    variable names to improve readability.'
+                violation_message:
+                    'Line exceeds 80 characters. Use shorter class, attribute,
+                    method, and variable names to improve readability.'
+                severity: 'Moderate'
+                tags: ['CodeStyle', 'Recommended']
+            ProhibitPrettierIgnore:
+                regex: /\/\/\s*prettier-ignore/gi
+                file_extensions: ['.apex', '.cls', '.trigger']
+                description:
+                    'Prohibits the use of prettier-ignore comments in Apex code.
+                    Code should be formatted consistently without exceptions.
+                    Using prettier-ignore comments undermines code formatting
+                    standards and makes the codebase less maintainable.'
+                violation_message:
+                    'Prettier-ignore comments are not allowed. Code should be
+                    formatted consistently without exceptions.'
+                severity: 'Moderate'
+                tags: ['CodeStyle', 'Recommended']
+```
+
+**Note:** You can copy this entire configuration into your project's
+`code-analyzer.yml` file, or select only the rules you want to enable. See the
+sections below for information on customizing rules and selecting specific
+categories.
+
 ### Basic Structure
 
 The `code-analyzer.yml` file uses YAML syntax and typically includes:
@@ -386,16 +505,15 @@ Regex rules are useful for:
 For more information on creating Regex rules, see the
 [Regex Engine Reference](docs/REGEX.md).
 
-### Complete Example
+### Minimal Example
 
-Here's a complete `code-analyzer.yml` example combining custom rules and
-standard PMD rules:
+Here's a minimal `code-analyzer.yml` example showing how to enable a few rules
+and customize their severity:
 
 ```yaml
 engines:
     pmd:
         custom_rulesets:
-            # Custom rules from sca-extra repository
             # Design rules
             - rulesets/design/InnerClassesCannotBeStatic.xml
             - rulesets/design/InnerClassesCannotHaveStaticMembers.xml
@@ -421,6 +539,10 @@ rules:
         severity: 'High'
         tags: ['Recommended', 'Naming']
 ```
+
+**For a comprehensive example with all 46 PMD rules and 4 Regex rules, see the
+[Comprehensive Example (All Rules)](#comprehensive-example-all-rules) section
+above.**
 
 **For more examples:** See the
 [unhappy-soup ruleset](https://github.com/rsoesemann/unhappy-soup/blob/master/ruleset.xml)
