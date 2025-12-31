@@ -22,7 +22,16 @@
 			tests to run in parallel, reducing overall test execution time and
 			improving developer productivity.
 
-			Version: 1.0.1
+			Test classes that use restricted operations are exempt from this
+			requirement, as they cannot run in parallel anyway. Restricted operations
+			include:
+			- Calling Test.getStandardPricebookId()
+			- Calling System.schedule() or System.enqueueJob()
+			- Inserting ContentNote SObjects
+			- Creating User or GroupMember SObjects
+			- Using SObjects that can't be used together in DML operations
+
+			Version: 2.0.0
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -38,6 +47,21 @@
 								and (@Value = 'true' or @Image = 'true')
 							]
 						)
+						and not(exists(.//MethodCallExpression[
+							@MethodName = 'getStandardPricebookId'
+							and child::ReferenceExpression[@Image = 'Test']
+						]))
+						and not(exists(.//MethodCallExpression[
+							@MethodName = 'schedule'
+							and child::ReferenceExpression[@Image = 'System']
+						]))
+						and not(exists(.//MethodCallExpression[
+							@MethodName = 'enqueueJob'
+							and child::ReferenceExpression[@Image = 'System']
+						]))
+						and not(exists(.//VariableDeclaration[@Type = 'ContentNote']))
+						and not(exists(.//VariableDeclaration[@Type = 'User']))
+						and not(exists(.//VariableDeclaration[@Type = 'GroupMember']))
 					]
 					]]>
 				</value>
@@ -75,12 +99,83 @@
 		</example>
 		<example>
 			<![CDATA[
+			// Valid: Test class using restricted operations (exempt from IsParallel requirement)
+			@IsTest
+			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        Id pricebookId = Test.getStandardPricebookId();
+			    }
+			}
+			
+			// Valid: Test class using System.schedule() (exempt from IsParallel requirement)
+			@IsTest
+			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        System.schedule('Test', '0 0 0 * * ?', new TestSchedulable());
+			    }
+			}
+			
+			// Valid: Test class using System.enqueueJob() (exempt from IsParallel requirement)
+			@IsTest
+			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        System.enqueueJob(new TestQueueable());
+			    }
+			}
+			
+			// Valid: Test class inserting ContentNote (exempt from IsParallel requirement)
+			@IsTest
+			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        ContentNote note = new ContentNote();
+			        insert note;
+			    }
+			}
+			
+			// Valid: Test class inserting User (exempt from IsParallel requirement)
+			@IsTest
+			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        User u = new User();
+			        insert u;
+			    }
+			}
+			
+			// Valid: Test class inserting GroupMember (exempt from IsParallel requirement)
+			@IsTest
+			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        GroupMember gm = new GroupMember();
+			        insert gm;
+			    }
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
 			// Valid: Test class with IsParallel=true (alternative syntax)
 			@IsTest(IsParallel = true)
 			private class MyTestClass {
 			    @IsTest
 			    static void testMethod() {
 			        // Test code
+			    }
+			}
+			
+			// Valid: Parallel test class with valid operations
+			@IsTest(IsParallel=true)
+			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        Account acc = new Account(Name = 'Test');
+			        insert acc;
+			        System.debug('Test');
 			    }
 			}
 			
