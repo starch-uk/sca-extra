@@ -21,6 +21,64 @@ describe('Code Style Rules', () => {
 			);
 			assertNoViolations(violations, 'NoMethodCallsInConditionals');
 		});
+
+		it('should not flag method calls in while loops', async () => {
+			const testCode = `public class TestWhile {
+				public void test() {
+					while (hasMore()) {
+						process();
+					}
+				}
+				private Boolean hasMore() { return true; }
+				private void process() { }
+			}`;
+			const fs = require('fs');
+			const path = require('path');
+			const os = require('os');
+			const tmpFile = path.join(os.tmpdir(), 'test-while.cls');
+			fs.writeFileSync(tmpFile, testCode);
+
+			try {
+				const violations = await runPMD(
+					'rulesets/code-style/NoMethodCallsInConditionals.xml',
+					tmpFile
+				);
+				assertNoViolations(violations, 'NoMethodCallsInConditionals');
+			} finally {
+				if (fs.existsSync(tmpFile)) {
+					fs.unlinkSync(tmpFile);
+				}
+			}
+		});
+
+		it('should not flag method calls in do-while loops', async () => {
+			const testCode = `public class TestDoWhile {
+				public void test() {
+					do {
+						process();
+					} while (hasMore());
+				}
+				private Boolean hasMore() { return true; }
+				private void process() { }
+			}`;
+			const fs = require('fs');
+			const path = require('path');
+			const os = require('os');
+			const tmpFile = path.join(os.tmpdir(), 'test-dowhile.cls');
+			fs.writeFileSync(tmpFile, testCode);
+
+			try {
+				const violations = await runPMD(
+					'rulesets/code-style/NoMethodCallsInConditionals.xml',
+					tmpFile
+				);
+				assertNoViolations(violations, 'NoMethodCallsInConditionals');
+			} finally {
+				if (fs.existsSync(tmpFile)) {
+					fs.unlinkSync(tmpFile);
+				}
+			}
+		});
 	});
 
 	describe('PreferSafeNavigationOperator', () => {

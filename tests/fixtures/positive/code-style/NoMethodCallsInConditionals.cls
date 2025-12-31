@@ -5,11 +5,6 @@ public class Example {
       // Valid: method result stored in variable
     }
 
-    Boolean isValid = checkStatus();
-    while (isValid) {
-      // Valid: method result stored in variable
-    }
-
     String name = getName();
     for (Integer i = 0; i < 10; i++) {
       // Valid: method result stored in variable
@@ -18,6 +13,19 @@ public class Example {
     Integer count = getCount();
     String result = count > 0 ? 'positive' : 'negative';
     // Valid: method result stored in variable
+
+    List<String> items = getItems();
+    for (String item : items) {
+      // Valid: method result stored in variable
+    }
+
+    while (checkStatus()) {
+      // Valid: method calls in while loops are allowed
+    }
+
+    do {
+      // Valid: method calls in do-while loops are allowed
+    } while (checkStatus());
   }
 
   private Integer getValue() {
@@ -34,6 +42,10 @@ public class Example {
 
   private Integer getCount() {
     return 10;
+  }
+
+  private List<String> getItems() {
+    return new List<String>();
   }
 }
 

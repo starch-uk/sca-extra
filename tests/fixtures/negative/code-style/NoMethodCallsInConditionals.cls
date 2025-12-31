@@ -4,10 +4,6 @@ public class Example {
       // Violation: method call in if condition
     }
 
-    while (checkStatus()) {
-      // Violation: method call in while condition
-    }
-
     for (Integer i = 0; i < getCount(); i++) {
       // Violation: method call in for condition
     }
@@ -19,6 +15,10 @@ public class Example {
       when 1 {
         // Violation: method call in switch
       }
+    }
+
+    for (String item : getItems()) {
+      // Violation: method call in for-each collection
     }
   }
 
@@ -36,6 +36,10 @@ public class Example {
 
   private String getName() {
     return 'test';
+  }
+
+  private List<String> getItems() {
+    return new List<String>();
   }
 }
 
