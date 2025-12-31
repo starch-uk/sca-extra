@@ -14,21 +14,27 @@
 	>
 		<description>
 			Method calls should be used directly in loop conditionals rather
-			than
-			testing inside the loop with a break statement. This makes the loop
-			condition explicit and improves readability.
+			than testing inside the loop with a break statement. This makes
+			the loop condition explicit and improves readability. Applies to
+			both while and do-while loops.
 			
 			Use: while (hasMore()) { ... }
 			Instead of: while (true) { if (!hasMore()) { break; } ... }
+			
+			Use: do { ... } while (hasMore());
+			Instead of: do { if (!hasMore()) { break; } ... } while (true);
 
-			Version: 1.0.0
+			Version: 1.1.0
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//WhileLoopStatement[
+					//(
+						WhileLoopStatement
+						| DoLoopStatement
+					)[
 						StandardCondition/LiteralExpression[@Boolean = true()]
 						and BlockStatement//IfBlockStatement[BlockStatement//BreakStatement and StandardCondition//MethodCallExpression]
 					]
@@ -46,10 +52,23 @@
 				processItem();
 			}
 			
+			// Violation: do-while(true) with break inside
+			do {
+				if (!hasMore()) {
+					break;
+				}
+				processItem();
+			} while (true);
+			
 			// Valid: Use method call in loop condition
 			while (hasMore()) {
 				processItem();
 			}
+			
+			// Valid: Use method call in do-while condition
+			do {
+				processItem();
+			} while (hasMore());
 			]]>
 		</example>
 	</rule>

@@ -18,7 +18,44 @@
 			operator is more concise and clearly expresses the intent of providing a
 			default value when a variable is null.
 
-			Version: 1.0.1
+			The null coalescing operator (??) returns its left-hand operand if it's
+			not null, otherwise returns the right-hand operand. It's a binary operator
+			that's left-associative. The left-hand operand is evaluated only once, and
+			the right-hand operand is only evaluated if the left-hand operand is null.
+
+			This rule detects ternary expressions that check for null using == or !=
+			operators and flags them for conversion to the null coalescing operator.
+			Common patterns include:
+			- Variable null checks: x != null ? x : defaultValue
+			- Inverted null checks: x == null ? defaultValue : x
+			- Null on left side: null == x ? defaultValue : x
+			- Method/property access: obj != null ? obj.getValue() : defaultValue
+			- SOQL query results: [SELECT Id FROM Account WHERE
+			Id = :id] != null ? queryResult : defaultValue
+
+			When converting ternary operators to null coalescing, you may also need
+			to use the safe navigation operator (?.) to safely access properties or
+			methods when the left operand might be null.
+
+			Both operands must be of compatible types. The null coalescing operator
+			cannot be used as the left-hand side of an assignment, and SOQL bind
+			expressions don't support the null coalescing operator.
+
+			This rule flags ternary expressions that check for null using == or !=
+			operators. The rule is designed to identify patterns that can be converted
+			to the null coalescing operator, where the same variable or expression
+			appears in both the condition and one of the branches (e.g., x != null ? x :
+			defaultValue or x == null ? defaultValue : x).
+
+			Patterns where the branches contain different variables than the one being
+			checked (e.g., x != null ? y : z where y differs from x) cannot be converted
+			to null coalescing, as they represent different logic. While this rule flags
+			ternaries with null checks, such patterns with mismatched variables are not
+			valid candidates for conversion and should not use the null coalescing
+			operator. This rule also does not flag ternary expressions that check
+			conditions other than null (e.g., x > 0 ? x : defaultValue).
+
+			Version: 1.0.2
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -27,10 +64,7 @@
 					<![CDATA[
 					//TernaryExpression[
 						StandardCondition/BooleanExpression[@Op = ('==', '!=')]
-						and (
-							StandardCondition/BooleanExpression/LiteralExpression[@Null = true()]
-							| StandardCondition/BooleanExpression/VariableExpression[@Image = 'null']
-						)
+						and StandardCondition/BooleanExpression/LiteralExpression[@Null = true()]
 					]
 					]]>
 				</value>
@@ -38,30 +72,75 @@
 		</properties>
 		<example>
 			<![CDATA[
-			// Violation: Ternary operator for null check
-			String value = obj != null ? obj.getName() : 'default';
-			Integer count = items != null ? items.size() : 0;
-			String name = account == null ? 'Unknown' : account.Name;
-			
-			// Valid: Use null coalescing operator
-			String value = obj?.getName() ?? 'default';
-			Integer count = items?.size() ?? 0;
-			String name = account?.Name ?? 'Unknown';
-			]]>
-		</example>
-		<example>
-			<![CDATA[
-			// Violation: Ternary with null literal
+			// Violation: Basic variable null check
 			String result = data != null ? data : 'default';
 			Integer value = num == null ? 0 : num;
 			
 			// Valid: Use null coalescing operator
 			String result = data ?? 'default';
 			Integer value = num ?? 0;
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Method call with null check
+			String value = obj != null ? obj.getName() : 'default';
+			Integer count = items != null ? items.size() : 0;
 			
-			// Valid: Ternary for non-null checks (not flagged)
+			// Valid: Combine safe navigation with null coalescing
+			String value = obj?.getName() ?? 'default';
+			Integer count = items?.size() ?? 0;
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Property access with null check
+			String name = account == null ? 'Unknown' : account.Name;
+			String city = account != null ? account.BillingCity : 'N/A';
+			
+			// Valid: Use safe navigation with null coalescing
+			String name = account?.Name ?? 'Unknown';
+			String city = account?.BillingCity ?? 'N/A';
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Null on left side of comparison
+			String result = null == data ? 'default' : data;
+			Integer value = null != num ? num : 0;
+			
+			// Valid: Use null coalescing operator
+			String result = data ?? 'default';
+			Integer value = num ?? 0;
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Chained ternary null checks
+			String city = account != null ? account.BillingCity : (account != null ? account.ShippingCity : 'N/A');
+			
+			// Valid: Chain null coalescing operators (left-associative)
+			String city = account?.BillingCity ?? account?.ShippingCity ?? 'N/A';
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: SOQL query with null check
+			Account defaultAccount = new Account(Name = 'Default');
+			Account a = [SELECT Id FROM Account WHERE Id = :accountId] != null 
+				? [SELECT Id FROM Account WHERE Id = :accountId] 
+				: defaultAccount;
+			
+			// Valid: Use null coalescing with SOQL query
+			Account a = [SELECT Id FROM Account WHERE Id = :accountId] ?? defaultAccount;
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Ternary for non-null checks (not flagged by this rule)
 			String result = status == 'active' ? 'yes' : 'no';
 			Integer value = count > 0 ? count : 1;
+			Boolean flag = name.contains('test') ? true : false;
 			]]>
 		</example>
 	</rule>

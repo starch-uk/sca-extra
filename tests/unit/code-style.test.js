@@ -14,7 +14,7 @@ describe('Code Style Rules', () => {
 			).toBeGreaterThan(0);
 		});
 
-		it('should not flag code with method results stored in variables', async () => {
+		it('should not flag code with method results stored in variables or method calls in while/do-while loops', async () => {
 			const violations = await runPMD(
 				'rulesets/code-style/NoMethodCallsInConditionals.xml',
 				'tests/fixtures/positive/code-style/NoMethodCallsInConditionals.cls'
