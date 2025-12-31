@@ -104,10 +104,29 @@ describe('Best Practices Rules - Modifiers', () => {
 			).toBeGreaterThan(0);
 		});
 
+		it('should detect test classes without IsParallel=true that do not use restricted operations', async () => {
+			const violations = await runPMD(
+				'rulesets/best-practices/TestClassIsParallel.xml',
+				'tests/fixtures/negative/best-practices/TestClassIsParallelRestrictions.cls'
+			);
+			expect(
+				violations.filter((v) => v.rule === 'TestClassIsParallel')
+					.length
+			).toBeGreaterThan(0);
+		});
+
 		it('should not flag test classes with IsParallel=true', async () => {
 			const violations = await runPMD(
 				'rulesets/best-practices/TestClassIsParallel.xml',
 				'tests/fixtures/positive/best-practices/TestClassIsParallel.cls'
+			);
+			assertNoViolations(violations, 'TestClassIsParallel');
+		});
+
+		it('should not flag test classes without IsParallel=true that use restricted operations', async () => {
+			const violations = await runPMD(
+				'rulesets/best-practices/TestClassIsParallel.xml',
+				'tests/fixtures/positive/best-practices/TestClassIsParallelRestrictions.cls'
 			);
 			assertNoViolations(violations, 'TestClassIsParallel');
 		});

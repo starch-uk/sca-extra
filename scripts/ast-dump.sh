@@ -44,11 +44,11 @@ fi
 # Run PMD AST dump
 echo "Dumping AST for: $APEX_FILE"
 echo "─────────────────────────────────────────────────────────"
-pmd ast-dump -d "$APEX_FILE" -l apex
+pmd ast-dump --file="$APEX_FILE" --language=apex
 
 # Alternative: Save to file
 OUTPUT_FILE="${APEX_FILE%.cls}.ast.xml"
-pmd ast-dump -d "$APEX_FILE" -l apex -f xml > "$OUTPUT_FILE" 2>/dev/null
+pmd ast-dump --file="$APEX_FILE" --language=apex --format=xml > "$OUTPUT_FILE" 2>/dev/null
 if [ $? -eq 0 ]; then
     echo "─────────────────────────────────────────────────────────"
     echo "AST XML saved to: $OUTPUT_FILE"
