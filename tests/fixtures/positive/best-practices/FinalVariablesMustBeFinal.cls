@@ -26,5 +26,19 @@ public class Example {
   public void methodWithParameter(Integer param) {
     // Valid: parameter, not required to be final
   }
+
+  public void methodWithCatchBlock() {
+    try {
+      final Integer value = 5;
+      // Valid: variable inside try block is declared as final
+      throw new Exception('test');
+    } catch (Exception e) {
+      // Valid: catch block exception variable 'e' cannot be declared as final in Apex
+      // (it is a Parameter node, not a VariableDeclaration, so it's excluded)
+      String errorMsg = e.getMessage();
+      // Valid: variable inside catch block that is reassigned
+      errorMsg = errorMsg + ' additional info';
+    }
+  }
 }
 

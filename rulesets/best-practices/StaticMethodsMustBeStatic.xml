@@ -33,7 +33,7 @@
 			- Calls to other instance methods in the same class (e.g., buildContext())
 			- The 'this' keyword
 			- Methods that are part of property declarations
-			- Abstract methods, constructors, and inner class methods
+			- Abstract methods, override methods, constructors, and inner class methods
 			
 			Note: The rule correctly handles cases where local variables shadow
 			instance fields - if an instance field is accessed before a local variable
@@ -86,6 +86,7 @@
 					return //Method[
 						not(ModifierNode[@Static = true()])
 						and not(ModifierNode[@Abstract = true()])
+						and not(ModifierNode[@Override = true()])
 						and not(@Constructor = true())
 						and not(ancestor::UserClass[@Abstract = 'true'])
 						and not(ancestor::UserClass[ancestor::UserClass])
@@ -271,6 +272,13 @@
 			// Valid: Abstract methods are excluded
 			public abstract class Base {
 			    public abstract void process();  // ✅ Abstract methods excluded
+			}
+			
+			// Valid: Override methods are excluded (cannot be static in Apex)
+			public class MyClass {
+			    public override String toString() {  // ✅ Override methods excluded
+			        return 'test';
+			    }
 			}
 			
 			// Valid: Constructors are excluded

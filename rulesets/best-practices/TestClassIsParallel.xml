@@ -17,21 +17,26 @@
 	>
 		<description>
 			Test classes must include IsParallel=true in their @IsTest
-			annotation to
-			enable parallel test execution. This improves test performance by allowing
-			tests to run in parallel, reducing overall test execution time and
-			improving developer productivity.
+			annotation
+			to explicitly enable parallel test execution. While tests run in
+			parallel by default in Salesforce, explicitly setting IsParallel=true
+			ensures parallel execution even if organization settings change,
+			improving test performance by allowing tests to run concurrently,
+			reducing overall test execution time and improving developer
+			productivity.
 
 			Test classes that use restricted operations are exempt from this
-			requirement, as they cannot run in parallel anyway. Restricted operations
-			include:
+			requirement, as they cannot run in parallel anyway. Restricted
+			operations include:
+			- Using @IsTest(seeAllData=true) - Tests with seeAllData=true cannot
+			  run in parallel due to data contention issues
 			- Calling Test.getStandardPricebookId()
 			- Calling System.schedule() or System.enqueueJob()
 			- Inserting ContentNote SObjects
 			- Creating User or GroupMember SObjects
 			- Using SObjects that can't be used together in DML operations
 
-			Version: 2.0.0
+			Version: 2.1.0
 		</description>
 		<priority>3</priority>
 		<properties>
@@ -44,6 +49,13 @@
 							.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
 							/AnnotationParameter[
 								@Name = 'IsParallel'
+								and (@Value = 'true' or @Image = 'true')
+							]
+						)
+						and not(
+							.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
+							/AnnotationParameter[
+								@Name = 'seeAllData'
 								and (@Value = 'true' or @Image = 'true')
 							]
 						)
@@ -99,6 +111,15 @@
 		</example>
 		<example>
 			<![CDATA[
+			// Valid: Test class using seeAllData=true (exempt from IsParallel requirement)
+			@IsTest(seeAllData=true)
+			private class MyTestClass {
+			    @IsTest
+			    static void testMethod() {
+			        // Test code with access to all org data
+			    }
+			}
+			
 			// Valid: Test class using restricted operations (exempt from IsParallel requirement)
 			@IsTest
 			private class MyTestClass {

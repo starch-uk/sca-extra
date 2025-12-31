@@ -24,6 +24,11 @@ public class Example {
 	public abstract void abstractMethod();
 	// Valid: abstract method
 
+	public override String toString() {
+		// Valid: override method (cannot be static in Apex)
+		return 'Example';
+	}
+
 	public Example() {
 		// Valid: constructor
 	}
