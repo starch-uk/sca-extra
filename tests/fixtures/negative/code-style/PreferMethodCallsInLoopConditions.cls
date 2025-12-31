@@ -15,6 +15,22 @@ public class Example {
             }
             doWork();
         }
+
+        // Violation: do-while(true) with break inside
+        do {
+            if (!hasMore()) {
+                break;
+            }
+            process();
+        } while (true);
+
+        // Violation: do-while(false) with break inside
+        do {
+            if (shouldStop()) {
+                break;
+            }
+            doWork();
+        } while (false);
     }
 }
 

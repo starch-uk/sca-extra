@@ -956,6 +956,56 @@ if (value > 0) {
 }
 ```
 
+#### PreferMethodCallsInLoopConditions
+
+**Priority:** P3 (Medium)  
+**Description:** Method calls should be used directly in loop conditionals
+rather than testing inside the loop with a break statement. This makes the loop
+condition explicit and improves readability. Applies to both while and do-while
+loops.
+
+**Violations:**
+
+```apex
+// while loop with break inside
+while (true) {  // ❌ Should use method call in condition
+    if (!hasMore()) {
+        break;
+    }
+    processItem();
+}
+
+// do-while loop with break inside
+do {  // ❌ Should use method call in condition
+    if (!hasMore()) {
+        break;
+    }
+    processItem();
+} while (true);
+```
+
+**Valid Code:**
+
+```apex
+// Method call in while loop condition
+while (hasMore()) {  // ✅ Method call in condition
+    processItem();
+}
+
+// Method call in do-while loop condition
+do {  // ✅ Method call in condition
+    processItem();
+} while (hasMore());
+
+// Break without method call (not flagged)
+while (true) {
+    if (flag) {  // ✅ No method call, so not flagged
+        break;
+    }
+    process();
+}
+```
+
 #### PreferNullCoalescingOverTernary
 
 **Priority:** P3 (Medium)  
