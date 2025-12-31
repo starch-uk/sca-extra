@@ -67,5 +67,8 @@
     "*.mdc": [
       "prettier --write"
     ]
-  }
+  },
+  "dependencies": {
+    "tmp": "^0.2.5"
+}
 }

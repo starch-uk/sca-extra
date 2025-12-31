@@ -33,9 +33,9 @@ describe('Code Style Rules', () => {
 				private void process() { }
 			}`;
 			const fs = require('fs');
-			const path = require('path');
-			const os = require('os');
-			const tmpFile = path.join(os.tmpdir(), 'test-while.cls');
+			const tmp = require('tmp');
+			const tempFile = tmp.fileSync({ postfix: '.cls' });
+			const tmpFile = tempFile.name;
 			fs.writeFileSync(tmpFile, testCode);
 
 			try {
@@ -45,9 +45,7 @@ describe('Code Style Rules', () => {
 				);
 				assertNoViolations(violations, 'NoMethodCallsInConditionals');
 			} finally {
-				if (fs.existsSync(tmpFile)) {
-					fs.unlinkSync(tmpFile);
-				}
+				tempFile.removeCallback();
 			}
 		});
 
@@ -62,9 +60,9 @@ describe('Code Style Rules', () => {
 				private void process() { }
 			}`;
 			const fs = require('fs');
-			const path = require('path');
-			const os = require('os');
-			const tmpFile = path.join(os.tmpdir(), 'test-dowhile.cls');
+			const tmp = require('tmp');
+			const tempFile = tmp.fileSync({ postfix: '.cls' });
+			const tmpFile = tempFile.name;
 			fs.writeFileSync(tmpFile, testCode);
 
 			try {
@@ -74,9 +72,7 @@ describe('Code Style Rules', () => {
 				);
 				assertNoViolations(violations, 'NoMethodCallsInConditionals');
 			} finally {
-				if (fs.existsSync(tmpFile)) {
-					fs.unlinkSync(tmpFile);
-				}
+				tempFile.removeCallback();
 			}
 		});
 	});
