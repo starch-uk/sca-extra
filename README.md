@@ -956,6 +956,85 @@ if (value > 0) {
 }
 ```
 
+#### PreferNullCoalescingOverTernary
+
+**Priority:** P3 (Medium)  
+**Description:** Prefer the null coalescing operator (`??`) over ternary
+operators when checking for null and providing a default value. The null
+coalescing operator is more concise and clearly expresses the intent of
+providing a default value when a variable is null.
+
+The null coalescing operator (`??`) returns its left-hand operand if it's not
+null, otherwise returns the right-hand operand. It's a binary operator that's
+left-associative. The left-hand operand is evaluated only once, and the
+right-hand operand is only evaluated if the left-hand operand is null.
+
+This rule flags ternary expressions that check for null using `==` or `!=`
+operators and follow patterns that can be converted to the null coalescing
+operator, where the same variable or expression appears in both the condition
+and one of the branches.
+
+Patterns where the branches contain different variables than the one being
+checked (e.g., `x != null ? y : z` where `y` differs from `x`) cannot be
+converted to null coalescing, as they represent different logic. This rule also
+does not flag ternary expressions that check conditions other than null.
+
+When converting ternary operators to null coalescing, you may also need to use
+the safe navigation operator (`?.`) to safely access properties or methods when
+the left operand might be null.
+
+Both operands must be of compatible types. The null coalescing operator cannot
+be used as the left-hand side of an assignment, and SOQL bind expressions don't
+support the null coalescing operator.
+
+**Violations:**
+
+```apex
+// Basic variable null check
+String result = data != null ? data : 'default';  // ❌ Should use ??
+Integer value = num == null ? 0 : num;            // ❌ Should use ??
+
+// Method call with null check
+String value = obj != null ? obj.getName() : 'default';  // ❌ Should use ?. and ??
+
+// Property access with null check
+String name = account == null ? 'Unknown' : account.Name;  // ❌ Should use ?. and ??
+
+// Null on left side of comparison
+String result = null == data ? 'default' : data;  // ❌ Should use ??
+
+// SOQL query with null check
+Account defaultAccount = new Account(Name = 'Default');
+Account a = [SELECT Id FROM Account WHERE Id = :accountId] != null
+    ? [SELECT Id FROM Account WHERE Id = :accountId]
+    : defaultAccount;  // ❌ Should use ??
+```
+
+**Valid Code:**
+
+```apex
+// Basic variable null coalescing
+String result = data ?? 'default';  // ✅ Uses null coalescing operator
+Integer value = num ?? 0;           // ✅ Uses null coalescing operator
+
+// Method call with safe navigation and null coalescing
+String value = obj?.getName() ?? 'default';  // ✅ Uses ?. and ??
+
+// Property access with safe navigation and null coalescing
+String name = account?.Name ?? 'Unknown';  // ✅ Uses ?. and ??
+
+// Chained null coalescing operators (left-associative)
+String city = account?.BillingCity ?? account?.ShippingCity ?? 'N/A';  // ✅ Chained ??
+
+// SOQL query with null coalescing
+Account defaultAccount = new Account(Name = 'Default');
+Account a = [SELECT Id FROM Account WHERE Id = :accountId] ?? defaultAccount;  // ✅ Uses ??
+
+// Ternary for non-null checks (not flagged by this rule)
+String result = status == 'active' ? 'yes' : 'no';  // ✅ Not a null check
+Integer value = count > 0 ? count : 1;              // ✅ Not a null check
+```
+
 ### Best Practices Rules
 
 #### RegexPatternsMustBeStaticFinal
