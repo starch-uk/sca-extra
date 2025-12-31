@@ -14,66 +14,12 @@ describe('Code Style Rules', () => {
 			).toBeGreaterThan(0);
 		});
 
-		it('should not flag code with method results stored in variables', async () => {
+		it('should not flag code with method results stored in variables or method calls in while/do-while loops', async () => {
 			const violations = await runPMD(
 				'rulesets/code-style/NoMethodCallsInConditionals.xml',
 				'tests/fixtures/positive/code-style/NoMethodCallsInConditionals.cls'
 			);
 			assertNoViolations(violations, 'NoMethodCallsInConditionals');
-		});
-
-		it('should not flag method calls in while loops', async () => {
-			const testCode = `public class TestWhile {
-				public void test() {
-					while (hasMore()) {
-						process();
-					}
-				}
-				private Boolean hasMore() { return true; }
-				private void process() { }
-			}`;
-			const fs = require('fs');
-			const tmp = require('tmp');
-			const tempFile = tmp.fileSync({ postfix: '.cls' });
-			const tmpFile = tempFile.name;
-			fs.writeFileSync(tmpFile, testCode);
-
-			try {
-				const violations = await runPMD(
-					'rulesets/code-style/NoMethodCallsInConditionals.xml',
-					tmpFile
-				);
-				assertNoViolations(violations, 'NoMethodCallsInConditionals');
-			} finally {
-				tempFile.removeCallback();
-			}
-		});
-
-		it('should not flag method calls in do-while loops', async () => {
-			const testCode = `public class TestDoWhile {
-				public void test() {
-					do {
-						process();
-					} while (hasMore());
-				}
-				private Boolean hasMore() { return true; }
-				private void process() { }
-			}`;
-			const fs = require('fs');
-			const tmp = require('tmp');
-			const tempFile = tmp.fileSync({ postfix: '.cls' });
-			const tmpFile = tempFile.name;
-			fs.writeFileSync(tmpFile, testCode);
-
-			try {
-				const violations = await runPMD(
-					'rulesets/code-style/NoMethodCallsInConditionals.xml',
-					tmpFile
-				);
-				assertNoViolations(violations, 'NoMethodCallsInConditionals');
-			} finally {
-				tempFile.removeCallback();
-			}
 		});
 	});
 
