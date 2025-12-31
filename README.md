@@ -611,6 +611,8 @@ or similar formatters.
     - Examples:
         - `FinalVariablesMustBeFinal` - Ensures immutability where intended
         - `StaticMethodsMustBeStatic` - Prevents unnecessary instance methods
+        - `RegexPatternsMustBeStaticFinal` - Ensures regex patterns are static
+          final constants
         - `TestClassIsParallel` - Enforces test best practices
 
 5. **Documentation Quality**
@@ -951,6 +953,82 @@ if (getValue() > 0) {  // ❌ Method call in conditional
 Integer value = getValue();  // ✅ Extract to variable
 if (value > 0) {
     // ...
+}
+```
+
+### Best Practices Rules
+
+#### RegexPatternsMustBeStaticFinal
+
+**Priority:** P2 (High)  
+**Description:** Regular expression patterns must be declared as static final
+constants instead of inline. This improves performance by avoiding repeated
+pattern compilation, makes patterns reusable, and improves maintainability by
+centralizing pattern definitions.
+
+This rule applies to:
+
+- `Pattern.compile()` and `Pattern.matches()` static methods
+- `String.split()`, `String.matches()`, `String.replaceAll()`, and
+  `String.replaceFirst()` instance methods
+
+For String replace operations, consider using the `Matcher` class with a static
+final `Pattern` instead of `String.replaceAll()` or `String.replaceFirst()` for
+better performance when the same pattern is used multiple times.
+
+**Violations:**
+
+```apex
+// Pattern.compile() with inline regex pattern
+Pattern pattern = Pattern.compile('^[A-Z]+$');  // ❌ Inline pattern
+
+// Pattern.matches() with inline regex pattern
+Boolean isValid = Pattern.matches('^[A-Z]+$', input);  // ❌ Inline pattern
+
+// String.replaceAll() with inline regex pattern
+String replaced = input.replaceAll('\\d', 'X');  // ❌ Inline pattern
+
+// String.replaceFirst() with inline regex pattern
+String replaced = input.replaceFirst('\\d', 'X');  // ❌ Inline pattern
+
+// String.split() with inline regex pattern
+List<String> parts = input.split(',');  // ❌ Inline pattern
+
+// String.matches() with inline regex pattern
+Boolean matches = input.matches('test.*');  // ❌ Inline pattern
+```
+
+**Valid Code:**
+
+```apex
+// Static final regex pattern with Pattern.matches()
+private static final String PATTERN = '^[A-Z]+$';
+public Boolean isValid(String input) {
+    return Pattern.matches(PATTERN, input);  // ✅ Uses static final constant
+}
+
+// Static final regex pattern with Pattern.compile()
+private static final String EMAIL_PATTERN = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$';
+public Boolean isValidEmail(String input) {
+    Pattern pattern = Pattern.compile(EMAIL_PATTERN);  // ✅ Uses static final constant
+    return pattern.matcher(input).matches();
+}
+
+// Using Matcher class with static final Pattern for replace operations
+private static final Pattern DIGIT_PATTERN = Pattern.compile('\\d');
+public String replaceDigits(String input) {
+    Matcher m = DIGIT_PATTERN.matcher(input);  // ✅ Uses static final Pattern
+    return m.replaceAll('X');
+}
+
+// Pattern from method/constructor argument (exception)
+public void processPattern(String pattern) {
+    Pattern p = Pattern.compile(pattern);  // ✅ Pattern from parameter - allowed
+}
+
+// Pattern from method output (exception)
+public void useDynamicPattern() {
+    Pattern p = Pattern.compile(getPattern());  // ✅ Pattern from method - allowed
 }
 ```
 

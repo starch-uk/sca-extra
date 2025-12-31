@@ -17,29 +17,36 @@
 	>
 		<description>
 			Regular expression patterns should be declared as static final
-			constants,
-			not inline. This improves performance by avoiding repeated pattern
-			compilation, makes patterns reusable, and improves maintainability by
-			centralizing pattern definitions.
+			constants, not inline. This improves performance by avoiding
+			repeated pattern compilation, makes patterns reusable, and improves
+			maintainability by centralizing pattern definitions.
 
-			Version: 1.0.1
+			This rule applies to:
+			- Pattern.compile() and Pattern.matches() static methods
+			- String.split(), String.matches(), String.replaceAll(), and
+			String.replaceFirst() instance methods
+
+			For String replace operations, consider using the Matcher class
+			with a static final Pattern instead of String.replaceAll() or
+			String.replaceFirst() for better performance when the same pattern
+			is used multiple times.
+
+			Version: 1.1.0
 		</description>
 		<priority>2</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					let $patternMethods := ('compile', 'matches'),
-						$isPatternCall := function($call) {
-							(
-								$call/@MethodName = 'compile'
-								and $call/@FullMethodName = 'Pattern.compile'
-							)
-							or $call/@MethodName = 'matches'
-						}
-					return //MethodCallExpression[
-						$isPatternCall(.)
-						and .//LiteralExpression[@String = true()]
+					//MethodCallExpression[
+						(
+							(@MethodName = 'compile' and @FullMethodName = 'Pattern.compile')
+							or (@MethodName = 'matches' and @FullMethodName = 'Pattern.matches')
+							or @MethodName = 'split'
+							or @MethodName = 'replaceAll'
+							or @MethodName = 'replaceFirst'
+						)
+						and ./*[2][self::LiteralExpression[@String = true()]]
 						and not(
 							ancestor::FieldDeclarationStatements[
 								ModifierNode[@Static = true() and @Final = true()]
@@ -66,6 +73,26 @@
 			public Boolean isValid(String input) {
 				Pattern pattern = Pattern.compile('^[A-Z]+$');
 				return pattern.matcher(input).matches();
+			}
+
+			// Violation: Inline regex pattern in String.replaceAll()
+			public String replaceDigits(String input) {
+				return input.replaceAll('\\d', 'X');
+			}
+
+			// Violation: Inline regex pattern in String.replaceFirst()
+			public String replaceFirstDigit(String input) {
+				return input.replaceFirst('\\d', 'X');
+			}
+
+			// Violation: Inline regex pattern in String.split()
+			public List<String> splitString(String input) {
+				return input.split(',');
+			}
+
+			// Violation: Inline regex pattern in String.matches()
+			public Boolean matchesPattern(String input) {
+				return input.matches('test.*');
 			}
 			
 			// Valid: Static final regex pattern
@@ -94,6 +121,13 @@
 			private static final String PHONE_PATTERN = '^\\d{3}-\\d{3}-\\d{4}$';
 			public Boolean isValidPhone(String input) {
 				return Pattern.matches(PHONE_PATTERN, input);
+			}
+
+			// Valid: Using Matcher class with static final Pattern for replace operations
+			private static final Pattern DIGIT_PATTERN = Pattern.compile('\\d');
+			public String replaceDigits(String input) {
+				Matcher m = DIGIT_PATTERN.matcher(input);
+				return m.replaceAll('X');
 			}
 			]]>
 		</example>
