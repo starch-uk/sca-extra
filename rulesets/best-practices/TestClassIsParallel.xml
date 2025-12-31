@@ -44,36 +44,12 @@
 				<value>
 					<![CDATA[
 					//UserClass[
-						.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
-						and not(
-							.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
-							/AnnotationParameter[
-								@Name = 'IsParallel'
-								and (@Value = 'true' or @Image = 'true')
-							]
-						)
-						and not(
-							.//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
-							/AnnotationParameter[
-								@Name = 'seeAllData'
-								and (@Value = 'true' or @Image = 'true')
-							]
-						)
-						and not(exists(.//MethodCallExpression[
-							@MethodName = 'getStandardPricebookId'
-							and child::ReferenceExpression[@Image = 'Test']
-						]))
-						and not(exists(.//MethodCallExpression[
-							@MethodName = 'schedule'
-							and child::ReferenceExpression[@Image = 'System']
-						]))
-						and not(exists(.//MethodCallExpression[
-							@MethodName = 'enqueueJob'
-							and child::ReferenceExpression[@Image = 'System']
-						]))
-						and not(exists(.//VariableDeclaration[@Type = 'ContentNote']))
-						and not(exists(.//VariableDeclaration[@Type = 'User']))
-						and not(exists(.//VariableDeclaration[@Type = 'GroupMember']))
+						let $isTestAnnot := .//Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]
+						return exists($isTestAnnot)
+							and not($isTestAnnot/AnnotationParameter[@Name = 'IsParallel' and (@Value = 'true' or @Image = 'true')])
+							and not($isTestAnnot/AnnotationParameter[@Name = 'seeAllData' and (@Value = 'true' or @Image = 'true')])
+							and not(.//MethodCallExpression[@MethodName = ('getStandardPricebookId', 'schedule', 'enqueueJob')][child::ReferenceExpression[@Image = ('Test', 'System')]])
+							and not(.//VariableDeclaration[@Type = ('ContentNote', 'User', 'GroupMember')])
 					]
 					]]>
 				</value>

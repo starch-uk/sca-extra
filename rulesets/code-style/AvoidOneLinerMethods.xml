@@ -36,36 +36,16 @@
 					<![CDATA[
 					let $minParams := 1
 					return //Method[
-						not(ModifierNode[@Abstract = true()])
-						and not(ModifierNode[@Override = true()])
+						not(ModifierNode[@Abstract = true()] or ModifierNode[@Override = true()])
 						and not(ancestor::UserClass[@Interface = 'true'])
 						and count(.//Parameter) >= $minParams
 						and BlockStatement
 						and count(BlockStatement/*) = 1
 						and not(BlockStatement/EmptyStatement)
-						and not(
-							some $otherMethod in ancestor::UserClass//Method 
-							satisfies $otherMethod/@Image = @Image 
-							and $otherMethod/@BeginLine != @BeginLine
-						)
-						and not(
-							BlockStatement/SwitchStatement
-							and (
-								count(BlockStatement/SwitchStatement/ValueWhenBlock) > 1
-								or (count(BlockStatement/SwitchStatement/ValueWhenBlock) >= 1 and BlockStatement/SwitchStatement/ElseWhenBlock)
-							)
-						)
-						and not(
-							BlockStatement//AssignmentExpression/VariableExpression
-							and not(
-								some $var in ancestor::Method//VariableDeclaration
-								satisfies $var/VariableDeclaratorId/@Image = BlockStatement//AssignmentExpression/VariableExpression/@Image
-							)
-						)
-						and not(
-							some $param in .//Parameter/VariableDeclaratorId/@Image
-							satisfies count(BlockStatement//MethodCallExpression[.//VariableExpression/@Image = $param]) > 1
-						)
+						and not(some $otherMethod in ancestor::UserClass//Method satisfies $otherMethod/@Image = @Image and $otherMethod/@BeginLine != @BeginLine)
+						and not(BlockStatement/SwitchStatement[(count(ValueWhenBlock) > 1) or (count(ValueWhenBlock) >= 1 and ElseWhenBlock)])
+						and not(BlockStatement//AssignmentExpression/VariableExpression[not(some $var in ancestor::Method//VariableDeclaration satisfies $var/VariableDeclaratorId/@Image = ./@Image)])
+						and not(some $param in .//Parameter/VariableDeclaratorId/@Image satisfies count(BlockStatement//MethodCallExpression[.//VariableExpression/@Image = $param]) > 1)
 					]
 					]]>
 				</value>

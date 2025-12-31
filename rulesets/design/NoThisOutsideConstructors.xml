@@ -29,10 +29,7 @@
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//ThisVariableExpression[
-						not(ancestor::Method[@Constructor = true()])
-						and not(ancestor::ReturnStatement)
-					]
+					//ThisVariableExpression[not(ancestor::Method[@Constructor = true()] or ancestor::ReturnStatement)]
 					]]>
 				</value>
 			</property>

@@ -31,10 +31,7 @@
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//(
-						WhileLoopStatement
-						| DoLoopStatement
-					)[
+					//(WhileLoopStatement | DoLoopStatement)[
 						StandardCondition/LiteralExpression[@Boolean = true()]
 						and BlockStatement//IfBlockStatement[BlockStatement//BreakStatement and StandardCondition//MethodCallExpression]
 					]

@@ -29,12 +29,9 @@
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					let $isInnerClass := function($node) {
-						exists($node/ancestor::UserClass[ancestor::UserClass])
-					}
-					return //(Field | Method)[
+					//(Field | Method)[
 						ModifierNode[@Static = true()]
-						and $isInnerClass(.)
+						and ancestor::UserClass[ancestor::UserClass]
 					]
 					]]>
 				</value>

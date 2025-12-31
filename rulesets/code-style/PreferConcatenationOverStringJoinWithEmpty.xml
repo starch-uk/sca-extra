@@ -28,11 +28,7 @@
 					<![CDATA[
 					let $isEmptyString := function($expr) {
 						$expr/@String = true()
-							and (
-								$expr/@Image = "''"
-								or $expr/@Image = '""'
-								or string-length($expr/@Image) = 0
-							)
+							and ($expr/@Image = "''" or $expr/@Image = '""' or string-length($expr/@Image) = 0)
 					}
 					return //MethodCallExpression[
 						@MethodName = 'join'
@@ -40,10 +36,7 @@
 						and .//NewListLiteralExpression
 						and (
 							$isEmptyString(./LiteralExpression)
-							or $isEmptyString(
-								./NewListLiteralExpression
-								/following-sibling::LiteralExpression
-							)
+							or $isEmptyString(./NewListLiteralExpression/following-sibling::LiteralExpression)
 						)
 					]
 					]]>

@@ -39,10 +39,8 @@
 					return //MethodCallExpression[
 						@InputParametersSize <= $maxArgs
 						and @BeginLine != @EndLine
-						and not(.//NewListLiteralExpression)
-						and not(.//NewMapLiteralExpression)
-						and not(ReferenceExpression[1]/MethodCallExpression)
-						and not(ReferenceExpression[1]/NewObjectExpression)
+						and not(.//NewListLiteralExpression or .//NewMapLiteralExpression)
+						and not(ReferenceExpression[1]/(MethodCallExpression | NewObjectExpression))
 					]
 					]]>
 				</value>

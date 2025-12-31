@@ -26,15 +26,10 @@
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//(
-						IfBlockStatement
-						| SwitchStatement
-						| ForLoopStatement
-						| TernaryExpression
-					)[StandardCondition//MethodCallExpression]
-					| //IfElseBlockStatement[
-						IfBlockStatement/StandardCondition//MethodCallExpression
-					]
+					//IfBlockStatement[StandardCondition//MethodCallExpression]
+					| //SwitchStatement[StandardCondition//MethodCallExpression]
+					| //ForLoopStatement[StandardCondition//MethodCallExpression]
+					| //TernaryExpression[StandardCondition//MethodCallExpression]
 					| //ForEachStatement[MethodCallExpression]
 					]]>
 				</value>

@@ -34,37 +34,17 @@
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					let $minStrings := 3
+					let $minStrings := 3,
+						$isEmptyString := function($expr) {
+							$expr/@String = true()
+								and (string-length($expr/@Image) = 0 or $expr/@Image = "''" or $expr/@Image = '""')
+						}
 					return //MethodCallExpression[
 						@MethodName = 'join'
 						and @FullMethodName = 'String.join'
-						and (
-							./*[2][
-								self::LiteralExpression[
-									@String = true()
-									and (
-										string-length(@Image) = 0
-										or @Image = "''"
-										or @Image = '""'
-									)
-								]
-							]
-							or ./*[3][
-								self::LiteralExpression[
-									@String = true()
-									and (
-										string-length(@Image) = 0
-										or @Image = "''"
-										or @Image = '""'
-									)
-								]
-							]
-						)
+						and ($isEmptyString(./*[2]) or $isEmptyString(./*[3]))
 						and .//NewListLiteralExpression
-						and count(
-							.//NewListLiteralExpression
-							//LiteralExpression[@String = true()]
-						) >= $minStrings
+						and count(.//NewListLiteralExpression//LiteralExpression[@String = true()]) >= $minStrings
 					]
 					]]>
 				</value>

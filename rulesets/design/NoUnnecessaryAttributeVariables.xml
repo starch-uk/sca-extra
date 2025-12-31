@@ -34,29 +34,17 @@
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					let $primitiveTypes := (
-							'String', 'Integer', 'Long', 'Double', 'Decimal',
-							'Boolean', 'Date', 'DateTime', 'Time', 'Id', 'Blob'
-						)
+					let $primitiveTypes := ('String', 'Integer', 'Long', 'Double', 'Decimal', 'Boolean', 'Date', 'DateTime', 'Time', 'Id', 'Blob')
 					return //VariableDeclaration[
 						VariableExpression[1]/ReferenceExpression
 						and @Type = $primitiveTypes
 						and VariableExpression[2]
 						and (
 							let $varName := VariableExpression[2]/@Image,
-								$method := ancestor::Method[1]
-							return not(
-								$method//AssignmentExpression[
-									VariableExpression[@Image = $varName]
-									and not(ancestor::VariableDeclaration[1] = .)
-								]
-							)
-								and count(
-									$method//VariableExpression[
-										@Image = $varName
-										and not(ancestor::VariableDeclaration[1] = .)
-									]
-								) = 1
+								$method := ancestor::Method[1],
+								$usages := $method//VariableExpression[@Image = $varName and not(ancestor::VariableDeclaration[1] = .)]
+							return not($method//AssignmentExpression[VariableExpression[@Image = $varName] and not(ancestor::VariableDeclaration[1] = .)])
+								and count($usages) = 1
 						)
 					]
 					]]>

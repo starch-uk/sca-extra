@@ -29,11 +29,7 @@
 					<![CDATA[
 					//FormalComment[
 						starts-with(@Image, '/**')
-						and (
-							contains(@Image, '@author')
-							or contains(@Image, '@since')
-							or contains(@Image, '@version')
-						)
+						and (contains(@Image, '@author') or contains(@Image, '@since') or contains(@Image, '@version'))
 					]
 					]]>
 				</value>

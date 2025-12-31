@@ -32,12 +32,7 @@
 					//IfBlockStatement[
 						BlockStatement
 						and count(BlockStatement/*) = 1
-						and (
-							BlockStatement/IfBlockStatement
-							or BlockStatement/IfElseBlockStatement[
-								count(IfBlockStatement) = 1
-							]
-						)
+						and (BlockStatement/IfBlockStatement or BlockStatement/IfElseBlockStatement[count(IfBlockStatement) = 1])
 					]
 					]]>
 				</value>

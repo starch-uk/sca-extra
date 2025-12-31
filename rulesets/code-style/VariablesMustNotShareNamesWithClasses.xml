@@ -49,12 +49,10 @@
 				<value>
 					<![CDATA[
 					//VariableDeclaration[VariableExpression][
-						let $varNameLower := lower-case(@Image)
+						let $varNameLower := lower-case(@Image),
+							$file := ancestor::ApexFile[1]
 						return string-length($varNameLower) > 1
-							and exists(ancestor::ApexFile//UserClass[
-								lower-case(@Name) = $varNameLower
-								or lower-case(@SimpleName) = $varNameLower
-							])
+							and exists($file//UserClass[lower-case(@Name) = $varNameLower or lower-case(@SimpleName) = $varNameLower])
 					]
 					]]>
 				</value>

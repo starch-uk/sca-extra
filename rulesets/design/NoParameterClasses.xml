@@ -40,8 +40,7 @@
 					return //UserClass[
 						count(Field) >= $minFields
 						and count(Method[@Constructor = true()]) >= $minConstructors
-						and count(Method[@Constructor = false() and not(ModifierNode[@Static = true()])]) = 0
-						and not(Method[@Constructor = false() and ModifierNode[@Static = true()]])
+						and not(Method[@Constructor = false()])
 					]
 					]]>
 				</value>

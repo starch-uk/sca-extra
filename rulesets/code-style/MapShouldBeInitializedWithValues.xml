@@ -31,18 +31,15 @@
 					//VariableDeclarationStatements[
 						VariableDeclaration[
 							contains(@Type, 'Map')
-							and NewMapInitExpression
-							and not(NewMapInitExpression/MapEntryNode)
+							and NewMapInitExpression[not(MapEntryNode)]
 							and VariableExpression
 						]
 						and (
-							let $varName := VariableDeclaration/VariableExpression/@Image,
-								$nextStmt := following-sibling::*[1]
-							return $nextStmt[self::ExpressionStatement]
-								and $nextStmt//MethodCallExpression[
-									@MethodName = 'put'
-									and ReferenceExpression[1]/@Image = $varName
-								]
+							let $varName := VariableDeclaration/VariableExpression/@Image
+							return following-sibling::ExpressionStatement[1]//MethodCallExpression[
+								@MethodName = 'put'
+								and ReferenceExpression[1]/@Image = $varName
+							]
 						)
 					]
 					]]>

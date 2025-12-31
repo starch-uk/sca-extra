@@ -38,26 +38,20 @@
 					<![CDATA[
 					let $allowedLoopNames := 'i,c',
 						$allowedExceptionNames := 'e',
-						$isAllowedLoopName := function($name) {
-							contains($allowedLoopNames, $name)
-						},
-						$isAllowedExceptionName := function($name) {
-							contains($allowedExceptionNames, $name)
-						}
+						$isAllowedLoopName := function($name) { contains($allowedLoopNames, $name) },
+						$isAllowedExceptionName := function($name) { contains($allowedExceptionNames, $name) }
 					return (
 						//VariableDeclaration[
 							let $varName := @Image
 							return string-length($varName) = 1
 								and (
-									(exists(ancestor::CatchBlockStatement) and not($isAllowedExceptionName($varName)))
-									or (not(exists(ancestor::CatchBlockStatement)) and not($isAllowedLoopName($varName)))
+									(ancestor::CatchBlockStatement and not($isAllowedExceptionName($varName)))
+									or (not(ancestor::CatchBlockStatement) and not($isAllowedLoopName($varName)))
 								)
 						]
-						|
-						//CatchBlockStatement[
+						| //CatchBlockStatement[
 							let $varName := @VariableName
-							return string-length($varName) = 1
-								and not($isAllowedExceptionName($varName))
+							return string-length($varName) = 1 and not($isAllowedExceptionName($varName))
 						]
 					)
 					]]>
