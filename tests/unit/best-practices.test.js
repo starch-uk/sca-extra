@@ -111,5 +111,21 @@ describe('Best Practices Rules - Modifiers', () => {
 			);
 			assertNoViolations(violations, 'TestClassIsParallel');
 		});
+
+		it('should not flag test classes with seeAllData=true', async () => {
+			const violations = await runPMD(
+				'rulesets/best-practices/TestClassIsParallel.xml',
+				'tests/fixtures/positive/best-practices/TestClassIsParallelSeeAllData.cls'
+			);
+			assertNoViolations(violations, 'TestClassIsParallel');
+		});
+
+		it('should not flag test classes with restricted operations', async () => {
+			const violations = await runPMD(
+				'rulesets/best-practices/TestClassIsParallel.xml',
+				'tests/fixtures/positive/best-practices/TestClassIsParallelRestrictions.cls'
+			);
+			assertNoViolations(violations, 'TestClassIsParallel');
+		});
 	});
 });
