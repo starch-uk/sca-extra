@@ -12,8 +12,10 @@ public class Example {
       // Violation: should use safe navigation operator
     }
 
-    String name = acc != null ? acc.Name : null;
-    // Violation: should use safe navigation operator
+    if (user != null) {
+      String email = user.getEmail();
+      // Violation: should use safe navigation operator
+    }
   }
 
   private Account getAccount() {
