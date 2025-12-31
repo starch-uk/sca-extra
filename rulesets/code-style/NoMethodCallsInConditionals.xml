@@ -56,6 +56,29 @@
 		</example>
 		<example>
 			<![CDATA[
+			// Violation: Method calls in if-else-if chain
+			if (getValue() > 0) {
+			    // ...
+			} else if (getOtherValue() > 0) {
+			    // Violation: method call in else-if
+			} else {
+			    // ...
+			}
+			
+			// Valid: Extract method calls to variables
+			Integer value = getValue();
+			Integer otherValue = getOtherValue();
+			if (value > 0) {
+			    // ...
+			} else if (otherValue > 0) {
+			    // Valid: using variable
+			} else {
+			    // ...
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
 			// Violation: Method call in ternary expression
 			String result = isValid() ? 'yes' : 'no';
 			
