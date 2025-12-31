@@ -117,6 +117,16 @@
 			public void method(Integer param) {
 			    // Parameter 'param' is excluded
 			}
+			
+			// Valid: Catch block exception variables are excluded (cannot be declared as final in Apex)
+			public void method() {
+			    try {
+			        // some code
+			    } catch (Exception e) {
+			        // Exception variable 'e' cannot be declared as final in Apex
+			        // (it is implicitly final and cannot be explicitly declared as final)
+			    }
+			}
 			]]>
 		</example>
 	</rule>
