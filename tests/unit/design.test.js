@@ -392,4 +392,25 @@ describe('Design Rules - Structure', () => {
 			assertNoViolations(violations, 'NoInterfacesEndingWithCallback');
 		});
 	});
+
+	describe('DmlInLoopAcrossMethods', () => {
+		it('should detect loops calling methods that perform DML operations', async () => {
+			const violations = await runPMD(
+				'rulesets/design/DmlInLoopAcrossMethods.xml',
+				'tests/fixtures/negative/design/DmlInLoopAcrossMethods.cls'
+			);
+			expect(
+				violations.filter((v) => v.rule === 'DmlInLoopAcrossMethods')
+					.length
+			).toBeGreaterThan(0);
+		});
+
+		it('should not flag loops that call methods without DML or bulk DML outside loops', async () => {
+			const violations = await runPMD(
+				'rulesets/design/DmlInLoopAcrossMethods.xml',
+				'tests/fixtures/positive/design/DmlInLoopAcrossMethods.cls'
+			);
+			assertNoViolations(violations, 'DmlInLoopAcrossMethods');
+		});
+	});
 });

@@ -1,0 +1,94 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Design Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>
+		Custom rules for Apex design issues (structure, method signatures, class
+		organization)
+	</description>
+	<rule
+		name="DmlInLoopAcrossMethods"
+		language="apex"
+		message="DML operations should not be performed inside loops. The loop calls method '{0}' which performs DML operations. Collect records in a list and perform bulk DML outside the loop"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			DML operations should not be performed inside loops, even when the
+			DML
+			operation is in a separate method called from the loop. This pattern leads
+			to governor limit issues and poor performance. Collect records in a list
+			and perform bulk DML operations outside the loop instead.
+			
+			This rule detects when a for loop or for-each loop calls a method that
+			performs DML operations (insert, update, delete, upsert, merge, or Database
+			class methods). The rule flags the loop that calls the method, not the
+			method that performs the DML.
+
+			Version: 1.0.0
+		</description>
+		<priority>1</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $dmlMethods := //Method[
+						.//DmlInsertStatement
+						or .//DmlUpdateStatement
+						or .//DmlDeleteStatement
+						or .//DmlUpsertStatement
+						or .//DmlMergeStatement
+						or .//MethodCallExpression[
+							ReferenceExpression[@Image = 'Database']
+							and (@MethodName = 'insert' or @MethodName = 'update' or @MethodName = 'delete' or @MethodName = 'upsert' or @MethodName = 'merge')
+						]
+					],
+					$dmlMethodNames := $dmlMethods/@Image
+					return //(ForLoopStatement | ForEachStatement)[
+						BlockStatement//MethodCallExpression[@MethodName = $dmlMethodNames]
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Loop calls method that performs DML
+			public void processAccounts(List<Account> accounts) {
+				for (Account acc : accounts) {
+					saveAccount(acc);  // Method performs insert
+				}
+			}
+			
+			private void saveAccount(Account acc) {
+				insert acc;  // DML operation
+			}
+			
+			// Valid: Collect records and perform bulk DML outside loop
+			public void processAccounts(List<Account> accounts) {
+				List<Account> accountsToInsert = new List<Account>();
+				for (Account acc : accounts) {
+					// Process account without DML
+					accountsToInsert.add(acc);
+				}
+				insert accountsToInsert;  // Bulk DML outside loop
+			}
+			
+			// Valid: Method called from loop does not perform DML
+			public void processAccounts(List<Account> accounts) {
+				for (Account acc : accounts) {
+					validateAccount(acc);  // No DML in this method
+				}
+			}
+			
+			private void validateAccount(Account acc) {
+				if (acc.Name == null) {
+					acc.Name = 'Unknown';
+				}
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>

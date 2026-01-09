@@ -101,6 +101,7 @@ engines:
             - rulesets/design/PreferPropertySyntaxOverGetterMethods.xml
             - rulesets/design/PreferSwitchOverIfElseChains.xml
             - rulesets/design/SingleParameterMustBeSingleLine.xml
+            - rulesets/design/DmlInLoopAcrossMethods.xml
             - rulesets/documentation/ExceptionDocumentationRequired.xml
             - rulesets/documentation/MethodsRequireExampleTag.xml
             - rulesets/documentation/ProhibitAuthorSinceVersionTags.xml
@@ -850,6 +851,73 @@ public interface EventListener {  // ✅ Alternative pattern
 }
 ```
 
+#### DmlInLoopAcrossMethods (thanks to @SamanAttar for the idea on this)
+
+**Priority:** P1 (Critical)  
+**Description:** DML operations should not be performed inside loops, even when
+the DML operation is in a separate method called from the loop. This pattern
+leads to governor limit issues and poor performance. Collect records in a list
+and perform bulk DML operations outside the loop instead.
+
+This rule detects when a for loop or for-each loop calls a method that performs
+DML operations (insert, update, delete, upsert, merge, or Database class
+methods). The rule flags the loop that calls the method, not the method that
+performs the DML.
+
+**Violations:**
+
+```apex
+// Violation: Loop calls method that performs DML
+public void processAccounts(List<Account> accounts) {
+    for (Account acc : accounts) {
+        saveAccount(acc);  // ❌ Method performs insert
+    }
+}
+
+private void saveAccount(Account acc) {
+    insert acc;  // DML operation
+}
+
+// Violation: Loop calls method that performs DML via Database class
+public void updateContacts(List<Contact> contacts) {
+    for (Contact con : contacts) {
+        updateContact(con);  // ❌ Method performs Database.update
+    }
+}
+
+private void updateContact(Contact con) {
+    Database.update(con);  // DML via Database class
+}
+```
+
+**Valid Code:**
+
+```apex
+// Valid: Collect records and perform bulk DML outside loop
+public void processAccounts(List<Account> accounts) {
+    List<Account> accountsToInsert = new List<Account>();
+    for (Account acc : accounts) {
+        // Process account without DML
+        acc.Name = 'Processed';
+        accountsToInsert.add(acc);
+    }
+    insert accountsToInsert;  // ✅ Bulk DML outside loop
+}
+
+// Valid: Method called from loop does not perform DML
+public void processAccounts(List<Account> accounts) {
+    for (Account acc : accounts) {
+        validateAccount(acc);  // ✅ No DML in this method
+    }
+}
+
+private void validateAccount(Account acc) {
+    if (acc.Name == null) {
+        acc.Name = 'Unknown';
+    }
+}
+```
+
 ### Code Style Rules (Naming)
 
 #### NoSingleLetterVariableNames
@@ -1337,7 +1405,7 @@ languages):
   rules, test class rules)
 - **code-style/** - Coding style enforcement (20 PMD rules: formatting, naming
   conventions, code style patterns)
-- **design/** - Design issue detection (16 PMD rules: code structure, method
+- **design/** - Design issue detection (17 PMD rules: code structure, method
   signatures, class organization)
 - **documentation/** - Code documentation rules (5 PMD rules)
 - **error-prone/** - Broken/confusing/runtime-error-prone constructs (currently
@@ -1346,7 +1414,7 @@ languages):
 - **performance/** - Suboptimal code detection (currently empty)
 - **security/** - Potential security flaws (currently empty)
 
-**Total: 46 PMD rules + 4 Regex rules = 50 rules**
+**Total: 47 PMD rules + 4 Regex rules = 51 rules**
 
 In addition to the PMD rules above, 4 Regex rules are provided:
 
