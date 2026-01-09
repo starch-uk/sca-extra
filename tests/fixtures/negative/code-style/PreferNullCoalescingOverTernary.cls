@@ -28,6 +28,20 @@ public class PreferNullCoalescingOverTernary {
     Account account1 = null != acc ? acc : new Account();
   }
   
+  // LiteralExpression with null literal in condition
+  public void literalExpressionNullChecks() {
+    String data = getString();
+    Integer num = getInteger();
+    
+    // Violation: Using literal null in condition (covers LiteralExpression[@Null = true()])
+    String result1 = data == null ? 'default' : data;
+    Integer value1 = num == null ? 0 : num;
+    
+    // Violation: Using literal null with != operator
+    String result2 = data != null ? data : 'default';
+    Integer value2 = num != null ? num : 0;
+  }
+  
   // Method calls with null checks
   public void methodCallNullChecks() {
     MyClass obj = getObject();

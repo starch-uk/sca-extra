@@ -205,6 +205,7 @@ function checkFixtureCoverage(ruleName, category, xpathAnalysis) {
 		ReferenceExpression: ['reference', 'ref', '.', 'this.', 'super.'],
 		FormalComment: ['/**', '*/', 'apexdoc'],
 		BinaryExpression: ['==', '!=', '<', '>', '<=', '>='],
+		LiteralExpression: ['null', 'true', 'false', '0', '1', 'literal'],
 	};
 
 	xpathAnalysis.nodeTypes.forEach((nodeType) => {

@@ -16,5 +16,15 @@ public class Example {
     public String getName() {
         return formatName(name);
     }
+
+    private String status;
+
+    // Valid: Getter with IfBlockStatement (excluded from rule)
+    public String getStatus() {
+        if (status == null) {
+            return 'Unknown';
+        }
+        return status;
+    }
 }
 
