@@ -39,10 +39,7 @@
 								$returnVar := BlockStatement//ReturnStatement/VariableExpression/@Image
 							return lower-case($returnVar) = lower-case(substring-after($methodName, 'get'))
 						)
-						and not(BlockStatement//MethodCallExpression)
-						and not(BlockStatement//IfBlockStatement)
-						and not(BlockStatement//ForLoopStatement)
-						and not(BlockStatement//WhileLoopStatement)
+						and not(BlockStatement//(MethodCallExpression | IfBlockStatement | ForLoopStatement | WhileLoopStatement))
 					]
 					]]>
 				</value>

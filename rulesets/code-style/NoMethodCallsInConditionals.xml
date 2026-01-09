@@ -26,15 +26,10 @@
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//(
-						IfBlockStatement
-						| SwitchStatement
-						| ForLoopStatement
-						| TernaryExpression
-					)[StandardCondition//MethodCallExpression]
-					| //IfElseBlockStatement[
-						IfBlockStatement/StandardCondition//MethodCallExpression
-					]
+					//IfBlockStatement[StandardCondition//MethodCallExpression]
+					| //SwitchStatement[StandardCondition//MethodCallExpression]
+					| //ForLoopStatement[StandardCondition//MethodCallExpression]
+					| //TernaryExpression[StandardCondition//MethodCallExpression]
 					| //ForEachStatement[MethodCallExpression]
 					]]>
 				</value>
@@ -50,6 +45,29 @@
 			// Valid: Extract method call to variable
 			Integer value = getValue();
 			if (value > 0) {
+			    // ...
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Method calls in if-else-if chain
+			if (getValue() > 0) {
+			    // ...
+			} else if (getOtherValue() > 0) {
+			    // Violation: method call in else-if
+			} else {
+			    // ...
+			}
+			
+			// Valid: Extract method calls to variables
+			Integer value = getValue();
+			Integer otherValue = getOtherValue();
+			if (value > 0) {
+			    // ...
+			} else if (otherValue > 0) {
+			    // Valid: using variable
+			} else {
 			    // ...
 			}
 			]]>

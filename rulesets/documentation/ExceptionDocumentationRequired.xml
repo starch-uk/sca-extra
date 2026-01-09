@@ -29,7 +29,7 @@
 					<![CDATA[
 					//Method[
 						FormalComment[starts-with(@Image, '/**') and not(contains(@Image, '@throws'))]
-						and .//ThrowStatement
+						and exists(.//ThrowStatement)
 					]
 					]]>
 				</value>

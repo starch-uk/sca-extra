@@ -28,7 +28,6 @@
 					//AssignmentExpression[
 						@Op = '='
 						and VariableExpression
-						and MethodCallExpression
 						and MethodCallExpression/ReferenceExpression[1]
 						and (
 							let $receiverVar := MethodCallExpression/ReferenceExpression[1]/@Image,

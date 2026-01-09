@@ -5,6 +5,16 @@ public class Example {
       // Valid: method result stored in variable
     }
 
+    Integer value2 = getValue();
+    Integer otherValue = getOtherValue();
+    if (value2 > 0) {
+      // Valid: method result stored in variable
+    } else if (otherValue > 0) {
+      // Valid: method result stored in variable
+    } else {
+      // Valid: else block
+    }
+
     String name = getName();
     for (Integer i = 0; i < 10; i++) {
       // Valid: method result stored in variable
@@ -46,6 +56,10 @@ public class Example {
 
   private List<String> getItems() {
     return new List<String>();
+  }
+
+  private Integer getOtherValue() {
+    return 3;
   }
 }
 

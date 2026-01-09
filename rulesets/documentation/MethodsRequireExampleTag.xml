@@ -37,20 +37,14 @@
 				<value>
 					<![CDATA[
 					//Method[
-						not(
-							FormalComment[starts-with(@Image, '/**')
-								and contains(@Image, '@example')
-								and contains(@Image, '@code')
-								and contains(substring-before(@Image, '@code'), '{')
-								and contains(substring-after(@Image, '@code'), '}')
-							]
-						)
-						and FormalComment[starts-with(@Image, '/**')]
-						and not(ModifierNode/Annotation)
-						and not(ModifierNode[@Override = true()])
-						and not(ancestor::UserClass[@Interface = 'true'])
-						and not(@Constructor = true())
-						and not(@ReturnType = 'void' and count(Parameter) = 0)
+						let $comment := FormalComment[starts-with(@Image, '/**')]
+						return exists($comment)
+							and not($comment[contains(@Image, '@example') and contains(@Image, '@code') and contains(substring-before(@Image, '@code'), '{') and contains(substring-after(@Image, '@code'), '}')])
+							and not(ModifierNode/Annotation)
+							and not(ModifierNode[@Override = true()])
+							and not(ancestor::UserClass[@Interface = 'true'])
+							and not(@Constructor = true())
+							and not(@ReturnType = 'void' and count(Parameter) = 0)
 					]
 					]]>
 				</value>

@@ -28,10 +28,8 @@
 				<value>
 					<![CDATA[
 					//VariableDeclarationStatements[
-						let $varName := VariableDeclaration/VariableExpression/@Image,
-							$nextStmt := following-sibling::*[1]
-						return $nextStmt[self::ReturnStatement]
-							and $nextStmt/VariableExpression/@Image = $varName
+						let $varName := VariableDeclaration/VariableExpression/@Image
+						return following-sibling::*[1][self::ReturnStatement][VariableExpression/@Image = $varName]
 					]
 					]]>
 				</value>

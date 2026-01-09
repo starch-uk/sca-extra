@@ -63,8 +63,7 @@
 				<value>
 					<![CDATA[
 					//TernaryExpression[
-						StandardCondition/BooleanExpression[@Op = ('==', '!=')]
-						and StandardCondition/BooleanExpression/LiteralExpression[@Null = true()]
+						StandardCondition/BooleanExpression[@Op = ('==', '!=')][LiteralExpression[@Null = true()]]
 					]
 					]]>
 				</value>

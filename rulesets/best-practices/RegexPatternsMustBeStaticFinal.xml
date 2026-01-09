@@ -39,24 +39,10 @@
 				<value>
 					<![CDATA[
 					//MethodCallExpression[
-						(
-							(@MethodName = 'compile' and @FullMethodName = 'Pattern.compile')
-							or (@MethodName = 'matches' and @FullMethodName = 'Pattern.matches')
-							or @MethodName = 'split'
-							or @MethodName = 'replaceAll'
-							or @MethodName = 'replaceFirst'
-						)
+						((@MethodName = 'compile' and @FullMethodName = 'Pattern.compile') or (@MethodName = 'matches' and @FullMethodName = 'Pattern.matches') or @MethodName = ('split', 'replaceAll', 'replaceFirst'))
 						and ./*[2][self::LiteralExpression[@String = true()]]
-						and not(
-							ancestor::FieldDeclarationStatements[
-								ModifierNode[@Static = true() and @Final = true()]
-							]
-						)
-						and not(
-							ancestor::Field[
-								ModifierNode[@Static = true() and @Final = true()]
-							]
-						)
+						and not(ancestor::FieldDeclarationStatements[ModifierNode[@Static = true() and @Final = true()]])
+						and not(ancestor::Field[ModifierNode[@Static = true() and @Final = true()]])
 					]
 					]]>
 				</value>

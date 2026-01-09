@@ -4,6 +4,14 @@ public class Example {
       // Violation: method call in if condition
     }
 
+    if (getValue() > 0) {
+      // Violation: method call in if condition
+    } else if (getOtherValue() > 0) {
+      // Violation: method call in else-if condition
+    } else {
+      // ...
+    }
+
     for (Integer i = 0; i < getCount(); i++) {
       // Violation: method call in for condition
     }
@@ -40,6 +48,10 @@ public class Example {
 
   private List<String> getItems() {
     return new List<String>();
+  }
+
+  private Integer getOtherValue() {
+    return 3;
   }
 }
 

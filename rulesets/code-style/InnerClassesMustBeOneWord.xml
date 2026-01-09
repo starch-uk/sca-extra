@@ -27,10 +27,7 @@
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					//UserClass[
-						@Nested = true()
-						and (contains(@Image, '_') or matches(@Image, '[a-z].*[A-Z]'))
-					]
+					//UserClass[@Nested = true()][contains(@Image, '_') or matches(@Image, '[a-z].*[A-Z]')]
 					]]>
 				</value>
 			</property>
