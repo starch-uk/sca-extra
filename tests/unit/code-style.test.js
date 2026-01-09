@@ -440,4 +440,24 @@ describe('Code Style Rules', () => {
 			assertNoViolations(violations, 'ProhibitPrettierIgnore');
 		});
 	});
+
+	describe('AvoidMagicNumbers', () => {
+		it('should detect magic numbers in code', async () => {
+			const violations = await runPMD(
+				'rulesets/code-style/AvoidMagicNumbers.xml',
+				'tests/fixtures/negative/code-style/AvoidMagicNumbers.cls'
+			);
+			expect(
+				violations.filter((v) => v.rule === 'AvoidMagicNumbers').length
+			).toBeGreaterThan(0);
+		});
+
+		it('should not flag safe numbers, array indices, loop conditions, or constants', async () => {
+			const violations = await runPMD(
+				'rulesets/code-style/AvoidMagicNumbers.xml',
+				'tests/fixtures/positive/code-style/AvoidMagicNumbers.cls'
+			);
+			assertNoViolations(violations, 'AvoidMagicNumbers');
+		});
+	});
 });

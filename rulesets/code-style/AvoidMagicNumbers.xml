@@ -1,0 +1,117 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Code Style Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>
+		Custom rules for Apex code style (formatting, naming conventions, code
+		style patterns)
+	</description>
+	<rule
+		name="AvoidMagicNumbers"
+		language="apex"
+		message="Magic numbers should be replaced with named constants. Use descriptive constant names instead of hardcoded numeric literals"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Magic numbers are hardcoded numeric literals that should be replaced
+			with named constants for better readability and maintainability. This
+			rule flags numeric literals that are not common "safe" numbers (like 0,
+			1, -1) and are not used in array indices or loop conditions.
+
+			To customize this rule, edit the variables at the beginning of the XPath
+			expression:
+			- $allowedNumbers: Comma-separated list of allowed numeric values
+			(default: '0,1,-1')
+			- $allowedNumbersList: List of allowed numbers parsed from the string
+
+			Version: 1.0.0
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					let $allowedNumbers := '0,1,-1',
+						$allowedNumbersList := tokenize($allowedNumbers, ',')
+					return (
+						//LiteralExpression[
+							@String = false()
+							and @Null = false()
+							and (@LiteralType = 'INTEGER' or @LiteralType = 'LONG' or @LiteralType = 'DECIMAL' or @LiteralType = 'DOUBLE')
+							and not(@Image = $allowedNumbersList)
+							and not(ancestor::ArrayLoadExpression)
+							and not(ancestor::FieldDeclarationStatements[ModifierNode[@Static = true() and @Final = true()]])
+							and not(ancestor::StandardCondition[parent::ForLoopStatement or parent::WhileLoopStatement or parent::DoLoopStatement])
+							and not(
+								parent::BooleanExpression[@Op = ('==', '!=', '<', '<=', '>', '>=')]
+								and (
+									@Image = $allowedNumbersList
+									or exists(../LiteralExpression[@Image = $allowedNumbersList])
+								)
+							)
+						]
+					)
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Magic numbers in calculations
+			Integer total = price * 1.15;  // ❌ What is 1.15?
+			Integer timeout = 30000;  // ❌ What is 30000?
+			Decimal discount = amount * 0.10;  // ❌ What is 0.10?
+			
+			// Valid: Use named constants
+			private static final Decimal TAX_RATE = 1.15;
+			private static final Integer TIMEOUT_MS = 30000;
+			private static final Decimal DISCOUNT_PERCENTAGE = 0.10;
+			
+			Integer total = price * TAX_RATE;
+			Integer timeout = TIMEOUT_MS;
+			Decimal discount = amount * DISCOUNT_PERCENTAGE;
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Common "safe" numbers (0, 1, -1) are allowed
+			Integer count = 0;
+			Integer index = 1;
+			Integer offset = -1;
+			if (value > 0) { }
+			if (size == 1) { }
+			if (result != -1) { }
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Array/list indices are allowed
+			List<String> items = new List<String>();
+			String first = items[0];
+			String second = items[1];
+			Integer value = array[2];
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Loop conditions are allowed
+			for (Integer i = 0; i < 10; i++) { }
+			for (Integer j = 0; j < items.size(); j++) { }
+			while (count < 100) { }
+			do { } while (index < 5);
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: Comparisons with safe numbers (0, 1, -1) are allowed
+			if (count == 0) { }
+			if (size > 1) { }
+			if (result != -1) { }
+			if (value < 0) { }
+			]]>
+		</example>
+	</rule>
+</ruleset>

@@ -49,7 +49,7 @@ to customize your configuration.
 
 ### Comprehensive Example (All Rules)
 
-Here's a complete `code-analyzer.yml` configuration that includes all 46 PMD
+Here's a complete `code-analyzer.yml` configuration that includes all 47 PMD
 rules and 4 Regex rules from this repository:
 
 ```yaml
@@ -67,6 +67,7 @@ engines:
             - rulesets/best-practices/StaticMethodsMustBeStatic.xml
             - rulesets/best-practices/StaticVariablesMustBeFinalAndScreamingSnakeCase.xml
             - rulesets/best-practices/TestClassIsParallel.xml
+            - rulesets/code-style/AvoidMagicNumbers.xml
             - rulesets/code-style/AvoidOneLinerMethods.xml
             - rulesets/code-style/InnerClassesMustBeOneWord.xml
             - rulesets/code-style/MapShouldBeInitializedWithValues.xml
@@ -541,7 +542,7 @@ rules:
         tags: ['Recommended', 'Naming']
 ```
 
-**For a comprehensive example with all 46 PMD rules and 4 Regex rules, see the
+**For a comprehensive example with all 47 PMD rules and 4 Regex rules, see the
 [Comprehensive Example (All Rules)](#comprehensive-example-all-rules) section
 above.**
 
@@ -1153,6 +1154,75 @@ String result = status == 'active' ? 'yes' : 'no';  // ✅ Not a null check
 Integer value = count > 0 ? count : 1;              // ✅ Not a null check
 ```
 
+#### AvoidMagicNumbers (thanks to @SamanAttar for the idea on this)
+
+**Priority:** P3 (Medium)  
+**Description:** Magic numbers are hardcoded numeric literals that should be
+replaced with named constants for better readability and maintainability. This
+rule flags numeric literals that are not common "safe" numbers (like 0, 1, -1)
+and are not used in array indices or loop conditions.
+
+**Violations:**
+
+```apex
+// Magic numbers in calculations
+Integer total = price * 1.15;  // ❌ What is 1.15?
+Integer timeout = 30000;  // ❌ What is 30000?
+Decimal discount = amount * 0.10;  // ❌ What is 0.10?
+
+// Magic numbers in method calls
+setMaxRetries(3);  // ❌ What is 3?
+setBatchSize(200);  // ❌ What is 200?
+
+// Magic numbers in assignments
+Integer maxRetries = 3;  // ❌ Should use a constant
+Integer batchSize = 200;  // ❌ Should use a constant
+
+// Magic numbers in return statements
+public Integer getDefaultTimeout() {
+    return 5000;  // ❌ What is 5000?
+}
+
+// Magic numbers in conditions (not safe numbers)
+if (count > 5) { }  // ❌ 5 is not a safe number
+if (size >= 10) { }  // ❌ 10 is not a safe number
+```
+
+**Valid Code:**
+
+```apex
+// Use named constants
+private static final Decimal TAX_RATE = 1.15;
+private static final Integer TIMEOUT_MS = 30000;
+private static final Decimal DISCOUNT_PERCENTAGE = 0.10;
+private static final Integer MAX_RETRIES = 3;
+private static final Integer BATCH_SIZE = 200;
+private static final Integer DEFAULT_TIMEOUT = 5000;
+
+Integer total = price * TAX_RATE;  // ✅ Uses constant
+Integer timeout = TIMEOUT_MS;  // ✅ Uses constant
+Decimal discount = amount * DISCOUNT_PERCENTAGE;  // ✅ Uses constant
+
+// Safe numbers (0, 1, -1) are allowed
+Integer count = 0;  // ✅ Safe number
+Integer index = 1;  // ✅ Safe number
+Integer offset = -1;  // ✅ Safe number
+
+// Array/list indices are allowed
+List<String> items = new List<String>();
+String first = items[0];  // ✅ Array index
+String second = items[1];  // ✅ Array index
+
+// Loop conditions are allowed
+for (Integer i = 0; i < 10; i++) { }  // ✅ Loop condition
+while (count < 100) { }  // ✅ Loop condition
+
+// Comparisons with safe numbers (0, 1, -1) are allowed
+if (count == 0) { }  // ✅ Safe number comparison
+if (size > 1) { }  // ✅ Safe number comparison
+if (result != -1) { }  // ✅ Safe number comparison
+```
+
 ### Best Practices Rules
 
 #### RegexPatternsMustBeStaticFinal
@@ -1403,7 +1473,7 @@ languages):
 
 - **best-practices/** - Generally accepted best practices (5 PMD rules: modifier
   rules, test class rules)
-- **code-style/** - Coding style enforcement (20 PMD rules: formatting, naming
+- **code-style/** - Coding style enforcement (21 PMD rules: formatting, naming
   conventions, code style patterns)
 - **design/** - Design issue detection (17 PMD rules: code structure, method
   signatures, class organization)
