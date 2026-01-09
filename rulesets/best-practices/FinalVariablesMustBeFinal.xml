@@ -16,11 +16,17 @@
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
-			Variables that are never reassigned should be declared as
-			final. This
-			enforces immutability, improves code clarity by indicating that the
-			variable's value won't change, and helps prevent accidental reassignment
-			bugs. Any variable that can be final without adding code must be final.
+			Detects variables that are never reassigned after their initial
+			declaration and flags them as violations if they are not declared as
+			final. This rule enforces immutability where appropriate, improves code
+			clarity by indicating that the variable's value won't change, and helps
+			prevent accidental reassignment bugs.
+
+			The rule checks local variables within methods and excludes:
+			- Loop variables (for and for-each loops)
+			- Method parameters
+			- Variables that are reassigned, incremented, decremented, or modified
+			  with compound assignment operators
 
 			Version: 1.0.1
 		</description>
@@ -35,8 +41,7 @@
 						),
 						$incrementOps := ('++', '--')
 					return //VariableDeclaration[
-						not(ModifierNode[@Final = true()])
-						and not(ancestor::*[ModifierNode[@Final = true()]])
+						not(parent::VariableDeclarationStatements/ModifierNode[@Final = true()])
 						and not(ancestor::Parameter)
 						and not(ancestor::ForLoopStatement)
 						and not(ancestor::ForEachStatement)
@@ -76,15 +81,15 @@
 			<![CDATA[
 			// Violation: Variable never reassigned but not declared final
 			public void method() {
-			    Integer value = 5;  // ❌ Should be final
-			    String name = 'test';  // ❌ Should be final
+			    Integer value = 5;  // Should be final
+			    String name = 'test';  // Should be final
 			    // value and name are never reassigned
 			}
 			
 			// Valid: Variables declared as final
 			public void method() {
-			    final Integer value = 5;  // ✅
-			    final String name = 'test';  // ✅
+			    final Integer value = 5;  // Valid
+			    final String name = 'test';  // Valid
 			    // value and name are never reassigned
 			}
 			]]>
@@ -101,6 +106,12 @@
 			public void method() {
 			    Integer count = 0;
 			    count++;  // Modified, so cannot be final
+			}
+			
+			// Valid: Variable with compound assignment (cannot be final)
+			public void method() {
+			    Integer sum = 0;
+			    sum += 5;  // Modified with compound assignment, so cannot be final
 			}
 			]]>
 		</example>

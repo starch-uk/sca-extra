@@ -611,7 +611,8 @@ or similar formatters.
     - Appropriate use of modifiers (final, static, etc.)
     - Access control best practices
     - Examples:
-        - `FinalVariablesMustBeFinal` - Ensures immutability where intended
+        - `FinalVariablesMustBeFinal` - Detects method-local variables that are
+          never reassigned and should be declared as final
         - `StaticMethodsMustBeStatic` - Prevents unnecessary instance methods
         - `RegexPatternsMustBeStaticFinal` - Ensures regex patterns are static
           final constants
@@ -975,20 +976,20 @@ public class Example {
 ```apex
 // Valid variables
 Integer accountCount = 5;    // ✅ Descriptive and explicit
-String configuration = 'x';  // ✅ Uses full word
+String configurationValue = 'x';  // ✅ Uses full word
 Boolean isManager = true;    // ✅ Descriptive and readable
 
 // Valid parameters
-public void processAccount(Account account) { }        // ✅ Full word
-public void configure(String configuration) { }       // ✅ Full word
-public void setContext(String context) { }              // ✅ Full word
+public void processAccount(Account accountRecord) { }        // ✅ Full word
+public void configure(String configurationValue) { }       // ✅ Full word
+public void setContext(String contextValue) { }              // ✅ Full word
 public void processRecord(String accountId) { }         // ✅ 'Id' suffix allowed
 public void testMethod(String testCtx) { }                // ✅ 'test' prefix allows abbreviations
 
 // Valid fields
 public class Example {
-    private Account account;           // ✅ Full word
-    private String configuration;      // ✅ Full word
+    private Account accountRecord;           // ✅ Full word
+    private String configurationValue;      // ✅ Full word
     private Boolean isManager;         // ✅ Full word
     private String accountId;         // ✅ 'Id' suffix allowed
     private String testCtx;            // ✅ 'test' prefix allows abbreviations
@@ -1303,20 +1304,45 @@ public void useDynamicPattern() {
 
 #### FinalVariablesMustBeFinal
 
-**Priority:** P2 (High)  
-**Description:** Variables declared as final must actually be final (immutable).
+**Priority:** P3 (Moderate)  
+**Description:** Method-local variables that are never reassigned must be
+declared as final to enforce immutability and improve code clarity.
 
 **Violations:**
 
 ```apex
-final Integer value = 5;
-value = 10;  // ❌ Cannot reassign final variable
+public void method() {
+    Integer value = 5;  // ❌ Should be final (never reassigned)
+    String name = 'test';  // ❌ Should be final (never reassigned)
+    Boolean isValid = true;  // ❌ Should be final (never reassigned)
+    // value, name, and isValid are never reassigned
+}
 ```
 
 **Valid Code:**
 
 ```apex
-final Integer value = 5;  // ✅ Final variable not reassigned
+public void method() {
+    final Integer value = 5;  // ✅ Declared as final
+    final String name = 'test';  // ✅ Declared as final
+
+    Integer counter = 0;
+    counter++;  // ✅ Not final (incremented)
+
+    Integer result = 10;
+    result = result + 5;  // ✅ Not final (reassigned)
+
+    Integer sum = 0;
+    sum += 5;  // ✅ Not final (compound assignment)
+}
+
+// Loop variables and parameters are excluded
+public void method(Integer param) {
+    for (Integer i = 0; i < 10; i++) {
+        // Loop variable 'i' is excluded
+    }
+    // Parameter 'param' is excluded
+}
 ```
 
 #### StaticMethodsMustBeStatic

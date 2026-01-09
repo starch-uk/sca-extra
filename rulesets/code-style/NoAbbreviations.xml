@@ -22,7 +22,7 @@
 			for developers unfamiliar with the codebase. Common exceptions like 'Api',
 			'Html', 'Id', and 'Url' are allowed as suffixes. Variables, parameters, and
 			fields with the 'test' prefix are also allowed.
-			
+
 			To customize this rule, edit the variables at the beginning of the XPath
 			expression:
 			- $disallowedAbbreviations: Comma-separated list of abbreviations to flag
@@ -34,7 +34,7 @@
 			- $allowedSuffixes: Comma-separated list of allowed suffixes (default:
 			'Api,Html,Id,Url')
 
-			Version: 1.1.1
+			Version: 1.1.2
 		</description>
 		<priority>2</priority>
 		<properties>
@@ -104,29 +104,29 @@
 			Integer acc = 5;
 			String cfg = 'test';
 			Boolean isMgr = true;
-			
+
 			// Violation: Abbreviations in method parameters
 			public void processAccount(Account acc) { }
 			public void configure(String cfg) { }
 			public void setManager(Boolean isMgr) { }
-			
+
 			// Violation: Abbreviations in class fields
 			public class Example {
 				private Account acc;
 				private String cfg;
 				private Boolean isMgr;
 			}
-			
+
 			// Valid: Use complete words
 			Integer accountCount = 5;
-			String configuration = 'test';
+			String configurationValue = 'test';
 			Boolean isManager = true;
-			public void processAccount(Account account) { }
-			public void configure(String configuration) { }
+			public void processAccount(Account accountRecord) { }
+			public void configure(String configurationValue) { }
 			public void setManager(Boolean isManager) { }
 			public class Example {
-				private Account account;
-				private String configuration;
+				private Account accountRecord;
+				private String configurationValue;
 				private Boolean isManager;
 			}
 			]]>
@@ -138,13 +138,13 @@
 			String apiUrl = 'https://example.com';
 			String htmlContent = '<div></div>';
 			String userId = 'user123';
-			
+
 			// Valid: Allowed suffixes in method parameters
 			public void processAccount(String accountId) { }
 			public void setUrl(String apiUrl) { }
 			public void renderHtml(String htmlContent) { }
 			public void updateUser(String userId) { }
-			
+
 			// Valid: Allowed suffixes in class fields
 			public class Example {
 				private String accountId;
@@ -160,31 +160,31 @@
 			String testCtx = 'value';
 			String testCfg = 'config';
 			Integer testAcc = 5;
-			
+
 			// Valid: Allowed prefixes in method parameters
 			public void testMethod(String testCtx) { }
 			public void testSetup(String testCfg) { }
 			public void testProcess(Integer testAcc) { }
-			
+
 			// Valid: Allowed prefixes in class fields
 			public class Example {
 				private String testCtx;
 				private String testCfg;
 				private Integer testAcc;
 			}
-			
+
 			// Violation: Abbreviations without test prefix in variables
-			String myCtx = 'value';  // ❌ 'ctx' not allowed without 'test' prefix
-			Integer ctx = 0;  // ❌ 'ctx' not allowed
-			
+			String myCtx = 'value';  // L 'ctx' not allowed without 'test' prefix
+			Integer ctx = 0;  // L 'ctx' not allowed
+
 			// Violation: Abbreviations without test prefix in parameters
-			public void method(String myCtx) { }  // ❌ 'ctx' not allowed without 'test' prefix
-			public void process(Integer ctx) { }  // ❌ 'ctx' not allowed
-			
+			public void method(String myCtx) { }  // L 'ctx' not allowed without 'test' prefix
+			public void process(Integer ctx) { }  // L 'ctx' not allowed
+
 			// Violation: Abbreviations without test prefix in fields
 			public class Example {
-				private String myCtx;  // ❌ 'ctx' not allowed without 'test' prefix
-				private Integer ctx;   // ❌ 'ctx' not allowed
+				private String myCtx;  // L 'ctx' not allowed without 'test' prefix
+				private Integer ctx;   // L 'ctx' not allowed
 			}
 			]]>
 		</example>
