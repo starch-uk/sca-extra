@@ -17,8 +17,7 @@
 	>
 		<description>
 			DML operations should not be performed inside loops, even when the
-			DML
-			operation is in a separate method called from the loop. This pattern leads
+			DML operation is in a separate method called from the loop. This pattern leads
 			to governor limit issues and poor performance. Collect records in a list
 			and perform bulk DML operations outside the loop instead.
 			
