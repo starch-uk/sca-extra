@@ -31,3 +31,18 @@ public class Example {
         return 5000;  // What is 5000?
     }
 }
+
+// Violation: Test classes without seeAllData=false should still flag magic numbers
+@IsTest
+private class TestClassWithoutSeeAllDataFalse {
+    @IsTest
+    static void testMethod() {
+        // Magic numbers should still be flagged in regular test classes
+        Integer batchSize = 200;  // Violation: What is 200?
+        Decimal taxRate = 0.08;   // Violation: What is 0.08?
+        Account acc = new Account(AnnualRevenue = 50000); // Violation: What is 50000?
+        System.assertEquals(3, records.size()); // Violation: What is 3?
+        Integer timeout = 30000;  // Violation: What is 30000?
+        Decimal discount = amount * 0.10;  // Violation: What is 0.10?
+    }
+}

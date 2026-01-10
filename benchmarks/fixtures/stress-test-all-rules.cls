@@ -49,31 +49,10 @@ public class StressTestAllRules {
   }
 
   public void processData(Integer x, String s, Boolean b) {
-    // Violations: NoSingleLetterVariableNames, NoAbbreviations (parameters: x, s, b)
+    // Violations: NoSingleLetterVariableNames (parameters: x, s, b)
 
-    Integer ctx = 0;
-    Integer idx = 5;
-    String msg = 'test';
-    String cfg = 'config';
-    Integer val = 10;
-    Account acc = new Account();
-    Contact con = new Contact();
-    Opportunity opp = new Opportunity();
-    // Violations: NoAbbreviations (variables)
 
-  public void processAccount(Account acc) {}
-  public void configure(String cfg) {}
-  public void setContext(String ctx) {}
-  public void setIndex(Integer idx) {}
-  public void sendMessage(String msg) {}
-  // Violations: NoAbbreviations (parameters)
 
-  private Account acc;
-  private String cfg;
-  private String ctx;
-  private Integer idx;
-  private String msg;
-  // Violations: NoAbbreviations (fields)
 
     if (getValue() > 0) {
       // Violations: NoMethodCallsInConditionals

@@ -85,68 +85,6 @@ describe('Naming Rules', () => {
 		});
 	});
 
-	describe('NoAbbreviations', () => {
-		it('should detect abbreviations in variable names', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/NoAbbreviations.xml',
-				'tests/fixtures/negative/code-style/NoAbbreviations.cls'
-			);
-			expect(
-				violations.filter((v) => v.rule === 'NoAbbreviations').length
-			).toBeGreaterThan(0);
-		});
-
-		it('should not flag allowed abbreviations (Id suffix, Api, Url, Html) or loop/exception variables', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/NoAbbreviations.xml',
-				'tests/fixtures/positive/code-style/NoAbbreviations.cls'
-			);
-			assertNoViolations(violations, 'NoAbbreviations');
-		});
-
-		it('should allow abbreviations with test prefix', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/NoAbbreviations.xml',
-				'tests/fixtures/positive/code-style/NoAbbreviations.cls'
-			);
-			// Verify test-prefixed abbreviations (testCtx, testCfg, testAcc) are not flagged
-			const testPrefixViolations = violations.filter(
-				(v) =>
-					v.rule === 'NoAbbreviations' &&
-					(v.line === 31 || v.line === 34 || v.line === 37)
-			);
-			expect(testPrefixViolations.length).toBe(0);
-		});
-
-		it('should flag abbreviations without test prefix', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/NoAbbreviations.xml',
-				'tests/fixtures/negative/code-style/NoAbbreviations.cls'
-			);
-			// Verify abbreviations without test prefix (myCtx, myCfg, myAcc) are flagged
-			const noPrefixViolations = violations.filter(
-				(v) =>
-					v.rule === 'NoAbbreviations' &&
-					(v.line === 40 || v.line === 43 || v.line === 46)
-			);
-			expect(noPrefixViolations.length).toBeGreaterThan(0);
-		});
-
-		it('should flag abbreviations even when they have other prefixes (not test)', async () => {
-			const violations = await runPMD(
-				'rulesets/code-style/NoAbbreviations.xml',
-				'tests/fixtures/negative/code-style/NoAbbreviations.cls'
-			);
-			// Verify 'myCtx', 'myCfg', 'myAcc' are flagged (my is not an allowed prefix)
-			const myPrefixViolations = violations.filter(
-				(v) =>
-					v.rule === 'NoAbbreviations' &&
-					(v.line === 40 || v.line === 43 || v.line === 46)
-			);
-			expect(myPrefixViolations.length).toBeGreaterThan(0);
-		});
-	});
-
 	describe('VariablesMustNotShareNamesWithClasses', () => {
 		it('should detect variables that share names with classes', async () => {
 			const violations = await runPMD(

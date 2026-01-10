@@ -48,7 +48,6 @@ included in PMD benchmark fixtures.
 ### Code Style Rules - Naming (100+ violations)
 
 - ✅ NoSingleLetterVariableNames (30 violations)
-- ✅ NoAbbreviations (90 violations: 50 variables + 20 parameters + 20 fields)
 - ✅ VariablesMustNotShareNamesWithClasses (10 violations)
 - ✅ InnerClassesMustBeOneWord (5 violations)
 

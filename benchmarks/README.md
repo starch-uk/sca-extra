@@ -30,7 +30,6 @@ violations:
 - PreferStringJoinWithSeparatorOverEmpty (10 violations)
 - SingleArgumentMustBeSingleLine (10 violations)
 - NoSingleLetterVariableNames (30 violations)
-- NoAbbreviations (50 violations)
 - VariablesMustNotShareNamesWithClasses (10 violations)
 - InnerClassesMustBeOneWord (5 violations)
 

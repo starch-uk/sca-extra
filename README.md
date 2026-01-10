@@ -72,7 +72,6 @@ engines:
             - rulesets/code-style/InnerClassesMustBeOneWord.xml
             - rulesets/code-style/MapShouldBeInitializedWithValues.xml
             - rulesets/code-style/MultipleStringContainsCalls.xml
-            - rulesets/code-style/NoAbbreviations.xml
             - rulesets/code-style/NoMethodCallsAsArguments.xml
             - rulesets/code-style/NoMethodCallsInConditionals.xml
             - rulesets/code-style/NoSingleLetterVariableNames.xml
@@ -207,7 +206,6 @@ engines:
 
             # Code style rules (including naming)
             - rulesets/code-style/NoSingleLetterVariableNames.xml
-            - rulesets/code-style/NoAbbreviations.xml
 
             # More code style rules
             - rulesets/code-style/NoMethodCallsInConditionals.xml
@@ -270,40 +268,6 @@ Change `3` to `4`:
         ]
         ]]>
     </value>
-</property>
-```
-
-**Example 2 - Customize NoAbbreviations to change which abbreviations are
-flagged:**
-
-Open `rulesets/code-style/NoAbbreviations.xml` and find the variables at the
-top:
-
-```xml
-<property name="xpath">
-    <value><![CDATA[
-        let $disallowedAbbreviations := 'acc,addr,attr,calc,cfg,col,con,ctx,curr,desc,dest,doc,dst,elem,fmt,hdr,idx,impl,init,lbl,len,mgr,msg,opp,opt,org,param,pos,prev,ref,repo,req,res,resp,spec,src,svc,util,val',
-            $allowedSuffixes := 'Api,Html,Id,Url',
-            $allowedPrefixes := 'test'
-        return //VariableDeclaration[
-            <!-- ... rest of XPath expression ... -->
-        ]
-    ]]></value>
-</property>
-```
-
-To only flag `ctx` and `idx`, change the `$disallowedAbbreviations` variable:
-
-```xml
-<property name="xpath">
-    <value><![CDATA[
-        let $disallowedAbbreviations := 'ctx,idx',  <!-- Changed to only flag ctx and idx -->
-            $allowedSuffixes := 'Api,Html,Id,Url',
-            $allowedPrefixes := 'test'
-        return //VariableDeclaration[
-            <!-- ... rest of XPath expression stays the same ... -->
-        ]
-    ]]></value>
 </property>
 ```
 
@@ -525,7 +489,6 @@ engines:
 
             # Code style rules
             - rulesets/code-style/NoSingleLetterVariableNames.xml
-            - rulesets/code-style/NoAbbreviations.xml
             - rulesets/code-style/NoMethodCallsInConditionals.xml
 
             # Documentation rules
@@ -604,7 +567,6 @@ or similar formatters.
     - Naming patterns that indicate intent
     - Examples:
         - `NoSingleLetterVariableNames` - Ensures descriptive variable names
-        - `NoAbbreviations` - Prevents cryptic abbreviations
         - `VariablesMustNotShareNamesWithClasses` - Prevents confusion
 
 4. **Modifiers & Access Control**
@@ -942,64 +904,6 @@ Integer index = 5;  // ✅ Descriptive name
 for (Integer i = 0; i < 10; i++) { }  // ✅ Loop counter allowed
 catch (Exception e) { }  // ✅ Exception variable allowed
 ```
-
-#### NoAbbreviations
-
-**Priority:** P2 (High)  
-**Description:** Variable, parameter, and field names must not use
-abbreviations. Use complete, descriptive words so that code is clear and
-self-explanatory.
-
-**Violations:**
-
-```apex
-// Variable violations
-Integer acc = 5;      // ❌ Uses abbreviation instead of full word
-String cfg = 'test';  // ❌ Uses abbreviation instead of full word
-Boolean isMgr = true; // ❌ Uses abbreviation instead of full word
-
-// Parameter violations
-public void processAccount(Account acc) { }  // ❌ Abbreviation 'acc' in parameter
-public void configure(String cfg) { }        // ❌ Abbreviation 'cfg' in parameter
-public void setContext(String ctx) { }      // ❌ Abbreviation 'ctx' in parameter
-
-// Field violations
-public class Example {
-    private Account acc;     // ❌ Abbreviation 'acc' in field
-    private String cfg;      // ❌ Abbreviation 'cfg' in field
-    private Boolean isMgr;   // ❌ Abbreviation 'mgr' in field
-}
-```
-
-**Valid Code:**
-
-```apex
-// Valid variables
-Integer accountCount = 5;    // ✅ Descriptive and explicit
-String configurationValue = 'x';  // ✅ Uses full word
-Boolean isManager = true;    // ✅ Descriptive and readable
-
-// Valid parameters
-public void processAccount(Account accountRecord) { }        // ✅ Full word
-public void configure(String configurationValue) { }       // ✅ Full word
-public void setContext(String contextValue) { }              // ✅ Full word
-public void processRecord(String accountId) { }         // ✅ 'Id' suffix allowed
-public void testMethod(String testCtx) { }                // ✅ 'test' prefix allows abbreviations
-
-// Valid fields
-public class Example {
-    private Account accountRecord;           // ✅ Full word
-    private String configurationValue;      // ✅ Full word
-    private Boolean isManager;         // ✅ Full word
-    private String accountId;         // ✅ 'Id' suffix allowed
-    private String testCtx;            // ✅ 'test' prefix allows abbreviations
-}
-```
-
-**Note:** To customize this rule (e.g., change which abbreviations are flagged
-or which suffixes are allowed), edit the configurable variables at the top of
-the XPath expression in `rulesets/code-style/NoAbbreviations.xml`. See the
-[Customizing Rules](#customizing-rules) section above for details.
 
 ### Code Style Rules
 
