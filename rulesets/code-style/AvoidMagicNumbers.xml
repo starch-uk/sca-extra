@@ -21,42 +21,50 @@
 			rule flags numeric literals that are not common "safe" numbers (like 0,
 			1, -1) and are not used in array indices or loop conditions.
 
-			Test classes annotated with @IsTest(seeAllData=false) are exempt from
-			this rule, as they often need to use hardcoded values for test data
-			setup and assertions.
+			Test classes annotated with @IsTest are exempt from this rule when
+			SeeAllData is false (the default) or explicitly set to false, as they
+			often need to use hardcoded values for test data setup and assertions.
 
 			To customize this rule, edit the variables at the beginning of the XPath
 			expression:
 			- $allowedNumbers: Comma-separated list of allowed numeric values
 			(default: '0,1,-1')
-			- $allowedNumbersList: List of allowed numbers parsed from the string
 
-			Version: 1.0.1
+			Version: 1.1.0
 		</description>
 		<priority>3</priority>
 		<properties>
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					let $allowedNumbers := '0,1,-1',
-						$allowedNumbersList := tokenize($allowedNumbers, ',')
+					let $allowedNumbers := tokenize('0,1,-1', ',')
 					return (
 						//LiteralExpression[
 							@String = false()
 							and @Null = false()
 							and (@LiteralType = 'INTEGER' or @LiteralType = 'LONG' or @LiteralType = 'DECIMAL' or @LiteralType = 'DOUBLE')
-							and not(@Image = $allowedNumbersList)
+							and not(@Image = $allowedNumbers)
 							and not(ancestor::ArrayLoadExpression)
 							and not(ancestor::FieldDeclarationStatements[ModifierNode[@Static = true() and @Final = true()]])
 							and not(ancestor::StandardCondition[parent::ForLoopStatement or parent::WhileLoopStatement or parent::DoLoopStatement])
 							and not(
 								parent::BooleanExpression[@Op = ('==', '!=', '<', '<=', '>', '>=')]
 								and (
-									@Image = $allowedNumbersList
-									or exists(../LiteralExpression[@Image = $allowedNumbersList])
+									@Image = $allowedNumbers
+									or exists(../LiteralExpression[@Image = $allowedNumbers])
 								)
 							)
-							and not(ancestor::UserClass[Annotation[(@Image = 'IsTest' or @Name = 'IsTest')]/AnnotationParameter[@Name = 'seeAllData' and (@Value = 'false' or @Image = 'false')]])
+							and not(
+								ancestor::UserClass[
+									let $isTestAnnot := .//Annotation[lower-case(@Image) = 'istest' or lower-case(@Name) = 'istest']
+									return exists($isTestAnnot)
+										and (
+											not($isTestAnnot/AnnotationParameter[lower-case(@Name) = 'seealldata'])
+											or $isTestAnnot/AnnotationParameter[lower-case(@Name) = 'seealldata' and lower-case(@Value) = 'false']
+											or $isTestAnnot/AnnotationParameter[lower-case(@Name) = 'seealldata' and lower-case(@Image) = 'false']
+										)
+								]
+							)
 						]
 					)
 					]]>
@@ -120,15 +128,25 @@
 		</example>
 		<example>
 			<![CDATA[
-			// Valid: Test classes with @IsTest(seeAllData=false) are exempt
-			@IsTest(seeAllData=false)
-			private class MyTestClass {
-			    @IsTest
+			// Valid: Test classes with @IsTest are exempt (SeeAllData defaults to false)
+			@IsTest
+			private class TestClassDefault {
 			    static void testMethod() {
-			        Integer batchSize = 200;  // ✅ Magic numbers allowed in test classes
-			        Decimal taxRate = 0.08;   // ✅ Magic numbers allowed in test classes
-			        Account acc = new Account(AnnualRevenue = 50000); // ✅ Magic numbers allowed
-			        System.assertEquals(3, records.size()); // ✅ Magic numbers allowed
+			        // Magic numbers are allowed in test classes (SeeAllData=false by default)
+			        Integer batchSize = 200;  // ✅ Allowed
+			        Decimal taxRate = 0.08;   // ✅ Allowed
+			        Account acc = new Account(AnnualRevenue = 50000); // ✅ Allowed
+			        System.assertEquals(3, records.size()); // ✅ Allowed
+			    }
+			}
+
+			// Valid: Test classes with @IsTest(SeeAllData=false) are exempt
+			@IsTest(SeeAllData=false)
+			private class TestClassExplicitFalse {
+			    static void testMethod() {
+			        // Magic numbers are allowed when SeeAllData=false
+			        Integer timeout = 30000;  // ✅ Allowed
+			        Decimal discount = amount * 0.10;  // ✅ Allowed
 			    }
 			}
 

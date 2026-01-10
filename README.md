@@ -1067,6 +1067,10 @@ replaced with named constants for better readability and maintainability. This
 rule flags numeric literals that are not common "safe" numbers (like 0, 1, -1)
 and are not used in array indices or loop conditions.
 
+Test classes annotated with @IsTest are exempt from this rule when SeeAllData is
+false (the default) or explicitly set to false, as they often need to use
+hardcoded values for test data setup and assertions.
+
 **Violations:**
 
 ```apex
@@ -1126,6 +1130,26 @@ while (count < 100) { }  // ✅ Loop condition
 if (count == 0) { }  // ✅ Safe number comparison
 if (size > 1) { }  // ✅ Safe number comparison
 if (result != -1) { }  // ✅ Safe number comparison
+
+// Test classes with @IsTest are exempt (SeeAllData defaults to false)
+@IsTest
+private class TestClassDefault {
+    static void testSomeMethod() {
+        Integer batchSize = 200;  // ✅ Allowed in test classes
+        Decimal taxRate = 0.08;   // ✅ Allowed in test classes
+        Account acc = new Account(AnnualRevenue = 50000); // ✅ Allowed
+        System.assertEquals(3, records.size()); // ✅ Allowed
+    }
+}
+
+// Test classes with @IsTest(SeeAllData=false) are exempt
+@IsTest(SeeAllData=false)
+private class TestClassExplicitFalse {
+    static void testSomeMethod() {
+        Integer timeout = 30000;  // ✅ Allowed when SeeAllData=false
+        Decimal discount = amount * 0.10;  // ✅ Allowed when SeeAllData=false
+    }
+}
 ```
 
 ### Best Practices Rules

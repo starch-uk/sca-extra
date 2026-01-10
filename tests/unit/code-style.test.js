@@ -452,10 +452,46 @@ describe('Code Style Rules', () => {
 			).toBeGreaterThan(0);
 		});
 
+		it('should detect magic numbers in @IsTest classes with SeeAllData=true', async () => {
+			const violations = await runPMD(
+				'rulesets/code-style/AvoidMagicNumbers.xml',
+				'tests/fixtures/negative/code-style/AvoidMagicNumbers_IsTestSeeAllDataTrue.cls'
+			);
+			expect(
+				violations.filter((v) => v.rule === 'AvoidMagicNumbers').length
+			).toBeGreaterThan(0);
+		});
+
+		it('should detect magic numbers in case insensitive @IsTest annotation with SeeAllData=true', async () => {
+			const violations = await runPMD(
+				'rulesets/code-style/AvoidMagicNumbers.xml',
+				'tests/fixtures/negative/code-style/AvoidMagicNumbers_IsTestAnnotationCaseInsensitive.cls'
+			);
+			expect(
+				violations.filter((v) => v.rule === 'AvoidMagicNumbers').length
+			).toBeGreaterThan(0);
+		});
+
 		it('should not flag safe numbers, array indices, loop conditions, or constants', async () => {
 			const violations = await runPMD(
 				'rulesets/code-style/AvoidMagicNumbers.xml',
 				'tests/fixtures/positive/code-style/AvoidMagicNumbers.cls'
+			);
+			assertNoViolations(violations, 'AvoidMagicNumbers');
+		});
+
+		it('should not flag magic numbers in @IsTest classes (SeeAllData defaults to false)', async () => {
+			const violations = await runPMD(
+				'rulesets/code-style/AvoidMagicNumbers.xml',
+				'tests/fixtures/positive/code-style/AvoidMagicNumbers_IsTestDefault.cls'
+			);
+			assertNoViolations(violations, 'AvoidMagicNumbers');
+		});
+
+		it('should not flag magic numbers with case insensitive SeeAllData parameter matching', async () => {
+			const violations = await runPMD(
+				'rulesets/code-style/AvoidMagicNumbers.xml',
+				'tests/fixtures/positive/code-style/AvoidMagicNumbers_IsTestCaseInsensitive.cls'
 			);
 			assertNoViolations(violations, 'AvoidMagicNumbers');
 		});
