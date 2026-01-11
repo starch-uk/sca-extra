@@ -17,8 +17,7 @@
 	>
 		<description>
 			Detects variables that are assigned but never returned or passed to
-			a
-			method or constructor. Variables should either be used in return
+			a method or constructor. Variables should either be used in return
 			statements or passed as arguments to methods or constructors. This helps
 			identify dead code and unused variables that can be removed.
 
