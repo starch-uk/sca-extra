@@ -9,7 +9,7 @@
 	<rule
 		name="SingleArgumentMustBeSingleLine"
 		language="apex"
-		message="Method calls with 0-1 arguments must be formatted on a single line. Unnecessary multi-line formatting is not allowed"
+		message="Method calls with 0-1 arguments must be on a single line"
 		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
 	>
 		<description>
@@ -27,6 +27,9 @@
 			To customize this rule, edit the $maxArgs variable at the beginning of
 			the XPath expression (default: 1). This sets the maximum number of
 			arguments allowed before multi-line formatting is required.
+
+			$maxArgs: Maximum number of arguments allowed before multi-line formatting is
+			required (default: 1)
 
 			Version: 1.2.0
 		</description>
@@ -70,6 +73,12 @@
 				'key1' => 'value1',
 				'key2' => 'value2'
 			});
+
+			// Valid: Set declaration as argument (excluded from rule)
+			processSet(new Set<String>{
+				'item1',
+				'item2'
+			});
 			]]>
 		</example>
 		<example>
@@ -87,6 +96,35 @@
 			// Valid: Method chaining (excluded from rule)
 			String result = getObject()
 				.processValue(value);
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: First argument is a simple variable (not a method call or new object)
+			String id = '12345';
+			String name = 'John';
+			Integer num = 42;
+			Boolean flag = true;
+			Decimal price = 99.99;
+			Date today = Date.today();
+			processRecord(id);
+			calculateResult(num);
+			updateUser(name);
+			setFlag(flag);
+			applyDiscount(price);
+			scheduleTask(today);
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Valid: First argument is a method call (excluded from rule)
+			String result = processValue(getId());
+			Integer count = calculate(getNumber());
+			Boolean active = checkStatus(getRecord());
+			
+			// Valid: First argument is a new object (excluded from rule)
+			String result = processValue(new MyClass());
+			Integer count = calculate(new Counter());
 			]]>
 		</example>
 	</rule>

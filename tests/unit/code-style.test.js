@@ -4,8 +4,8 @@ describe('Code Style Rules', () => {
 	describe('NoMethodCallsInConditionals', () => {
 		it('should detect method calls in if conditions', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/NoMethodCallsInConditionals.xml',
-				'tests/fixtures/negative/code-style/NoMethodCallsInConditionals.cls'
+				'rulesets/codestyle/NoMethodCallsInConditionals.xml',
+				'tests/fixtures/negative/codestyle/NoMethodCallsInConditionals.cls'
 			);
 			expect(
 				violations.filter(
@@ -16,8 +16,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag code with method results stored in variables or method calls in while/do-while loops', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/NoMethodCallsInConditionals.xml',
-				'tests/fixtures/positive/code-style/NoMethodCallsInConditionals.cls'
+				'rulesets/codestyle/NoMethodCallsInConditionals.xml',
+				'tests/fixtures/positive/codestyle/NoMethodCallsInConditionals.cls'
 			);
 			assertNoViolations(violations, 'NoMethodCallsInConditionals');
 		});
@@ -26,8 +26,8 @@ describe('Code Style Rules', () => {
 	describe('PreferSafeNavigationOperator', () => {
 		it('should detect explicit null checks before property access', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferSafeNavigationOperator.xml',
-				'tests/fixtures/negative/code-style/PreferSafeNavigationOperator.cls'
+				'rulesets/codestyle/PreferSafeNavigationOperator.xml',
+				'tests/fixtures/negative/codestyle/PreferSafeNavigationOperator.cls'
 			);
 			expect(
 				violations.filter(
@@ -38,8 +38,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag code using safe navigation operator', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferSafeNavigationOperator.xml',
-				'tests/fixtures/positive/code-style/PreferSafeNavigationOperator.cls'
+				'rulesets/codestyle/PreferSafeNavigationOperator.xml',
+				'tests/fixtures/positive/codestyle/PreferSafeNavigationOperator.cls'
 			);
 			assertNoViolations(violations, 'PreferSafeNavigationOperator');
 		});
@@ -48,8 +48,8 @@ describe('Code Style Rules', () => {
 	describe('PreferNullCoalescingOverTernary', () => {
 		it('should detect ternary operators for null checks', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferNullCoalescingOverTernary.xml',
-				'tests/fixtures/negative/code-style/PreferNullCoalescingOverTernary.cls'
+				'rulesets/codestyle/PreferNullCoalescingOverTernary.xml',
+				'tests/fixtures/negative/codestyle/PreferNullCoalescingOverTernary.cls'
 			);
 			expect(
 				violations.filter(
@@ -60,8 +60,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag code using null coalescing operator', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferNullCoalescingOverTernary.xml',
-				'tests/fixtures/positive/code-style/PreferNullCoalescingOverTernary.cls'
+				'rulesets/codestyle/PreferNullCoalescingOverTernary.xml',
+				'tests/fixtures/positive/codestyle/PreferNullCoalescingOverTernary.cls'
 			);
 			assertNoViolations(violations, 'PreferNullCoalescingOverTernary');
 		});
@@ -70,8 +70,8 @@ describe('Code Style Rules', () => {
 	describe('AvoidOneLinerMethods', () => {
 		it('should detect one-liner methods with single statement', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/AvoidOneLinerMethods.xml',
-				'tests/fixtures/negative/code-style/AvoidOneLinerMethods.cls'
+				'rulesets/codestyle/AvoidOneLinerMethods.xml',
+				'tests/fixtures/negative/codestyle/AvoidOneLinerMethods.cls'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'AvoidOneLinerMethods')
@@ -81,8 +81,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag abstract, override, interface, or multi-statement methods', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/AvoidOneLinerMethods.xml',
-				'tests/fixtures/positive/code-style/AvoidOneLinerMethods.cls'
+				'rulesets/codestyle/AvoidOneLinerMethods.xml',
+				'tests/fixtures/positive/codestyle/AvoidOneLinerMethods.cls'
 			);
 			assertNoViolations(violations, 'AvoidOneLinerMethods');
 		});
@@ -93,7 +93,7 @@ describe('Code Style Rules', () => {
 			const { runRegexRule } = require('../helpers/pmd-helper');
 			const violations = await runRegexRule(
 				'NoConsecutiveBlankLines',
-				'tests/fixtures/negative/code-style/NoConsecutiveBlankLines.cls'
+				'tests/fixtures/negative/codestyle/NoConsecutiveBlankLines.cls'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'NoConsecutiveBlankLines')
@@ -105,7 +105,7 @@ describe('Code Style Rules', () => {
 			const { runRegexRule } = require('../helpers/pmd-helper');
 			const violations = await runRegexRule(
 				'NoConsecutiveBlankLines',
-				'tests/fixtures/positive/code-style/NoConsecutiveBlankLines.cls'
+				'tests/fixtures/positive/codestyle/NoConsecutiveBlankLines.cls'
 			);
 			assertNoViolations(violations, 'NoConsecutiveBlankLines');
 		});
@@ -116,7 +116,7 @@ describe('Code Style Rules', () => {
 			const fs = require('fs');
 			const path = require('path');
 			const { runRegexRule } = require('../helpers/pmd-helper');
-			const negativeDir = 'tests/fixtures/negative/code-style';
+			const negativeDir = 'tests/fixtures/negative/codestyle';
 			const files = fs
 				.readdirSync(negativeDir)
 				.filter(
@@ -145,7 +145,7 @@ describe('Code Style Rules', () => {
 			const fs = require('fs');
 			const path = require('path');
 			const { runRegexRule } = require('../helpers/pmd-helper');
-			const positiveDir = 'tests/fixtures/positive/code-style';
+			const positiveDir = 'tests/fixtures/positive/codestyle';
 			const files = fs
 				.readdirSync(positiveDir)
 				.filter(
@@ -172,7 +172,7 @@ describe('Code Style Rules', () => {
 			const { runRegexRule } = require('../helpers/pmd-helper');
 			const violations = await runRegexRule(
 				'NoLongLines',
-				'tests/fixtures/negative/code-style/NoLongLines.cls'
+				'tests/fixtures/negative/codestyle/NoLongLines.cls'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'NoLongLines').length
@@ -183,7 +183,7 @@ describe('Code Style Rules', () => {
 			const { runRegexRule } = require('../helpers/pmd-helper');
 			const violations = await runRegexRule(
 				'NoLongLines',
-				'tests/fixtures/positive/code-style/NoLongLines.cls'
+				'tests/fixtures/positive/codestyle/NoLongLines.cls'
 			);
 			assertNoViolations(violations, 'NoLongLines');
 		});
@@ -192,8 +192,8 @@ describe('Code Style Rules', () => {
 	describe('NoMethodCallsAsArguments', () => {
 		it('should detect method calls used directly as arguments', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/NoMethodCallsAsArguments.xml',
-				'tests/fixtures/negative/code-style/NoMethodCallsAsArguments.cls'
+				'rulesets/codestyle/NoMethodCallsAsArguments.xml',
+				'tests/fixtures/negative/codestyle/NoMethodCallsAsArguments.cls'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'NoMethodCallsAsArguments')
@@ -203,8 +203,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag method calls extracted to variables', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/NoMethodCallsAsArguments.xml',
-				'tests/fixtures/positive/code-style/NoMethodCallsAsArguments.cls'
+				'rulesets/codestyle/NoMethodCallsAsArguments.xml',
+				'tests/fixtures/positive/codestyle/NoMethodCallsAsArguments.cls'
 			);
 			assertNoViolations(violations, 'NoMethodCallsAsArguments');
 		});
@@ -213,8 +213,8 @@ describe('Code Style Rules', () => {
 	describe('SingleArgumentMustBeSingleLine', () => {
 		it('should detect single-argument method calls on multiple lines', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/SingleArgumentMustBeSingleLine.xml',
-				'tests/fixtures/negative/code-style/SingleArgumentMustBeSingleLine.cls'
+				'rulesets/codestyle/SingleArgumentMustBeSingleLine.xml',
+				'tests/fixtures/negative/codestyle/SingleArgumentMustBeSingleLine.cls'
 			);
 			expect(
 				violations.filter(
@@ -225,8 +225,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag single-argument method calls on one line', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/SingleArgumentMustBeSingleLine.xml',
-				'tests/fixtures/positive/code-style/SingleArgumentMustBeSingleLine.cls'
+				'rulesets/codestyle/SingleArgumentMustBeSingleLine.xml',
+				'tests/fixtures/positive/codestyle/SingleArgumentMustBeSingleLine.cls'
 			);
 			assertNoViolations(violations, 'SingleArgumentMustBeSingleLine');
 		});
@@ -235,8 +235,8 @@ describe('Code Style Rules', () => {
 	describe('PreferStringJoinOverConcatenation', () => {
 		it('should detect multiple string concatenations with common separator', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferStringJoinOverConcatenation.xml',
-				'tests/fixtures/negative/code-style/PreferStringJoinOverConcatenation.cls'
+				'rulesets/codestyle/PreferStringJoinOverConcatenation.xml',
+				'tests/fixtures/negative/codestyle/PreferStringJoinOverConcatenation.cls'
 			);
 			expect(
 				violations.filter(
@@ -247,8 +247,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag String.join usage or concatenations without common separator', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferStringJoinOverConcatenation.xml',
-				'tests/fixtures/positive/code-style/PreferStringJoinOverConcatenation.cls'
+				'rulesets/codestyle/PreferStringJoinOverConcatenation.xml',
+				'tests/fixtures/positive/codestyle/PreferStringJoinOverConcatenation.cls'
 			);
 			assertNoViolations(violations, 'PreferStringJoinOverConcatenation');
 		});
@@ -257,8 +257,8 @@ describe('Code Style Rules', () => {
 	describe('MultipleStringContainsCalls', () => {
 		it('should detect multiple contains() calls in conditionals', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/MultipleStringContainsCalls.xml',
-				'tests/fixtures/negative/code-style/MultipleStringContainsCalls.cls'
+				'rulesets/codestyle/MultipleStringContainsCalls.xml',
+				'tests/fixtures/negative/codestyle/MultipleStringContainsCalls.cls'
 			);
 			expect(
 				violations.filter(
@@ -269,8 +269,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag single contains() calls or regex patterns', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/MultipleStringContainsCalls.xml',
-				'tests/fixtures/positive/code-style/MultipleStringContainsCalls.cls'
+				'rulesets/codestyle/MultipleStringContainsCalls.xml',
+				'tests/fixtures/positive/codestyle/MultipleStringContainsCalls.cls'
 			);
 			assertNoViolations(violations, 'MultipleStringContainsCalls');
 		});
@@ -279,8 +279,8 @@ describe('Code Style Rules', () => {
 	describe('MapShouldBeInitializedWithValues', () => {
 		it('should detect empty maps followed immediately by put()', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/MapShouldBeInitializedWithValues.xml',
-				'tests/fixtures/negative/code-style/MapShouldBeInitializedWithValues.cls'
+				'rulesets/codestyle/MapShouldBeInitializedWithValues.xml',
+				'tests/fixtures/negative/codestyle/MapShouldBeInitializedWithValues.cls'
 			);
 			expect(
 				violations.filter(
@@ -291,8 +291,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag maps initialized with values or put() called later', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/MapShouldBeInitializedWithValues.xml',
-				'tests/fixtures/positive/code-style/MapShouldBeInitializedWithValues.cls'
+				'rulesets/codestyle/MapShouldBeInitializedWithValues.xml',
+				'tests/fixtures/positive/codestyle/MapShouldBeInitializedWithValues.cls'
 			);
 			assertNoViolations(violations, 'MapShouldBeInitializedWithValues');
 		});
@@ -301,8 +301,8 @@ describe('Code Style Rules', () => {
 	describe('PreferStringJoinOverMultipleNewlines', () => {
 		it('should detect strings with multiple newlines', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferStringJoinOverMultipleNewlines.xml',
-				'tests/fixtures/negative/code-style/PreferStringJoinOverMultipleNewlines.cls'
+				'rulesets/codestyle/PreferStringJoinOverMultipleNewlines.xml',
+				'tests/fixtures/negative/codestyle/PreferStringJoinOverMultipleNewlines.cls'
 			);
 			expect(
 				violations.filter(
@@ -313,8 +313,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag String.join usage or strings with single/no newlines', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferStringJoinOverMultipleNewlines.xml',
-				'tests/fixtures/positive/code-style/PreferStringJoinOverMultipleNewlines.cls'
+				'rulesets/codestyle/PreferStringJoinOverMultipleNewlines.xml',
+				'tests/fixtures/positive/codestyle/PreferStringJoinOverMultipleNewlines.cls'
 			);
 			assertNoViolations(
 				violations,
@@ -326,8 +326,8 @@ describe('Code Style Rules', () => {
 	describe('PreferConcatenationOverStringJoinWithEmpty', () => {
 		it('should detect String.join() with empty separator', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferConcatenationOverStringJoinWithEmpty.xml',
-				'tests/fixtures/negative/code-style/PreferConcatenationOverStringJoinWithEmpty.cls'
+				'rulesets/codestyle/PreferConcatenationOverStringJoinWithEmpty.xml',
+				'tests/fixtures/negative/codestyle/PreferConcatenationOverStringJoinWithEmpty.cls'
 			);
 			expect(
 				violations.filter(
@@ -339,8 +339,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag concatenation or String.join with non-empty separator', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferConcatenationOverStringJoinWithEmpty.xml',
-				'tests/fixtures/positive/code-style/PreferConcatenationOverStringJoinWithEmpty.cls'
+				'rulesets/codestyle/PreferConcatenationOverStringJoinWithEmpty.xml',
+				'tests/fixtures/positive/codestyle/PreferConcatenationOverStringJoinWithEmpty.cls'
 			);
 			assertNoViolations(
 				violations,
@@ -352,8 +352,8 @@ describe('Code Style Rules', () => {
 	describe('PreferMethodCallsInLoopConditions', () => {
 		it('should detect while(true/false) with break and method call inside', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferMethodCallsInLoopConditions.xml',
-				'tests/fixtures/negative/code-style/PreferMethodCallsInLoopConditions.cls'
+				'rulesets/codestyle/PreferMethodCallsInLoopConditions.xml',
+				'tests/fixtures/negative/codestyle/PreferMethodCallsInLoopConditions.cls'
 			);
 			expect(
 				violations.filter(
@@ -364,8 +364,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag method calls in loop conditions or breaks without method calls', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferMethodCallsInLoopConditions.xml',
-				'tests/fixtures/positive/code-style/PreferMethodCallsInLoopConditions.cls'
+				'rulesets/codestyle/PreferMethodCallsInLoopConditions.xml',
+				'tests/fixtures/positive/codestyle/PreferMethodCallsInLoopConditions.cls'
 			);
 			assertNoViolations(violations, 'PreferMethodCallsInLoopConditions');
 		});
@@ -374,8 +374,8 @@ describe('Code Style Rules', () => {
 	describe('PreferBuilderPatternChaining', () => {
 		it('should detect builder pattern with intermediary variable assignments', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferBuilderPatternChaining.xml',
-				'tests/fixtures/negative/code-style/PreferBuilderPatternChaining.cls'
+				'rulesets/codestyle/PreferBuilderPatternChaining.xml',
+				'tests/fixtures/negative/codestyle/PreferBuilderPatternChaining.cls'
 			);
 			expect(
 				violations.filter(
@@ -386,8 +386,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag method chaining or assignments in constructors', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferBuilderPatternChaining.xml',
-				'tests/fixtures/positive/code-style/PreferBuilderPatternChaining.cls'
+				'rulesets/codestyle/PreferBuilderPatternChaining.xml',
+				'tests/fixtures/positive/codestyle/PreferBuilderPatternChaining.cls'
 			);
 			assertNoViolations(violations, 'PreferBuilderPatternChaining');
 		});
@@ -396,8 +396,8 @@ describe('Code Style Rules', () => {
 	describe('PreferStringJoinWithSeparatorOverEmpty', () => {
 		it('should detect String.join with empty separator when strings have common suffix', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferStringJoinWithSeparatorOverEmpty.xml',
-				'tests/fixtures/negative/code-style/PreferStringJoinWithSeparatorOverEmpty.cls'
+				'rulesets/codestyle/PreferStringJoinWithSeparatorOverEmpty.xml',
+				'tests/fixtures/negative/codestyle/PreferStringJoinWithSeparatorOverEmpty.cls'
 			);
 			expect(
 				violations.filter(
@@ -408,8 +408,8 @@ describe('Code Style Rules', () => {
 
 		it('should not flag String.join with separator or without common suffix', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/PreferStringJoinWithSeparatorOverEmpty.xml',
-				'tests/fixtures/positive/code-style/PreferStringJoinWithSeparatorOverEmpty.cls'
+				'rulesets/codestyle/PreferStringJoinWithSeparatorOverEmpty.xml',
+				'tests/fixtures/positive/codestyle/PreferStringJoinWithSeparatorOverEmpty.cls'
 			);
 			assertNoViolations(
 				violations,
@@ -423,7 +423,7 @@ describe('Code Style Rules', () => {
 			const { runRegexRule } = require('../helpers/pmd-helper');
 			const violations = await runRegexRule(
 				'ProhibitPrettierIgnore',
-				'tests/fixtures/negative/code-style/ProhibitPrettierIgnore.cls'
+				'tests/fixtures/negative/codestyle/ProhibitPrettierIgnore.cls'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'ProhibitPrettierIgnore')
@@ -435,7 +435,7 @@ describe('Code Style Rules', () => {
 			const { runRegexRule } = require('../helpers/pmd-helper');
 			const violations = await runRegexRule(
 				'ProhibitPrettierIgnore',
-				'tests/fixtures/positive/code-style/ProhibitPrettierIgnore.cls'
+				'tests/fixtures/positive/codestyle/ProhibitPrettierIgnore.cls'
 			);
 			assertNoViolations(violations, 'ProhibitPrettierIgnore');
 		});
@@ -444,8 +444,8 @@ describe('Code Style Rules', () => {
 	describe('AvoidMagicNumbers', () => {
 		it('should detect magic numbers in code', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/AvoidMagicNumbers.xml',
-				'tests/fixtures/negative/code-style/AvoidMagicNumbers.cls'
+				'rulesets/codestyle/AvoidMagicNumbers.xml',
+				'tests/fixtures/negative/codestyle/AvoidMagicNumbers.cls'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'AvoidMagicNumbers').length
@@ -454,8 +454,8 @@ describe('Code Style Rules', () => {
 
 		it('should detect magic numbers in @IsTest classes with SeeAllData=true', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/AvoidMagicNumbers.xml',
-				'tests/fixtures/negative/code-style/AvoidMagicNumbers_IsTestSeeAllDataTrue.cls'
+				'rulesets/codestyle/AvoidMagicNumbers.xml',
+				'tests/fixtures/negative/codestyle/AvoidMagicNumbers_IsTestSeeAllDataTrue.cls'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'AvoidMagicNumbers').length
@@ -464,8 +464,8 @@ describe('Code Style Rules', () => {
 
 		it('should detect magic numbers in case insensitive @IsTest annotation with SeeAllData=true', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/AvoidMagicNumbers.xml',
-				'tests/fixtures/negative/code-style/AvoidMagicNumbers_IsTestAnnotationCaseInsensitive.cls'
+				'rulesets/codestyle/AvoidMagicNumbers.xml',
+				'tests/fixtures/negative/codestyle/AvoidMagicNumbers_IsTestAnnotationCaseInsensitive.cls'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'AvoidMagicNumbers').length
@@ -474,24 +474,24 @@ describe('Code Style Rules', () => {
 
 		it('should not flag safe numbers, array indices, loop conditions, or constants', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/AvoidMagicNumbers.xml',
-				'tests/fixtures/positive/code-style/AvoidMagicNumbers.cls'
+				'rulesets/codestyle/AvoidMagicNumbers.xml',
+				'tests/fixtures/positive/codestyle/AvoidMagicNumbers.cls'
 			);
 			assertNoViolations(violations, 'AvoidMagicNumbers');
 		});
 
 		it('should not flag magic numbers in @IsTest classes (SeeAllData defaults to false)', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/AvoidMagicNumbers.xml',
-				'tests/fixtures/positive/code-style/AvoidMagicNumbers_IsTestDefault.cls'
+				'rulesets/codestyle/AvoidMagicNumbers.xml',
+				'tests/fixtures/positive/codestyle/AvoidMagicNumbers_IsTestDefault.cls'
 			);
 			assertNoViolations(violations, 'AvoidMagicNumbers');
 		});
 
 		it('should not flag magic numbers with case insensitive SeeAllData parameter matching', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/AvoidMagicNumbers.xml',
-				'tests/fixtures/positive/code-style/AvoidMagicNumbers_IsTestCaseInsensitive.cls'
+				'rulesets/codestyle/AvoidMagicNumbers.xml',
+				'tests/fixtures/positive/codestyle/AvoidMagicNumbers_IsTestCaseInsensitive.cls'
 			);
 			assertNoViolations(violations, 'AvoidMagicNumbers');
 		});

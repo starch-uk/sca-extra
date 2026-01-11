@@ -49,7 +49,7 @@ to customize your configuration.
 
 ### Comprehensive Example (All Rules)
 
-Here's a complete `code-analyzer.yml` configuration that includes all 47 PMD
+Here's a complete `code-analyzer.yml` configuration that includes all 48 PMD
 rules and 4 Regex rules from this repository:
 
 ```yaml
@@ -62,29 +62,29 @@ engines:
                 - .cls
                 - .trigger
         custom_rulesets:
-            - rulesets/best-practices/FinalVariablesMustBeFinal.xml
-            - rulesets/best-practices/RegexPatternsMustBeStaticFinal.xml
-            - rulesets/best-practices/StaticMethodsMustBeStatic.xml
-            - rulesets/best-practices/StaticVariablesMustBeFinalAndScreamingSnakeCase.xml
-            - rulesets/best-practices/TestClassIsParallel.xml
-            - rulesets/code-style/AvoidMagicNumbers.xml
-            - rulesets/code-style/AvoidOneLinerMethods.xml
-            - rulesets/code-style/InnerClassesMustBeOneWord.xml
-            - rulesets/code-style/MapShouldBeInitializedWithValues.xml
-            - rulesets/code-style/MultipleStringContainsCalls.xml
-            - rulesets/code-style/NoMethodCallsAsArguments.xml
-            - rulesets/code-style/NoMethodCallsInConditionals.xml
-            - rulesets/code-style/NoSingleLetterVariableNames.xml
-            - rulesets/code-style/PreferBuilderPatternChaining.xml
-            - rulesets/code-style/PreferConcatenationOverStringJoinWithEmpty.xml
-            - rulesets/code-style/PreferMethodCallsInLoopConditions.xml
-            - rulesets/code-style/PreferNullCoalescingOverTernary.xml
-            - rulesets/code-style/PreferSafeNavigationOperator.xml
-            - rulesets/code-style/PreferStringJoinOverConcatenation.xml
-            - rulesets/code-style/PreferStringJoinOverMultipleNewlines.xml
-            - rulesets/code-style/PreferStringJoinWithSeparatorOverEmpty.xml
-            - rulesets/code-style/SingleArgumentMustBeSingleLine.xml
-            - rulesets/code-style/VariablesMustNotShareNamesWithClasses.xml
+            - rulesets/bestpractices/FinalVariablesMustBeFinal.xml
+            - rulesets/bestpractices/RegexPatternsMustBeStaticFinal.xml
+            - rulesets/bestpractices/StaticMethodsMustBeStatic.xml
+            - rulesets/bestpractices/StaticVariablesMustBeFinalAndScreamingSnakeCase.xml
+            - rulesets/bestpractices/TestClassIsParallel.xml
+            - rulesets/codestyle/AvoidMagicNumbers.xml
+            - rulesets/codestyle/AvoidOneLinerMethods.xml
+            - rulesets/codestyle/InnerClassesMustBeOneWord.xml
+            - rulesets/codestyle/MapShouldBeInitializedWithValues.xml
+            - rulesets/codestyle/MultipleStringContainsCalls.xml
+            - rulesets/codestyle/NoMethodCallsAsArguments.xml
+            - rulesets/codestyle/NoMethodCallsInConditionals.xml
+            - rulesets/codestyle/NoSingleLetterVariableNames.xml
+            - rulesets/codestyle/PreferBuilderPatternChaining.xml
+            - rulesets/codestyle/PreferConcatenationOverStringJoinWithEmpty.xml
+            - rulesets/codestyle/PreferMethodCallsInLoopConditions.xml
+            - rulesets/codestyle/PreferNullCoalescingOverTernary.xml
+            - rulesets/codestyle/PreferSafeNavigationOperator.xml
+            - rulesets/codestyle/PreferStringJoinOverConcatenation.xml
+            - rulesets/codestyle/PreferStringJoinOverMultipleNewlines.xml
+            - rulesets/codestyle/PreferStringJoinWithSeparatorOverEmpty.xml
+            - rulesets/codestyle/SingleArgumentMustBeSingleLine.xml
+            - rulesets/codestyle/VariablesMustNotShareNamesWithClasses.xml
             - rulesets/design/AvoidLowValueWrapperMethods.xml
             - rulesets/design/AvoidTrivialPropertyGetters.xml
             - rulesets/design/ClassesMustHaveMethods.xml
@@ -98,6 +98,7 @@ engines:
             - rulesets/design/NoThisOutsideConstructors.xml
             - rulesets/design/NoUnnecessaryAttributeVariables.xml
             - rulesets/design/NoUnnecessaryReturnVariables.xml
+            - rulesets/design/UnusedVariableNotReturnedOrPassed.xml
             - rulesets/design/PreferPropertySyntaxOverGetterMethods.xml
             - rulesets/design/PreferSwitchOverIfElseChains.xml
             - rulesets/design/SingleParameterMustBeSingleLine.xml
@@ -201,15 +202,15 @@ engines:
             - rulesets/design/InnerClassesCannotHaveStaticMembers.xml
 
             # Best practices rules
-            - rulesets/best-practices/FinalVariablesMustBeFinal.xml
-            - rulesets/best-practices/StaticMethodsMustBeStatic.xml
+            - rulesets/bestpractices/FinalVariablesMustBeFinal.xml
+            - rulesets/bestpractices/StaticMethodsMustBeStatic.xml
 
             # Code style rules (including naming)
-            - rulesets/code-style/NoSingleLetterVariableNames.xml
+            - rulesets/codestyle/NoSingleLetterVariableNames.xml
 
             # More code style rules
-            - rulesets/code-style/NoMethodCallsInConditionals.xml
-            - rulesets/code-style/PreferSafeNavigationOperator.xml
+            - rulesets/codestyle/NoMethodCallsInConditionals.xml
+            - rulesets/codestyle/PreferSafeNavigationOperator.xml
 ```
 
 **Important:**
@@ -331,7 +332,7 @@ engines:
         custom_rulesets:
             - rulesets/custom-disabled-defaults.xml # Custom ruleset with disabled defaults
             - rulesets/design/InnerClassesCannotBeStatic.xml
-            - rulesets/code-style/NoSingleLetterVariableNames.xml
+            - rulesets/codestyle/NoSingleLetterVariableNames.xml
 ```
 
 Alternatively, if you're creating a comprehensive custom ruleset, you can
@@ -374,7 +375,7 @@ engines:
         custom_rulesets:
             - rulesets/custom-comprehensive-rules.xml # Standard rules with exclusions
             - rulesets/design/InnerClassesCannotBeStatic.xml # Custom rules
-            - rulesets/code-style/NoSingleLetterVariableNames.xml
+            - rulesets/codestyle/NoSingleLetterVariableNames.xml
 ```
 
 **Standard PMD category rulesets available:**
@@ -384,7 +385,7 @@ engines:
 - `category/apex/design.xml` - Design pattern rules
 - `category/apex/performance.xml` - Performance rules
 - `category/apex/codestyle.xml` - Code style rules
-- `category/apex/errorprone.xml` - Error-prone patterns
+- `category/apex/errorprone.xml` - Errorprone patterns
 
 ### Regex Rules
 
@@ -469,7 +470,7 @@ Regex rules are useful for:
 - Simple string/pattern detection
 
 For more information on creating Regex rules, see the
-[Regex Engine Reference](docs/REGEX.md).
+[Code Analyzer Configuration](docs/CODEANALYZER.md) Regex Engine section.
 
 ### Minimal Example
 
@@ -485,11 +486,11 @@ engines:
             - rulesets/design/InnerClassesCannotHaveStaticMembers.xml
 
             # Best practices rules
-            - rulesets/best-practices/FinalVariablesMustBeFinal.xml
+            - rulesets/bestpractices/FinalVariablesMustBeFinal.xml
 
             # Code style rules
-            - rulesets/code-style/NoSingleLetterVariableNames.xml
-            - rulesets/code-style/NoMethodCallsInConditionals.xml
+            - rulesets/codestyle/NoSingleLetterVariableNames.xml
+            - rulesets/codestyle/NoMethodCallsInConditionals.xml
 
             # Documentation rules
             - rulesets/documentation/ExceptionDocumentationRequired.xml
@@ -505,7 +506,7 @@ rules:
         tags: ['Recommended', 'Naming']
 ```
 
-**For a comprehensive example with all 47 PMD rules and 4 Regex rules, see the
+**For a comprehensive example with all 48 PMD rules and 4 Regex rules, see the
 [Comprehensive Example (All Rules)](#comprehensive-example-all-rules) section
 above.**
 
@@ -879,6 +880,97 @@ private void validateAccount(Account acc) {
     if (acc.Name == null) {
         acc.Name = 'Unknown';
     }
+}
+```
+
+#### UnusedVariableNotReturnedOrPassed (thanks to Marlene Guerra-Reeve for the idea on this)
+
+**Priority:** P3 (Medium)  
+**Description:** Detects variables that are assigned but never returned or
+passed to a method or constructor. Variables should either be used in return
+statements or passed as arguments to methods or constructors. This helps
+identify dead code and unused variables that can be removed.
+
+This rule flags variables that are assigned but not used in:
+
+- Return statements
+- Method call arguments
+- Constructor arguments (both positional and named parameters)
+
+Variables that are reassigned, incremented, or decremented after being used are
+still flagged if the final value is not returned or passed.
+
+**Violations:**
+
+```apex
+// Violation: Variable assigned but never used
+public void method1() {
+    String unused = 'test';  // ❌ Variable never returned or passed
+}
+
+// Violation: Variable assigned after being used but not returned or passed
+public void method2() {
+    String value = 'test';
+    process(value);
+    value = 'test2';  // ❌ Variable reassigned but not returned or passed
+}
+
+// Violation: Variable incremented but not returned or passed
+public void method3() {
+    Integer value = 0;
+    process(value);
+    value++;  // ❌ Variable incremented but not returned or passed
+}
+
+// Violation: Variable used in constructor then reassigned but not returned or passed
+public void method4() {
+    String name = 'test';
+    Account acc = new Account(Name = name);
+    name = 'test2';  // ❌ Variable reassigned but not returned or passed
+}
+```
+
+**Valid Code:**
+
+```apex
+// Valid: Variable returned
+public String method1() {
+    String result = 'test';
+    return result;  // ✅ Variable is returned
+}
+
+// Valid: Variable passed to method
+public void method2() {
+    String value = 'test';
+    process(value);  // ✅ Variable is passed to method
+}
+
+// Valid: Variable passed to constructor with named parameters
+public void method3() {
+    String name = 'Test';
+    Account acc = new Account(Name = name);  // ✅ Variable is passed to constructor
+    process(acc);
+}
+
+// Valid: Variable passed to constructor with positional parameters
+public Account method4() {
+    String name = 'Test';
+    Account acc = new Account(name);  // ✅ Variable is passed to constructor
+    return acc;  // ✅ Result is returned
+}
+
+// Valid: Variable used in multiple ways
+public void method5() {
+    String value = 'test';
+    process(value);
+    log(value);  // ✅ Variable is passed to multiple methods
+}
+
+// Valid: Variable returned after being used
+public String method6() {
+    String result = 'test';
+    process(result);
+    return result;  // ✅ Variable is returned after being used
 }
 ```
 
@@ -1425,20 +1517,20 @@ public void initialize() {  // ✅ Void method with no parameters exempt
 Rules are organized into PMD's 8 standard categories (consistent across
 languages):
 
-- **best-practices/** - Generally accepted best practices (5 PMD rules: modifier
+- **bestpractices/** - Generally accepted best practices (5 PMD rules: modifier
   rules, test class rules)
-- **code-style/** - Coding style enforcement (21 PMD rules: formatting, naming
+- **codestyle/** - Coding style enforcement (21 PMD rules: formatting, naming
   conventions, code style patterns)
-- **design/** - Design issue detection (17 PMD rules: code structure, method
+- **design/** - Design issue detection (18 PMD rules: code structure, method
   signatures, class organization)
 - **documentation/** - Code documentation rules (5 PMD rules)
-- **error-prone/** - Broken/confusing/runtime-error-prone constructs (currently
+- **errorprone/** - Broken/confusing/runtime-error-prone constructs (currently
   empty)
 - **multithreading/** - Multi-threaded execution issues (currently empty)
 - **performance/** - Suboptimal code detection (currently empty)
 - **security/** - Potential security flaws (currently empty)
 
-**Total: 47 PMD rules + 4 Regex rules = 51 rules**
+**Total: 48 PMD rules + 4 Regex rules = 52 rules**
 
 In addition to the PMD rules above, 4 Regex rules are provided:
 
@@ -1472,7 +1564,7 @@ pnpm test:watch    # Run tests in watch mode
 pnpm test:coverage # Run tests with coverage
 ```
 
-For Jest API reference, see [Jest 30.0 Reference](docs/JEST30.md).
+For Jest API reference, see [Jest Reference](docs/JEST.md).
 
 ### Formatting
 
@@ -1651,55 +1743,35 @@ reporting instructions.
 
 - [PMD Quick Reference](docs/PMD.md) - Condensed guide to PMD essentials
   (rulesets, CLI, CPD, configuration)
-- [Code Analyzer Configuration](docs/CODE_ANALYZER_CONFIG.md) - Quick reference
-  for configuring `code-analyzer.yml` with all engines and properties
+- [Code Analyzer Configuration](docs/CODEANALYZER.md) - Quick reference for
+  configuring `code-analyzer.yml` with all engines and properties (includes
+  Regex engine configuration)
 - [XPath 3.1 Reference](docs/XPATH31.md) - XPath 3.1 syntax and functions
-- [PMD Apex AST Reference](docs/APEX_PMD_AST.md) - PMD Apex AST node types and
-  patterns
-- [AI Agent Rule Guide](docs/AI_AGENT_RULE_GUIDE.md) - Machine-readable rule
-  configuration guide for AI coding assistants
-- [Regex Engine Reference](docs/REGEX.md) - Regex engine configuration and
-  custom rule creation
+- [PMD Quick Reference](docs/PMD.md) - PMD essentials including Apex AST
+  reference (see Apex AST Reference section)
 
 ### Documentation & Suppression
 
 - [ApexDoc Reference](docs/APEXDOC.md) - ApexDoc syntax, tags, and documentation
   format for Apex code
-- [Suppressing Warnings](docs/SUPPRESS_WARNINGS.md) - How to suppress PMD rule
-  violations using annotations, comments, and rule properties
+- [PMD Quick Reference](docs/PMD.md) - How to suppress PMD rule violations using
+  annotations, comments, and rule properties (see Suppressing Warnings section)
 
 ### Testing & Development
 
-- [Jest 30.0 Reference](docs/JEST30.md) - Jest 30.0 API reference for writing
-  and running tests
+- [Jest Reference](docs/JEST.md) - Jest 30.0 API reference for writing and
+  running tests
 - [pnpm Reference](docs/PNPM.md) - pnpm package manager reference for dependency
   management and workspace configuration
-- [Husky v9 Reference](docs/HUSKY9.md) - Husky v9 Git hooks manager reference
-  for setting up pre-commit and other Git hooks
-- [Migration Guides](docs/MIGRATION_GUIDES.md) - Rule migration and versioning
-  information
-
-### Usage Guides
-
-- [Salesforce CLI Commands](docs/SFCLI.md) - Using Code Analyzer via Salesforce
-  CLI
-- [VS Code Extension](docs/VSCODE.md) - Using Code Analyzer in Visual Studio
-  Code
-- [CI/CD Integration](docs/CICD.md) - Integrating Code Analyzer into CI/CD
-  pipelines
-- [MCP Tools](docs/MCP.md) - Using Model Context Protocol tools with Code
-  Analyzer
+- [Husky Reference](docs/HUSKY.md) - Husky Git hooks manager reference for
+  setting up pre-commit and other Git hooks
 
 ### Additional Code Analyzer Engines
 
-- [CPD Engine Reference](docs/CPD.md) - Copy/Paste Detector engine for duplicate
-  code detection across multiple languages
+- [PMD Quick Reference](docs/PMD.md) - Copy/Paste Detector (CPD) engine for
+  duplicate code detection across multiple languages (see CPD section)
 - [ESLint Reference](docs/ESLINT.md) - ESLint engine configuration for
   JavaScript, TypeScript, and LWC static analysis
-- [Flow Scanner Reference](docs/FLOWSCANNER.md) - Flow Scanner engine for
-  auditing Salesforce Flows for security vulnerabilities
-- [RetireJS Reference](docs/RETIREJS.md) - RetireJS engine for detecting
-  security vulnerabilities in JavaScript dependencies
 
 ### Graph Engine Documentation
 
@@ -1718,11 +1790,11 @@ reporting instructions.
 
 ## AI Agent Configuration
 
-The [AI Agent Rule Guide](docs/AI_AGENT_RULE_GUIDE.md) provides a
-machine-readable reference for AI coding assistants (like Cursor's Agent) to
-help developers configure PMD rules. This guide contains structured information
-about each rule including violations, valid code examples, and configuration
-properties.
+The [Code Analyzer Configuration](docs/CODEANALYZER.md) and
+[PMD Quick Reference](docs/PMD.md) provide machine-readable reference for AI
+coding assistants (like Cursor's Agent) to help developers configure PMD rules.
+This guide contains structured information about each rule including violations,
+valid code examples, and configuration properties.
 
 ### Required Documentation Files
 
@@ -1732,67 +1804,37 @@ When setting up AI agent rules, you should reference these documentation files:
 
 - **[PMD Quick Reference](docs/PMD.md)** - PMD essentials (rulesets, CLI, CPD,
   configuration)
-- **[Code Analyzer Configuration](docs/CODE_ANALYZER_CONFIG.md)** - Complete
-  `code-analyzer.yml` configuration reference
-- **[AI Agent Rule Guide](docs/AI_AGENT_RULE_GUIDE.md)** - Rule configuration
-  reference with examples
+- **[Code Analyzer Configuration](docs/CODEANALYZER.md)** - Complete
+  `code-analyzer.yml` configuration reference (includes Regex engine
+  configuration)
 - **[XPath 3.1 Reference](docs/XPATH31.md)** - XPath 3.1 syntax and functions
   for writing rule queries
-- **[PMD Apex AST Reference](docs/APEX_PMD_AST.md)** - PMD Apex AST node types
-  and patterns
-- **[Regex Engine Reference](docs/REGEX.md)** - Regex engine configuration and
-  custom rule creation
+- **[PMD Quick Reference](docs/PMD.md)** - PMD essentials including Apex AST
+  reference (see Apex AST Reference section)
 
 **Documentation & Suppression:**
 
 - **[ApexDoc Reference](docs/APEXDOC.md)** - ApexDoc syntax, tags, and
   documentation format for Apex code
-- **[Suppressing Warnings](docs/SUPPRESS_WARNINGS.md)** - How to suppress PMD
-  rule violations using annotations, comments, and rule properties
+- **[PMD Quick Reference](docs/PMD.md)** - How to suppress PMD rule violations
+  using annotations, comments, and rule properties (see Suppressing Warnings
+  section)
 
 **Testing & Development:**
 
-- **[Jest 30.0 Reference](docs/JEST30.md)** - Jest 30.0 API reference for
-  writing and running tests
+- **[Jest Reference](docs/JEST.md)** - Jest 30.0 API reference for writing and
+  running tests
 - **[pnpm Reference](docs/PNPM.md)** - pnpm package manager reference for
   dependency management and workspace configuration
-- **[Husky v9 Reference](docs/HUSKY9.md)** - Husky v9 Git hooks manager
-  reference for setting up pre-commit and other Git hooks
-- **[Migration Guides](docs/MIGRATION_GUIDES.md)** - Rule migration and
-  versioning information
-
-**Usage Guides:**
-
-- **[Salesforce CLI Commands](docs/SFCLI.md)** - Using Code Analyzer via
-  Salesforce CLI
-- **[VS Code Extension](docs/VSCODE.md)** - Using Code Analyzer in Visual Studio
-  Code
-- **[CI/CD Integration](docs/CICD.md)** - Integrating Code Analyzer into CI/CD
-  pipelines
-- **[MCP Tools](docs/MCP.md)** - Using Model Context Protocol tools with Code
-  Analyzer
+- **[Husky Reference](docs/HUSKY.md)** - Husky Git hooks manager reference for
+  setting up pre-commit and other Git hooks
 
 **Additional Engines:**
 
-- **[CPD Engine Reference](docs/CPD.md)** - Copy/Paste Detector engine for
-  duplicate code detection
+- **[PMD Quick Reference](docs/PMD.md)** - Copy/Paste Detector (CPD) engine for
+  duplicate code detection (see CPD section)
 - **[ESLint Reference](docs/ESLINT.md)** - ESLint engine configuration for
   JavaScript, TypeScript, and LWC
-- **[Flow Scanner Reference](docs/FLOWSCANNER.md)** - Flow Scanner engine for
-  auditing Salesforce Flows
-- **[RetireJS Reference](docs/RETIREJS.md)** - RetireJS engine for detecting
-  security vulnerabilities in JavaScript dependencies
-
-**Usage Guides:**
-
-- **[Salesforce CLI Commands](docs/SFCLI.md)** - Using Code Analyzer via
-  Salesforce CLI
-- **[VS Code Extension](docs/VSCODE.md)** - Using Code Analyzer in Visual Studio
-  Code
-- **[CI/CD Integration](docs/CICD.md)** - Integrating Code Analyzer into CI/CD
-  pipelines
-- **[MCP Tools](docs/MCP.md)** - Using Model Context Protocol tools with Code
-  Analyzer
 
 **Graph Engine Documentation:**
 
@@ -1828,7 +1870,7 @@ To configure Cursor's Agent to use this guide, create a Cursor Project Rule:
     ---
     description:
         'Guide for configuring PMD rules for Salesforce Apex code analysis.
-        Reference docs/AI_AGENT_RULE_GUIDE.md when helping with
+        Reference @docs/CODEANALYZER.md and @docs/PMD.md when helping with
         code-analyzer.yml configuration or creating new rules.'
     alwaysApply: false
     ---
@@ -1836,13 +1878,13 @@ To configure Cursor's Agent to use this guide, create a Cursor Project Rule:
     When helping with Salesforce Code Analyzer configuration or creating PMD
     rules:
 
-    - Reference @docs/CODE_ANALYZER_CONFIG.md for `code-analyzer.yml`
-      configuration and engine settings
-    - Reference @docs/AI_AGENT_RULE_GUIDE.md for rule information and examples
+    - Reference @docs/CODEANALYZER.md for `code-analyzer.yml` configuration and
+      engine settings (includes Regex engine configuration)
     - Reference @docs/XPATH31.md for XPath 3.1 syntax when writing rule queries
-    - Reference @docs/APEX_PMD_AST.md for PMD Apex AST node types and patterns
-    - Reference @docs/SUPPRESS_WARNINGS.md for suppressing rule violations when
-      necessary
+    - Reference @docs/PMD.md for PMD Apex AST node types and patterns (see Apex
+      AST Reference section)
+    - Reference @docs/PMD.md for suppressing rule violations when needed (see
+      Suppressing Warnings section)
     - Use the structured format to provide accurate rule information
     - Include code examples from the guides
     - When configuring code-analyzer.yml, use property examples from the guides

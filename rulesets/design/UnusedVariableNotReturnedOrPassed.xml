@@ -1,0 +1,125 @@
+<?xml version="1.0" ?>
+<ruleset
+	name="Apex Design Rules"
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+	<description>
+		Custom rules for Apex design issues (structure, method signatures, class
+		organization)
+	</description>
+	<rule
+		name="UnusedVariableNotReturnedOrPassed"
+		language="apex"
+		message="Variable is assigned but never returned or passed to a method/constructor. Remove the variable or use it in a return statement or as an argument"
+		class="net.sourceforge.pmd.lang.rule.xpath.XPathRule"
+	>
+		<description>
+			Detects variables that are assigned but never returned or passed to
+			a
+			method or constructor. Variables should either be used in return
+			statements or passed as arguments to methods or constructors. This helps
+			identify dead code and unused variables that can be removed.
+
+			Version: 1.0.0
+		</description>
+		<priority>3</priority>
+		<properties>
+			<property name="xpath">
+				<value>
+					<![CDATA[
+					//VariableDeclarationStatements[
+						VariableDeclaration/VariableExpression
+						and (
+							let $varDecl := VariableDeclaration,
+								$varName := $varDecl/VariableExpression/@Image,
+								$method := ancestor::Method[1]
+							return
+								not(some $ve in $method//ReturnStatement//VariableExpression[@Image = $varName] satisfies not(ancestor::VariableDeclaration[1] = $varDecl))
+								and not(some $ve in $method//MethodCallExpression//VariableExpression[@Image = $varName] satisfies not(ancestor::VariableDeclaration[1] = $varDecl))
+								and not(some $ve in $method//NewObjectExpression//VariableExpression[@Image = $varName] satisfies not(ancestor::VariableDeclaration[1] = $varDecl))
+								and not(some $ve in $method//NewKeyValueObjectExpression//AssignmentExpression/VariableExpression[position() > 1][@Image = $varName] satisfies not(ancestor::VariableDeclaration[1] = $varDecl))
+						)
+					]
+					]]>
+				</value>
+			</property>
+		</properties>
+		<example>
+			<![CDATA[
+			// Violation: Variable assigned but not used
+			public void method1() {
+				String unused = 'test';
+				// Variable is never returned or passed
+			}
+			
+			// Valid: Variable returned
+			public String method2() {
+				String result = 'test';
+				return result;
+			}
+			
+			// Valid: Variable passed to method
+			public void method3() {
+				String value = 'test';
+				process(value);
+			}
+			
+			// Valid: Variable passed to constructor
+			public void method4() {
+				String name = 'Test';
+				Account acc = new Account(Name = name);
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Variable assigned after being used but not returned or passed
+			public void method5() {
+				String value = 'test';
+				process(value);
+				value = 'test2'; // ❌ Variable is assigned but not used
+			}
+
+			// Violation: Variable incremented but not returned or passed
+			public void method6() {
+				Integer value = 0;
+				process(value);
+				value++; // ❌ Variable incremented but not returned or passed
+			}
+
+			// Violation: Variable decremented but not returned or passed
+			public void method7() {
+				Integer value = 0;
+				process(value);
+				value--; // ❌ Variable decremented but not returned or passed
+			}
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Variable assigned but not returned or passed (after being used in constructor)
+			public void method8() {
+				String value = 'test';
+				Account acc = new Account(Name = value);
+				value = 'test2'; // ❌ Variable used in constructor is assigned but not returned or passed
+			}
+
+			// Violation: Variable incremented but not returned or passed (after being used in constructor)
+			public void method9() {
+				Integer value = 0;
+				Account acc = new Account(NumberOfEmployees = value);
+				value++; // ❌ Variable used in constructor is incremented but not returned or passed
+			}
+
+			// Violation: Variable decremented but not returned or passed (after being used in constructor)
+			public void method10() {
+				Integer value = 0;
+				Account acc = new Account(NumberOfEmployees = value);
+				value--; // ❌ Variable used in constructor is decremented but not returned or passed
+			}
+			]]>
+		</example>
+	</rule>
+</ruleset>
