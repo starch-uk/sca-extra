@@ -4,8 +4,8 @@ describe('Naming Rules', () => {
 	describe('NoSingleLetterVariableNames', () => {
 		it('should detect single-letter variable names', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/NoSingleLetterVariableNames.xml',
-				'tests/fixtures/negative/code-style/NoSingleLetterVariableNames.cls'
+				'rulesets/codestyle/NoSingleLetterVariableNames.xml',
+				'tests/fixtures/negative/codestyle/NoSingleLetterVariableNames.cls'
 			);
 			expect(
 				violations.filter(
@@ -16,8 +16,8 @@ describe('Naming Rules', () => {
 
 		it('should not flag allowed single-letter names (i, c) or exception variables', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/NoSingleLetterVariableNames.xml',
-				'tests/fixtures/positive/code-style/NoSingleLetterVariableNames.cls'
+				'rulesets/codestyle/NoSingleLetterVariableNames.xml',
+				'tests/fixtures/positive/codestyle/NoSingleLetterVariableNames.cls'
 			);
 			assertNoViolations(violations, 'NoSingleLetterVariableNames');
 		});
@@ -25,8 +25,8 @@ describe('Naming Rules', () => {
 		describe('property behavior', () => {
 			it('should allow loop counter "i" by default', async () => {
 				const violations = await runPMD(
-					'rulesets/code-style/NoSingleLetterVariableNames.xml',
-					'tests/fixtures/positive/code-style/NoSingleLetterVariableNames.cls'
+					'rulesets/codestyle/NoSingleLetterVariableNames.xml',
+					'tests/fixtures/positive/codestyle/NoSingleLetterVariableNames.cls'
 				);
 				// Verify 'i' is not flagged in loop
 				const iViolations = violations.filter(
@@ -45,8 +45,8 @@ describe('Naming Rules', () => {
 
 			it('should allow exception variable "e" in catch blocks', async () => {
 				const violations = await runPMD(
-					'rulesets/code-style/NoSingleLetterVariableNames.xml',
-					'tests/fixtures/positive/code-style/NoSingleLetterVariableNames.cls'
+					'rulesets/codestyle/NoSingleLetterVariableNames.xml',
+					'tests/fixtures/positive/codestyle/NoSingleLetterVariableNames.cls'
 				);
 				// Verify 'e' is not flagged in catch block
 				const eViolations = violations.filter(
@@ -59,8 +59,8 @@ describe('Naming Rules', () => {
 
 			it('should forbid exception variable "x" in catch blocks', async () => {
 				const violations = await runPMD(
-					'rulesets/code-style/NoSingleLetterVariableNames.xml',
-					'tests/fixtures/negative/code-style/NoSingleLetterVariableNames.cls'
+					'rulesets/codestyle/NoSingleLetterVariableNames.xml',
+					'tests/fixtures/negative/codestyle/NoSingleLetterVariableNames.cls'
 				);
 				// Verify 'x' is flagged in catch block (line 9 in negative fixture)
 				const xViolations = violations.filter(
@@ -72,8 +72,8 @@ describe('Naming Rules', () => {
 
 			it('should reject other single-letter variables (x, y, z, etc.)', async () => {
 				const violations = await runPMD(
-					'rulesets/code-style/NoSingleLetterVariableNames.xml',
-					'tests/fixtures/negative/code-style/NoSingleLetterVariableNames.cls'
+					'rulesets/codestyle/NoSingleLetterVariableNames.xml',
+					'tests/fixtures/negative/codestyle/NoSingleLetterVariableNames.cls'
 				);
 				// Verify violations are detected for non-allowed letters
 				expect(
@@ -88,8 +88,8 @@ describe('Naming Rules', () => {
 	describe('VariablesMustNotShareNamesWithClasses', () => {
 		it('should detect variables that share names with classes', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/VariablesMustNotShareNamesWithClasses.xml',
-				'tests/fixtures/negative/code-style/VariablesMustNotShareNamesWithClasses.cls'
+				'rulesets/codestyle/VariablesMustNotShareNamesWithClasses.xml',
+				'tests/fixtures/negative/codestyle/VariablesMustNotShareNamesWithClasses.cls'
 			);
 			expect(
 				violations.filter(
@@ -100,8 +100,8 @@ describe('Naming Rules', () => {
 
 		it('should not flag variables with different names from classes', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/VariablesMustNotShareNamesWithClasses.xml',
-				'tests/fixtures/positive/code-style/VariablesMustNotShareNamesWithClasses.cls'
+				'rulesets/codestyle/VariablesMustNotShareNamesWithClasses.xml',
+				'tests/fixtures/positive/codestyle/VariablesMustNotShareNamesWithClasses.cls'
 			);
 			assertNoViolations(
 				violations,
@@ -113,8 +113,8 @@ describe('Naming Rules', () => {
 	describe('InnerClassesMustBeOneWord', () => {
 		it('should detect inner classes with underscores or multiple words', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/InnerClassesMustBeOneWord.xml',
-				'tests/fixtures/negative/code-style/InnerClassesMustBeOneWord.cls'
+				'rulesets/codestyle/InnerClassesMustBeOneWord.xml',
+				'tests/fixtures/negative/codestyle/InnerClassesMustBeOneWord.cls'
 			);
 			expect(
 				violations.filter((v) => v.rule === 'InnerClassesMustBeOneWord')
@@ -124,8 +124,8 @@ describe('Naming Rules', () => {
 
 		it('should not flag single-word inner class names', async () => {
 			const violations = await runPMD(
-				'rulesets/code-style/InnerClassesMustBeOneWord.xml',
-				'tests/fixtures/positive/code-style/InnerClassesMustBeOneWord.cls'
+				'rulesets/codestyle/InnerClassesMustBeOneWord.xml',
+				'tests/fixtures/positive/codestyle/InnerClassesMustBeOneWord.cls'
 			);
 			assertNoViolations(violations, 'InnerClassesMustBeOneWord');
 		});

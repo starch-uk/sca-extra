@@ -240,6 +240,28 @@ describe('Design Rules - Structure', () => {
 		});
 	});
 
+	describe('UnusedVariableNotReturnedOrPassed', () => {
+		it('should detect variables assigned but never returned or passed', async () => {
+			const violations = await runPMD(
+				'rulesets/design/UnusedVariableNotReturnedOrPassed.xml',
+				'tests/fixtures/negative/design/UnusedVariableNotReturnedOrPassed.cls'
+			);
+			expect(
+				violations.filter(
+					(v) => v.rule === 'UnusedVariableNotReturnedOrPassed'
+				).length
+			).toBeGreaterThan(0);
+		});
+
+		it('should not flag variables returned or passed to methods/constructors', async () => {
+			const violations = await runPMD(
+				'rulesets/design/UnusedVariableNotReturnedOrPassed.xml',
+				'tests/fixtures/positive/design/UnusedVariableNotReturnedOrPassed.cls'
+			);
+			assertNoViolations(violations, 'UnusedVariableNotReturnedOrPassed');
+		});
+	});
+
 	describe('PreferSwitchOverIfElseChains', () => {
 		it('should detect if-else chains with 2+ conditions comparing the same variable', async () => {
 			const violations = await runPMD(

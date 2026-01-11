@@ -23,9 +23,14 @@
 			one outcome, or methods that update a class attribute are excluded from
 			this rule.
 			
-			To customize this rule, edit the $minParams variable at the beginning of
-			the XPath expression (default: 1). This sets the minimum number of
-			parameters a method must have to be flagged as a one-liner.
+			To customize this rule, edit the variables at the beginning of
+			the XPath expression:
+			- $minParams (default: 1): Minimum number of parameters a method must have to be
+			flagged
+			- $minWhenBlocks (default: 1): Threshold for when switch statements are
+			considered to have multiple outcomes
+			- $minParamUsages (default: 1): Threshold for when parameter reuse excludes
+			methods
 
 			Version: 1.0.1
 		</description>
@@ -34,7 +39,9 @@
 			<property name="xpath">
 				<value>
 					<![CDATA[
-					let $minParams := 1
+					let $minParams := 1,
+						$minWhenBlocks := 1,
+						$minParamUsages := 1
 					return //Method[
 						not(ModifierNode[@Abstract = true()] or ModifierNode[@Override = true()])
 						and not(ancestor::UserClass[@Interface = 'true'])
@@ -43,9 +50,9 @@
 						and count(BlockStatement/*) = 1
 						and not(BlockStatement/EmptyStatement)
 						and not(some $otherMethod in ancestor::UserClass//Method satisfies $otherMethod/@Image = @Image and $otherMethod/@BeginLine != @BeginLine)
-						and not(BlockStatement/SwitchStatement[(count(ValueWhenBlock) > 1) or (count(ValueWhenBlock) >= 1 and ElseWhenBlock)])
+						and not(BlockStatement/SwitchStatement[(count(ValueWhenBlock) > $minWhenBlocks) or (count(ValueWhenBlock) >= $minWhenBlocks and ElseWhenBlock)])
 						and not(BlockStatement//AssignmentExpression/VariableExpression[not(some $var in ancestor::Method//VariableDeclaration satisfies $var/VariableDeclaratorId/@Image = ./@Image)])
-						and not(some $param in .//Parameter/VariableDeclaratorId/@Image satisfies count(BlockStatement//MethodCallExpression[.//VariableExpression/@Image = $param]) > 1)
+						and not(some $param in .//Parameter/VariableDeclaratorId/@Image satisfies count(BlockStatement//MethodCallExpression[.//VariableExpression/@Image = $param]) > $minParamUsages)
 					]
 					]]>
 				</value>
@@ -113,12 +120,12 @@
 			// Valid: Methods that update class attributes are excluded
 			public class Example {
 				private Integer value;
-				
+
 				public void setValue(Integer newValue) {  // ✅ Updates class attribute
 					this.value = newValue;
 				}
 			}
-			
+
 			// Valid: Switch statements with multiple outcomes are excluded
 			public String getStatus(Integer code) {
 				switch on code {

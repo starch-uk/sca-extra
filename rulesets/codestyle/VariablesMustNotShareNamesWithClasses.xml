@@ -26,6 +26,11 @@
 			in its class, although it is permitted to do so. This rule enforces this
 			best practice to improve code clarity and maintainability.
 
+			To customize this rule, edit the $minNameLength variable at the beginning of
+			the XPath expression (default: 1). This sets the minimum length a variable
+			name must have to be checked (shorter names are ignored to allow single
+			letter variables like "r" or "x").
+
 			Note: This rule addresses variable-to-class name conflicts, which is
 			different from the name shadowing scenarios discussed in Salesforce's name
 			shadowing documentation (where local variables can shadow member
@@ -50,8 +55,9 @@
 					<![CDATA[
 					//VariableDeclaration[VariableExpression][
 						let $varNameLower := lower-case(@Image),
-							$file := ancestor::ApexFile[1]
-						return string-length($varNameLower) > 1
+							$file := ancestor::ApexFile[1],
+							$minNameLength := 1
+						return string-length($varNameLower) > $minNameLength
 							and exists($file//UserClass[lower-case(@Name) = $varNameLower or lower-case(@SimpleName) = $varNameLower])
 					]
 					]]>
@@ -63,23 +69,22 @@
 			// Violation: Variable name matches class name (case-insensitive)
 			public class Account {
 			    // ...
-			}
-			
-			public void method() {
-			    Account Account = new Account();  // ❌ Variable name matches class (exact case)
-			    Account ACCOUNT = new Account();  // ❌ Variable name matches class (uppercase)
-			    Account account = new Account();  // ❌ Variable name matches class (lowercase)
-			    Account AcCoUnT = new Account();  // ❌ Variable name matches class (mixed case)
-			}
-			
-			// Valid: Use different variable name
-			public void method() {
-			    Account acc = new Account();  // ✅ Different name (abbreviation)
-			    Account accountInstance = new Account();  // ✅ Different name (with suffix)
-			    Account accountBob = new Account();  // ✅ Different name (with suffix)
-			    Account myAccount = new Account();  // ✅ Different name (with prefix)
-			    Account accounts = new Account();  // ✅ Valid: Plural is allowed
-			    Account r = new Account();  // ✅ Valid: Single letter is allowed
+
+			    public void testViolations() {
+			        Account Account = new Account();  // ❌ Variable name matches class (exact case)
+			        Account ACCOUNT = new Account();  // ❌ Variable name matches class (uppercase)
+			        Account account = new Account();  // ❌ Variable name matches class (lowercase)
+			        Account AcCoUnT = new Account();  // ❌ Variable name matches class (mixed case)
+			    }
+
+			    public void testValids() {
+			        Account acc = new Account();  // ✅ Different name (abbreviation)
+			        Account accountInstance = new Account();  // ✅ Different name (with suffix)
+			        Account accountBob = new Account();  // ✅ Different name (with suffix)
+			        Account myAccount = new Account();  // ✅ Different name (with prefix)
+			        Account accounts = new Account();  // ✅ Valid: Plural is allowed
+			        Account r = new Account();  // ✅ Valid: Single letter is allowed
+			    }
 			}
 			]]>
 		</example>
@@ -90,20 +95,19 @@
 			    public class Inner {
 			        // ...
 			    }
-			    
-			    public void method() {
+
+			    public void testViolations() {
 			        Inner Inner = new Inner();  // ❌ Variable name matches inner class (exact case)
 			        Inner inner = new Inner();  // ❌ Variable name matches inner class (lowercase)
 			        Inner INNER = new Inner();  // ❌ Variable name matches inner class (uppercase)
 			    }
-			}
-			
-			// Valid: Use different variable name
-			public void method() {
-			    Inner innerInstance = new Inner();  // ✅ Different name (with suffix)
-			    Inner innerBob = new Inner();  // ✅ Different name (with suffix)
-			    Inner myInner = new Inner();  // ✅ Different name (with prefix)
-			    Inner item = new Inner();  // ✅ Different name (generic)
+
+			    public void testValids() {
+			        Inner innerInstance = new Inner();  // ✅ Different name (with suffix)
+			        Inner innerBob = new Inner();  // ✅ Different name (with suffix)
+			        Inner myInner = new Inner();  // ✅ Different name (with prefix)
+			        Inner item = new Inner();  // ✅ Different name (generic)
+			    }
 			}
 			]]>
 		</example>
@@ -112,56 +116,51 @@
 			// Violation: Multi-word class names also checked
 			public class TestHelper {
 			    // ...
-			}
-			
-			public void method() {
-			    TestHelper TestHelper = new TestHelper();  // ❌ Variable name matches class
-			    TestHelper testHelper = new TestHelper();  // ❌ Variable name matches class (case-insensitive)
-			    TestHelper TESTHELPER = new TestHelper();  // ❌ Variable name matches class (uppercase)
-			}
-			
-			// Valid: Different variable names
-			public void method() {
-			    TestHelper helper = new TestHelper();  // ✅ Different name
-			    TestHelper testHelperInstance = new TestHelper();  // ✅ Different name (with suffix)
-			    TestHelper myTestHelper = new TestHelper();  // ✅ Different name (with prefix)
+
+			    public void testViolations() {
+			        TestHelper TestHelper = new TestHelper();  // ❌ Variable name matches class
+			        TestHelper testHelper = new TestHelper();  // ❌ Variable name matches class (case-insensitive)
+			        TestHelper TESTHELPER = new TestHelper();  // ❌ Variable name matches class (uppercase)
+			    }
+
+			    public void testValids() {
+			        TestHelper helper = new TestHelper();  // ✅ Different name
+			        TestHelper testHelperInstance = new TestHelper();  // ✅ Different name (with suffix)
+			        TestHelper myTestHelper = new TestHelper();  // ✅ Different name (with prefix)
+			    }
 			}
 			]]>
 		</example>
 		<example>
 			<![CDATA[
 			// Valid: Partial matches are allowed (variable contains class name but is different)
-			public class Account {
+			public class TestClass {
+			    public class Account {
+			        // Inner class
+			    }
+
+			    public class Request {
+			        // Inner class
+			    }
+
 			    public void method() {
 			        String accountName = 'Test';  // ✅ Valid: accountName != Account
 			        String accountId = '123';  // ✅ Valid: accountId != Account
 			        Account accountInstance = new Account();  // ✅ Valid: accountInstance != Account
 			        Account accounts = new Account();  // ✅ Valid: Plural is allowed
-			    }
-			}
-			
-			public class Request {
-			    public void method() {
+
 			        Request requestItem = new Request();  // ✅ Valid: Contains class name but is longer
-			        Request request = new Request();  // ❌ Violation: Exact match
 			        Request r = new Request();  // ✅ Valid: Single letter is allowed
 			    }
 			}
-			
-			public class Quote {
+			]]>
+		</example>
+		<example>
+			<![CDATA[
+			// Violation: Variable name matches class name in same file
+			public class TestClass {
 			    public void method() {
-			        Quote quotes = new Quote();  // ✅ Valid: Plural is allowed
-			        Quote quote = new Quote();  // ❌ Violation: Exact match
-			    }
-			}
-			
-			public class Dress {
-			    public void method() {
-			        Dress dresses = new Dress();  // ✅ Valid: Plural is allowed
-			        Dress myDress = new Dress();  // ✅ Valid: Contains class name with prefix
-			        Dress dressItem = new Dress();  // ✅ Valid: Contains class name with suffix
-			        Dress redDressObject = new Dress();  // ✅ Valid: Contains class name in middle
-			        Dress dress = new Dress();  // ❌ Violation: Exact match
+			        TestClass TestClass = new TestClass();  // ❌ Violation: Exact match
 			    }
 			}
 			]]>

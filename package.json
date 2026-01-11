@@ -13,8 +13,8 @@
     "test:coverage": "node scripts/check-rule-coverage.js",
     "test:rules": "node scripts/validate-rules.js && pnpm test",
     "validate": "node scripts/validate-rules.js",
-    "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\" \"*.yml\" \"*.yaml\" \".github/workflows/*.{yml,yaml}\" \"*.md\" \"docs/**/*.md\" \"benchmarks/**/*.md\" \".cursor/rules/**/*.mdc\"",
-    "format:check": "prettier --check \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\" \"*.yml\" \"*.yaml\" \".github/workflows/*.{yml,yaml}\" \"*.md\" \"docs/**/*.md\" \"benchmarks/**/*.md\" \".cursor/rules/**/*.mdc\"",
+    "format": "prettier --write \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\" \"*.yml\" \"*.yaml\" \".github/workflows/*.{yml,yaml}\" \"*.md\" \"benchmarks/**/*.md\" \".cursor/rules/**/*.mdc\"",
+    "format:check": "prettier --check \"rulesets/**/*.xml\" \"tests/**/*.js\" \"scripts/**/*.js\" \"*.yml\" \"*.yaml\" \".github/workflows/*.{yml,yaml}\" \"*.md\" \"benchmarks/**/*.md\" \".cursor/rules/**/*.mdc\"",
     "lint": "eslint tests/**/*.js scripts/**/*.js",
     "lint:fix": "eslint --fix tests/**/*.js scripts/**/*.js",
     "benchmark": "node scripts/benchmark.js",
@@ -29,13 +29,16 @@
     "clean": "node scripts/clean.js",
     "check-xml-order": "node scripts/check-xml-order.js",
     "fix-xml-order": "node scripts/fix-xml-element-order.js",
-    "add-version-info": "node scripts/add-version-info.js"
+    "add-version-info": "node scripts/add-version-info.js",
+    "test-rule-coverage": "node scripts/test-rule-coverage.js",
+    "test-pmd-rule": "node test-pmd-rule.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@prettier/plugin-xml": "^3.4.2",
     "@types/jest": "^30.0.0",
     "@xmldom/xmldom": "^0.8.11",
+    "agent-docs": "^1.3.1",
     "eslint": "^9.39.2",
     "globals": "^17.0.0",
     "husky": "^9.1.7",
@@ -47,6 +50,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "agent-docs",
       "unrs-resolver"
     ]
   },

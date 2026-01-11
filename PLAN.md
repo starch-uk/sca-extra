@@ -15,17 +15,17 @@ Regex engine for pattern-based matching.
 This plan describes the project scope and components that will be implemented:
 
 - **43 PMD rules and 4 Regex rules** across PMD's 8 standard categories
-  (best-practices, code-style, design, documentation, error-prone,
-  multithreading, performance, security)
+  (bestpractices, codestyle, design, documentation, errorprone, multithreading,
+  performance, security)
 - **Comprehensive test infrastructure** with positive and negative test fixtures
   for all rules, including Regex rule testing helpers
 - **Benchmarking system** with stress-test fixtures targeting 580+ violations
   across 7 fixture files
 - **CI/CD pipeline** with PMD 7.19.0, Java 21, Node.js 24, pnpm 10.26.2, and
   Codecov integration
-- **Documentation** including AI Agent-friendly rule guide, XPath 3.1 reference,
-  PMD AST reference, Regex engine reference, and Code Analyzer usage guides
-  (CLI, VS Code extension, CI/CD integration, MCP tools)
+- **Documentation** including XPath 3.1 reference, PMD quick reference (with
+  Apex AST reference and suppression guide), Code Analyzer configuration
+  reference (with Regex engine configuration)
 - **Development tooling** including AST dump helper, validation scripts, version
   bumping, and changelog generation
 
@@ -55,26 +55,18 @@ sca-extra/
 │   └── pull_request_template.md       # Pull request template
 ├── docs/                              # Documentation
 │   ├── XPATH31.md                     # XPath 3.1 reference
-│   ├── APEX_PMD_AST.md                # PMD Apex AST reference
-│   ├── REGEX.md                       # Regex engine reference and custom rule creation guide
-│   ├── CODE_ANALYZER_CONFIG.md        # Code Analyzer configuration reference
-│   ├── AI_AGENT_RULE_GUIDE.md         # AI Agent-friendly rule configuration guide
-│   ├── MIGRATION_GUIDES.md             # Rule migration guides between versions
+│   ├── PMD.md                         # PMD quick reference (includes Apex AST reference)
+│   ├── CODEANALYZER.md                # Code Analyzer configuration reference (includes Regex engine)
 │   ├── APEXDOC.md                     # ApexDoc syntax and documentation format
-│   ├── SUPPRESS_WARNINGS.md           # How to suppress PMD rule violations
-│   ├── PMD.md                         # PMD quick reference
-│   ├── JEST30.md                      # Jest 30.0 API reference
+│   ├── JEST.md                        # Jest 30.0 API reference
 │   ├── PNPM.md                        # pnpm package manager reference
-│   ├── SFCLI.md                       # Salesforce CLI commands for Code Analyzer
-│   ├── VSCODE.md                      # VS Code extension usage guide
-│   ├── CICD.md                        # CI/CD integration guide
-│   └── MCP.md                         # Model Context Protocol tools guide
+│   └── HUSKY.md                       # Husky Git hooks manager reference
 ├── rulesets/                          # PMD ruleset XML files (organized by PMD's 8 categories)
-│   ├── best-practices/                # Best practices rules (modifiers, test classes)
-│   ├── code-style/                    # Code style rules (formatting, naming conventions)
+│   ├── bestpractices/                 # Best practices rules (modifiers, test classes)
+│   ├── codestyle/                     # Code style rules (formatting, naming conventions)
 │   ├── design/                        # Design rules (structure, method signatures, class organization)
 │   ├── documentation/                 # Documentation rules
-│   ├── error-prone/                   # Error-prone patterns (currently empty)
+│   ├── errorprone/                    # Errorprone patterns (currently empty)
 │   ├── multithreading/                # Multithreading issues (currently empty)
 │   ├── performance/                   # Performance rules (currently empty)
 │   └── security/                      # Security rules (currently empty)
@@ -83,20 +75,20 @@ sca-extra/
 ├── tests/                             # Test files
 │   ├── fixtures/                      # Test Apex code files
 │   │   ├── positive/                  # Code that should NOT trigger rules
-│   │   │   ├── code-style/            # Positive test fixtures for code-style rules
+│   │   │   ├── codestyle/             # Positive test fixtures for codestyle rules
 │   │   │   ├── documentation/         # Positive test fixtures for documentation rules
-│   │   │   ├── best-practices/        # Positive test fixtures for best-practices rules
+│   │   │   ├── bestpractices/         # Positive test fixtures for bestpractices rules
 │   │   │   ├── design/                # Positive test fixtures for design rules
-│   │   │   ├── error-prone/           # Positive test fixtures for error-prone rules
+│   │   │   ├── errorprone/            # Positive test fixtures for errorprone rules
 │   │   │   ├── multithreading/        # Positive test fixtures for multithreading rules
 │   │   │   ├── performance/           # Positive test fixtures for performance rules
 │   │   │   └── security/               # Positive test fixtures for security rules
 │   │   └── negative/                  # Code that SHOULD trigger rules
-│   │       ├── best-practices/        # Negative test fixtures for best-practices rules
-│   │       ├── code-style/            # Negative test fixtures for code-style rules
+│   │       ├── bestpractices/         # Negative test fixtures for bestpractices rules
+│   │       ├── codestyle/             # Negative test fixtures for codestyle rules
 │   │       ├── design/                # Negative test fixtures for design rules
 │   │       ├── documentation/         # Negative test fixtures for documentation rules
-│   │       ├── error-prone/           # Negative test fixtures for error-prone rules
+│   │       ├── errorprone/            # Negative test fixtures for errorprone rules
 │   │       ├── multithreading/        # Negative test fixtures for multithreading rules
 │   │       ├── performance/           # Negative test fixtures for performance rules
 │   │       └── security/               # Negative test fixtures for security rules
@@ -105,11 +97,11 @@ sca-extra/
 │   ├── rulesets/                      # Test-specific rulesets
 │   │   └── test-ruleset.xml           # Combined ruleset for testing (generated)
 │   └── unit/                          # Unit test files
-│       ├── code-style.test.js
+│       ├── codestyle.test.js
 │       ├── documentation.test.js
-│       ├── best-practices.test.js
+│       ├── bestpractices.test.js
 │       ├── design.test.js
-│       ├── error-prone.test.js
+│       ├── errorprone.test.js
 │       ├── multithreading.test.js
 │       ├── performance.test.js
 │       └── security.test.js
@@ -128,10 +120,10 @@ sca-extra/
 ├── benchmarks/                        # Benchmark test files
 │   ├── fixtures/                      # Large Apex files for benchmarking
 │   │   ├── stress-test-all-rules.cls  # Comprehensive stress test (100+ violations across all rules)
-│   │   ├── stress-code-style.cls      # Code style stress test (200+ violations, 17 rules)
+│   │   ├── stress-codestyle.cls       # Codestyle stress test (200+ violations, 17 rules)
 │   │   ├── stress-design.cls          # Design stress test (130+ violations, 15 rules - structure + method signatures)
-│   │   ├── stress-best-practices.cls  # Best practices stress test (100+ violations, 5 rules - modifiers)
-│   │   ├── stress-code-style.cls      # Code style stress test (300+ violations, 21 rules - includes naming)
+│   │   ├── stress-bestpractices.cls   # Best practices stress test (100+ violations, 5 rules - modifiers)
+│   │   ├── stress-codestyle.cls       # Codestyle stress test (300+ violations, 21 rules - includes naming)
 │   │   └── stress-documentation.cls   # Documentation stress test (30+ violations, 2 rules)
 │   ├── results/                      # Benchmark results (gitignored)
 │   ├── README.md                      # Benchmark documentation
@@ -198,21 +190,14 @@ is NOT an npm package and must be installed separately.
 
 2. **Documentation layout**
     - Create `docs/XPATH31.md` with the XPath 3.1 reference
-    - Create `docs/APEX_PMD_AST.md` with the PMD Apex AST reference
-    - Create `docs/REGEX.md` with Regex engine reference
-    - Create `docs/CODE_ANALYZER_CONFIG.md` with Code Analyzer configuration
-      reference
-    - Create `docs/AI_AGENT_RULE_GUIDE.md` with AI Agent-friendly rule guide
-    - Create `docs/MIGRATION_GUIDES.md` with rule migration guides
+    - Create `docs/PMD.md` with PMD quick reference (includes Apex AST reference
+      and suppression guide)
+    - Create `docs/CODEANALYZER.md` with Code Analyzer configuration reference
+      (includes Regex engine configuration)
     - Create `docs/APEXDOC.md` with ApexDoc syntax reference
-    - Create `docs/SUPPRESS_WARNINGS.md` with suppression guide
-    - Create `docs/PMD.md` with PMD quick reference
-    - Create `docs/JEST30.md` with Jest 30.0 API reference
+    - Create `docs/JEST.md` with Jest 30.0 API reference
     - Create `docs/PNPM.md` with pnpm reference
-    - Create `docs/SFCLI.md` with Salesforce CLI commands for Code Analyzer
-    - Create `docs/VSCODE.md` with VS Code extension usage guide
-    - Create `docs/CICD.md` with CI/CD integration guide
-    - Create `docs/MCP.md` with Model Context Protocol tools guide
+    - Create `docs/HUSKY.md` with Husky Git hooks manager reference
     - Organize `rulesets/` structure by category
 
 3. **Create LICENSE.md file**
@@ -383,13 +368,13 @@ is NOT an npm package and must be installed separately.
     - Add benchmark fixtures in `benchmarks/fixtures/`:
         - `stress-test-all-rules.cls` - Comprehensive (100+ violations across
           all rules)
-        - `stress-code-style.cls` - Code style focused (200+ violations)
+        - `stress-codestyle.cls` - Codestyle focused (200+ violations)
         - `stress-design.cls` - Design focused (130+ violations - structure +
           method signatures)
-        - `stress-best-practices.cls` - Best practices focused (100+
-          violations - modifiers)
-        - `stress-code-style.cls` - Code style focused (300+ violations -
-          includes naming)
+        - `stress-bestpractices.cls` - Best practices focused (100+ violations -
+          modifiers)
+        - `stress-codestyle.cls` - Codestyle focused (300+ violations - includes
+          naming)
         - `stress-documentation.cls` - Documentation focused (30+ violations)
     - Create `benchmarks/README.md` - Benchmark documentation
     - Create `benchmarks/FIXTURES.md` - Fixture statistics and coverage
@@ -542,23 +527,12 @@ rules)**
         - Code examples showing valid code (what doesn't trigger the rule)
         - Configurable properties (if any) with default values
         - Priority level
-    - **Create AI Agent-friendly rule guide** (`docs/AI_AGENT_RULE_GUIDE.md`)
-        - Structured format for all rules
-        - Instructions for using in Cursor and other AI coding environments
-        - Machine-readable format for AI agents
-    - **Regex engine reference** (`docs/REGEX.md`)
-        - Regex engine configuration guide
-        - Custom Regex rule creation instructions
-        - Pattern examples and best practices
-    - **Code Analyzer configuration reference** (`docs/CODE_ANALYZER_CONFIG.md`)
+    - **Code Analyzer configuration reference** (`docs/CODEANALYZER.md`)
         - Complete `code-analyzer.yml` configuration reference
         - All engine settings and properties
-    - **Rule migration guides** (`docs/MIGRATION_GUIDES.md`)
-        - Guide for migrating between rule versions
-        - Breaking changes documentation
-        - How to update code when rules change
-        - Examples of code changes needed for rule updates
-        - Version-specific migration paths
+        - Regex engine configuration guide (included in this file)
+        - Custom Regex rule creation instructions
+        - Pattern examples and best practices
     - README will include test coverage information
     - Troubleshooting guide will be added
     - Benchmark results will be included in documentation
@@ -683,7 +657,8 @@ This ensures:
       `bash scripts/ast-dump.sh <apex-file>`
     - **Security**: Must validate file paths to prevent path traversal attacks
       (reject `..` sequences, use `realpath` to resolve symlinks)
-- **Documentation:** Document common AST patterns in `docs/APEX_PMD_AST.md`
+- **Documentation:** Document common AST patterns in `docs/PMD.md` (see Apex AST
+  Reference section)
     - Node types and relationships
     - Common XPath patterns
     - AST traversal examples
@@ -836,7 +811,7 @@ This ensures:
    InnerClassesCannotHaveStaticMembers
 2. **P2** (High): Method calls in conditionals, multi-line formatting, naming
    restrictions, modifier rules
-3. **P3** (Medium): Remaining code-style, documentation, design, and best
+3. **P3** (Medium): Remaining codestyle, documentation, design, and best
    practices rules
 4. **P4** (Low): Complex rules requiring thorough testing (e.g.,
    AvoidOneLinerMethods)
@@ -1057,7 +1032,6 @@ The project will be considered complete when the following criteria are met:
 - [ ] All rules are documented in README.md with code examples (violations and
       valid code)
 - [ ] Configurable properties are exposed for applicable rules
-- [ ] AI Agent-friendly rule guide (`docs/AI_AGENT_RULE_GUIDE.md`) is created
 - [ ] Benchmarking infrastructure is set up and functional
 - [ ] Baseline benchmark results are established
 - [ ] Benchmark PR comments and performance regression alerts in CI will not be
