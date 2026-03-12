@@ -36,14 +36,14 @@ jobs:
             - name: Setup Node.js
               # Pinned to commit SHA for security (immutable version)
               # actions/setup-node version: v6
-              uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
+              uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
               with:
                   node-version: '24'
 
             - name: Setup pnpm
               # Pinned to commit SHA for security (immutable version)
               # pnpm/action-setup version: v4
-              uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+              uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
               with:
                   version: '10.26.2'
 
