@@ -36,21 +36,21 @@ jobs:
             - name: Setup Node.js
               # Pinned to commit SHA for security (immutable version)
               # actions/setup-node version: v6
-              uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
+              uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
               with:
                   node-version: '24'
 
             - name: Setup pnpm
               # Pinned to commit SHA for security (immutable version)
               # pnpm/action-setup version: v4
-              uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+              uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
               with:
                   version: '10.26.2'
 
             - name: Cache pnpm store
               # Pinned to commit SHA for security (immutable version)
               # actions/cache version: v5
-              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+              uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
               with:
                   path: ~/.local/share/pnpm/store
                   key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -76,7 +76,7 @@ jobs:
               id: cache-pmd
               # Pinned to commit SHA for security (immutable version)
               # actions/cache version: v5
-              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+              uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
               with:
                   path: ~/pmd
                   key: pmd-${{ env.PMD_VERSION }}
@@ -165,7 +165,7 @@ jobs:
             - name: Upload coverage
               # Pinned to commit SHA for security (immutable version)
               # codecov/codecov-action version: v5
-              uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de
+              uses: codecov/codecov-action@1af58845a975a7985b0beb0cbe6fbbb71a41dbad
               if: always()
               with:
                   files: ./coverage/lcov.info
